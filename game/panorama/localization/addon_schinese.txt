@@ -1,0 +1,22 @@
+"addon"
+{
+	"Unassigned"      								"Unassigned Team"
+	"Spectator"       								"Spectators"
+	"Neutrals"        								"Neutrals"
+	"NoTeam"          								"No Team"
+
+	"DOTA_GoodGuys"   								"天辉"
+	"DOTA_BadGuys"    								"夜魇"
+	"DOTA_Custom1"    								"Pink Dragon"
+	"DOTA_Custom2"    								"Orange Dog"
+	"DOTA_Custom3"    								"Blue Rooster"
+	"DOTA_Custom4"    								"Green Ram"
+	"DOTA_Custom5"    								"Brown Rat"
+	"DOTA_Custom6"    								"Cyan Boar"
+	"DOTA_Custom7"    								"Olive Snake"
+	"DOTA_Custom8"    								"Purple Horse"
+	
+	"addonname"										"DOTA：英霸"
+
+	
+}
