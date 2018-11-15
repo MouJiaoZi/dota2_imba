@@ -1,7 +1,0 @@
-<root> 
-	<scripts>
-		<include src="file://{resources}/scripts/imba_hud_hack.js" />
-	</scripts>
-	<Panel>
-	</Panel>
-</root>
