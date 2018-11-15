@@ -1,0 +1,23 @@
+<root> 
+	<scripts>
+		<include src="file://{resources}/scripts/loding_screen_tips.js" />
+	</scripts>
+	<styles>
+		<include src="file://{resources}/styles/custom_loading_screen.css" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+	</styles>
+	<Panel class="AddonLoadingRoot">
+		<Panel id="CustomBg" >
+			<Image id="gamemode" class="SeqImg" src="file://{images}/custom_game/loading_screen/gamemode.png" />
+		</Panel>
+		<Panel id="TitlePanel"> 
+			<!--Label id="AddonTitle" text="#addon_game_name" style="" /-->
+		</Panel>
+
+		<!-- This is comes form LOD REDUX github.com/darklordabc/Legends-of-Dota-Redux/ !-->
+		 <Panel id="LoDLoadingTip" class="workingPanel">
+            <Image id="LoDLoadingTipImage" />
+            <Panel hittest="false" id="LoDLoadingTipText"/>
+        </Panel>
+	</Panel>
+</root>

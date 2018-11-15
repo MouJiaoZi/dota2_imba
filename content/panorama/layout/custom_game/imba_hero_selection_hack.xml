@@ -1,0 +1,10 @@
+<root> 
+	<styles>
+		<include src="file://{resources}/styles/hero_selection_imba.css" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/imba_hero_selection_hack.js" />
+	</scripts>
+	<Panel>
+	</Panel>
+</root>
