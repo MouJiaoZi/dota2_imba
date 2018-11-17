@@ -1,41 +1,41 @@
-# Compiled Lua sources
-luac.out
+maps/
+resource/flash3/scaleform
+resource/flash3/ValveLib
+soundevents/soundevents_diagnostics.vsndevts_c
+resource/overviews/
+particles/
+materials/
+tools_thumbnail_cache.bin
+tools_asset_info.bin
+resource/flash3/custom_ui.txt
+resource/flash3/CustomUI.as
+resource/flash3/CustomUI.fla
+resource/flash3/CustomUI.swf
+resource/flash3/StatsCollection.swf
+flash source/
+resource/flash3/images/spellicons/mjollnir_arc.000.png
+resource/flash3/images/spellicons/mjollnir_arc.001.png
+resource/flash3/images/spellicons/mjollnir_arc.002.png
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+# Cache crap that Valve autogenerates
+*.bin
+*.cfg
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
+# Compiled formats
+*.vpcf_c
+*.vtex_c
+*.vsndevts_c
+*.vsnd_c
+*.vmat_c
+*.vjs_c
+*.vxml_c
+*.vcss_c
 
-# Precompiled Headers
-*.gch
-*.pch
+# Map files
+*.vpk
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
+# Map overviews
+resource/overviews/*
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
+#Github dump
+*.stackdump
