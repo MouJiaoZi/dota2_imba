@@ -1,0 +1,1261 @@
+"Imba.SvenGreatCleave"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/sven/warcry_signet.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.SvenBeAMan"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/sven/be_a_man_03.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.NecroDeathPulseRepeat"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/necro/death_pulse.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.SandKingSandStorm"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/sand_king/sand_storm.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.SandKingEpicenter"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/sand_king/epicenter.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.PhantomAssassinFatality"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/phantom_assassin/fatality.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.CrystalMaidenLetItGo01"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/crystal_maiden/LetItGo_01.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.CrystalMaidenLetItGo02"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/crystal_maiden/LetItGo_02.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.CrystalMaidenLetItGo03"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/crystal_maiden/LetItGo_03.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.FacelessZaWarudo"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/faceless_void/zawarudo.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+					"volume"			{   "value"     "2.50000"  }
+					"pitch_rand_min"	{   "value"     "-0.02000"  }
+					"pitch_rand_max"	{   "value"     "0.02000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1600.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Hero_WraithKing.EruptionCast"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/skeleton_king/hellfire_eruption.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Hero_WraithKing.IllBeBack"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"	"sounds/hero/skeleton_king/ill_be_back.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"			"0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.EnigmaBlackHoleTi5"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/weapons/hero/enigma/black_hole_chasm.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.EnigmaBlackHoleTobi01"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/enigma/BlackHole01.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.EnigmaBlackHoleTobi02"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/enigma/BlackHole02.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.EnigmaBlackHoleTobi03"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/enigma/BlackHole03.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.EnigmaBlackHoleTobi04"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/enigma/BlackHole04.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.EnigmaBlackHoleTobi05"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/enigma/BlackHole05.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.WarlockShadowWordExplosion"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/warlock/shadow_word_explosion.vsnd"
+						}
+					}
+					"memory_type"
+					{
+						"value"     "0"
+					}
+				}
+			}
+		}
+	}
+}
+
+"Imba.WarlockYouFaceJaraxxus"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/warlock/you_face_jaraxxus.vsnd"
+						}
+					}
+					"volume"			{   "value"     "6.00000"  }
+					"pitch_rand_min"	{   "value"     "-0.00000"  }
+					"pitch_rand_max"	{   "value"     "0.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1600.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.WarlockYouFaceJaraxxusLong"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/warlock/you_face_jaraxxus_long.vsnd"
+						}
+					}
+					"volume"			{   "value"     "6.00000"  }
+					"pitch_rand_min"	{   "value"     "-0.00000"  }
+					"pitch_rand_max"	{   "value"     "0.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1600.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.NightStalkerDarknessAlt01"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/night_stalker/fearofthedark.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.90000"  }
+					"pitch_rand_min"	{   "value"     "-0.00000"  }
+					"pitch_rand_max"	{   "value"     "0.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1600.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.NightStalkerDarknessAlt02"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/hero/night_stalker/hellodarkness.vsnd"
+						}
+					}
+					"volume"			{   "value"     "6.00000"  }
+					"pitch_rand_min"	{   "value"     "-0.00000"  }
+					"pitch_rand_max"	{   "value"     "0.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1600.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.PugnaLifeDrainTarget"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/pugna/lifedrain_target.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.50000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1400.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.PugnaLifeDrainLoop"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/pugna/lifedrain_loop.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.250000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1400.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.QopShadowStrikeCreep"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/queenofpain/queenofpain_shadowstrike.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.350000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1000.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.SniperLongRangeHeadshot"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/sniper/sniper_assassinate.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.400000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.SniperLongRangeHeadshotProjectile"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/sniper/assasinate_projectile.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.400000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.SniperLongRangeHeadshot01"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/sniper/assasinate_damage01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.400000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.SniperLongRangeHeadshot02"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "weapons/hero/sniper/assasinate_damage01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "0.400000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury10"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_10.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury11"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_11.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury12"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_12.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury13"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_13.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury14"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_14.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury15"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_15.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury16"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_16.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury17"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_17.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.JuggernautBladeFury18"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/juggernaut/jugg_ability_bladefury_18.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "1200.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.PickPhaseDrums"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/music/ui_hero_select_intl.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.03000"  }
+					"pitch_rand_max"	{   "value"     "0.030000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "25000.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"Imba.ControlPointTaken"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/addons/conquest/capture_point_timer.vsnd"
+						}
+					}
+					"volume"			{   "value"     "5.000000"  }
+					"pitch_rand_min"	{   "value"     "-0.05000"  }
+					"pitch_rand_max"	{   "value"     "0.050000"  }
+					"pitch"				{   "value"     "1.000000"  }
+					"soundlevel"		{   "value"     "100.00000" }
+					"distance_max"		{   "value"     "10000.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}

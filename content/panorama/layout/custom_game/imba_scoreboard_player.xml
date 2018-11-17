@@ -1,0 +1,37 @@
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
+	</styles> 
+	<scripts>
+		<include src="file://{resources}/scripts/imba_scoreboard_player.js" />
+	</scripts>
+	<Panel class="IMBAPlayerBackground LeftRightFlow" style="width:100%;height:32px;">
+		<Panel id="IMBAPlayerColor"/>
+		<DOTAAvatarImage id="IMBAPlayerAvtar" steamid="local" class="IMBAPlayerAvatarIMG"/>
+		<DOTAHeroImage id="IMBAPlayerHero" heroname="npc_dota_hero_pudge" heroimagestyle="landscape" class="IMBAHeroIMG"/>
+		<Panel id="IMBAPlayerAndHeroName" class="TopBottomFlow" style="width:130px;height:100%;">
+			<Label id="IMBAPlayerName" class="IMBAPlayerNameLabel" text="圣耀救赎手炮" />
+			<Label id="IMBAPlayerHeroName" class="IMBAHeroNameLabel" text="帕吉"/>			
+		</Panel>
+		<Label id="IMBAPlayerLevel" class="IMBAPlayerLevelText MonoNumbersFont" hittest="false" text="50" />
+		<Label id="IMBAPlayerGold" class="IMBAPlayerGoldText MonoNumbersFont" text="10000"/>
+		<Label id="IMBAPlayerKills" class="IMBAKDANumber IMBAKDAKills MonoNumbersFont" text="100"/>
+		<Label id="IMBAPlayerDeaths" class="IMBAKDANumber MonoNumbersFont" text="100"/>
+		<Label id="IMBAPlayerAssists" class="IMBAKDANumber MonoNumbersFont" text="100"/>
+		<Panel id="IMBAUltICON" class="UltLearned UltReady UltOnCooldown UltReadyNoMana">
+            <Panel id="IMBAUltICONIMG" class="IMBAUltICON UltNotLearned"/>
+		</Panel>
+		<Panel id="IMBAPlayerShare" class="LeftRightFlow">
+			<ToggleButton id="IMBAUnitControlButton" class="IMBAPlayerShareButton" onmouseout="UIHideTextTooltip();" onmouseover="UIShowTextTooltip( #IMBA_HUD_SharedUnits );" onactivate="ToggleUnit();"/>
+			<ToggleButton id="IMBAHeroControlButton" class="IMBAPlayerShareButton" onmouseout="UIHideTextTooltip();" onmouseover="UIShowTextTooltip( #IMBA_HUD_SharedHero );" onactivate="ToggleHero();"/>
+			<ToggleButton id="IMBADisableHelpButton" class="IMBAPlayerShareButton" onmouseout="UIHideTextTooltip();" onmouseover="UIShowTextTooltip( #IMBA_HUD_DisableHelp );" onactivate="ToggleDisableHelp();"/>
+			<ToggleButton id="IMBAMuteButton" class="IMBAPlayerShareButton" onmouseout="UIHideTextTooltip();" onmouseover="UIShowTextTooltip( #IMBA_HUD_Mute );" onactivate="ToggleMute();"/>
+		</Panel>
+	</Panel>
+</root>

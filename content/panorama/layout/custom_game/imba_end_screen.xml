@@ -1,0 +1,43 @@
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
+	</styles> 
+	<scripts>
+		<include src="file://{resources}/scripts/imba_end_screen.js" />
+	</scripts>
+	<Panel class="TopBottomFlow" hittest="false" style="horizontal-align:center;" >
+		<Panel id="IMBAVictoryRow">
+			<Label id="IMBAEndVictory" text="#custom_end_screen_victory_message" class="" />
+		</Panel>
+		<Panel id="IMBAEndBackgroundPanel" class="IMBAEndBackground TopBottomFlow" hittest="false" >
+			<Panel id="IMBARadiantHeader" class="LeftRightFlow">
+				<Label id="IMBARadiantScoreLabel" text="100" require-composition-layer="true" always-cache-composition-layer="true"/>
+				<Label id="IMBARadiantTeamName" text="#DOTA_GoodGuysCaps" require-composition-layer="true" always-cache-composition-layer="true"/>
+				<Label id="IMBALvlLabel" class="IMBABoardHeader" text="#DOTA_Scoreboard_Header_Lvl"/>
+				<Label id="IMBAGoldLabel" class="IMBABoardHeader" text="#DOTA_Scoreboard_Header_Gold"/>
+				<Label id="IMBAKillsLabel" class="IMBABoardHeader" text="#DOTA_Scoreboard_K"/>
+				<Label id="IMBADeathsLabel" class="IMBABoardHeader" text="#DOTA_Scoreboard_D"/>
+				<Label id="IMBAAssistsLabel" class="IMBABoardHeader" text="#DOTA_Scoreboard_A"/>
+			</Panel>
+
+			<Panel id="IMBAEndRadiantTeamContainer" hittest="false" class="TopBottomFlow" />
+			
+			<Panel id="IMBADireHeader" class="LeftRightFlow">
+				<Label id="IMBADireScoreLabel" text="100" require-composition-layer="true" always-cache-composition-layer="true"/>
+				<Label id="IMBADireTeamName" text="#DOTA_BadGuysCaps" require-composition-layer="true" always-cache-composition-layer="true"/>
+			</Panel>
+
+			<Panel id="IMBAEndDireTeamContainer" hittest="false" class="TopBottomFlow" />
+		</Panel>
+
+		<Button id="IMBACloseButton" onactivate="Game.FinishGame();">
+			<Label text="#CustomEndScreenClose" />
+		</Button>
+	</Panel>
+</root>

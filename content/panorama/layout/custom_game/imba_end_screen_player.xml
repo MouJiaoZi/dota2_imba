@@ -1,0 +1,37 @@
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
+	</styles> 
+	<scripts>
+		<include src="file://{resources}/scripts/imba_end_screen_player.js" />
+	</scripts>
+	<Panel class="IMBAPlayerBackground LeftRightFlow" style="width:100%;height:32px;">
+		<Panel id="IMBAPlayerColor"/>
+		<DOTAAvatarImage id="IMBAPlayerAvtar" steamid="local" class="IMBAPlayerAvatarIMG"/>
+		<DOTAHeroImage id="IMBAPlayerHero" heroname="npc_dota_hero_pudge" heroimagestyle="landscape" class="IMBAHeroIMG"/>
+		<Panel id="IMBAPlayerAndHeroName" class="TopBottomFlow" style="width:130px;height:100%;">
+			<Label id="IMBAPlayerName" class="IMBAPlayerNameLabel" text=" " />
+			<Label id="IMBAPlayerHeroName" class="IMBAHeroNameLabel" text=" "/>
+		</Panel>
+		<Label id="IMBAPlayerLevel" class="IMBAPlayerLevelText MonoNumbersFont" hittest="false" text="0" />
+		<Label id="IMBAPlayerGold" class="IMBAPlayerGoldText MonoNumbersFont" text="0"/>
+		<Label id="IMBAPlayerKills" class="IMBAKDANumber IMBAKDAKills MonoNumbersFont" text="0"/>
+		<Label id="IMBAPlayerDeaths" class="IMBAKDANumber MonoNumbersFont" text="0"/>
+		<Label id="IMBAPlayerAssists" class="IMBAKDANumber MonoNumbersFont" text="0"/>
+		<DOTAItemImage id="IMBAItem_0" itemname="item_imba_dummy" style="margin-left:10px;"/>
+		<DOTAItemImage id="IMBAItem_1" itemname="item_imba_dummy" style="margin-left:3px;"/>
+		<DOTAItemImage id="IMBAItem_2" itemname="item_imba_dummy" style="margin-left:3px;"/>
+		<DOTAItemImage id="IMBAItem_3" itemname="item_imba_dummy" style="margin-left:3px;"/>
+		<DOTAItemImage id="IMBAItem_4" itemname="item_imba_dummy" style="margin-left:3px;"/>
+		<DOTAItemImage id="IMBAItem_5" itemname="item_imba_dummy" style="margin-left:3px;"/>
+		<DOTAItemImage id="IMBAItem_6" itemname="item_imba_dummy" style="margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;"/>
+		<DOTAItemImage id="IMBAItem_7" itemname="item_imba_dummy" style="margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;"/>
+		<DOTAItemImage id="IMBAItem_8" itemname="item_imba_dummy" style="margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;"/>
+	</Panel>
+</root>
