@@ -116,7 +116,7 @@ var IMBAHeroes =
 ["npc_dota_hero_skywrath_mage", 1],
 ["npc_dota_hero_elder_titan", 0],
 ["npc_dota_hero_abaddon", 1],
-["npc_dota_hero_earth_spirit", 3],
+["npc_dota_hero_earth_spirit", 1],
 ["npc_dota_hero_ember_spirit", 1],
 ["npc_dota_hero_legion_commander", 0],
 ["npc_dota_hero_phoenix", 0],

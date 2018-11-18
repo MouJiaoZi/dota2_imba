@@ -19,9 +19,8 @@ function imba_tinker_laser:OnSpellStart()
 	end
 	caster:EmitSound("Hero_Tinker.Laser")
 	local stack = caster:GetModifierStackCount("modifier_imba_rearm_stack", caster)
-	local units = {}
+	local units = {target}
 	local radius = self:GetSpecialValueFor("bounce_range_scepter")
-	table.insert(units, target)
 	if caster:HasScepter() then
 		for i, aunit in pairs(units) do
 			local units1 = FindUnitsInRadius(caster:GetTeamNumber(), aunit:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
@@ -396,12 +395,14 @@ end
 
 imba_tinker_rearm = class({})
 
+LinkLuaModifier("modifier_imba_rearm_fuck", "hero/hero_tinker", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rearm_stack", "hero/hero_tinker", LUA_MODIFIER_MOTION_NONE)
 
 function imba_tinker_rearm:IsHiddenWhenStolen() 	return false end
 function imba_tinker_rearm:IsRefreshable() 			return true end
 function imba_tinker_rearm:IsStealable() 			return true end
 function imba_tinker_rearm:IsNetherWardStealable()	return false end
+function imba_tinker_rearm:GetIntrinsicModifierName() return "modifier_imba_rearm_fuck" end
 
 function imba_tinker_rearm:OnSpellStart()
 	local caster = self:GetCaster()
@@ -486,3 +487,49 @@ function modifier_imba_rearm_stack:IsPurgable() 		return false end
 function modifier_imba_rearm_stack:IsPurgeException() 	return false end
 function modifier_imba_rearm_stack:DeclareFunctions() return {MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE} end
 function modifier_imba_rearm_stack:GetModifierTotalPercentageManaRegen() return (0 - self:GetAbility():GetSpecialValueFor("mana_penalty") * self:GetStackCount()) end
+
+modifier_imba_rearm_fuck = class({})
+
+function modifier_imba_rearm_fuck:IsDebuff()			return false end
+function modifier_imba_rearm_fuck:IsHidden() 			return true end
+function modifier_imba_rearm_fuck:IsPurgable() 			return false end
+function modifier_imba_rearm_fuck:IsPurgeException() 	return false end
+function modifier_imba_rearm_fuck:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_EXECUTED} end
+
+function modifier_imba_rearm_fuck:OnCreated()
+	if IsServer() then
+		if self:GetParent():IsIllusion() then
+			return
+		end
+		self.time = -10000
+		self:StartIntervalThink(FrameTime())
+	end
+end
+
+function modifier_imba_rearm_fuck:OnIntervalThink()
+	if not self:GetParent():IsAlive() then
+		return
+	end
+	local range = 1000 + self:GetParent():GetCastRangeBonus()
+	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_ANY_ORDER, false)
+	if #enemies > 0 and self.time == -10000 then
+		self.time = GameRules:GetGameTime()
+	elseif #enemies == 0 then
+		self.time = -10000
+	end
+end
+
+function modifier_imba_rearm_fuck:OnAbilityExecuted(keys)
+	if not IsServer() then
+		return
+	end
+	if (keys.ability:GetName() == "item_imba_sheepstick" or string.find(keys.ability:GetName(), "dagon") or keys.ability:GetName() == "item_ethereal_blade") and keys.unit == self:GetParent() then
+		if (GameRules:GetGameTime() - self.time) <= 0.1 then
+			Notifications:BottomToAll({text="检测到修补匠从发现敌方英雄到使用邪恶镰刀/大根/虚灵刀的时间间隔小于0.1秒！！", duration = 5})
+			self:SetStackCount(self:GetStackCount() + 1)
+			if self:GetStackCount() >= 100 then
+				self:GetParent():ForceKill(false)
+			end
+		end
+	end
+end

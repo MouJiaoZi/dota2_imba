@@ -50,7 +50,7 @@ function imba_techies_land_mines:ThrowMine(target)
 	mine:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
 	mine:AddNewModifier(caster, self, "modifier_imba_land_mines_throw_motion", {duration = 3.0})
 	mine:AddNewModifier(caster, self, "modifier_imba_land_mines", {duration = self:GetSpecialValueFor("duration")})
-	mine:AddNewModifier(caster, self, "modifier_imba_land_mines_throw_mark", {})
+	mine:AddNewModifier(caster, self, "modifier_imba_land_mines_throw_mark", {duration = self:GetSpecialValueFor("duration")})
 	local info = 
 	{
 		Target = target,
@@ -137,18 +137,18 @@ function modifier_imba_land_mines:OnDestroy()
 		local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.mine:GetAbsOrigin(), nil, self.small_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 		local enemies2 = FindUnitsInRadius(self.caster:GetTeamNumber(), self.mine:GetAbsOrigin(), nil, self.big_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 		for _, enemy in pairs(enemies) do
-			if not enemy:IsBuilding() and not self:GetParent():HasModifier("modifier_imba_land_mines_throw_mark") then
-				ApplyDamage({victim = enemy, attacker = self.mine, damage = damage, damage_type = self.ability:GetAbilityDamageType(), ability = self.ability})
-			elseif enemy:IsBuilding() or self:GetParent():HasModifier("modifier_imba_land_mines_throw_mark") then
+			if enemy:IsBuilding() or self:GetParent():HasModifier("modifier_imba_land_mines_throw_mark") then
 				ApplyDamage({victim = enemy, attacker = self.mine, damage = building_dmg, damage_type = self.ability:GetAbilityDamageType(), ability = self.ability})
+			else
+				ApplyDamage({victim = enemy, attacker = self.mine, damage = damage, damage_type = self.ability:GetAbilityDamageType(), ability = self.ability})
 			end
 		end
 		for _, enemy in pairs(enemies2) do
 			if not IsInTable(enemy, enemies) then
-				if not enemy:IsBuilding() and not self:GetParent():HasModifier("modifier_imba_land_mines_throw_mark") then
-					ApplyDamage({victim = enemy, attacker = self.mine, damage = (damage / 2), damage_type = self.ability:GetAbilityDamageType(), ability = self.ability})
-				elseif enemy:IsBuilding() or self:GetParent():HasModifier("modifier_imba_land_mines_throw_mark") then
+				if enemy:IsBuilding() or self:GetParent():HasModifier("modifier_imba_land_mines_throw_mark") then
 					ApplyDamage({victim = enemy, attacker = self.mine, damage = (building_dmg / 2), damage_type = self.ability:GetAbilityDamageType(), ability = self.ability})
+				else
+					ApplyDamage({victim = enemy, attacker = self.mine, damage = (damage / 2), damage_type = self.ability:GetAbilityDamageType(), ability = self.ability})
 				end
 			end
 		end
@@ -164,6 +164,7 @@ function modifier_imba_land_mines:OnDestroy()
 		)
 		local sound = CreateModifierThinker(self.caster, self.ability, "modifier_dummy_thinker", {duration = 0.5}, self.mine:GetAbsOrigin(), self.caster:GetTeamNumber(), false)
 		sound:EmitSound("Hero_Techies.LandMine.Detonate")
+		self:GetParent():ForceKill(false)
 	end
 	self.ability = nil
 	self.mine = nil
@@ -194,8 +195,8 @@ function modifier_imba_land_mines_explose_delay:OnDestroy()
 			local buff = self:GetParent():FindModifierByName("modifier_imba_land_mines")
 			if buff then
 				buff:SetStackCount(1)
+				buff:Destroy()
 			end
-			self:GetParent():ForceKill(false)
 		end
 	end
 end

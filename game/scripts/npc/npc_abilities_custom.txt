@@ -5826,11 +5826,14 @@
 		"BaseClass"             		"ability_lua"
 		"AbilityTextureName"			"earth_spirit_stone_caller"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING | DOTA_ABILITY_BEHAVIOR_SHOW_IN_GUIDES | DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
-		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"AbilityType"					"DOTA_ABILITY_TYPE_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
 		"MaxLevel"						"1"
 		"AbilitySound"					"Hero_EarthSpirit.StoneRemnant.Impact"
+		"HasScepterUpgrade"				"1"
 		"ScriptFile"					"hero/hero_earth_spirit.lua"
 		
 		// Casting
@@ -5866,6 +5869,26 @@
 			{
 				"var_type"				"FIELD_FLOAT"
 				"duration"				"60.0"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration_scepter"		"6.0"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"aoe_scepter"			"400"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage_scepter"		"300"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"hero_cooldown_scepter"	"20.0"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_ES_STONE_CALLER"
@@ -5912,7 +5935,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"radius"				"180"	// NOTE: This radius must match the radius for geomagnetic grip
+				"radius"				"240"	// NOTE: This radius must match the radius for geomagnetic grip
 			}
 			"02"
 			{
@@ -6041,6 +6064,192 @@
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
+	}
+
+	//=================================================================================================================
+	// Earth Spirit: Geomagnetic Grip
+	//=================================================================================================================
+	"imba_earth_spirit_geomagnetic_grip"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"earth_spirit_geomagnetic_grip"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_INVULNERABLE"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_EarthSpirit.GeomagneticGrip.Target"
+		"ScriptFile"					"hero/hero_earth_spirit.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"1100"
+		"AbilityCastPoint"				"0.01"
+		
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"13"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"100"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"180"	// NOTE: This radius must match the radius for boulder smash
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"miss_rate"				"75"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"miss_duration"			"2.0 2.5 3 3.5"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"rock_damage"			"150 200 250 300"
+			}				
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"speed"					"1200"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+
+	//=================================================================================================================
+	// Earth Spirit: Petrify
+	//=================================================================================================================
+	"imba_earth_spirit_petrify"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"custom/earth_spirit_petrify_0"
+		"MaxLevel" 						"1"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"MaxLevel"						"1"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_EarthSpirit.Petrify"
+		"ScriptFile"					"hero/hero_earth_spirit.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_5"
+		
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"10"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"pull_distance"		"150"
+			}
+			"02"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"search_range"		"400"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Earth Spirit: Magnetize
+	//=================================================================================================================
+	"imba_earth_spirit_magnetize"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"earth_spirit_magnetize"
+		"MaxLevel" 						"3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"FightRecapLevel"				"2"
+		"AbilitySound"					"Hero_EarthSpirit.Magnetize.Cast"
+		"ScriptFile"					"hero/hero_earth_spirit.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"500"
+		"AbilityCastPoint"				"0.01"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_6"
+		
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"100 90 80"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"100.0"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"cast_radius"			"500"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage_per_second"		"50 100 150"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"damage_duration"			"6.0"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"rock_search_radius"			"300"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"rock_explosion_radius"			"500"
+			}			
+			"06"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"damage_interval"			"1.0"
+			}
+		}
 	}
 
 

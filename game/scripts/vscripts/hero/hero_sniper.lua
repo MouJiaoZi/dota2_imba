@@ -278,12 +278,13 @@ function modifier_imba_take_aim_far:IsPurgable() 		return false end
 function modifier_imba_take_aim_far:IsPurgeException() 	return false end
 function modifier_imba_take_aim_far:AllowIllusionDuplicate() return false end
 function modifier_imba_take_aim_far:RemoveOnDeath()	return true end
-function modifier_imba_take_aim_far:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
-function modifier_imba_take_aim_far:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACK_RANGE_BONUS, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE, MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT} end
+function modifier_imba_take_aim_far:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACK_RANGE_BONUS, MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE, MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT, MODIFIER_PROPERTY_MOVESPEED_MAX} end
 function modifier_imba_take_aim_far:GetModifierAttackRangeBonus() return self:GetAbility():GetSpecialValueFor("range") end
-function modifier_imba_take_aim_far:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("self_slow")) end
 function modifier_imba_take_aim_far:GetModifierBaseAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("damage_bonus") end
 function modifier_imba_take_aim_far:GetModifierBaseAttackTimeConstant() return self:GetAbility():GetSpecialValueFor("BAT") end
+function modifier_imba_take_aim_far:GetModifierMoveSpeed_Absolute() return 1 end
+function modifier_imba_take_aim_far:GetModifierMoveSpeed_Limit() return 1 end
+function modifier_imba_take_aim_far:GetModifierMoveSpeed_Max() return 1 end
 
 --modifier_sniper_shrapnel_slow
 

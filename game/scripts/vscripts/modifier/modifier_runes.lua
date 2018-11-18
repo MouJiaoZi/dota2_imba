@@ -135,7 +135,7 @@ function modifier_imba_rune_regeneration:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if IsEnemy(keys.attacker, self:GetParent()) and keys.unit == self:GetParent() and (keys.attacker:IsRealHero() or IsBoss(keys.attacker)) then
+	if IsEnemy(keys.attacker, self:GetParent()) and keys.unit == self:GetParent() and (keys.attacker:IsRealHero() or keys.attacker:IsBoss()) then
 		self:DecrementStackCount()
 		if self:GetStackCount() == 0 then
 			self:Destroy()

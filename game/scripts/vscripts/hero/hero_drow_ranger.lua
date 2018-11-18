@@ -384,6 +384,14 @@ function modifier_imba_marksmanship_effect:OnIntervalThink()
 	end
 end
 
+function modifier_imba_marksmanship_effect:OnDestroy()
+	if IsServer() and self.pfx then
+		ParticleManager:DestroyParticle(self.pfx, false)
+		ParticleManager:ReleaseParticleIndex(self.pfx)
+		self.pfx = nil
+	end
+end
+
 function modifier_imba_marksmanship_effect:DeclareFunctions()
 	return {MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACK_RANGE_BONUS, MODIFIER_EVENT_ON_ATTACK_LANDED}
 end

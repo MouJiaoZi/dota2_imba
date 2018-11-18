@@ -182,7 +182,7 @@ function modifier_imba_vampiric_aura_effect:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() then
+	if keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) ~= DOTA_DAMAGE_FLAG_REFLECTION and bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL) ~= DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL then
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_skeletonking/wraith_king_vampiric_aura_lifesteal.vpcf", PATTACH_CUSTOMORIGIN, keys.attacker)
 		ParticleManager:SetParticleControlEnt(pfx, 0, keys.attacker, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.attacker:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 1, keys.unit, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.unit:GetAbsOrigin(), true)
@@ -323,7 +323,7 @@ end
 
 function modifier_imba_reincarnation:ReincarnateTime()
 	if IsServer() then
-		if self:GetAbility():IsOwnersManaEnough() and self:GetAbility():IsCooldownReady() then--and not self:GetParent():HasModifier("modifier_imba_aegis") then
+		if self:GetAbility():IsOwnersManaEnough() and self:GetAbility():IsCooldownReady() and not self:GetParent():HasModifier("modifier_imba_aegis") then
 			return self:GetAbility():GetSpecialValueFor("reincarnate_delay")
 		else
 			return nil

@@ -479,7 +479,7 @@ function modifier_imba_enigma_black_hole_out_pull:OnIntervalThink()
 	end
 	local ability = self:GetAbility()
 	local out_distance = self:GetAbility():GetSpecialValueFor("base_pull_distance") + self:GetCaster():GetModifierStackCount("modifier_imba_enigma_black_hole_singularity", self:GetCaster()) * self:GetAbility():GetSpecialValueFor("stack_pull_distance")
-	if not ability:IsChanneling() or (self:GetParent():GetAbsOrigin() - ability.pos):Length2D() > out_distance or IsBoss(self:GetParent()) then
+	if not ability:IsChanneling() or (self:GetParent():GetAbsOrigin() - ability.pos):Length2D() > out_distance or self:GetParent():IsBoss() then
 		self:Destroy()
 	end
 	local out_pull = ability:GetSpecialValueFor("base_pull_speed") + self:GetCaster():GetModifierStackCount("modifier_imba_enigma_black_hole_singularity", self:GetCaster()) * ability:GetSpecialValueFor("stack_pull_speed")

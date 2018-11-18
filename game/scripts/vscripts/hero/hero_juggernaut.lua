@@ -474,7 +474,7 @@ function modifier_imba_omni_slash_caster:JumpAndSlash(target)
 	local target_pos = target:GetAbsOrigin() + (target:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized() * 100
 	caster:SetAbsOrigin(target_pos)
 	if not self:GetParent():IsDisarmed() then
-		if target:IsRealHero() or IsBoss(target) or target:IsAncient() then
+		if target:IsRealHero() or target:IsBoss() or target:IsAncient() then
 			caster:PerformAttack(target, true, true, true, false, true, false, true)
 		else
 			target:Kill(self:GetAbility(), caster)

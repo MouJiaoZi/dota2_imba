@@ -6,7 +6,7 @@
 	// Default item removal 
 	// -----------------------------------------------------------
 
-	//"item_imba_manta"			"REMOVE"
+	"item_imba_manta"			"REMOVE"
 
 	"item_recipe_hand_of_midas"			"REMOVE"
 	//"item_mithril_hammer"			"REMOVE"

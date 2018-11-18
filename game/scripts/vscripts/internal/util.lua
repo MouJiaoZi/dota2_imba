@@ -931,7 +931,7 @@ end
 
 function CDOTA_BaseNPC:AddNewModifierWhenPossible(hCaster, hAbility, pszScriptName, hModifierTable)
 	Timers:CreateTimer(0.1, function()
-		if not self:IsAlive() then
+		if not self:IsAlive() or (IsEnemy(self, hCaster) and self:IsInvulnerable()) then
 			return 0.1
 		else
 			self:AddNewModifier(hCaster, hAbility, pszScriptName, hModifierTable)
@@ -939,6 +939,23 @@ function CDOTA_BaseNPC:AddNewModifierWhenPossible(hCaster, hAbility, pszScriptNa
 	end)
 end
 
+function CDOTA_BaseNPC:AddNewEarthSpiritModifier(hCaster, hAbility, pszScriptName, hModifierTable)
+	local temps = FindUnitsInRadius(hCaster:GetTeamNumber(), self:GetAbsOrigin(), nil, 5000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemies = {}
+	for _, temp in pairs(temps) do
+		if temp:HasModifier("modifier_imba_magnetize_debuff") then
+			enemies[#enemies + 1] = temp
+		end
+	end
+	if not IsInTable(self, enemies) then
+		table.insert(enemies, self)
+	end
+	local buffs = {}
+	for _, enemy in pairs(enemies) do
+		buffs[#buffs + 1] = enemy:AddNewModifier(hCaster, hAbility, pszScriptName, hModifierTable)
+	end
+	return buffs
+end
 
 function CDOTA_BaseNPC_Hero:GetIMBARespawnTime()
 	

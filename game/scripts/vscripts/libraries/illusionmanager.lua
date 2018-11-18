@@ -213,12 +213,13 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 	-----------------
 	local buffTable = hBaseUnit:FindAllModifiers()
 	for _, buff in pairs(buffTable) do
-		if string.find(buff:GetName(), "modifier_special_bonus_") or (buff:GetAbility() and buff:GetAbility():GetLevel() > 0) then
+		if string.find(buff:GetName(), "modifier_special_bonus_") or (buff:GetAbility() and buff:GetAbility():GetLevel() > 0 and buff:GetDuration() > 0) then
 			if (buff.AllowIllusionDuplicate and not buff:AllowIllusionDuplicate()) or (buff:GetAbility():IsItem() and buff:GetName() ~= "midifier_imba_armlet_active_unique") or IsInTable(buff:GetName(), forbidden_buff) then
 				--nothing
 			else
-				print(buff:GetName())
-				local ibuff = hIllusion:AddNewModifier(hBaseUnit, buff:GetAbility(), buff:GetName(), {duration = buff:GetDuration()})
+				--print(buff:GetName(), "123")
+				local caster = buff:GetCaster() == hBaseUnit and hIllusion or buff:GetCaster()
+				local ibuff = hIllusion:AddNewModifier(caster, buff:GetAbility(), buff:GetName(), {duration = buff:GetDuration()})
 				if ibuff then
 					ibuff:SetStackCount(buff:GetStackCount())
 				end
