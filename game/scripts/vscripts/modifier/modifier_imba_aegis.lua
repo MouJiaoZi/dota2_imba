@@ -101,6 +101,10 @@ function modifier_imba_roshan_upgrade:OnCreated()
 end
 
 function modifier_imba_roshan_upgrade:OnIntervalThink()
+	if not self:GetParent():IsAlive() then
+		self:Destroy()
+		return
+	end
 	----back to your house
 	if (self:GetParent():GetAbsOrigin() - roshan_pos):Length2D() > 1200 then
 		FindClearSpaceForUnit(self:GetParent(), roshan_pos, true)

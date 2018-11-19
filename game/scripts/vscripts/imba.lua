@@ -229,12 +229,12 @@ function IMBA:DamageFilter(keys)
 	if keys.damage >= target:GetHealth() and IsInTable(target, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
 		local victim = target
 		local game_time = GameRules:GetDOTATime(false, false)
-		local base_gold = victim:GetLevel() * 12
+		local base_gold = victim:GetLevel() * 10
 		if game_time > 90 then
-			base_gold = base_gold + PlayerResource:GetGoldPerMin(victim:GetPlayerID()) * 0.1
+			base_gold = base_gold + PlayerResource:GetGoldPerMin(victim:GetPlayerID()) * 0.05
 		end
 		local bounty = base_gold * math.max((1 - PlayerResource.IMBA_PLAYER_DEATH_STREAK[victim:GetPlayerID() + 1] / 10), 0)
-		bounty = bounty * (1 + CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[victim:GetPlayerID() + 1] / 13)
+		bounty = bounty * (1 + CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[victim:GetPlayerID() + 1] / 10)
 		victim:SetMinimumGoldBounty(bounty)
 		victim:SetMaximumGoldBounty(bounty)
 		local hero_level = victim:GetLevel()

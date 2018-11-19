@@ -26,7 +26,7 @@ function imba_earth_spirit_stone_caller:IsNetherWardStealable()	return false end
 function imba_earth_spirit_stone_caller:IsTalentAbility() return true end
 
 function imba_earth_spirit_stone_caller:CastFilterResultTarget(target)
-	if (not self:GetCaster():HasScepter() and target ~= self:GetCaster()) or not target:IsHero() or (target:IsHero() and self:GetCaster():HasModifier("modifier_imba_stone_remnant_prevent")) then
+	if (not self:GetCaster():HasScepter() and target ~= self:GetCaster()) or not target:IsHero() or (target:IsHero() and self:GetCaster():HasModifier("modifier_imba_stone_remnant_prevent")) or (IsEnemy(target, self:GetCaster()) and target:IsMagicImmune()) then
 		return UF_FAIL_CUSTOM
 	end
 end
@@ -41,9 +41,11 @@ function imba_earth_spirit_stone_caller:OnSpellStart()
 	if self:GetCursorTarget() == caster then
 		pos = caster:GetAbsOrigin() + caster:GetForwardVector() * 100
 	end
-	if self:GetCursorTarget() and caster:HasScepter() and self:GetCursorTarget() ~= caster then
-		self:GetCursorTarget():AddNewModifier(caster, self, "modifier_imba_stone_remnant_status", {duration = self:GetSpecialValueFor("duration_scepter")})
-		caster:AddNewModifier(caster, self, "modifier_imba_stone_remnant_prevent", {duration = self:GetSpecialValueFor("duration_scepter")})
+	if self:GetCursorTarget() and self:GetCursorTarget() ~= caster then
+		if not self:GetCursorTarget():TriggerStandardTargetSpell(self) then
+			self:GetCursorTarget():AddNewModifier(caster, self, "modifier_imba_stone_remnant_status", {duration = self:GetSpecialValueFor("duration_scepter")})
+		end
+		caster:AddNewModifier(caster, self, "modifier_imba_stone_remnant_prevent", {duration = self:GetSpecialValueFor("hero_cooldown_scepter")})
 		return
 	end
 	local stone = CreateUnitByName("npc_imba_earth_spirit_stone", pos, false, caster, caster, caster:GetTeamNumber())
@@ -106,6 +108,7 @@ function modifier_imba_stone_remnant_prevent:RemoveOnDeath() return false end
 
 imba_earth_spirit_boulder_smash = class({})
 
+LinkLuaModifier("modifier_imba_boulder_smash_move_to_cast", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_silent", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
@@ -127,7 +130,10 @@ function imba_earth_spirit_boulder_smash:CastFilterResultTarget(target)
 	if target:IsInvulnerable() then
 		return UF_FAIL_INVULNERABLE
 	end
-	if target == self:GetCaster() or not target:IsHero() then
+	if PlayerResource:IsDisableHelpSetForPlayerID(self:GetCaster():GetPlayerOwnerID(), target:GetPlayerOwnerID()) then
+		return UF_FAIL_DISABLE_HELP
+	end
+	if target == self:GetCaster() or (not target:IsHero() and not target:IsCreep()) then
 		return UF_FAIL_CUSTOM
 	end
 end
@@ -140,14 +146,40 @@ function imba_earth_spirit_boulder_smash:GetCustomCastErrorTarget(target)
 	end
 end
 
+function imba_earth_spirit_boulder_smash:OnAbilityPhaseStart()
+	local caster = self:GetCaster()
+	local target = self:GetCursorTarget() or FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe"))
+	if target then
+		return true
+	end
+	if not target then
+		target = FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("rock_search_aoe"))
+		if target then
+			local moveToRock = {
+		 		UnitIndex = caster:entindex(), 
+		 		OrderType = DOTA_UNIT_ORDER_MOVE_TO_POSITION,
+		 		TargetIndex = nil, --Optional.  Only used when targeting units
+		 		AbilityIndex = nil, --Optional.  Only used when casting abilities
+		 		Position = self:GetCursorPosition(), --Optional.  Only used when targeting the ground
+		 		Queue = 0 --Optional.  Used for queueing up abilities
+	 		}
+	 		ExecuteOrderFromTable(moveToRock)
+	 		caster:RemoveModifierByName("modifier_imba_boulder_smash_move_to_cast")
+	 		caster:AddNewModifier(caster, self, "modifier_imba_boulder_smash_move_to_cast", {rock = target:entindex()})
+ 		end
+ 	end
+ 	return false
+end
+
+
 function imba_earth_spirit_boulder_smash:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget() or FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe"))
-	if not target then
+	--[[if not target then
 		self:EndCooldown()
 		self:RefundManaCost()
 		return
-	end
+	end]]
 	local pos0 = target:GetAbsOrigin()
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
 		pos0 = self:GetCursorPosition()
@@ -189,6 +221,48 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 		if re_apply then
 			target:AddNewModifier(self:GetCaster(), remnant_buff_ability, "modifier_imba_stone_remnant_status", {duration = time})
 		end
+	end
+end
+
+modifier_imba_boulder_smash_move_to_cast = class({})
+
+function modifier_imba_boulder_smash_move_to_cast:IsDebuff()			return false end
+function modifier_imba_boulder_smash_move_to_cast:IsHidden() 			return true end
+function modifier_imba_boulder_smash_move_to_cast:IsPurgable() 			return false end
+function modifier_imba_boulder_smash_move_to_cast:IsPurgeException() 	return false end
+function modifier_imba_boulder_smash_move_to_cast:DeclareFunctions() return {MODIFIER_EVENT_ON_ORDER} end
+
+function modifier_imba_boulder_smash_move_to_cast:OnOrder(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
+	end
+end
+
+function modifier_imba_boulder_smash_move_to_cast:OnCreated(keys)
+	if IsServer() then
+		self.rock = EntIndexToHScript(keys.rock)
+		self:StartIntervalThink(0.1)
+	end
+end
+
+function modifier_imba_boulder_smash_move_to_cast:OnIntervalThink()
+	if not self.rock or (self.rock and (self.rock:IsNull() or not self.rock:IsAlive())) then
+		self:Destroy()
+		return
+	end
+	local rocks = Entities:FindAllInSphere(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("rock_search_aoe"))
+	for _, rock in pairs(rocks) do
+		if self.rock and not self.rock:IsNull() and self.rock:IsAlive() and self.rock == rock then
+			self:GetParent():CastAbilityOnPosition(self.rock:GetAbsOrigin(), self:GetAbility(), self:GetParent():GetPlayerOwnerID())
+			self:Destroy()
+			return
+		end
+	end
+end
+
+function modifier_imba_boulder_smash_move_to_cast:OnDestroy()
+	if IsServer() then
+		self.rock = nil
 	end
 end
 
@@ -407,10 +481,12 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 			end
 			if enemy:IsRealHero() then
 				enemy:EmitSound("Hero_EarthSpirit.RollingBoulder.Target")
-				self:SetStackCount(2)
-				local direction = (enemy:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
-				self:GetParent():SetAbsOrigin(enemy:GetAbsOrigin() + direction * 100)
-				self:Destroy()
+				if not self:GetParent():HasTalent("special_bonus_imba_earth_spirit_1") then
+					self:SetStackCount(2)
+					local direction = (enemy:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
+					self:GetParent():SetAbsOrigin(enemy:GetAbsOrigin() + direction * 100)
+					self:Destroy()
+				end
 			end
 		end
 	end
@@ -492,14 +568,19 @@ function imba_earth_spirit_geomagnetic_grip:GetCustomCastErrorTarget(target)
 	end
 end
 
+function imba_earth_spirit_geomagnetic_grip:OnAbilityPhaseStart()
+	local caster = self:GetCaster()
+	local target = self:GetCursorTarget() or FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("radius"))
+	if target then
+		return true
+	end
+	return false
+end
+
 function imba_earth_spirit_geomagnetic_grip:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget() or FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("radius"))
-	if not target then
-		self:EndCooldown()
-		self:RefundManaCost()
-		return
-	end
+
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_geomagentic_grip_caster.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
 	ParticleManager:SetParticleControl(pfx, 10, caster:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(pfx)
@@ -702,7 +783,7 @@ function modifier_imba_magnetize_debuff:OnIntervalThink()
 	ApplyDamage({victim = parent, attacker = self:GetCaster(), ability = self:GetAbility(), damage = dmg, damage_type = self:GetAbility():GetAbilityDamageType()})
 	local stone = FindStoneRemnant(parent:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("rock_search_radius"))
 	if stone and not parent:IsMagicImmune() then
-		stone:EmitSound("Hero_EarthSpirit.Magnetize.StoneBolt")
+		stone:EmitSound("Imba.Hero_EarthSpirit.Magnetize.StoneBolt")
 		if stone:IsHero() then
 			stone:RemoveModifierByName("modifier_imba_stone_remnant_status")
 		end

@@ -53,13 +53,13 @@ function imba_luna_moon_glaive:OnProjectileHit_ExtraData(target, location, keys)
 			self:GetCaster():RemoveModifierByName("modifier_imba_luna_moon_glaive_nodmg")
 			self.GetCaster().splitattack = true
 		end
+		local bounce = keys.bounces + 1
+		if bounce >= self:GetSpecialValueFor("bounces") then
+			return
+		end
+		local next_target = target
+		self:GlaiveAttck(next_target, damage, bounce)
 	end
-	local bounce = keys.bounces + 1
-	if bounce >= self:GetSpecialValueFor("bounces") then
-		return
-	end
-	local next_target = target or CreateModifierThinker(self:GetCaster(), self, "modifier_imba_luna_moon_glaive_nodmg", {duration = 0.1}, location, self:GetCaster():GetTeamNumber(), false)
-	self:GlaiveAttck(next_target, damage, bounce)
 end
 
 modifier_imba_luna_moon_glaive = class({})

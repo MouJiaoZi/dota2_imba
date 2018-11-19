@@ -6066,6 +6066,31 @@
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
 	}
 
+	"special_bonus_imba_earth_spirit_1" // Rolling Boulder Doesn't Stop
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_earth_spirit_rolling_boulder"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"1"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Earth Spirit: Geomagnetic Grip
 	//=================================================================================================================
@@ -6117,7 +6142,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"miss_duration"			"2.0 2.5 3 3.5"
+				"miss_duration"			"3.0 4.0 5.0 6.0"
 			}
 			"04"
 			{
@@ -6170,7 +6195,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"pull_distance"		"150"
+				"pull_distance"		"200"
 			}
 			"02"
 			{
@@ -6209,7 +6234,7 @@
 		
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"100 90 80"
+		"AbilityCooldown"				"90 80 70"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -6237,17 +6262,17 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"rock_search_radius"			"300"
+				"rock_search_radius"			"400"
 			}
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"rock_explosion_radius"			"500"
+				"rock_explosion_radius"			"600"
 			}			
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"damage_interval"			"1.0"
+				"damage_interval"			"0.75"
 			}
 		}
 	}
@@ -15349,17 +15374,13 @@
 
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.2"
+		"AbilityCastPoint"				"0.3"
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_4"
 		
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityManaCost"				"30"
 		
-		// Damage.
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityDamage"					"8 12 16"
-
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -15393,12 +15414,12 @@
 			"06"
 			{
 				"var_type"								"FIELD_FLOAT"
-				"cast_invul_duration"					"0.5 1.0 1.5"		
+				"cast_invul_duration"					"0.5"		
 			}
 			"07"
 			{
 				"var_type"								"FIELD_FLOAT"
-				"travel_damage"							"12 16 20"		
+				"travel_damage"							"12 16 20"
 			}
 		}
 	}
