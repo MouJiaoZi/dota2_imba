@@ -22,8 +22,8 @@ function modifier_imba_phase_boots2_passive:IsHidden() 			return true end
 function modifier_imba_phase_boots2_passive:IsPurgable() 		return false end
 function modifier_imba_phase_boots2_passive:IsPurgeException() 	return false end
 function modifier_imba_phase_boots2_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_phase_boots2_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE} end
-function modifier_imba_phase_boots2_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
+function modifier_imba_phase_boots2_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE} end
+function modifier_imba_phase_boots2_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_as") end
 function modifier_imba_phase_boots2_passive:GetModifierMoveSpeedBonus_Special_Boots() return self:GetAbility():GetSpecialValueFor("bonus_movement_speed") end
 function modifier_imba_phase_boots2_passive:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 
@@ -64,7 +64,7 @@ function modifier_imba_tranquil_boots2_passive:GetModifierPhysicalArmorBonus() r
 function modifier_imba_tranquil_boots2_passive:GetModifierMoveSpeedBonus_Special_Boots() return self:GetAbility():GetSpecialValueFor("base_move_speed") end
 
 function modifier_imba_tranquil_boots2_passive:OnAttackLanded(keys)
-	if IsServer() and (keys.target == self:GetParent() or keys.attacker == self:GetParent()) then
+	if IsServer() and (keys.target == self:GetParent() or keys.attacker == self:GetParent()) and keys.attacker:IsHero() then
 		self:GetAbility():UseResources(true, true, true)
 	end
 end

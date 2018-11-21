@@ -83,15 +83,21 @@ function modifier_imba_moon_shard_consume:IsPurgeException() 	return false end
 function modifier_imba_moon_shard_consume:GetTexture() return "custom/imba_moon_shard" end
 function modifier_imba_moon_shard_consume:RemoveOnDeath() return self:GetParent():IsIllusion() end
 
+CONSUME_AS_1 = 70
+CONSUME_AS_2 = 50
+CONSUME_AS_3 = 30
+CONSUME_NV_1 = 250
+CONSUME_NV_2 = 150
+
 function modifier_imba_moon_shard_consume:OnCreated()
 	if self:GetParent():IsIllusion() then
 		UTIL_Remove(self)
 	end
-	self.as_1 = self:GetAbility():GetSpecialValueFor("consume_as_1")
-	self.as_2 = self:GetAbility():GetSpecialValueFor("consume_as_2")
-	self.as = self:GetAbility():GetSpecialValueFor("consume_as_3")
-	self.nv_1 = self:GetAbility():GetSpecialValueFor("consume_vision_1")
-	self.nv_2 = self:GetAbility():GetSpecialValueFor("consume_vision_2")
+	self.as_1 = CONSUME_AS_1
+	self.as_2 = CONSUME_AS_2
+	self.as = CONSUME_AS_3
+	self.nv_1 = CONSUME_NV_1
+	self.nv_2 = CONSUME_NV_2
 end
 
 function modifier_imba_moon_shard_consume:OnDestroy()

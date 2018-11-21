@@ -7,18 +7,6 @@ imba_earth_spirit_stone_caller = class({})
 LinkLuaModifier("modifier_imba_stone_remnant_status", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_stone_remnant_prevent", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 
-local function FindStoneRemnant(pos, radius)
-	local stones = Entities:FindAllInSphere(pos, radius)
-	local stone = nil
-	for _, sto in pairs(stones) do
-		if (string.find(sto:GetName(), "npc_")) and sto:HasModifier("modifier_imba_stone_remnant_status") then
-			stone = sto
-			break
-		end
-	end
-	return stone
-end
-
 function imba_earth_spirit_stone_caller:IsHiddenWhenStolen() 	return false end
 function imba_earth_spirit_stone_caller:IsRefreshable() 		return true end
 function imba_earth_spirit_stone_caller:IsStealable() 			return false end
@@ -130,7 +118,7 @@ function imba_earth_spirit_boulder_smash:CastFilterResultTarget(target)
 	if target:IsInvulnerable() then
 		return UF_FAIL_INVULNERABLE
 	end
-	if PlayerResource:IsDisableHelpSetForPlayerID(self:GetCaster():GetPlayerOwnerID(), target:GetPlayerOwnerID()) then
+	if IsServer() and PlayerResource:IsDisableHelpSetForPlayerID(self:GetCaster():GetPlayerOwnerID(), target:GetPlayerOwnerID()) then
 		return UF_FAIL_DISABLE_HELP
 	end
 	if target == self:GetCaster() or (not target:IsHero() and not target:IsCreep()) then
@@ -148,7 +136,11 @@ end
 
 function imba_earth_spirit_boulder_smash:OnAbilityPhaseStart()
 	local caster = self:GetCaster()
-	local target = self:GetCursorTarget() or FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe"))
+	local target = FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe"))
+	if target then
+		return true
+	end
+	target = self:GetCursorTarget()
 	if target then
 		return true
 	end
@@ -174,7 +166,7 @@ end
 
 function imba_earth_spirit_boulder_smash:OnSpellStart()
 	local caster = self:GetCaster()
-	local target = self:GetCursorTarget() or FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe"))
+	local target = FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe")) or self:GetCursorTarget()
 	--[[if not target then
 		self:EndCooldown()
 		self:RefundManaCost()

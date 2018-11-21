@@ -73,7 +73,7 @@ function modifier_imba_searing_chains:OnIntervalThink()
 	local caster = self:GetCaster()
 	local target = self:GetParent()
 	local dmg = ability:GetSpecialValueFor("chains_damage") / (1.0 / ability:GetSpecialValueFor("tick_interval"))
-	ApplyDamage({victim = target, attacker = caster, ability = ability, damage = dmg, damage_type = ability:GetAbilityDamageType()})
+	ApplyDamage({victim = target, attacker = caster, ability = ability, damage = dmg, damage_type = ability:GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE})
 end
 
 function modifier_imba_searing_chains:OnDestroy()
@@ -267,7 +267,7 @@ function modifier_imba_flame_guard:OnIntervalThink()
 	local dmg = ability:GetSpecialValueFor("damage_per_second") / (1.0 / ability:GetSpecialValueFor("tick_interval"))
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
-		ApplyDamage({victim = enemy, attacker = caster, ability = ability, damage_type = ability:GetAbilityDamageType(), damage = dmg})
+		ApplyDamage({victim = enemy, attacker = caster, ability = ability, damage_type = ability:GetAbilityDamageType(), damage = dmg, damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE})
 	end
 end
 
@@ -409,7 +409,7 @@ function modifier_imba_fire_remnant_state:Explode(bActive)
 	end
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
-		ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
+		ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE})
 	end
 end
 

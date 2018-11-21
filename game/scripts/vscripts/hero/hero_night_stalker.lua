@@ -354,8 +354,7 @@ function modifier_imba_darkness_caster:IsHidden() 			return false end
 function modifier_imba_darkness_caster:IsPurgable() 		return false end
 function modifier_imba_darkness_caster:IsPurgeException()	return false end
 function modifier_imba_darkness_caster:RemoveOnDeath()		return false end
-function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_BONUS_NIGHT_VISION} end
-function modifier_imba_darkness_caster:GetModifierMoveSpeed_Max() return 10000 end
+function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_NIGHT_VISION} end
 function modifier_imba_darkness_caster:GetBonusNightVision() return self:GetAbility():GetSpecialValueFor("bonus_vision") end
 
 function modifier_imba_darkness_caster:IsAura() return true end
@@ -366,7 +365,6 @@ function modifier_imba_darkness_caster:GetAuraRadius() return 100000 end
 function modifier_imba_darkness_caster:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD end
 function modifier_imba_darkness_caster:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
 function modifier_imba_darkness_caster:GetAuraSearchType() return DOTA_UNIT_TARGET_ALL end
-
 function modifier_imba_darkness_caster:OnCreated()
 	if IsServer() then
 		self:StartIntervalThink(0.5)

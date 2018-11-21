@@ -450,8 +450,9 @@ function modifier_imba_courier_buff:IsHidden() return true end
 function modifier_imba_courier_buff:IsPurgable() return false end
 function modifier_imba_courier_buff:IsPurgeException() return false end
 
-function modifier_imba_courier_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE} end
+function modifier_imba_courier_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE} end
 function modifier_imba_courier_buff:GetModifierMoveSpeed_Max() return 10000 end
+function modifier_imba_courier_buff:GetModifierMoveSpeed_Absolute() return 1000 end
 function modifier_imba_courier_buff:GetModifierMoveSpeedBonus_Percentage() return 100 end
 function modifier_imba_courier_buff:GetModifierPercentageCooldown() return 90 end
 

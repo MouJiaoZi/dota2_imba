@@ -337,18 +337,18 @@ imba_magnus_magnetize = class({})
 
 LinkLuaModifier("modifier_imba_magnetize_aura_counter", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_magnetize_aura", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_magnetize_debuff", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_magnus_magnetize_debuff", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
 
 function imba_magnus_magnetize:IsTalentAbility() return true end
 
-function imba_magnus_magnetize:GetIntrinsicModifierName() return "modifier_imba_magnetize_debuff" end
+function imba_magnus_magnetize:GetIntrinsicModifierName() return "modifier_imba_magnus_magnetize_debuff" end
 
-modifier_imba_magnetize_debuff = class({})
+modifier_imba_magnus_magnetize_debuff = class({})
 
-function modifier_imba_magnetize_debuff:IsDebuff()			return true end
-function modifier_imba_magnetize_debuff:IsPurgable() 		return true end
-function modifier_imba_magnetize_debuff:IsPurgeException() 	return true end
-function modifier_imba_magnetize_debuff:IsHidden()
+function modifier_imba_magnus_magnetize_debuff:IsDebuff()			return true end
+function modifier_imba_magnus_magnetize_debuff:IsPurgable() 		return true end
+function modifier_imba_magnus_magnetize_debuff:IsPurgeException() 	return true end
+function modifier_imba_magnus_magnetize_debuff:IsHidden()
 	if self:GetParent() == self:GetCaster() then
 		return true
 	else
@@ -356,27 +356,27 @@ function modifier_imba_magnetize_debuff:IsHidden()
 	end
 end
 
-function modifier_imba_magnetize_debuff:DeclareFunctions() return {MODIFIER_EVENT_ON_TAKEDAMAGE} end
-function modifier_imba_magnetize_debuff:OnTakeDamage(keys)
+function modifier_imba_magnus_magnetize_debuff:DeclareFunctions() return {MODIFIER_EVENT_ON_TAKEDAMAGE} end
+function modifier_imba_magnus_magnetize_debuff:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
 	if self:GetParent() ~= self:GetCaster() or keys.attacker ~= self:GetParent() or keys.unit:IsBuilding() or keys.unit:IsOther() or keys.attacker:GetTeamNumber() == keys.unit:GetTeamNumber() then
 		return
 	end
-	keys.unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_magnetize_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+	keys.unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_magnus_magnetize_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
 end
 
-function modifier_imba_magnetize_debuff:OnCreated()
+function modifier_imba_magnus_magnetize_debuff:OnCreated()
 	if IsServer() then
 		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("think_interval"))
 	end
 end
 
-function modifier_imba_magnetize_debuff:OnIntervalThink()
+function modifier_imba_magnus_magnetize_debuff:OnIntervalThink()
 	local units = FindUnitsInRadius(1, self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, unit in pairs(units) do
-		if unit ~= self:GetCaster() and not unit:FindModifierByNameAndCaster("modifier_imba_magnetize_aura", self:GetParent()) and unit:HasModifier("modifier_imba_magnetize_debuff") and unit ~= self:GetParent() then
+		if unit ~= self:GetCaster() and not unit:FindModifierByNameAndCaster("modifier_imba_magnetize_aura", self:GetParent()) and unit:HasModifier("modifier_imba_magnus_magnetize_debuff") and unit ~= self:GetParent() then
 			unit:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_magnetize_aura", {})
 		end
 	end
@@ -397,7 +397,7 @@ function modifier_imba_magnetize_aura:OnCreated()
 end
 
 function modifier_imba_magnetize_aura:OnIntervalThink()
-	if not self:GetCaster():HasModifier("modifier_imba_magnetize_debuff") or (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius") or not self:GetParent():HasModifier("modifier_imba_magnetize_debuff") then
+	if not self:GetCaster():HasModifier("modifier_imba_magnus_magnetize_debuff") or (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius") or not self:GetParent():HasModifier("modifier_imba_magnus_magnetize_debuff") then
 		self:Destroy()
 	end
 end
@@ -486,7 +486,7 @@ function modifier_imba_reverse_polarity_slow:OnCreated()
 	if IsServer() then
 		self:CheckMotionControllers()
 		local direction = (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
-		local distance = self:GetParent():HasModifier("modifier_imba_magnetize_debuff") and self:GetAbility():GetSpecialValueFor("magnetize_pull") or self:GetAbility():GetSpecialValueFor("normal_pull")
+		local distance = self:GetParent():HasModifier("modifier_imba_magnus_magnetize_debuff") and self:GetAbility():GetSpecialValueFor("magnetize_pull") or self:GetAbility():GetSpecialValueFor("normal_pull")
 		local length = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D()
 		distance =  length <= distance and length or distance
 		local new_pos = self:GetParent():GetAbsOrigin() + direction * distance

@@ -49,7 +49,7 @@ function modifier_imba_strafe_active:OnIntervalThink()
 		return
 	end
 	local target = caster:GetAttackTarget()
-	local range = caster:GetAttackRange()
+	local range = caster:Script_GetAttackRange()
 	if target and (target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() <= (range + 100) then
 		caster:StartGesture(ACT_DOTA_ATTACK)
 		caster:PerformAttack(target, true, true, true, false, true, false, false)
@@ -123,6 +123,7 @@ function modifier_imba_searing_arrows_passive:OnAttackLanded(keys)
 						damage = self:GetAbility():GetSpecialValueFor("bonus_damage"),
 						damage_type = self:GetAbility():GetAbilityDamageType(),
 						ability = self:GetAbility(),
+						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE,
 						}
 	ApplyDamage(damageTable)
 	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_searing_arrows_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})

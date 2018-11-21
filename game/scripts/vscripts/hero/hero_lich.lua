@@ -269,6 +269,9 @@ function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
 						ability = self, --Optional.
 						}
 	ApplyDamage(damageTable)
+	if self:GetCaster():HasTalent("special_bonus_imba_lich_2") then
+		target:AddNewModifier(self:GetCaster(), self, "modifier_paralyzed", {duration = self:GetCaster():GetTalentValue("special_bonus_imba_lich_2")})
+	end
 	local hero_got = false
 	local next_target = nil
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), location, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)

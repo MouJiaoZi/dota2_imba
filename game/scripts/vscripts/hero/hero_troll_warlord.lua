@@ -17,6 +17,7 @@ function imba_troll_warlord_whirling_axes_melee:GetCastRange()	return self:GetSp
 
 function imba_troll_warlord_whirling_axes_melee:OnSpellStart()
 	local caster = self:GetCaster() 
+	print(caster:GetAttackSpeed())
 	StartAnimation(caster, {duration=5, activity=ACT_DOTA_CAST_ABILITY_3, rate=1.5, translate="melee"})
 	caster:EmitSound("Hero_TrollWarlord.WhirlingAxes.Melee")
 	local particle_axe = "particles/units/heroes/hero_troll_warlord/troll_warlord_whirling_axe_melee.vpcf"

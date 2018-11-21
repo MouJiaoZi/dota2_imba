@@ -144,7 +144,7 @@ function imba_drow_ranger_gust:OnProjectileThink_ExtraData(pos, extra_data)
 								}
 			ApplyDamage(damageTable)
 			enemy:AddNewModifier(caster, self, "modifier_imba_drow_ranger_gust_debuff", {duration = self:GetSpecialValueFor("silence_duration")})
-			local knockback_distance = (caster:GetAbsOrigin() - enemy:GetAbsOrigin()):Length2D() < caster:GetAttackRange() and ((caster:GetAttackRange() - (caster:GetAbsOrigin() - enemy:GetAbsOrigin()):Length2D()) / 2) or 50
+			local knockback_distance = (caster:GetAbsOrigin() - enemy:GetAbsOrigin()):Length2D() < caster:Script_GetAttackRange() and ((caster:Script_GetAttackRange() - (caster:GetAbsOrigin() - enemy:GetAbsOrigin()):Length2D()) / 2) or 50
 			enemy:AddNewModifier(caster, self, "modifier_imba_drow_ranger_gust_enemy_motion", {duration = self:GetSpecialValueFor("knockback_duration"), knockback_distance = knockback_distance, center_point_x = EntIndexToHScript(extra_data.buffid):GetAbsOrigin().x, center_point_y = EntIndexToHScript(extra_data.buffid):GetAbsOrigin().y, center_point_z = EntIndexToHScript(extra_data.buffid):GetAbsOrigin().z})
 			if not buff.self_knockbacked then
 				buff.self_knockbacked = true

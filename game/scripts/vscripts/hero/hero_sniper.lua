@@ -234,7 +234,7 @@ function modifier_imba_take_aim_range:GetModifierAttackRangeBonus() return (0 - 
 
 function modifier_imba_take_aim_range:OnCreated()
 	if IsServer() then
-		self:SetStackCount(self:GetParent():GetAttackRange() - self:GetAbility():GetSpecialValueFor("range"))
+		self:SetStackCount(self:GetParent():Script_GetAttackRange() - self:GetAbility():GetSpecialValueFor("range"))
 	end
 end
 

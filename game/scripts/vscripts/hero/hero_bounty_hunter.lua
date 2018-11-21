@@ -293,6 +293,7 @@ end
 
 imba_bounty_hunter_track = class({})
 
+LinkLuaModifier("modifier_imba_track_cirt", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_track", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_track_aura", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_track_speed", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
@@ -301,6 +302,7 @@ function imba_bounty_hunter_track:IsHiddenWhenStolen() 		return false end
 function imba_bounty_hunter_track:IsRefreshable() 			return true  end
 function imba_bounty_hunter_track:IsStealable() 			return true  end
 function imba_bounty_hunter_track:IsNetherWardStealable() 	return true end
+function imba_bounty_hunter_track:GetIntrinsicModifierName() return "modifier_imba_track_cirt" end
 
 function imba_bounty_hunter_track:OnUpgrade()
 	if self:GetLevel() >= 2 then
@@ -328,6 +330,35 @@ function imba_bounty_hunter_track:OnSpellStart()
 		buff:SetStackCount(1)
 	end
 end
+
+modifier_imba_track_cirt = class({})
+
+function modifier_imba_track_cirt:IsDebuff()			return false end
+function modifier_imba_track_cirt:IsHidden() 			return true end
+function modifier_imba_track_cirt:IsPurgable() 			return false end
+function modifier_imba_track_cirt:IsPurgeException() 	return false end
+
+function modifier_imba_track_cirt:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_START} end
+function modifier_imba_track_cirt:GetIMBAPhysicalCirtChance() return self.cirt end
+function modifier_imba_track_cirt:GetIMBAPhysicalCirtBonus() return self:GetAbility():GetSpecialValueFor("crit_percentage") end
+
+function modifier_imba_track_cirt:OnAttackStart(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and not self:GetParent():IsRangedAttacker() then
+		if keys.target:HasModifier("modifier_imba_track") then
+			self.cirt = 100
+			self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
+		else
+			self.cirt = 0
+		end
+	end
+	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and self:GetParent():IsRangedAttacker() and keys.target:HasModifier("modifier_imba_track") then
+		self.cirt = 100
+	end
+end
+
 
 modifier_imba_track = class({})
 

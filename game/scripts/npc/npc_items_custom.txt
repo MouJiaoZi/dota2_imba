@@ -953,7 +953,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"mana_regen_aura"		"1.1"
+				"mana_regen_aura"		"2.0"
 			}
 			"06"
 			{
@@ -1113,7 +1113,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"aura_mana_regen"		"0.8"
+				"aura_mana_regen"		"3.5"
 			}
 			"05"
 			{
@@ -1305,7 +1305,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_mana_regen"		"5"
+				"bonus_mana_regen"		"7.5"
 			}
 			"05"
 			{
@@ -1404,8 +1404,8 @@
 			}
 			"04"
 			{
-				"var_type"					"FIELD_INTEGER"
-				"bonus_mana_regen"			"5.25"
+				"var_type"					"FIELD_FLOAT"
+				"bonus_mana_regen"			"8.5"
 			}
 			"05"
 			{
@@ -1510,7 +1510,7 @@
 			"04"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"bonus_mana_regen"			"4.0"
+				"bonus_mana_regen"			"11.0"
 			}
 			"05"
 			{
@@ -3195,7 +3195,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_mana_regen"		"7"
+				"bonus_mana_regen"		"11"
 			}
 		}
 	}
@@ -3260,7 +3260,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_armor"			"12"
+				"bonus_armor"			"10"
 			}
 			"03"
 			{
@@ -3377,7 +3377,7 @@
 			"07"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_armor"				"12"
+				"bonus_armor"				"10"
 			}
 			"08"
 			{
@@ -3503,17 +3503,17 @@
 			"05"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"base_regen"			"0.8"
+				"base_regen"			"0.5"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"regen_cooldown"		"4.0"
+				"regen_cooldown"		"6.0"
 			}
 			"07"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"regen_tooltip"			"7.0"
+				"regen_tooltip"			"5.0"
 			}
 		}
 	}
@@ -3673,7 +3673,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_armor"			"15"
+				"bonus_armor"			"10"
 			}
 			"03"
 			{
@@ -3812,12 +3812,12 @@
 			"08"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"hp_regen_per_charge"		"0.3"
+				"hp_regen_per_charge"		"3.0"
 			}
 			"09"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"mana_regen_per_charge"		"1.0"
+				"mana_regen_per_charge"		"1.5"
 			}
 		}
 	}
@@ -3893,7 +3893,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_mana_regen"		"8"
+				"bonus_mana_regen"		"10"
 			}
 			"04"
 			{
@@ -4061,7 +4061,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"armor"					"7"
+				"armor"					"5"
 			}
 			"05"
 			{
@@ -4174,7 +4174,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"armor"					"10"
+				"armor"					"7"
 			}
 			"06"
 			{
@@ -7257,7 +7257,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_movement"		"55"
+				"bonus_movement"		"15"
 			}
 			"02"
 			{
@@ -7272,7 +7272,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"replenish_amount"		"135"
+				"replenish_amount"		"175"
 			}
 			"05"
 			{
@@ -7369,7 +7369,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"bonus_mana_regen"		"2.5"
+				"bonus_mana_regen"		"4.5"
 			}
 			"06"
 			{
@@ -7739,7 +7739,7 @@
 			"07"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"aura_mana_regen"		"0.8"
+				"aura_mana_regen"		"2.0"
 			}
 			"08"
 			{
@@ -7904,95 +7904,6 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"consume_as_3"			"30"
-			}
-		}
-
-		"OnSpellStart"
-		{
-			"RunScript"
-			{
-				"ScriptFile"			"items/item_moon_shard.lua"
-				"Function"				"MoonShardActive"
-
-				"sound_consume"			"Item.MoonShard.Consume"
-				"modifier_consume_1"	"modifier_imba_moon_shard_consume_1"
-				"modifier_consume_2"	"modifier_imba_moon_shard_consume_2"
-				"modifier_consume_3"	"modifier_imba_moon_shard_consume_3"
-				"modifier_stacks"		"modifier_imba_moon_shard_stacks_dummy"
-			}
-		}
-
-		"Modifiers"
-		{
-			"modifier_imba_moon_shard"
-			{
-				"Passive"			"1"
-				"IsHidden"			"1"
-
-				"Attributes"		"MODIFIER_ATTRIBUTE_MULTIPLE"
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT" 	"%bonus_attack_speed"
-					"MODIFIER_PROPERTY_BONUS_NIGHT_VISION"			"%bonus_night_vision"
-				}
-			}
-
-			"modifier_imba_moon_shard_stacks_dummy"
-			{
-				"Passive"			"0"
-				"IsHidden"			"0"
-
-				"Attributes"		"MODIFIER_ATTRIBUTE_PERMANENT"
-
-				"TextureName"		"custom/imba_moon_shard"
-			}
-
-			"modifier_imba_moon_shard_consume_1"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsBuff"			"1"
-				"IsPurgable"		"0"
-
-				"Attributes"		"MODIFIER_ATTRIBUTE_PERMANENT"
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT" 	"%consume_as_1"
-					"MODIFIER_PROPERTY_BONUS_NIGHT_VISION"			"%consume_vision_1"
-				}
-			}
-
-			"modifier_imba_moon_shard_consume_2"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsBuff"			"1"
-				"IsPurgable"		"0"
-
-				"Attributes"		"MODIFIER_ATTRIBUTE_PERMANENT"
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT" 	"%consume_as_2"
-					"MODIFIER_PROPERTY_BONUS_NIGHT_VISION"			"%consume_vision_2"
-				}
-			}
-
-			"modifier_imba_moon_shard_consume_3"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsBuff"			"1"
-				"IsPurgable"		"0"
-
-				"Attributes"		"MODIFIER_ATTRIBUTE_PERMANENT | MODIFIER_ATTRIBUTE_MULTIPLE"
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT" 	"%consume_as_3"
-				}
 			}
 		}
 	}
@@ -8255,7 +8166,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_movement"		"80"
+				"bonus_movement"		"35"
 			}
 			"02"
 			{
@@ -8295,7 +8206,7 @@
 			"09"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"replenish_mana"		"200"
+				"replenish_mana"		"250"
 			}
 			"10"
 			{
@@ -8543,7 +8454,7 @@
 			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"range"					"400"
+				"range"					"800"
 			}
 			"08"
 			{
@@ -8633,13 +8544,11 @@
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"ID"							"2186"
-		"BaseClass"						"item_datadriven"
-		"AbilityTextureName" 			"custom/imba_recipe"
-		"Model"							"models/props_gameplay/recipe.mdl"
-		
+		"BaseClass"						"item_recipe_power_treads"
+	
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"0"	
+		"ItemCost"						"100"	
 		"ItemShopTags"					""
 		
 		// Recipe
@@ -8648,9 +8557,7 @@
 		"ItemResult"					"item_imba_power_treads_2"
 		"ItemRequirements"
 		{
-			"01"						"item_power_treads;item_ogre_axe;item_hyperstone"
-			"02"						"item_power_treads;item_staff_of_wizardry;item_hyperstone"
-			"03"						"item_power_treads;item_blade_of_alacrity;item_hyperstone"
+			"01"						"item_power_treads;item_relic"
 		}
 	}
 	
@@ -8681,17 +8588,22 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_movement_speed"  "80"
+				"bonus_movement_speed"  "40"
 			}
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_stat"			"25"
-			}
+				"bonus_stat"			"17"
+			}	
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_attack_speed"	"100"
+				"bonus_attack_speed"			"0"
+			}		
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_damage"			"80"
 			}
 		}
 	}
@@ -8758,12 +8670,12 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_movement_speed"	"100"
+				"bonus_movement_speed"	"40"
 			}
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"70"
+				"bonus_as"				"70"
 			}					
 			"03"
 			{
@@ -8843,7 +8755,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"base_move_speed"		"60"
+				"base_move_speed"		"20"
 			}
 			"02"
 			{
@@ -9008,7 +8920,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_movement_speed"		"110"
+				"bonus_movement_speed"		"40"
 			}
 			"04"
 			{
@@ -9107,8 +9019,8 @@
 			}
 			"05"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_mana_regen"		"1.0"
+				"var_type"				"FIELD_FLOAT"
+				"bonus_mana_regen"		"3.0"
 			}
 			"06"
 			{
@@ -9223,7 +9135,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"bonus_mana_regen"		"1.5"
+				"bonus_mana_regen"		"4.5"
 			}
 			"07"
 			{
@@ -10383,7 +10295,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_armor"			"25"
+				"bonus_armor"			"20"
 			}
 			"03"
 			{

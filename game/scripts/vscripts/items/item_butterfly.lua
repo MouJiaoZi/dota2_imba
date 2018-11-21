@@ -89,7 +89,7 @@ function modifier_imba_butterflf_unique:OnAttackLanded(keys)
 		return
 	end
 	if keys.attacker == self:GetParent() and self:GetParent().splitattack and RollPercentage(self.pct) and not self:GetParent():IsIllusion() then
-		local range = math.max(self.range, self:GetParent():GetAttackRange())
+		local range = math.max(self.range, self:GetParent():Script_GetAttackRange())
 		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
 		for _, enemy in pairs(enemies) do
 			if enemy ~= keys.target then

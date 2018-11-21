@@ -3710,6 +3710,90 @@
 	{										
 		"BaseClass"					"npc_dota_earth_spirit_stone"
 	}
+	
+	"npc_dota_beastmaster_boar_1"
+	{										
+		"AttackDamageMin"			"32"		// Damage range min.
+		"AttackDamageMax"			"32"		// Damage range max.	
 
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"300"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+		
+	}	
+
+	"npc_dota_beastmaster_boar_2"
+	{										
+		"AttackDamageMin"			"64"		// Damage range min.
+		"AttackDamageMax"			"64"		// Damage range max.	
+
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"450"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}	
+
+	"npc_dota_beastmaster_boar_3"
+	{										
+		"AttackDamageMin"			"96"		// Damage range min.
+		"AttackDamageMax"			"96"		// Damage range max.	
+
+		"StatusHealth"				"600"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}	
+
+	"npc_dota_beastmaster_boar_4"
+	{										
+		"AttackDamageMin"			"128"		// Damage range min.
+		"AttackDamageMax"			"128"		// Damage range max.	
+
+		"StatusHealth"				"750"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}
+	
+	"npc_dota_beastmaster_hawk_1"
+	{										
+		"MovementSpeed"				"420"		// Speed.
+		"MovementTurnRate"			"0.6"		// Turning rate.
+
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"10"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}	
+
+	"npc_dota_beastmaster_hawk_2"
+	{										
+		"MovementSpeed"				"450"		// Speed.
+		"MovementTurnRate"			"0.6"		// Turning rate.
+
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"10"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}	
+
+	"npc_dota_beastmaster_hawk_3"
+	{										
+		"MovementSpeed"				"480"		// Speed.
+		"MovementTurnRate"			"0.6"		// Turning rate.
+
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"10"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}	
+
+	"npc_dota_beastmaster_hawk_4"
+	{										
+		"MovementSpeed"				"510"		// Speed.
+		"MovementTurnRate"			"0.6"		// Turning rate.
+
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"10"		// Base health.
+		"StatusHealthRegen"			"1.5"		// Health regeneration rate.
+	}
 
 }

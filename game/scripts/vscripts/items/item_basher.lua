@@ -91,7 +91,7 @@ LinkLuaModifier("modifier_imba_abyssal_blade_cooldown", "items/item_basher", LUA
 function item_imba_abyssal_blade:GetIntrinsicModifierName() return "modifier_imba_abyssal_blade_passive" end
 function item_imba_abyssal_blade:GetCastRange(pos, tar)
 	if not self:GetCaster():IsRangedAttacker() then
-		return (self:GetCaster():GetAttackRange() + 50)
+		return (self:GetCaster():Script_GetAttackRange() + 50)
 	else
 		return self:GetSpecialValueFor("cast_range")
 	end

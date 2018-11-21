@@ -80,7 +80,7 @@ function imba_wraith_king_wraithfire_blast:OnProjectileHit_ExtraData(target, loc
 						attacker = self:GetCaster(),
 						damage = self:GetSpecialValueFor("damage"),
 						damage_type = self:GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 						ability = self, --Optional.
 						}
 	ApplyDamage(damageTable)
@@ -111,7 +111,7 @@ function modifier_imba_wraithfire_blast_slow:OnIntervalThink()
 						attacker = self:GetCaster(),
 						damage = self:GetAbility():GetSpecialValueFor("damage_per_second"),
 						damage_type = self:GetAbility():GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 						ability = self:GetAbility(), --Optional.
 						}
 	ApplyDamage(damageTable)

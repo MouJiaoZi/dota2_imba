@@ -280,10 +280,6 @@ function modifier_imba_centaur_stampede:OnCreated()
 	if IsServer() then
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_centaur/centaur_stampede.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 		self:AddParticle(pfx, false, false, 15, false, false)
-		if self:GetParent():IsCreep() then
-			return
-		end
-		self:StartIntervalThink(0.1)
 		if self:GetCaster():HasTalent("special_bonus_imba_centaur_2") then
 			local buffs = self:GetParent():FindAllModifiers()
 			for _, buff in pairs(buffs) do
@@ -296,6 +292,10 @@ function modifier_imba_centaur_stampede:OnCreated()
 				end
 			end
 		end
+		if self:GetParent() ~= self:GetCaster() then
+			return
+		end
+		self:StartIntervalThink(0.1)
 	end
 end
 

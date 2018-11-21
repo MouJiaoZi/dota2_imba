@@ -121,7 +121,7 @@ function imba_antimage_spell_shield:OnSpellStart()
 	local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_blink_end_glow.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster())
 	ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
 	ParticleManager:ReleaseParticleIndex(pfx2)
-	EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "Hero_Antimage.ManaVoidCast", self:GetCaster())
+	self:GetCaster():EmitSound("Hero_Antimage.Counterspell.Cast")
 end
 
 modifier_imba_antimage_spell_shield_passive = class({})
@@ -151,6 +151,30 @@ function modifier_imba_antimage_spell_shield_active:IsDebuff()					return false 
 function modifier_imba_antimage_spell_shield_active:IsHidden() 					return false end
 function modifier_imba_antimage_spell_shield_active:IsPurgable() 				return true end
 function modifier_imba_antimage_spell_shield_active:IsPurgeException() 			return true end
+function modifier_imba_antimage_spell_shield_active:DeclareFunctions() return {MODIFIER_PROPERTY_ABSORB_SPELL} end
+
+function modifier_imba_antimage_spell_shield_active:OnCreated()
+	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_counter.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 1, Vector(100*self:GetParent():GetModelScale(), 1, 1))
+		self:AddParticle(pfx, false, false, 15, false, false)
+	end
+end
+
+function modifier_imba_antimage_spell_shield_active:GetAbsorbSpell(keys)
+	if not IsServer() then
+		return
+	end
+	if not IsEnemy(keys.ability:GetCaster(), self:GetParent()) then
+		return 0
+	end
+	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_counter_glint.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+	ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+	ParticleManager:ReleaseParticleIndex(pfx)
+	self:GetParent():EmitSound("Hero_Antimage.Counterspell.Target")
+	return 1
+end
 
 
 imba_antimage_magehunter = class({})
@@ -163,6 +187,7 @@ function imba_antimage_magehunter:IsTalentAbility() return true end
 
 modifier_imba_antimage_magehunter = class({})
 modifier_imba_antimage_magehunter_counter = class({})
+
 function modifier_imba_antimage_magehunter:IsDebuff()					return false end
 function modifier_imba_antimage_magehunter:IsPurgable() 				return false end
 function modifier_imba_antimage_magehunter:IsPurgeException() 			return false end
@@ -189,9 +214,11 @@ function modifier_imba_antimage_magehunter:OnIntervalThink()
 end
 
 function modifier_imba_antimage_magehunter:DeclareFunctions()
-	local funcs = {MODIFIER_EVENT_ON_SPENT_MANA,MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,}
+	local funcs = {MODIFIER_EVENT_ON_SPENT_MANA,MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING}
 	return funcs
 end
+
+function modifier_imba_antimage_magehunter:GetModifierPercentageManacostStacking() return 100 end
 
 function modifier_imba_antimage_magehunter:GetModifierPreAttack_BonusDamage()
 	if self:GetCaster():PassivesDisabled() or self:GetCaster():IsIllusion() then

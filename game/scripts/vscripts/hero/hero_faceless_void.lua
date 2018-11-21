@@ -258,6 +258,7 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_faceless_void_time_lock_reduce", {duration = self:GetAbility():GetSpecialValueFor("reduce_duration")})
 		end
 		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), keys.target:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+		local attacks = self:GetAbility():GetSpecialValueFor("additional_attacks")
 		for _, enemy in pairs(enemies) do
 			local damageTable = {
 								victim = enemy,
@@ -268,6 +269,11 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 								ability = self:GetAbility(), --Optional.
 								}
 			ApplyDamage(damageTable)
+		end
+		for i = 1, attacks do
+			if enemies[i] then
+				self:GetParent():PerformAttack(enemies[i], true, true, true, true, false, false, true)
+			end
 		end
 	end
 end

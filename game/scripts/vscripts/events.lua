@@ -261,7 +261,7 @@ function GameMode:OnNPCSpawned(keys)
 		
 		Timers:CreateTimer(0, function()
 			-- a fresh Tp
-			for i=0, 8 do
+			for i=0, 9 do
 				local item = npc:GetItemInSlot(i)
 				if item and item:GetName() == "item_tpscroll" then
 					item:EndCooldown()

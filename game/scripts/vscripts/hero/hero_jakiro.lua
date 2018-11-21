@@ -120,7 +120,7 @@ function modifier_imba_fire_breath:OnIntervalThink()
 						attacker = self:GetCaster(),
 						damage = dmg,
 						damage_type = self:GetAbility():GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 						ability = self:GetAbility(), --Optional.
 						}
 	ApplyDamage(damageTable)
@@ -339,7 +339,7 @@ function modifier_imba_liquid_fire:OnIntervalThink()
 						attacker = self:GetCaster(),
 						damage = dmg,
 						damage_type = self:GetAbility():GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 						ability = self:GetAbility(), --Optional.
 						}
 	ApplyDamage(damageTable)
@@ -532,7 +532,7 @@ function modifier_imba_macropyre:OnIntervalThink()
 						attacker = self:GetCaster(),
 						damage = dmg,
 						damage_type = self:GetAbility():GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 						ability = self:GetAbility(), --Optional.
 						}
 	ApplyDamage(damageTable)

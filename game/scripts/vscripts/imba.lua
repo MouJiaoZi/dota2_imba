@@ -318,14 +318,18 @@ function IMBA:OrderFilter(keys)
 	-- Boulder Smash Cast Range
 	------------------------------------------------------------------------------------
 
-	if keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_earth_spirit_boulder_smash" then
+	--[[if keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_earth_spirit_boulder_smash" then
 		local ability = EntIndexToHScript(keys.entindex_ability)
 		ability.range = 0
-	end
+	end]]
 
-	if keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_earth_spirit_boulder_smash" then
+	if (keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION or keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET) and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_earth_spirit_boulder_smash" then
 		local ability = EntIndexToHScript(keys.entindex_ability)
-		ability.range = 50000
+		if keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION or FindStoneRemnant(ability:GetCaster():GetAbsOrigin(), ability:GetSpecialValueFor("rock_search_aoe")) then
+			ability.range = 50000
+		else
+			ability.range = 0
+		end
 	end
 
 	------------------------------------------------------------------------------------
@@ -568,7 +572,7 @@ function IMBA:ModifierAddFilter(keys)
 	------------------------------------------------------------------------------------
 
 	if modifier_name == "modifier_imba_stunned" or modifier_name == "modifier_imba_bashed" then
-		keys.duration = keys.duration * (1 - status_res)
+		keys.duration = keys.duration * math.max((1 - status_res), 0)
 	end
 
 	return true
@@ -708,8 +712,8 @@ function IMBA:SpawnRoshan()
 
 	--- IMBA Roshan Set
 	SetCreatureHealth(unit, 12000 + (roshan_kill - 1) * 2000, true)
-	local ability1 = unit:AddAbility("huskar_berserkers_blood")
-	ability1:SetLevel(4)
+	--local ability1 = unit:AddAbility("huskar_berserkers_blood")
+	--ability1:SetLevel(4)
 	local buff1 = unit:AddNewModifier(unit, nil, "modifier_imba_roshan_upgrade", {})
 	buff1:SetStackCount(roshan_kill - 1)
 	local buff2 = unit:AddNewModifier(unit, nil, "modifier_roshan_devotion", {})

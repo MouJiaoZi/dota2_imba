@@ -148,7 +148,7 @@ function modifier_imba_axe_battle_hunger_enemy:OnIntervalThink()
 							attacker = self:GetCaster(),
 							damage = dmg,
 							damage_type = self:GetAbility():GetAbilityDamageType(),
-							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
+							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 							ability = self:GetAbility(), --Optional.
 							}
 	ApplyDamage(damageTable)

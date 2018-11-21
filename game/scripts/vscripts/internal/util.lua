@@ -370,7 +370,18 @@ function IncreaseAttackSpeedCap(unit, new_cap)
 	end
 
 	-- Get current attack speed, limited to new_cap
-	local current_as = math.min(unit:GetAttackSpeed() * 100, new_cap)
+	local buffs = unit:FindAllModifiers()
+	local as = 0
+	for _, buff in pairs(buffs) do
+		if buff.GetModifierAttackSpeedBonus_Constant then
+			as = as + buff:GetModifierAttackSpeedBonus_Constant()
+		end
+	end
+	if unit:IsHero() then
+		local agi_as = GameRules:GetGameModeEntity():GetCustomAttributeDerivedStatValue(DOTA_ATTRIBUTE_AGILITY_ATTACK_SPEED, unit)
+		as = as + agi_as * unit:GetAgility()
+	end
+	local current_as = math.min(as, new_cap)
 
 	-- Should we reduce BAT?
 	if current_as > MAXIMUM_ATTACK_SPEED then
@@ -1009,4 +1020,16 @@ function CDOTA_BaseNPC:AddModifierStacks(hCaster, hAbility, sModifierName, tModi
 		end
 	end
 	return buff
+end
+
+function FindStoneRemnant(pos, radius)
+	local stones = Entities:FindAllInSphere(pos, radius)
+	local stone = nil
+	for _, sto in pairs(stones) do
+		if (string.find(sto:GetName(), "npc_")) and sto:HasModifier("modifier_imba_stone_remnant_status") then
+			stone = sto
+			break
+		end
+	end
+	return stone
 end

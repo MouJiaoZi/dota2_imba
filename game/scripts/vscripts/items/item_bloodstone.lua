@@ -48,7 +48,7 @@ function modifier_imba_bloodstone_passive:OnDeath(keys)
 		local allies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("effect_radius"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 		local heal = self:GetAbility():GetCurrentCharges() * self:GetAbility():GetSpecialValueFor("heal_on_death_per_charge") + self:GetAbility():GetSpecialValueFor("heal_on_death_base")
 		for _, ally in pairs(allies) do
-			local pfx = ParticleManager:CreateParticle("particles/items_fx/bloodstone_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, ally)
+			local pfx = ParticleManager:CreateParticle("particles/items_fx/bloodstone_heal_start.vpcf", PATTACH_ABSORIGIN_FOLLOW, ally)
 			ParticleManager:ReleaseParticleIndex(pfx)
 			ally:Heal(heal, self:GetAbility())
 		end

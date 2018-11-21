@@ -152,7 +152,7 @@ function modifier_imba_lina_dragon_slave_thinker:OnIntervalThink()
 										attacker = self:GetCaster(),
 										damage = dmg,
 										damage_type = self:GetAbility():GetAbilityDamageType(),
-										damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+										damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 										ability = self:GetAbility(), --Optional.
 										}
 					ApplyDamage(damageTable)
@@ -182,7 +182,7 @@ function modifier_imba_lina_dragon_slave_thinker:OnIntervalThink()
 										attacker = self:GetCaster(),
 										damage = dmg,
 										damage_type = self:GetAbility():GetAbilityDamageType(),
-										damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+										damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 										ability = self:GetAbility(), --Optional.
 										}
 					ApplyDamage(damageTable)
@@ -214,7 +214,7 @@ function modifier_imba_lina_dragon_slave_thinker:OnIntervalThink()
 										attacker = self:GetCaster(),
 										damage = dmg,
 										damage_type = self:GetAbility():GetAbilityDamageType(),
-										damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+										damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 										ability = self:GetAbility(), --Optional.
 										}
 					ApplyDamage(damageTable)
@@ -244,7 +244,7 @@ function modifier_imba_lina_dragon_slave_thinker:OnIntervalThink()
 										attacker = self:GetCaster(),
 										damage = dmg,
 										damage_type = self:GetAbility():GetAbilityDamageType(),
-										damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+										damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 										ability = self:GetAbility(), --Optional.
 										}
 					ApplyDamage(damageTable)
@@ -328,7 +328,7 @@ function modifier_imba_lina_light_strike_array_thinker_son:OnDestroy()
 								attacker = self:GetCaster(),
 								damage = self:GetAbility():GetSpecialValueFor("damage"),
 								damage_type = self:GetAbility():GetAbilityDamageType(),
-								damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+								damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE, --Optional.
 								ability = self:GetAbility(), --Optional.
 								}
 			ApplyDamage(damageTable)

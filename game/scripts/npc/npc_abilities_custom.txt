@@ -2507,6 +2507,8 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"										"ability_lua"
 		"AbilityBehavior"								"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityUnitTargetTeam"							"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"							"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP | DOTA_UNIT_TARGET_BUILDING"
 		"SpellImmunityType"								"SPELL_IMMUNITY_ENEMIES_YES"
 		"SpellDispellableType"							"SPELL_DISPELLABLE_YES"
 		"AbilityTextureName"							"abaddon_frostmourne"
@@ -3841,6 +3843,11 @@
 				"var_type"						"FIELD_INTEGER"
 				"bonus_damage_scepter"			"15"
 			}
+			"09"
+			{
+				"var_type"						"FIELD_INTEGER"
+				"crit_percentage"				"140 160 180"
+			}
 		}
 	}
 
@@ -4107,7 +4114,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"strength_damage"			"200 250 300"
+				"strength_damage"			"200 300 400"
 			}
 			"03"
 			{
@@ -7302,6 +7309,11 @@
 				"var_type"					"FIELD_INTEGER"
 				"reduce_duration"			"5"
 			}
+			"08"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"additional_attacks"		"2 3 4 5"
+			}
 		}
 	}
 
@@ -7447,7 +7459,7 @@
 		}
 	}
 
-	"special_bonus_imba_faceless_void_2" // +25% Back Track
+	"special_bonus_imba_faceless_void_2" // +20% Back Track
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
@@ -7462,7 +7474,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"value"						"15"
+				"value"						"20"
 			}
 		}
 	}
@@ -9235,8 +9247,33 @@
 		{
 			"01"
 			{
-				"var_type"					"FIELD_FLOAT"
+				"var_type"					"FIELD_INTEGER"
 				"value"						"1"
+			}
+		}
+	}
+
+	"special_bonus_imba_lich_2" // Chain Frost Paralyzed
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_lich_chain_frost"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"value"						"1.0"
 			}
 		}
 	}
@@ -12948,7 +12985,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"					"150.0"
+		"AbilityCooldown"					"150.0 130.0 110.0"
 		"AbilityCastPoint"					"0.4"
 		
 		// Cost
@@ -12984,7 +13021,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"repel_duration"			"3"
+				"repel_duration"			"2"
 			}
 			"04"
 			{
