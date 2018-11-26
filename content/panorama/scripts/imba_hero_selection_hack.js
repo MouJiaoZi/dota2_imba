@@ -32,7 +32,7 @@ var IMBAHeroes =
 ["npc_dota_hero_enchantress", 0],
 ["npc_dota_hero_enigma", 1],
 ["npc_dota_hero_faceless_void", 1],
-["npc_dota_hero_furion", 0],
+["npc_dota_hero_furion", 2],
 ["npc_dota_hero_juggernaut", 1],
 ["npc_dota_hero_kunkka", 1],
 ["npc_dota_hero_leshrac", 0],

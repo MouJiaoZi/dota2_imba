@@ -150,7 +150,7 @@ function modifier_imba_sange_unique:OnAttackLanded(keys)
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("disarm_chance")) and self.ability:IsCooldownReady() then
+	if RollPercentage(self.ability:GetSpecialValueFor("disarm_chance")) and self.ability:IsCooldownReady() and not keys.target:IsMagicImmune() then
 		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("disarm_duration")})
 		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
 		self.ability:UseResources(true, true, true)
@@ -328,8 +328,10 @@ function modifier_imba_sange_and_yasha_unique:OnAttackLanded(keys)
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():EmitSound("Hero_PhantomLancer.Doppelganger.Appear")
 		self.ability:TriggerYashaAttack(keys.target)
-		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
-		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
+		if not keys.target:IsMagicImmune() then
+			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
+			keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
+		end
 		self.ability:UseResources(true, true, true)
 	end
 end
@@ -388,8 +390,10 @@ function modifier_imba_sange_and_azura_unique:OnAttackLanded(keys)
 	buff2:SetStackCount(buff2:GetStackCount() + 1)
 	keys.target:EmitSound("DOTA_Item.Maim")
 	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) and self.ability:IsCooldownReady() then
-		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
-		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
+		if not keys.target:IsMagicImmune() then
+			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
+			keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
+		end
 		self.ability:UseResources(true, true, true)
 		self:GetParent():EmitSound("DOTA_Item.FaerieSpark.Activate")
 		local pfx = ParticleManager:CreateParticle("particles/item/azura/azura_mana_regen.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
@@ -592,8 +596,10 @@ function modifier_imba_triumvirate_unique:OnAttackLanded(keys)
 		local pfx = ParticleManager:CreateParticle("particles/item/azura/azura_mana_regen.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():GiveMana(self.ability:GetSpecialValueFor("mana_regen"))
-		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
-		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
+		if not keys.target:IsMagicImmune() then
+			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
+			keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
+		end
 		self.ability:UseResources(true, true, true)
 	end
 end
@@ -604,7 +610,7 @@ item_imba_manta = class({})
 LinkLuaModifier("modifier_imba_manta_passive", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_manta_unique", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_manta_active_invuln", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_manta_passive_illusion", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_manta_dmg", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_manta:GetIntrinsicModifierName() return "modifier_imba_manta_passive" end
 
@@ -692,32 +698,28 @@ function modifier_imba_manta_unique:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() then
 		return
 	end
-	local max_stacks = (self.ability:GetSpecialValueFor("proc_max_illusions") - 1)
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) then
-		local dmg_in = self.ability:GetSpecialValueFor("illusion_in")
-		local dmg_out = self.ability:GetSpecialValueFor("illusion_out")
-		local duration = self.ability:GetSpecialValueFor("illusion_duration")
-		local pos = self:GetParent():GetAbsOrigin() + self:GetParent():GetForwardVector() * 100
-		pos = RotatePosition(self:GetParent():GetAbsOrigin(), QAngle(0, math.random(0,360), 0), pos)
-		local illusion = IllusionManager:CreateIllusion(self:GetParent(), pos, self:GetParent():GetForwardVector(), dmg_out, dmg_in, 0, duration, self:GetParent(), "manta_passive"..self:GetParent():entindex().."_"..self:GetStackCount())
-		illusion:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_manta_passive_illusion", {})
-		self:SetStackCount(self:GetStackCount() + 1)
-		if self:GetStackCount() > max_stacks then
-			self:SetStackCount(0)
+	if RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) then
+		for i=1, self:GetAbility():GetSpecialValueFor("proc_max_illusions") do
+			local pos = RotatePosition(keys.target:GetAbsOrigin(), QAngle(0,math.random(0,360),0), self:GetParent():GetAbsOrigin())
+			local pfx = ParticleManager:CreateParticle("particles/item/manta/manta_attack_ghost.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+			ParticleManager:SetParticleControl(pfx, 0, pos)
+			ParticleManager:SetParticleControlOrientation(pfx, 0, (keys.target:GetAbsOrigin() - pos):Normalized(), Vector(0,0,0), Vector(0,0,0))
+			ParticleManager:ReleaseParticleIndex(pfx)
+			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_manta_dmg", {duration = 0.1})
+			self:GetParent():PerformAttack(keys.target, false, false, true, false, false, false, false)
+			self:GetParent():RemoveModifierByName("modifier_imba_manta_dmg")
 		end
 	end
 end
 
-modifier_imba_manta_passive_illusion = class({})
+modifier_imba_manta_dmg = class({})
 
-function modifier_imba_manta_passive_illusion:IsDebuff()			return false end
-function modifier_imba_manta_passive_illusion:IsHidden() 			return true end
-function modifier_imba_manta_passive_illusion:IsPurgable() 			return false end
-function modifier_imba_manta_passive_illusion:IsPurgeException() 	return false end
-function modifier_imba_manta_passive_illusion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
-function modifier_imba_manta_passive_illusion:GetStatusEffectName() return "particles/item/manta/status_effect_manta_passive_illusion.vpcf" end
-function modifier_imba_manta_passive_illusion:StatusEffectPriority() return 30 end
-
+function modifier_imba_manta_dmg:IsDebuff()			return false end
+function modifier_imba_manta_dmg:IsHidden() 		return true end
+function modifier_imba_manta_dmg:IsPurgable() 		return false end
+function modifier_imba_manta_dmg:IsPurgeException() return false end
+function modifier_imba_manta_dmg:DeclareFunctions() return {MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE} end
+function modifier_imba_manta_dmg:GetModifierDamageOutgoing_Percentage() return (IsServer() and (0 - (100 - self:GetAbility():GetSpecialValueFor("illusion_out"))) or 0) end
 
 item_imba_heavens_halberd = class({})
 
@@ -789,7 +791,7 @@ function modifier_imba_heavens_halberd_unique:OnAttackLanded(keys)
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("disarm_chance")) and self.ability:IsCooldownReady() then
+	if RollPercentage(self.ability:GetSpecialValueFor("disarm_chance")) then
 		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("disarm_passive")})
 		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
 	end

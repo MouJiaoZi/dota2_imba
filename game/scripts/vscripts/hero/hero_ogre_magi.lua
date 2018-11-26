@@ -3,7 +3,7 @@ CreateEmptyTalents("ogre_magi")
 
 imba_ogre_magi_multicast = class({})
 
-LinkLuaModifier("modifier_multicast_passive", "hero/hero_ogre_magi", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_multicast_passive", "hero/hero_ogre_magi", LUA_MODIFIER_MOTION_NONE)
 
 modifier_multicast_attack_range = class({})
 
@@ -14,26 +14,29 @@ function modifier_multicast_attack_range:IsPurgeException() return false end
 function modifier_multicast_attack_range:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACK_RANGE_BONUS} end
 function modifier_multicast_attack_range:GetModifierAttackRangeBonus() return 10000 end
 
-function imba_ogre_magi_multicast:GetIntrinsicModifierName() return "modifier_multicast_passive" end
+function imba_ogre_magi_multicast:GetIntrinsicModifierName() return "modifier_imba_multicast_passive" end
+function imba_ogre_magi_multicast:GetAbilityTextureName() return "custom/ogre_magi_multicast_"..self:GetCaster():GetModifierStackCount("modifier_imba_multicast_passive", nil) end
+function imba_ogre_magi_multicast:ResetToggleOnRespawn() return false end
 
-function imba_ogre_magi_multicast:OnUpgrade()
-	local ability = self:GetCaster():FindAbilityByName('ogre_magi_multicast')
-	if ability then
-		ability:SetLevel(self:GetLevel())
+function imba_ogre_magi_multicast:OnToggle()
+	if self:GetToggleState() then
+		self:GetCaster():FindModifierByName("modifier_imba_multicast_passive"):SetStackCount(1)
+	else
+		self:GetCaster():FindModifierByName("modifier_imba_multicast_passive"):SetStackCount(0)
 	end
 end
 
-modifier_multicast_passive = class({})
+modifier_imba_multicast_passive = class({})
 
-function modifier_multicast_passive:IsDebuff()			return false end
-function modifier_multicast_passive:IsHidden() 			return true end
-function modifier_multicast_passive:IsPurgable() 		return false end
-function modifier_multicast_passive:IsPurgeException() 	return false end
-function modifier_multicast_passive:AllowIllusionDuplicate() return false end
-function modifier_multicast_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ABILITY_FULLY_CAST, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE} end
-function modifier_multicast_passive:GetModifierPercentageCooldown() return (self:GetAbility():GetSpecialValueFor("cdr_pct")) end
+function modifier_imba_multicast_passive:IsDebuff()			return false end
+function modifier_imba_multicast_passive:IsHidden() 			return true end
+function modifier_imba_multicast_passive:IsPurgable() 		return false end
+function modifier_imba_multicast_passive:IsPurgeException() 	return false end
+function modifier_imba_multicast_passive:AllowIllusionDuplicate() return false end
+function modifier_imba_multicast_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ABILITY_FULLY_CAST, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE} end
+function modifier_imba_multicast_passive:GetModifierPercentageCooldown() return (self:GetAbility():GetSpecialValueFor("cdr_pct")) end
 
-function modifier_multicast_passive:OnAttackLanded(keys)
+function modifier_imba_multicast_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
@@ -57,15 +60,13 @@ function modifier_multicast_passive:OnAttackLanded(keys)
 	self:DoMultiAttack(self:GetParent(), target, multicast)
 end
 
-function modifier_multicast_passive:DoMultiAttack(caster, target, times)
+function modifier_imba_multicast_passive:DoMultiAttack(caster, target, times)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			caster:StartGesture(ACT_DOTA_ATTACK)
 			caster.splitattack = false
-			caster:AddNewModifier(caster, self:GetAbility(), "modifier_multicast_attack_range", {})
 			caster:PerformAttack(target, true, true, true, true, true, false, false)
 			caster.splitattack = true
-			caster:RemoveModifierByName("modifier_multicast_attack_range")
 			caster:EmitSound("Hero_OgreMagi.Fireblast.x"..i+1)
 			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ogre_magi/ogre_magi_multicast.vpcf", PATTACH_OVERHEAD_FOLLOW, caster)
 			ParticleManager:SetParticleControl(pfx, 1, Vector(i+1, 1, 0))
@@ -113,13 +114,10 @@ local NoMultiCastItems = {
 "item_travel_boots_2",
 "item_travel_boots",
 "item_power_treads",
-"ogre_magi_fireblast",
-"ogre_magi_ignite",
-"ogre_magi_bloodlust",
-"ogre_magi_unrefined_fireblast",
+"item_imba_power_treads_2",
 }
 
-function modifier_multicast_passive:OnAbilityFullyCast(keys)
+function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
 	if not IsServer() then
 		return
 	end
@@ -143,7 +141,16 @@ function modifier_multicast_passive:OnAbilityFullyCast(keys)
 		multicast = 2
 	end
 	if target then
-		self:DoMultiTargetAbility(caster, target, ability, multicast)
+		if self:GetStackCount() == 0 then
+			self:DoMultiTargetAbility(caster, target, ability, multicast)
+		else
+			local units = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, ability:GetCastRange(caster:GetAbsOrigin(), caster) + caster:GetCastRangeBonus(), ability:GetAbilityTargetTeam(), ability:GetAbilityTargetType(), ability:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+			for i=2, multicast do
+				if units[i] then
+					self:DoMultiTargetAbility(caster, units[i], ability, 2)
+				end
+			end
+		end
 		return
 	end
 	if pos then
@@ -153,7 +160,7 @@ function modifier_multicast_passive:OnAbilityFullyCast(keys)
 	self:DoMultiNoTargetAbility(caster, ability, multicast)
 end
 
-function modifier_multicast_passive:DoMultiTargetAbility(caster, target, ability, times)
+function modifier_imba_multicast_passive:DoMultiTargetAbility(caster, target, ability, times)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			self.nocast = true
@@ -169,7 +176,7 @@ function modifier_multicast_passive:DoMultiTargetAbility(caster, target, ability
 	end
 end
 
-function modifier_multicast_passive:DoMultiPositionAbility(caster, pos, ability, times)
+function modifier_imba_multicast_passive:DoMultiPositionAbility(caster, pos, ability, times)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			self.nocast = true
@@ -185,7 +192,7 @@ function modifier_multicast_passive:DoMultiPositionAbility(caster, pos, ability,
 	end
 end
 
-function modifier_multicast_passive:DoMultiNoTargetAbility(caster, ability, times)
+function modifier_imba_multicast_passive:DoMultiNoTargetAbility(caster, ability, times)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			self.nocast = true
@@ -200,7 +207,7 @@ function modifier_multicast_passive:DoMultiNoTargetAbility(caster, ability, time
 	end
 end
 
-function modifier_multicast_passive:OnCreated()
+function modifier_imba_multicast_passive:OnCreated()
 	if IsServer() and not self:GetParent():IsIllusion() then
 		self:StartIntervalThink(1.0)
 		self.nocast_check = 0
@@ -208,7 +215,7 @@ function modifier_multicast_passive:OnCreated()
 	end
 end
 
-function modifier_multicast_passive:OnIntervalThink()
+function modifier_imba_multicast_passive:OnIntervalThink()
 	if self.nocast then
 		self.nocast_check = self.nocast_check + 1
 	else

@@ -273,7 +273,7 @@ function modifier_imba_caustic_finale_passive:OnTakeDamage(keys)
 		return
 	end
 	if not self:GetParent():IsIllusion() and not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and not keys.unit:IsCourier() and not keys.unit:HasModifier("modifier_imba_caustic_finale") and not keys.unit:IsMagicImmune() then
-		if keys.inflictor and keys.inflictor:GetName() == "imba_sandking_caustic_finale" then
+		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "modifier_item_imba_nether_wand_burn" or keys.inflictor:GetName() == "modifier_item_imba_elder_staff_burn") then
 			return
 		end
 		keys.unit:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_caustic_finale", {duration = self:GetAbility():GetSpecialValueFor("debuff_duration")})

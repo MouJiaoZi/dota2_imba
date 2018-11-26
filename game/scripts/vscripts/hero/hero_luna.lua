@@ -47,11 +47,11 @@ function imba_luna_moon_glaive:OnProjectileHit_ExtraData(target, location, keys)
 		target:EmitSound("Hero_Luna.MoonGlaive.Impact")
 		ApplyDamage({victim = target, attacker = self:GetCaster(), damage = damage, ability = self, damage_type = self:GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL})
 		if RollPercentage(self:GetSpecialValueFor("attack_effect_change")) and not self:GetCaster():IsIllusion() then
-			self.GetCaster().splitattack = false
+			self:GetCaster().splitattack = false
 			self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_luna_moon_glaive_nodmg", {})
 			self:GetCaster():PerformAttack(target, false, true, true, false, false, true, true)
 			self:GetCaster():RemoveModifierByName("modifier_imba_luna_moon_glaive_nodmg")
-			self.GetCaster().splitattack = true
+			self:GetCaster().splitattack = true
 		end
 		local bounce = keys.bounces + 1
 		if bounce >= self:GetSpecialValueFor("bounces") then

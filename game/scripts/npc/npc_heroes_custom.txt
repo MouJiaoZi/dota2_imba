@@ -1051,6 +1051,8 @@
 		"AttributeIntelligenceGain"	"3.5"
 
 		"AttributeAgilityGain"		"2.75"
+		
+		"Ability3"					"imba_furion_force_of_nature"
 
 		"Ability10"					"special_bonus_attack_damage_20"
 		"Ability11"					"special_bonus_hp_150"
@@ -1058,8 +1060,8 @@
 		"Ability13"					"special_bonus_movement_speed_25"
 		"Ability14"					"special_bonus_attack_speed_30"
 		"Ability15"					"special_bonus_armor_5"
-		"Ability16"					"special_bonus_respawn_reduction_40"
-		"Ability17"					"special_bonus_unique_furion"
+		"Ability16"					"special_bonus_magic_resistance_30"
+		"Ability17"					"special_bonus_armor_8"
 	}
 	"npc_dota_hero_life_stealer"
 	{
@@ -1996,7 +1998,7 @@
 		"Ability3"					"ogre_magi_bloodlust"
 		"Ability4"					"ogre_magi_unrefined_fireblast"
 		"Ability5"					"generic_hidden"
-		"Ability6"					"ogre_magi_multicast"
+		"Ability6"					"imba_ogre_magi_multicast"
 
 		"Ability10"					"special_bonus_gold_income_15"
 		"Ability11"					"special_bonus_cast_range_100"
@@ -2703,30 +2705,7 @@
 	}
 	"npc_dota_hero_bristleback"
 	{
-		"Model"		"models/heroes/bristleback/bristleback.vmdl"
-		"Portrait"		"vgui/hud/heroportraits/portrait_bristleback"
-		"SoundSet"		"Hero_Bristleback"
-		"IdleSoundLoop"		"Hero_Bristleback.IdleLoop"
-		"Enabled"		"1"
-		"Role"			"Carry,Durable,Initiator,Nuker"
-		"Rolelevels"	"2,3,1,1"
-		"Complexity"	"1"
-		"Team"		"Good"
-		"HeroID"		"99"
-		"BotImplemented"		"1"
-		"ModelScale"		"0.800000"
-		"LoadoutScale"		"0.900000"
-		"NameAliases"		"Rigwarl;bb"
-		"workshop_guide_name"		"Bristleback"
-		"HasAggressiveStance"		"1"
-		"PickSound"		"bristleback_bristle_spawn_01"
-		"BanSound"		"bristleback_bristle_anger_09"
-		"CMEnabled"		"1"
-		"new_player_enable"		"1"
-		"LastHitChallengeRival"		"npc_dota_hero_dragon_knight"
-		"HeroSelectSoundEffect"		"Hero_Bristleback.Pick"
-		"GibType"		"goo"
-		"GibTintColor"	"203 29 0 255"
+
 		"Ability1"		"bristleback_viscous_nasal_goo"
 		"Ability2"		"bristleback_quill_spray"
 		"Ability3"		"bristleback_bristleback"
@@ -2741,205 +2720,7 @@
 		"Ability15"		"special_bonus_unique_bristleback_2"
 		"Ability16"		"special_bonus_spell_lifesteal_70"
 		"Ability17"		"special_bonus_unique_bristleback_3"
-		"ArmorPhysical"		"0.000000"
-		"AttackCapabilities"		"DOTA_UNIT_CAP_MELEE_ATTACK"
-		"AttackDamageMin"		"22"
-		"AttackDamageMax"		"32"
-		"AttackRate"		"1.800000"
-		"AttackAnimationPoint"		"0.300000"
-		"AttackAcquisitionRange"		"600"
-		"AttackRange"		"150"
-		"AttributePrimary"		"DOTA_ATTRIBUTE_STRENGTH"
-		"AttributeBaseStrength"		"22"
-		"AttributeStrengthGain"		"2.200000"
-		"AttributeBaseAgility"		"17"
-		"AttributeAgilityGain"		"1.800000"
-		"AttributeBaseIntelligence"		"14"
-		"AttributeIntelligenceGain"		"2.800000"
-		"MovementSpeed"		"285"
-		"MovementTurnRate"		"1.000000"
-		"particle_folder"		"particles/units/heroes/hero_bristleback"
-		"GameSoundsFile"		"soundevents/game_sounds_heroes/game_sounds_bristleback.vsndevts"
-		"VoiceFile"		"soundevents/voscripts/game_sounds_vo_bristleback.vsndevts"
-		"RenderablePortrait"
-		{
-			"Particles"
-			{
-				"particles/units/heroes/hero_bristleback/bristleback_loadout.vpcf"
-				{
-					"0"
-					{
-						"type"		"follow_attachment"
-						"location"		"attach_attack3"
-					}
-					"1"
-					{
-						"type"		"follow_origin"
-						"location"		"attach_hitloc"
-					}
-				}
-			}
-		}
-		"ItemSlots"
-		{
-			"0"
-			{
-				"SlotIndex"		"0"
-				"SlotName"		"weapon"
-				"SlotText"		"#LoadoutSlot_Weapon"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"1000"
-				"MaxPolygonsLOD1"		"550"
-			}
-			"1"
-			{
-				"SlotIndex"		"1"
-				"SlotName"		"head"
-				"SlotText"		"#LoadoutSlot_Head_Accessory"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"1000"
-				"MaxPolygonsLOD1"		"500"
-			}
-			"2"
-			{
-				"SlotIndex"		"2"
-				"SlotName"		"back"
-				"SlotText"		"#LoadoutSlot_Back"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"1000"
-				"MaxPolygonsLOD1"		"750"
-			}
-			"3"
-			{
-				"SlotIndex"		"3"
-				"SlotName"		"neck"
-				"SlotText"		"#LoadoutSlot_Neck"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"800"
-				"MaxPolygonsLOD1"		"600"
-			}
-			"4"
-			{
-				"SlotIndex"		"4"
-				"SlotName"		"arms"
-				"SlotText"		"#LoadoutSlot_arms"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"800"
-				"MaxPolygonsLOD1"		"600"
-			}
-			"5"
-			{
-				"SlotIndex"		"5"
-				"SlotName"		"summon"
-				"SlotText"		"#LoadoutSlot_Pet"
-				"ShowItemOnGeneratedUnits" "1"
-				"GeneratesUnits"
-				{
-					"0" "npc_dota_companion"
-				}
-			}
-			"6"
-			{
-				"SlotIndex"		"6"
-				"SlotName"		"taunt"
-				"SlotText"		"#LoadoutSlot_Taunt"
-			}
-			"7"
-			{
-				"SlotIndex"		"7"
-				"SlotName"		"ambient_effects"
-				"SlotText"		"#LoadoutSlot_Ambient_Effects"
-				"DisplayInLoadout"		"0"
-			}
-		}
-		"Bot"
-		{
-			"Loadout"
-			{
-				"item_tango"		"ITEM_CONSUMABLE | ITEM_SELLABLE"
-				"item_clarity"		"ITEM_CONSUMABLE | ITEM_SELLABLE"
-				"item_stout_shield"		"ITEM_CORE"
-				"item_branches"		"ITEM_CORE"
-				"item_branches"		"ITEM_CORE"
-				"item_boots"		"ITEM_CORE"
-				"item_magic_stick"		"ITEM_CORE"
-				"item_recipe_magic_wand"		"ITEM_CORE"
-				"item_magic_wand"		"ITEM_DERIVED | ITEM_SELLABLE"
-				"item_ring_of_protection"		"ITEM_CORE"
-				"item_sobi_mask"		"ITEM_CORE"
-				"item_ring_of_basilius"		"ITEM_DERIVED | ITEM_SELLABLE"
-				"item_belt_of_strength"		"ITEM_CORE"
-				"item_gloves"		"ITEM_CORE"
-				"item_power_treads"		"ITEM_DERIVED"
-				"item_ring_of_health"		"ITEM_CORE"
-				"item_vitality_booster"		"ITEM_EXTENSION"
-				"item_vanguard"		"ITEM_DERIVED"
-				"item_broadsword"		"ITEM_EXTENSION"
-				"item_chainmail"		"ITEM_EXTENSION"
-				"item_robe"		"ITEM_EXTENSION"
-				"item_blade_mail"		"ITEM_DERIVED | ITEM_SELLABLE"
-				"item_reaver"		"ITEM_EXTENSION"
-				"item_vitality_booster"		"ITEM_EXTENSION"
-				"item_vitality_booster"		"ITEM_EXTENSION"
-				"item_heart"		"ITEM_DERIVED"
-				"item_platemail"		"ITEM_LUXURY"
-				"item_hyperstone"		"ITEM_LUXURY"
-				"item_chainmail"		"ITEM_LUXURY"
-				"item_recipe_assault"		"ITEM_LUXURY"
-				"item_assault"		"ITEM_DERIVED"
-				"item_platemail"		"ITEM_LUXURY"
-				"item_mystic_staff"		"ITEM_LUXURY"
-				"item_recipe_shivas_guard"		"ITEM_LUXURY"
-				"item_shivas_guard"		"ITEM_DERIVED"
-				"item_relic"		"ITEM_EXTENSION"
-				"item_recipe_radiance"		"ITEM_EXTENSION"
-				"item_radiance"		"ITEM_DERIVED"
-			}
-			"Build"
-			{
-				"1"		"bristleback_quill_spray"
-				"2"		"bristleback_bristleback"
-				"3"		"bristleback_quill_spray"
-				"4"		"bristleback_viscous_nasal_goo"
-				"5"		"bristleback_quill_spray"
-				"6"		"bristleback_warpath"
-				"7"		"bristleback_quill_spray"
-				"8"		"bristleback_bristleback"
-				"9"		"bristleback_bristleback"
-				"10"		"special_bonus_mp_regen_2"
-				"11"		"bristleback_bristleback"
-				"12"		"bristleback_warpath"
-				"13"		"bristleback_viscous_nasal_goo"
-				"14"		"bristleback_viscous_nasal_goo"
-				"15"		"special_bonus_hp_250"
-				"16"		"bristleback_viscous_nasal_goo"
-				"17"		""
-				"18"		"bristleback_warpath"
-				"19"		""
-				"20"		"special_bonus_hp_regen_20"
-				"21"		""
-				"22"		""
-				"23"		""
-				"24"		""
-				"25"		"special_bonus_unique_bristleback_3"
-			}
-			"HeroType"		"DOTA_BOT_TANK | DOTA_BOT_SEMI_CARRY"
-			"LaningInfo"
-			{
-				"SoloDesire"		"0"
-				"RequiresBabysit"		"1"
-				"ProvidesBabysit"		"0"
-				"SurvivalRating"		"2"
-				"RequiresFarm"		"1"
-				"ProvidesSetup"		"1"
-				"RequiresSetup"		"1"
-			}
-		}
+
 	}
 	
 	"npc_dota_hero_tusk"
@@ -3142,164 +2923,10 @@
 		"Ability15"		"special_bonus_unique_terrorblade_2"
 		"Ability16"		"special_bonus_unique_terrorblade"
 		"Ability17"		"special_bonus_unique_terrorblade_3"
-		"AbilityDraftAbilities"
-		{
-			"Ability1"		"terrorblade_reflection"
-			"Ability2"		"terrorblade_conjure_image"
-			"Ability3"		"terrorblade_sunder"
-		}
 
-
-		"ArmorPhysical"		"9"
-		"AttackCapabilities"		"DOTA_UNIT_CAP_MELEE_ATTACK"
-		"AttackDamageMin"		"26"
-		"AttackDamageMax"		"32"
-		"AttackRate"		"1.500000"
-		"AttackAnimationPoint"		"0.300000"
-		"AttackAcquisitionRange"		"600"
-		"AttackRange"		"150"
-		"ProjectileSpeed"		"900"
-		"AttributePrimary"		"DOTA_ATTRIBUTE_AGILITY"
-		"AttributeBaseStrength"		"16"
-		"AttributeStrengthGain"		"1.750000"
-		"AttributeBaseIntelligence"		"19"
-		"AttributeIntelligenceGain"		"1.60000"
-		"AttributeBaseAgility"		"22"
-		"AttributeAgilityGain"		"4.200000"
-		"MovementSpeed"		"310"
-		"MovementTurnRate"		"0.500000"
-		"BoundsHullName"		"DOTA_HULL_SIZE_HERO"
-		"StatusHealthRegen"		"1.50000"
-		"particle_folder"		"particles/units/heroes/hero_terrorblade"
-		"GameSoundsFile"		"soundevents/game_sounds_heroes/game_sounds_terrorblade.vsndevts"
-		"VoiceFile"		"soundevents/voscripts/game_sounds_vo_terrorblade.vsndevts"
-		"HealthBarOffset"		"300"
-		"precache"
-		{
-			"model"		"models/heroes/terrorblade/demon.vmdl"
-		}
-		"RenderablePortrait"
-		{
-			"Particles"
-			{
-				"particles/units/heroes/hero_terrorblade/terrorblade_loadout.vpcf"
-				{
-					"0"
-					{
-						"type"		"follow_origin"
-						"location"		"attach_hitloc"
-					}
-				}
-			}
-		}
-		"ItemSlots"
-		{
-			"0"
-			{
-				"SlotIndex"		"0"
-				"SlotName"		"weapon"
-				"SlotText"		"#LoadoutSlot_Weapon"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"1000"
-				"MaxPolygonsLOD1"		"600"
-			}
-			"1"
-			{
-				"SlotIndex"		"1"
-				"SlotName"		"back"
-				"SlotText"		"#LoadoutSlot_Back"
-				"TextureWidth"		"512"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"700"
-				"MaxPolygonsLOD1"		"400"
-			}
-			"2"
-			{
-				"SlotIndex"		"2"
-				"SlotName"		"armor"
-				"SlotText"		"#LoadoutSlot_Armor"
-				"TextureWidth"		"512"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"1000"
-				"MaxPolygonsLOD1"		"600"
-			}
-			"3"
-			{
-				"SlotIndex"		"3"
-				"SlotName"		"head"
-				"SlotText"		"#LoadoutSlot_Head"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"		"1000"
-				"MaxPolygonsLOD1"		"500"
-			}
-			"4"
-			{
-				"SlotIndex"		"4"
-				"SlotName"		"ability3"
-				"SlotText"		"#LoadoutSlot_TerrorBlade_Demon"
-				"no_import"		"1"
-				"LoadoutPreviewMode"		"transformation"
-				"TextureWidth"		"512"
-				"TextureHeight"		"512"
-				"MaxPolygonsLOD0"	"6000"
-				"MaxPolygonsLOD1"	"3000"
-			}
-			"5"
-			{
-				"SlotIndex"		"5"
-				"SlotName"		"taunt"
-				"SlotText"		"#LoadoutSlot_Taunt"
-			}
-			"6"
-			{
-				"SlotIndex"		"6"
-				"SlotName"		"ambient_effects"
-				"SlotText"		"#LoadoutSlot_Ambient_Effects"
-				"DisplayInLoadout"		"0"
-			}
-		}
-		"Bot"
-		{
-			"HeroType"		"DOTA_BOT_HARD_CARRY"
-			"LaningInfo"
-			{
-				"SoloDesire"		"0"
-				"RequiresBabysit"		"2"
-				"ProvidesBabysit"		"0"
-				"SurvivalRating"		"0"
-				"RequiresFarm"		"2"
-				"ProvidesSetup"		"0"
-				"RequiresSetup"		"1"
-			}
-		}
 	}
 	"npc_dota_hero_phoenix"
 	{
-		"BaseClass"		"npc_dota_hero_phoenix"
-		"Model"		"models/heroes/phoenix/phoenix_bird.vmdl"
-		"SoundSet"		"Hero_Phoenix"
-		"IdleSoundLoop"		"Hero_Phoenix.IdleLoop"
-		"IdleExpression"		"scenes/phoenix/phoenix/exp_idle_01.vcd"
-		"HeroID"		"110"
-		"Enabled"		"1"
-		"CMEnabled"		"1"
-		"new_player_enable"		"1"
-		"HeroUnlockOrder"		"1"
-		"Role"			"Support,Nuker,Initiator,Escape,Disabler"
-		"Rolelevels"	"1,3,2,2,1"
-		"Complexity"	"2"
-		"Team"		"Good"
-		"Portrait"		"vgui/hud/heroportraits/portrait_phoenix"
-		"ModelScale"		"0.950000"
-		"NameAliases"		"ph"
-		"workshop_guide_name"		"Phoenix"
-		"NoCombine"		"1"
-		"PickSound"		"phoenix_phoenix_bird_respawn"
-		"BanSound"		"phoenix_phoenix_bird_moving01"
-		"HeroSelectSoundEffect"		"Hero_Phoenix.Pick"
-		"GibType"		"fire"
 		"Ability1"		"phoenix_icarus_dive"
 		"Ability2"		"phoenix_fire_spirits"
 		"Ability3"		"phoenix_sun_ray"

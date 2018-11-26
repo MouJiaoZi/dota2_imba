@@ -39,3 +39,4 @@ resource/overviews/*
 
 #Github dump
 *.stackdump
+game/scripts/vscripts/statcollection/settings.kv

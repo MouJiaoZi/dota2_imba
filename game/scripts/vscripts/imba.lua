@@ -223,7 +223,7 @@ function IMBA:DamageFilter(keys)
 	end
 
 	------------------------------------------------------------------------------------
-	-- Hero Killed Bounty Set
+	-- True Hero Killed
 	------------------------------------------------------------------------------------
 
 	if keys.damage >= target:GetHealth() and IsInTable(target, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
@@ -245,6 +245,69 @@ function IMBA:DamageFilter(keys)
 			victim:SetMinimumGoldBounty(0)
 			victim:SetMaximumGoldBounty(0)
 		end
+
+		Timers:CreateTimer(FrameTime(), function()
+				if not victim:IsAlive() and not victim:IsReincarnating() then
+					local player_id = victim:GetPlayerID()
+					local game_time = GameRules:GetDOTATime(false, false)
+
+					local respawn_timer = victim:GetIMBARespawnTime()
+
+					if game_time > 1800 then
+						respawn_timer = respawn_timer + math.floor((game_time - 1800) / 60)
+						GameRules:SetSafeToLeave(true)
+					end
+
+					-- Set up the respawn timer
+					victim:SetTimeUntilRespawn(respawn_timer)
+
+					local buy_back_cost = 0
+
+					buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim:GetPlayerID()) / 20 + math.min(victim:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
+
+					if GameRules:IsCheatMode() then
+						--buy_back_cost = 0
+					end
+
+					PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
+
+					-- Setup buyback cooldown
+					local buyback_cooldown = 0
+					if BUYBACK_COOLDOWN_ENABLED and game_time > BUYBACK_COOLDOWN_START_POINT then
+						buyback_cooldown = math.min(BUYBACK_COOLDOWN_GROW_FACTOR * (game_time - BUYBACK_COOLDOWN_START_POINT), BUYBACK_COOLDOWN_MAXIMUM)
+					end
+
+					PlayerResource:SetCustomBuybackCooldown(player_id, buyback_cooldown)
+					--Lose Gold
+					local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
+					local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
+					PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
+
+					print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
+
+					--Death Streak
+					if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+						local line_duration = 7
+
+						local death_player = victim:GetPlayerID()
+						local kill_player = attacker:GetPlayerID()
+						if death_player and kill_player then
+							CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
+							CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
+							CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
+							CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
+
+							if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
+								Notifications:BottomToAll({hero = victim:GetName(), duration = line_duration})
+								Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
+								Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
+							end
+						end
+					end
+				end
+				return nil
+			end
+		)
 	end
 
 	------------------------------------------------------------------------------------

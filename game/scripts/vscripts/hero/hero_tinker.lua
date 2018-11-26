@@ -525,7 +525,7 @@ function modifier_imba_rearm_fuck:OnAbilityExecuted(keys)
 	end
 	if (keys.ability:GetName() == "item_imba_sheepstick" or string.find(keys.ability:GetName(), "dagon") or keys.ability:GetName() == "item_ethereal_blade") and keys.unit == self:GetParent() then
 		if (GameRules:GetGameTime() - self.time) <= 0.1 then
-			Notifications:BottomToAll({text="检测到修补匠从发现敌方英雄到使用邪恶镰刀/大根/虚灵刀的时间间隔小于0.1秒！！", duration = 5})
+			--Notifications:BottomToAll({text="检测到修补匠从发现敌方英雄到使用邪恶镰刀/大根/虚灵刀的时间间隔小于0.1秒！！", duration = 5})
 			self:SetStackCount(self:GetStackCount() + 1)
 			if self:GetStackCount() >= 100 then
 				self:GetParent():ForceKill(false)

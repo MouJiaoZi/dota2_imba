@@ -92,5 +92,6 @@ function modifier_item_heart_aura_effect:IsPurgeException() return false end
 function modifier_item_heart_aura_effect:GetTexture() return "custom/imba_heart" end
 function modifier_item_heart_aura_effect:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_heart_aura_effect:OnDestroy() self.ability = nil end
-function modifier_item_heart_aura_effect:DeclareFunctions() return  {MODIFIER_PROPERTY_STATS_STRENGTH_BONUS} end
+function modifier_item_heart_aura_effect:DeclareFunctions() return  {MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE} end
 function modifier_item_heart_aura_effect:GetModifierBonusStats_Strength() return self.ability:GetSpecialValueFor("aura_str") end
+function modifier_item_heart_aura_effect:GetModifierHPRegenAmplify_Percentage() return self.ability:GetSpecialValueFor("regen_pct") end

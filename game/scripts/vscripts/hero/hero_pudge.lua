@@ -459,7 +459,7 @@ function modifier_imba_rot_slow:IsHidden() 			return false end
 function modifier_imba_rot_slow:IsPurgable() 		return false end
 function modifier_imba_rot_slow:IsPurgeException() 	return false end
 function modifier_imba_rot_slow:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
-function modifier_imba_rot_slow:GetModifierMoveSpeedBonus_Percentage() return (self:GetAbility():GetSpecialValueFor("rot_slow")) end
+function modifier_imba_rot_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("rot_slow")) end
 
 function modifier_imba_rot_slow:OnCreated()
 	if IsServer() then

@@ -157,6 +157,9 @@ end
 function modifier_imba_fountain_buff:OnCreated()
 	if IsServer() then
 		self:StartIntervalThink(0.5)
+		if GetMapName() == "dbii_death_match" then
+			self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_fountain_disabled", {})
+		end
 	end
 end
 

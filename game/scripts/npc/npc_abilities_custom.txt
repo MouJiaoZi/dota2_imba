@@ -7312,7 +7312,7 @@
 			"08"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"additional_attacks"		"2 3 4 5"
+				"additional_attacks"		"1 2 3 4"
 			}
 		}
 	}
@@ -7477,6 +7477,51 @@
 				"value"						"20"
 			}
 		}
+	}
+	//=================================================================================================================
+	// Furion: Force of Nature, Nature's Call
+	//=================================================================================================================
+	"imba_furion_force_of_nature"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"furion_force_of_nature"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_TREE"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"AbilitySound"					"Hero_Furion.ForceOfNature"
+		"ScriptFile"					"hero/hero_furion.lua"
+
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"1000"
+		"AbilityCastPoint"				"0.5 0.5 0.5 0.5"
+		"AbilityCooldown"				"37 37 37 37"
+		"AbilityManaCost"				"130 140 150 160"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"area_of_effect"		"150 225 300 375"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"atk_per_tree"			"10"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"20"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
 	}
 
 	//=================================================================================================================
@@ -12696,10 +12741,10 @@
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"						"ability_lua"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_TOGGLE | DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
 		"AbilityCastAnimation"			"ACT_INVALID"
-		"AbilityTextureName"			"custom/ogre_magi_multicast_lod" // This is from LOD github.com/darklordabc/Legends-of-Dota-Redux/
+		"AbilityTextureName"			"custom/ogre_magi_multicast_0" // This is from LOD github.com/darklordabc/Legends-of-Dota-Redux/
 		"ScriptFile"					"hero/hero_ogre_magi.lua"
 
 		"AbilityCooldown"				"3.0 2.0 1.0"

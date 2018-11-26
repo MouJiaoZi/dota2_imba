@@ -272,7 +272,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() then
 		return
 	end
-	if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() then
+	if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() and self:GetParent():IsRealHero() then
 		TrueKill(self:GetParent(), keys.target, self:GetAbility())
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, keys.target, 999999, nil)
 		local blood_pfx = ParticleManager:CreateParticle("particles/hero/phantom_assassin/screen_blood_splatter.vpcf", PATTACH_EYES_FOLLOW, keys.target)

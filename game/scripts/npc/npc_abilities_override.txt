@@ -6,7 +6,7 @@
 	// Default item removal 
 	// -----------------------------------------------------------
 
-	"item_imba_manta"			"REMOVE"
+	//"item_imba_manta"			"REMOVE"
 
 	"item_recipe_hand_of_midas"			"REMOVE"
 	//"item_mithril_hammer"			"REMOVE"
@@ -6744,7 +6744,7 @@
 			"03"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"cloud_radius"			"750"
+				"cloud_radius"			"550"
 			}
 		}
 	}
@@ -6920,6 +6920,7 @@
 			{
 				"var_type"						"FIELD_FLOAT"
 				"stun_duration"					"1.25 1.5 1.75 2.0"
+				"LinkedSpecialBonus"			"special_bonus_unique_slardar"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -9081,10 +9082,10 @@
 	{
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"50000"
+		"AbilityCastRange"				"1000 2000 4000 8000"
 		"AbilityCastPoint"				"0.35"
 		"AbilityCooldown"				"11 10 9 8"
-		"AbilityManaCost"				"70 90 110 130"
+		"AbilityManaCost"				"130"
 		
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -9103,7 +9104,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"cast_range_tooltip"				"50000"
+				"cast_range_tooltip"				"1000 2000 4000 8000"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -9128,77 +9129,6 @@
 		"AbilityCooldown"				"50 40 30 20"
 		"AbilityManaCost"				"50 50 50 50"
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
-	}
-	
-	//=================================================================================================================
-	// Furion: Force of Nature, Nature's Call
-	//=================================================================================================================
-	"furion_force_of_nature"
-	{
-		// Stats
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1000"
-		"AbilityCastPoint"				"0.5 0.5 0.5 0.5"
-		"AbilityCooldown"				"27"
-		"AbilityManaCost"				"100"
-		
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"area_of_effect"		"150 225 300 375"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"max_treants"			"4 5 6 7"
-				"LinkedSpecialBonus"	"special_bonus_unique_furion_2"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"duration"				"40"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_health_tooltip"				"550"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_min_dmg_tooltip"				"30"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_max_dmg_tooltip"				"34"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_hp_bonus"				"550"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_damage_bonus"		"36"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_large_hp_bonus"				"1650"
-			}
-			"10"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"treant_large_damage_bonus"		"108"
-			}
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
 	}
 	
 	//=================================================================================================================
@@ -9252,12 +9182,12 @@
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"scepter_buffer"		"4"
+				"scepter_buffer"		"0"
 			}
 			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"buffer_tooltip_scepter"		"4"
+				"buffer_tooltip_scepter"		"0"
 			}
 		}
 	}
@@ -9574,7 +9504,7 @@
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"width"					"50000"
+				"width"					"1500"
 			}			
 			"07"
 			{
@@ -9584,7 +9514,7 @@
 			"08"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"range_tooltip"			"1200"
+				"range_tooltip"			"1500"
 			}
 			"09"
 			{
@@ -9812,7 +9742,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"knockback_distance"	"550"
+				"knockback_distance"	"300"
 			}
 			"05"
 			{
@@ -13013,7 +12943,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"130.0 110.0 90.0"
+		"AbilityCooldown"				"130.0 120.0 110.0"
 		"AbilityDuration"				"5.0 6.0 7.0"
 
 

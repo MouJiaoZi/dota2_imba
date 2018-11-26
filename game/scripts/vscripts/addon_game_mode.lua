@@ -14,6 +14,7 @@ end
 require('internal/util')
 require('gamemode')
 require('addon_init')
+require("statcollection/init")
 
 function Precache( context )
 --[[
@@ -40,6 +41,7 @@ function Precache( context )
 	LinkLuaModifier("modifier_confuse", "modifier/modifier_confuse.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_unlimited_level_powerup", "modifier/modifier_imba_unlimited_level_powerup.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_dummy_thinker", "modifier/modifier_dummy_thinker.lua", LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier("modifier_imba_base_protect", "modifier/modifier_dummy_thinker.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_stunned", "modifier/modifier_imba_stunned.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_bashed", "modifier/modifier_imba_stunned.lua", LUA_MODIFIER_MOTION_NONE )
 	PrecacheResource("particle", "particles/basic_ambient/generic_paralyzed.vpcf", context)

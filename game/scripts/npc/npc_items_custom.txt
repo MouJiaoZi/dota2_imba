@@ -3515,6 +3515,11 @@
 				"var_type"				"FIELD_FLOAT"
 				"regen_tooltip"			"5.0"
 			}
+			"08"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"regen_pct"				"75"
+			}
 		}
 	}
 
@@ -4741,7 +4746,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"crit_increase"			"25"
+				"crit_increase"			"30"
 			}
 		}
 	}
@@ -6419,12 +6424,12 @@
 			"11"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"proc_chance"			"8"
+				"proc_chance"			"15"
 			}
 			"12"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"proc_max_illusions"	"3"
+				"proc_max_illusions"	"4"
 			}
 		}
 	}

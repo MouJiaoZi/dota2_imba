@@ -97,11 +97,17 @@ function GameMode:OnGameRulesStateChange(keys)
 		Timers:CreateTimer({useGameTime = false,
 			callback = function()
 				if tick == 0 then
+					if GameRules:IsCheatMode() then
+						CreateUnitByName("npc_dota_hero_target_dummy", Vector(-5345,-6549,384), false, nil, nil, DOTA_TEAM_NEUTRALS)
+					end
 					local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 					for _, tower in pairs(towers) do
 						if string.find(tower:GetUnitName(), "_tower1_") then --T1 Tower set
 							local ability = tower:AddAbility(RandomFromTable(IMBA_TOWER_ABILITY_1))
 							ability:SetLevel(1)
+							if (string.find(tower:GetName(), "_top") or string.find(tower:GetName(), "_bot")) and GetMapName() == "dbii_death_match" then
+								tower:AddNewModifier(tower, nil, "modifier_dummy_thinker", {})
+							end
 						end
 						if string.find(tower:GetUnitName(), "_tower2_") then --T2 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 800, true)
@@ -158,11 +164,15 @@ function GameMode:OnGameRulesStateChange(keys)
 						if string.find(tower:GetUnitName(), "_range_rax_") then
 							SetCreatureHealth(tower, 3200, true)
 						end
+						if string.find(tower:GetName(), "_fort") and GetMapName() == "dbii_death_match" then
+							tower:AddNewModifier(tower, nil, "modifier_imba_base_protect", {})
+						end
 					end
 				end
 				if tick >= 2 and not announce then
 					announce = true
 					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_20_SCES", duration = waitTick - 2})
+					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
 				end
 				PauseGame(true)
 				tick = tick + 0.1
@@ -242,6 +252,14 @@ function GameMode:OnNPCSpawned(keys)
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
 				end
 
+				--[[local abilityName = RandomFromTable(IMBA_RANDOM_ABILITIES)
+				if npc:GetName() ~= "npc_dota_hero_invoker" then
+					local ability = npc:AddAbility(abilityName)
+					if ability then
+						ability:SetLevel(1)
+						ability:SetAbilityIndex(3)
+					end
+				end]]
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
 				return nil
@@ -576,7 +594,7 @@ function GameMode:OnEntityKilled( keys )
 	-- IMBA: True Hero Death Setup (bb, respawn timer, death streak, lose gold)
 	-------------------------------------------------------------------------------------------------
 
-	local victim_respawn = killed_unit
+	--[[local victim_respawn = killed_unit
 	if killed_unit:IsClone() then
 		victim_respawn = killed_unit:GetCloneSource()
 	end
@@ -641,7 +659,7 @@ function GameMode:OnEntityKilled( keys )
 		PlayerResource:ModifyGold(victim_respawn:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
 
 		print(victim_respawn:GetName(), "respawn time:", victim_respawn:GetIMBARespawnTime(), "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
-	end
+	end]]
 
 	-------------------------------------------------------------------------------------------------
 	-- IMBA: Roshan

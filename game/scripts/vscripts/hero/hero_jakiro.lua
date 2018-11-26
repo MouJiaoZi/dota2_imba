@@ -44,11 +44,12 @@ function modifier_imba_jakiro_fire_breath_motion:GetMotionControllerPriority() r
 
 function modifier_imba_jakiro_fire_breath_motion:OnCreated(keys)
 	if IsServer() then
+		self:CheckMotionControllers()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
 		self.current_pos = self:GetParent():GetAbsOrigin()
 		self.pfx_tick = 10
-		local a = self:CheckMotionControllers() and self:StartIntervalThink(FrameTime()) or 1
+		self:StartIntervalThink(FrameTime())
 		self:OnIntervalThink()
 	end
 end
@@ -59,7 +60,7 @@ function modifier_imba_jakiro_fire_breath_motion:OnIntervalThink()
 		self:Destroy()
 	end
 	local distance = (self.current_pos - self.pos):Length2D()
-	local next_pos = self.current_pos + distance * (self.direction / (self:GetRemainingTime() / FrameTime()))
+	local next_pos = self.current_pos + self.direction * (self:GetAbility():GetSpecialValueFor("speed") / (1.0 / FrameTime()))
 	caster:SetAbsOrigin(next_pos)
 	caster:SetForwardVector(self.direction)
 	if self.pfx_tick == 10 then
@@ -178,11 +179,12 @@ function modifier_imba_jakiro_ice_breath_motion:GetMotionControllerPriority() re
 
 function modifier_imba_jakiro_ice_breath_motion:OnCreated(keys)
 	if IsServer() then
+		self:CheckMotionControllers()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
 		self.current_pos = self:GetParent():GetAbsOrigin()
 		self.pfx_tick = 10
-		local a = self:CheckMotionControllers() and self:StartIntervalThink(FrameTime()) or 1
+		self:StartIntervalThink(FrameTime())
 		self:OnIntervalThink()
 	end
 end
@@ -193,7 +195,7 @@ function modifier_imba_jakiro_ice_breath_motion:OnIntervalThink()
 		self:Destroy()
 	end
 	local distance = (self.current_pos - self.pos):Length2D()
-	local next_pos = self.current_pos + distance * (self.direction / (self:GetRemainingTime() / FrameTime()))
+	local next_pos = self.current_pos + self.direction * (self:GetAbility():GetSpecialValueFor("speed") / (1.0 / FrameTime()))
 	caster:SetAbsOrigin(next_pos)
 	caster:SetForwardVector(self.direction)
 	if self.pfx_tick == 10 then

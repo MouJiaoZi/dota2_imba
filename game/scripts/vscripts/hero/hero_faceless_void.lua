@@ -53,9 +53,9 @@ function modifier_imba_time_walk_motion:OnCreated(keys)
 		if self:CheckMotionControllers() then
 			self.target_point = Vector(keys.target_x, keys.target_y, keys.target_z)
 			self.distance = keys.distance
+			self.effected_enemies = {}
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
-			self.effected_enemies = {}
 		end
 	end
 end
@@ -272,7 +272,9 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 		end
 		for i = 1, attacks do
 			if enemies[i] then
+				self:GetParent().splitattack = false
 				self:GetParent():PerformAttack(enemies[i], true, true, true, true, false, false, true)
+				self:GetParent().splitattack = true
 			end
 		end
 	end
@@ -355,15 +357,18 @@ function imba_faceless_void_chronosphere:OnSpellStart()
 	local pos = self:GetCursorPosition()
 	local radius = self:GetAOERadius()
 	caster:SpendMana(caster:GetMana(), self)
-	CreateChronosphere(caster, self, pos, radius, self:GetSpecialValueFor("base_duration"), 1)
+	local time = self:GetSpecialValueFor("base_duration")
 	if math.random(0,100) == math.random(0,100) then
-		EmitSoundOnLocationWithCaster(pos, "Imba.FacelessZaWarudo", caster)
+		time = 1.9
+		--EmitGlobalSound("Imba.FacelessZaWarudo")
+		caster:EmitSound("Imba.FacelessZaWarudo")
 		caster:SetContextThink(DoUniqueString("DIO"),
 									function()
 										CreateChronosphere(caster, self, pos, 3000, 9, 1)
 										return nil
-									end,2.0)
+									end,1.8)
 	end
+	CreateChronosphere(caster, self, pos, radius, time, 1)
 	EmitSoundOnLocationWithCaster(pos, "Hero_FacelessVoid.Chronosphere", caster)
 end
 

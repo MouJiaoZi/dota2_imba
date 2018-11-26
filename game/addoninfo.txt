@@ -14,4 +14,8 @@
 	{
 		"MaxPlayers"        "20"
 	}
+	"dbii_death_match"
+	{
+		"MaxPlayers"        "16"
+	}
 }
