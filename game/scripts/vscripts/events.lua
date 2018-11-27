@@ -235,6 +235,8 @@ roshan_pos = Vector(-2464.244629, 2016.373291, 232.000000)
 roshan_kill = 0
 
 local monkeyKingFound = false
+local courier_num_radiant = 1
+local courier_num_dire = 1
 
 -- An NPC has spawned somewhere in game.  This includes heroes
 function GameMode:OnNPCSpawned(keys)
@@ -271,6 +273,7 @@ function GameMode:OnNPCSpawned(keys)
 
 		local chicken = npc:AddItemByName("item_courier")
 		npc:CastAbilityNoTarget(chicken, npc:GetPlayerID())
+
 		PlayerResource:SetGold(npc:GetPlayerID(), IMBA_STARTING_GOLD, true)
 
 		if PlayerResource:HasRandomed(npc:GetPlayerID()) then
@@ -306,6 +309,13 @@ function GameMode:OnNPCSpawned(keys)
 	--Courier Setuo
 	if npc:IsCourier() and npc:HasAbility("imba_courier_speed") then
 		npc:FindAbilityByName("imba_courier_speed"):SetLevel(1)
+		if npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+			npc.courier_num = courier_num_radiant
+			courier_num_radiant = courier_num_radiant + 1
+		elseif npc:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+			npc.courier_num = courier_num_dire
+			courier_num_dire = courier_num_dire + 1
+		end
 	end
 
 	--modifier_imba_unlimited_level_powerup

@@ -354,8 +354,10 @@ function modifier_imba_darkness_caster:IsHidden() 			return false end
 function modifier_imba_darkness_caster:IsPurgable() 		return false end
 function modifier_imba_darkness_caster:IsPurgeException()	return false end
 function modifier_imba_darkness_caster:RemoveOnDeath()		return false end
-function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_NIGHT_VISION} end
+function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end
 function modifier_imba_darkness_caster:GetBonusNightVision() return self:GetAbility():GetSpecialValueFor("bonus_vision") end
+function modifier_imba_darkness_caster:GetModifierIgnoreMovespeedLimit() return 1 end
+function modifier_imba_darkness_caster:GetModifierMoveSpeedBonus_Constant() return 5000 end
 
 function modifier_imba_darkness_caster:IsAura() return true end
 function modifier_imba_darkness_caster:IsAuraActiveOnDeath() return true end

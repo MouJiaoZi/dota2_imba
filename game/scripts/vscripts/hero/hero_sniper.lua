@@ -167,19 +167,28 @@ imba_sniper_take_aim_near = class({})
 LinkLuaModifier("modifier_imba_take_aim_near", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_take_aim_range", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
 
-function imba_sniper_take_aim_near:IsHiddenWhenStolen() 	return false end
+function imba_sniper_take_aim_near:IsHiddenWhenStolen() 	return true end
 function imba_sniper_take_aim_near:IsRefreshable() 			return true end
 function imba_sniper_take_aim_near:IsStealable() 			return false end
 function imba_sniper_take_aim_near:IsNetherWardStealable()	return false end
+function imba_sniper_take_aim_near:IsHiddenWhenStolen() return true end
 
 function imba_sniper_take_aim_near:OnUpgrade()
 	local ability = self:GetCaster():FindAbilityByName("imba_sniper_take_aim_far")
 	if ability and ability:GetLevel() ~= self:GetLevel() then
 		ability:SetLevel(self:GetLevel())
 	end
+	if self:GetCaster():HasModifier("modifier_morphling_replicate") then
+		self:SetActivated(false)
+		return
+	end
 end
 
 function imba_sniper_take_aim_near:OnSpellStart()
+	if self:GetCaster():HasModifier("modifier_morphling_replicate") then
+		self:SetActivated(false)
+		return
+	end
 	local caster = self:GetCaster()
 	self:GetCaster():EmitSound("Ability.AssassinateLoad")
 	caster:RemoveModifierByName("modifier_imba_take_aim_far")
@@ -242,7 +251,7 @@ imba_sniper_take_aim_far = class({})
 
 LinkLuaModifier("modifier_imba_take_aim_far", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
 
-function imba_sniper_take_aim_far:IsHiddenWhenStolen() 		return false end
+function imba_sniper_take_aim_far:IsHiddenWhenStolen() 		return true end
 function imba_sniper_take_aim_far:IsRefreshable() 			return true end
 function imba_sniper_take_aim_far:IsStealable() 			return false end
 function imba_sniper_take_aim_far:IsNetherWardStealable()	return false end
@@ -252,9 +261,17 @@ function imba_sniper_take_aim_far:OnUpgrade()
 	if ability and ability:GetLevel() ~= self:GetLevel() then
 		ability:SetLevel(self:GetLevel())
 	end
+	if self:GetCaster():HasModifier("modifier_morphling_replicate") then
+		self:SetActivated(false)
+		return
+	end
 end
 
 function imba_sniper_take_aim_far:OnSpellStart()
+	if self:GetCaster():HasModifier("modifier_morphling_replicate") then
+		self:SetActivated(false)
+		return
+	end
 	local caster = self:GetCaster()
 	self:GetCaster():EmitSound("Ability.AssassinateLoad")
 	caster:RemoveModifierByName("modifier_imba_take_aim_near")

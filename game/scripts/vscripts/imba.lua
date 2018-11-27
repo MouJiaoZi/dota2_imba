@@ -226,7 +226,7 @@ function IMBA:DamageFilter(keys)
 	-- True Hero Killed
 	------------------------------------------------------------------------------------
 
-	if keys.damage >= target:GetHealth() and IsInTable(target, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+	if target:IsRealHero() and keys.damage >= target:GetHealth() and IsInTable(target, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
 		local victim = target
 		local game_time = GameRules:GetDOTATime(false, false)
 		local base_gold = victim:GetLevel() * 10
@@ -246,7 +246,7 @@ function IMBA:DamageFilter(keys)
 			victim:SetMaximumGoldBounty(0)
 		end
 
-		Timers:CreateTimer(FrameTime(), function()
+		Timers:CreateTimer(0.1, function()
 				if not victim:IsAlive() and not victim:IsReincarnating() then
 					local player_id = victim:GetPlayerID()
 					local game_time = GameRules:GetDOTATime(false, false)

@@ -437,6 +437,31 @@ end
 
 
 
+IMBA_COURIER_POSITION = {}
+
+IMBA_COURIER_POSITION[2] = {}
+IMBA_COURIER_POSITION[2][1] = Vector(-7450, -6550, 256)
+IMBA_COURIER_POSITION[2][2] = Vector(-7350, -6650, 256)
+IMBA_COURIER_POSITION[2][3] = Vector(-7250, -6750, 256)
+IMBA_COURIER_POSITION[2][4] = Vector(-7150, -6850, 256)
+IMBA_COURIER_POSITION[2][5] = Vector(-7050, -6950, 256)
+IMBA_COURIER_POSITION[2][6] = Vector(-7325, -6425, 256)
+IMBA_COURIER_POSITION[2][7] = Vector(-7225, -6525, 256)
+IMBA_COURIER_POSITION[2][8] = Vector(-7125, -6625, 256)
+IMBA_COURIER_POSITION[2][9] = Vector(-7025, -6725, 256)
+IMBA_COURIER_POSITION[2][10] = Vector(-6925, -6825, 256)
+
+IMBA_COURIER_POSITION[3] = {}
+IMBA_COURIER_POSITION[3][1] = Vector(7400, 6500, 256)
+IMBA_COURIER_POSITION[3][2] = Vector(7300, 6600, 256)
+IMBA_COURIER_POSITION[3][3] = Vector(7200, 6700, 256)
+IMBA_COURIER_POSITION[3][4] = Vector(7100, 6800, 256)
+IMBA_COURIER_POSITION[3][5] = Vector(7000, 6900, 256)
+IMBA_COURIER_POSITION[3][6] = Vector(7275, 6375, 256)
+IMBA_COURIER_POSITION[3][7] = Vector(7175, 6475, 256)
+IMBA_COURIER_POSITION[3][8] = Vector(7075, 6575, 256)
+IMBA_COURIER_POSITION[3][9] = Vector(6975, 6675, 256)
+IMBA_COURIER_POSITION[3][10] = Vector(6875, 6775, 256)
 
 imba_courier_speed = class({})
 
@@ -466,12 +491,8 @@ function modifier_imba_courier_buff:OnIntervalThink()
 	if not self:GetParent():IsIdle() or not self:GetParent():HasModifier("modifier_fountain_aura_buff") then
 		return
 	end
-	local couriers = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, 150, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_COURIER, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_ANY_ORDER, false)
-	if #couriers > 1 then
-		local point = self:GetParent():GetTeamNumber() == 2 and Vector(-7000, -6537, 512) or Vector(7040 ,6332 ,518)
-		point = GetGroundPosition(point, self:GetParent())
-		local abs = GetRandomPosition2D(point, 600)
-		FindClearSpaceForUnit(self:GetParent(), abs, true)
+	if self:GetParent().courier_num then
+		self:GetParent():MoveToPosition(IMBA_COURIER_POSITION[self:GetParent():GetTeamNumber()][self:GetParent().courier_num])
 	end
 end
 

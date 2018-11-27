@@ -4190,6 +4190,31 @@
 		}
 	}
 	
+	"special_bonus_imba_chaos_knight_2" // Random Attack Damage
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"max"						"333"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"min"						"-333"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Clinkz's Strafe
 	//=================================================================================================================
@@ -16462,7 +16487,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"range"						"250 250 250 350"
+				"range"						"250 250 350 450"
 			}
 			"02"
 			{
@@ -18245,7 +18270,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bat_scepter"			"5 7 9"
+				"bat_scepter"			"8 12 16"
 			}
 		}
 	}

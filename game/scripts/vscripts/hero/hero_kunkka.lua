@@ -216,8 +216,8 @@ function modifier_imba_tidebringer:OnIntervalThink()
 	end
 end
 
-function modifier_imba_tidebringer:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_EVENT_ON_ATTACK, MODIFIER_EVENT_ON_ATTACK_LANDED} end
-function modifier_imba_tidebringer:GetModifierPreAttack_BonusDamage()
+function modifier_imba_tidebringer:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_EVENT_ON_ATTACK, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_tidebringer:GetModifierBaseDamageOutgoing_Percentage()
 	local tide = GetTideEffect(self:GetParent(), false)
 	if bit.band(tide, KUNKKA_TIDEBRINGER_HIGH_TIDE) == KUNKKA_TIDEBRINGER_HIGH_TIDE then
 		return (self:GetAbility():GetSpecialValueFor("damage_bonus") * 2)

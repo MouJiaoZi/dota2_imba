@@ -37,7 +37,6 @@ function modifier_item_imba_phase_boots_2_move_speed:DeclareFunctions() return {
 function modifier_item_imba_phase_boots_2_move_speed:GetModifierMoveSpeed_Max() return self:GetAbility():GetSpecialValueFor("new_ms_limit") end
 function modifier_item_imba_phase_boots_2_move_speed:GetModifierMoveSpeedBonus_Percentage() return self:GetAbility():GetSpecialValueFor("phase_ms") end
 
-
 item_imba_tranquil_boots_2 = class({})
 
 LinkLuaModifier("modifier_imba_tranquil_boots2_passive", "items/item_boots", LUA_MODIFIER_MOTION_NONE)

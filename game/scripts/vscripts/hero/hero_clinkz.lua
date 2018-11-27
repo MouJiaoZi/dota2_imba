@@ -274,7 +274,7 @@ function imba_clinkz_death_pact:GetCustomCastErrorTarget(target)
 end
 
 function imba_clinkz_death_pact:OnAbilityPhaseStart()
-	EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "Hero_Clinkz.DeathPact.Cast", self:GetCaster())
+	self:GetCaster():EmitSound("Hero_Clinkz.BurningArmy.SpellStart")
 	return true
 end
 
@@ -284,6 +284,7 @@ function imba_clinkz_death_pact:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
+	target:EmitSound("Hero_Clinkz.BurningArmy.Cast")
 	local duration = self:GetSpecialValueFor("duration_creep")
 	if target:IsHero() then
 		local damageTable = {
@@ -408,12 +409,9 @@ function modifier_imba_death_pact_caster_permanent:OnHeroKilled(keys)
 	if not IsServer() then
 		return
 	end
-	if not self:GetCaster():HasScepter() then
-		return
-	end
 	if self:GetAbility().hero == keys.target and self:GetCaster():HasModifier("modifier_imba_death_pact_caster") then
-		self:IncrementStackCount()
+		self:SetStackCount(self:GetStackCount() + 1)
 	elseif keys.target == self:GetCaster() then
-		self:DecrementStackCount()
+		self:SetStackCount(math.max(self:GetStackCount() - 1, 0))
 	end
 end

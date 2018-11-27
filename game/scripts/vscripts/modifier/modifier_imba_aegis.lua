@@ -7,9 +7,10 @@ function modifier_imba_aegis:IsHidden() 		return false end
 function modifier_imba_aegis:IsPurgable() 		return false end
 function modifier_imba_aegis:IsPurgeException() return false end
 function modifier_imba_aegis:AllowIllusionDuplicate() return false end
+function modifier_imba_aegis:GetPriority() return MODIFIER_PRIORITY_SUPER_ULTRA end
 function modifier_imba_aegis:GetTexture() return "custom/imba_aegis" end
 function modifier_imba_aegis:DeclareFunctions() return {MODIFIER_PROPERTY_REINCARNATION, MODIFIER_EVENT_ON_DEATH} end
-function modifier_imba_aegis:ReincarnateTime() return 5.0 end
+function modifier_imba_aegis:ReincarnateTime() return 3.0 end
 
 function modifier_imba_aegis:OnCreated()
 	if IsServer() then
@@ -31,7 +32,7 @@ function modifier_imba_aegis:OnDeath(keys)
 	ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 	ParticleManager:SetParticleControl(pfx, 1, Vector(5, 5, 5))
 	ParticleManager:ReleaseParticleIndex(pfx)
-	Timers:CreateTimer(5.1, function()
+	Timers:CreateTimer(3.1, function()
 		local pfx2 = ParticleManager:CreateParticle("particles/items_fx/aegis_respawn.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
 		ParticleManager:SetParticleControlEnt(pfx2, 0, caster, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx2, 1, caster, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true)
@@ -71,7 +72,7 @@ function modifier_imba_roshan_upgrade:IsHidden() 			return true end
 function modifier_imba_roshan_upgrade:IsPurgable() 			return false end
 function modifier_imba_roshan_upgrade:IsPurgeException() 	return false end
 function modifier_imba_roshan_upgrade:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE} end
-function modifier_imba_roshan_upgrade:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * 20) end
+function modifier_imba_roshan_upgrade:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * 50) end
 function modifier_imba_roshan_upgrade:GetModifierPreAttack_BonusDamage() return (self:GetStackCount() * 80) end
 function modifier_imba_roshan_upgrade:GetModifierPhysicalArmorBonus() return (self:GetStackCount() * 2) end
 function modifier_imba_roshan_upgrade:GetPriority() return MODIFIER_PRIORITY_HIGH end
