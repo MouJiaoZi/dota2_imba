@@ -369,7 +369,7 @@
 		"Ability13"					"special_bonus_movement_speed_20"
 		"Ability14"					"special_bonus_hp_200"
 		"Ability15"					"special_bonus_armor_6"
-		"Ability16"					"special_bonus_hp_regen_20"
+		"Ability16"					"special_bonus_hp_regen_40"
 		"Ability17"					"special_bonus_spell_lifesteal_20"
 	}
 	"npc_dota_hero_storm_spirit"
@@ -1298,7 +1298,7 @@
 		"Ability14"					"special_bonus_gold_income_30"
 		"Ability15"					"special_bonus_unique_chen_4"
 		"Ability16"					"special_bonus_unique_chen_1"
-		"Ability17"					"cooldown_reduction_12"
+		"Ability17"					"special_bonus_cooldown_reduction_12"
 
 	}
 	"npc_dota_hero_spectre"
@@ -2029,7 +2029,7 @@
 		"Ability13"					"special_bonus_unique_undying_4"
 		"Ability14"					"special_bonus_unique_undying"
 		"Ability15"					"special_bonus_unique_undying_5"
-		"Ability16"					"special_bonus_reincarnation_60"
+		"Ability16"					"special_bonus_respawn_reduction_60"
 		"Ability17"					"special_bonus_unique_undying_2"
 		
 	}

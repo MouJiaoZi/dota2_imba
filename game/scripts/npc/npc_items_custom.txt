@@ -3260,7 +3260,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_armor"			"10"
+				"bonus_armor"			"6"
 			}
 			"03"
 			{
@@ -3270,12 +3270,12 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"aura_armor_ally"		"8"
+				"aura_armor_ally"		"7"
 			}
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"aura_armor_enemy"		"8"
+				"aura_armor_enemy"		"7"
 			}
 			"06"
 			{
@@ -3377,7 +3377,7 @@
 			"07"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_armor"				"10"
+				"bonus_armor"				"8"
 			}
 			"08"
 			{
@@ -3392,7 +3392,7 @@
 			"10"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"aura_armor"			"10"
+				"aura_armor"			"8"
 			}
 			"11"
 			{
@@ -6721,7 +6721,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"base_stacks"			"7"
+				"base_stacks"			"6"
 			}
 			"03"
 			{
@@ -6736,12 +6736,12 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"max_stacks"			"12"
+				"max_stacks"			"10"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration"				"15"
+				"duration"				"10"
 			}
 			"07"
 			{
@@ -6848,7 +6848,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"base_stacks"			"10"
+				"base_stacks"			"7"
 			}
 			"03"
 			{
@@ -6863,12 +6863,12 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"active_stacks"			"12"
+				"active_stacks"			"7"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration"				"15"
+				"duration"				"10"
 			}
 			"07"
 			{

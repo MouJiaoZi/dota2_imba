@@ -980,7 +980,7 @@ function CDOTA_BaseNPC_Hero:GetIMBARespawnTime()
 
 	respawn_time = respawn_time + victim_respawn:GetRespawnTimeChangeNormal()
 
-	respawn_time = math.floor(math.max(respawn_time, 1))
+	respawn_time = (math.max(respawn_time, 1))
 
 	return respawn_time
 end

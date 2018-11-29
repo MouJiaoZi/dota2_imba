@@ -323,7 +323,7 @@ end
 
 function modifier_imba_reincarnation:ReincarnateTime()
 	if IsServer() then
-		if self:GetAbility():IsOwnersManaEnough() and self:GetAbility():IsCooldownReady() then --and not self:GetParent():HasModifier("modifier_imba_aegis") then
+		if self:GetAbility():IsOwnersManaEnough() and self:GetAbility():IsCooldownReady() and not self:GetParent():HasModifier("modifier_imba_aegis") then
 			return self:GetAbility():GetSpecialValueFor("reincarnate_delay")
 		else
 			return nil
@@ -333,7 +333,7 @@ end
 
 function modifier_imba_reincarnation:OnDeath(keys)
 	if IsServer() then
-		if keys.unit == self:GetParent() and self:ReincarnateTime() and not self:GetParent():IsIllusion() then
+		if keys.unit == self:GetParent() and self:GetStackCount() == 1 and not self:GetParent():IsIllusion() then
 			local ability = self:GetAbility()
 			local radius = self:GetAbility():GetSpecialValueFor("slow_radius")
 			local damage = self:GetAbility():GetSpecialValueFor("kingdom_damage")

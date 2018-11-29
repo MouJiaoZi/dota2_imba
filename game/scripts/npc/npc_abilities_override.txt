@@ -1101,7 +1101,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"2"
+				"value"				"4"
 			}
 		}
 	}
@@ -1113,7 +1113,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"4"
+				"value"				"8"
 			}
 		}
 	}
@@ -1125,7 +1125,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"5"
+				"value"				"12"
 			}
 		}
 	}
@@ -1137,7 +1137,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"8"
+				"value"				"16"
 			}
 		}
 	}
@@ -1149,7 +1149,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"12"
+				"value"				"24"
 			}
 		}
 	}
@@ -1161,7 +1161,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"16"
+				"value"				"30"
 			}
 		}
 	}
@@ -1173,7 +1173,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"20"
+				"value"				"50"
 			}
 		}
 	}
@@ -1185,7 +1185,7 @@
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"24"
+				"value"				"80"
 			}
 		}
 	}
@@ -3836,7 +3836,117 @@
 			"01"						"item_force_staff;item_dragon_lance"
 		}
 	}
-	
+	//=================================================================================================================
+	// Spirit Vessel
+	//=================================================================================================================
+	"item_spirit_vessel"
+	{
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_health"			"250"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_movement_speed"	"6"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"bonus_mana_regen"		"1.5"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_all_stats"		"2"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"bonus_armor"			"2"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"soul_radius"			"1400"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"soul_initial_charge"	"2"
+			}
+			"08"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"soul_additional_charges"	"1"
+			}
+			"09"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"soul_heal_amount"		"30"
+			}			
+			"10"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"soul_damage_amount"	"25"
+			}
+			"11"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"			"8.0"
+			}
+			"12"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"soul_release_range_tooltip"	"950"
+			}
+			"13"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"hp_regen_reduction_enemy"	"90"
+			}
+			"14"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"enemy_hp_drain"		"4.5"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Force Staff
+	//=================================================================================================================
+	"item_force_staff"
+	{
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"750"
+		"AbilityCastPoint"				"0.0"
+		"AbilityCooldown"				"14.0"
+		"AbilitySharedCooldown"			"force"
+
+	}
+
+	//=================================================================================================================
+	// Hurricane Pike
+	//=================================================================================================================
+	"item_hurricane_pike"
+	{
+
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"800"
+		"AbilityCastPoint"				"0.0"
+		"AbilityCooldown"				"14.0"
+		"AbilitySharedCooldown"			"force"
+
+	}
+
 	//=================================================================================================================
 	// Aeon Disk
 	//=================================================================================================================

@@ -24,6 +24,7 @@ function imba_ogre_magi_multicast:OnToggle()
 	else
 		self:GetCaster():FindModifierByName("modifier_imba_multicast_passive"):SetStackCount(0)
 	end
+	self:EndCooldown()
 end
 
 modifier_imba_multicast_passive = class({})
