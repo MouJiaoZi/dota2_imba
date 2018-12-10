@@ -25,7 +25,7 @@ function modifier_imba_antimage_mana_break:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetCaster() then
 		return
 	end
-	if keys.target:IsBuilding() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or self:GetCaster():PassivesDisabled() then
+	if keys.target:IsBuilding() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or self:GetCaster():PassivesDisabled() or not keys.target:IsAlive() then
 		return 
 	end
 	local mana_burn = self:GetAbility():GetSpecialValueFor("base_mana_burn") + keys.target:GetMaxMana() * (self:GetAbility():GetSpecialValueFor("bonus_mana_burn") / 100)

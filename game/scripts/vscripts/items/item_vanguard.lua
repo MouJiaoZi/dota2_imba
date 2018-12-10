@@ -117,8 +117,10 @@ item_imba_greatwyrm_plate = class({})
 
 LinkLuaModifier("modifier_imba_greatwyrm_plate_passive", "items/item_vanguard", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_greatwyrm_plate_active", "items/item_vanguard", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_item_greatwyrm_plate_out_dmg_reduce", "items/item_vanguard", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_greatwyrm_plate:GetIntrinsicModifierName() return "modifier_imba_greatwyrm_plate_passive" end
+function item_imba_greatwyrm_plate:GetAbilityTextureName() return "custom/greatwyrm_plate_"..self:GetCaster():GetModifierStackCount("modifier_imba_greatwyrm_plate_passive", nil) end
 
 function item_imba_greatwyrm_plate:GetCastRange()
 	if not IsServer() then
@@ -193,6 +195,9 @@ function modifier_imba_greatwyrm_plate_passive:OnCreated()
 end
 
 function modifier_imba_greatwyrm_plate_passive:OnIntervalThink()
+	if (self:GetParent():IsStunned() or self:GetParent():IsHexed()) then
+		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_greatwyrm_plate_out_dmg_reduce", {duration = self:GetAbility():GetSpecialValueFor("disable_duration")})
+	end
 	if (self:GetParent():IsStunned() or self:GetParent():IsHexed()) and not self.pfx then
 		self.pfx = ParticleManager:CreateParticle("particles/item/greatwyrm_plate/greatwyrm_passive.vpcf", PATTACH_POINT_FOLLOW, self:GetParent())
 		ParticleManager:SetParticleControlEnt(self.pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
@@ -237,3 +242,13 @@ function modifier_item_greatwyrm_plate_active:OnCreated()
 		self:AddParticle(pfx, false, false, 15, false, false)
 	end
 end
+
+modifier_item_greatwyrm_plate_out_dmg_reduce = class({})
+
+function modifier_item_greatwyrm_plate_out_dmg_reduce:IsDebuff()			return true end
+function modifier_item_greatwyrm_plate_out_dmg_reduce:IsHidden() 			return false end
+function modifier_item_greatwyrm_plate_out_dmg_reduce:IsPurgable() 			return false end
+function modifier_item_greatwyrm_plate_out_dmg_reduce:IsPurgeException() 	return false end
+function modifier_item_greatwyrm_plate_out_dmg_reduce:RemoveOnDeath() return self:GetParent():IsIllusion() end
+function modifier_item_greatwyrm_plate_out_dmg_reduce:DeclareFunctions() return {MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE} end
+function modifier_item_greatwyrm_plate_out_dmg_reduce:GetModifierTotalDamageOutgoing_Percentage() return (0 -  self:GetAbility():GetSpecialValueFor("disable_out_dmg_reduce")) end

@@ -82,7 +82,7 @@ function modifier_imba_luna_moon_glaive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or self:GetParent():HasModifier("modifier_imba_luna_moon_glaive_nodmg") or not self:GetParent().splitattack then
+	if keys.attacker ~= self:GetParent() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or self:GetParent():HasModifier("modifier_imba_luna_moon_glaive_nodmg") or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	local dmg = keys.original_damage

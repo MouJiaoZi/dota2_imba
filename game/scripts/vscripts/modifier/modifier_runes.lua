@@ -47,8 +47,8 @@ function modifier_imba_rune_haste:IsPurgeException() 	return false end
 function modifier_imba_rune_haste:GetTexture() return "rune_haste" end
 function modifier_imba_rune_haste:GetEffectName() return "particles/generic_gameplay/rune_haste_owner.vpcf" end
 function modifier_imba_rune_haste:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
-function modifier_imba_rune_haste:GetModifierMoveSpeed_Max() return 10000 end
+function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_rune_haste:GetIMBAMaxMovespeed() return 10000 end
 function modifier_imba_rune_haste:GetModifierMoveSpeedBonus_Percentage() return 100 end
 function modifier_imba_rune_haste:GetModifierAttackSpeedBonus_Constant() return 100 end
 
@@ -75,8 +75,8 @@ function modifier_imba_rune_haste_ally:IsPurgeException() 	return false end
 function modifier_imba_rune_haste_ally:GetTexture() return "rune_haste" end
 function modifier_imba_rune_haste_ally:GetEffectName() return "particles/generic_gameplay/rune_haste_owner.vpcf" end
 function modifier_imba_rune_haste_ally:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_haste_ally:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
-function modifier_imba_rune_haste_ally:GetModifierMoveSpeed_Max() return 10000 end
+function modifier_imba_rune_haste_ally:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_rune_haste_ally:GetIMBAMaxMovespeed() return 10000 end
 function modifier_imba_rune_haste_ally:GetModifierMoveSpeedBonus_Percentage() return 50 end
 function modifier_imba_rune_haste_ally:GetModifierAttackSpeedBonus_Constant() return 50 end
 

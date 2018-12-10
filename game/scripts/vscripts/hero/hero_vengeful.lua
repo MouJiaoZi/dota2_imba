@@ -36,7 +36,7 @@ function imba_vengeful_magic_missile:OnSpellStart()
 end
 
 function imba_vengeful_magic_missile:OnProjectileHit_ExtraData(target, location, keys)
-	if not target then
+	if not target or target:IsMagicImmune() then
 		return
 	end
 	if keys.main == 1 then

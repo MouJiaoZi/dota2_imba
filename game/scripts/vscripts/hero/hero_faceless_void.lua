@@ -243,7 +243,7 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return 
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or self:GetParent():PassivesDisabled() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or self:GetParent():PassivesDisabled() or not keys.target:IsAlive() then
 		return
 	end
 	if keys.target:IsBuilding() or keys.target:IsOther() then
@@ -270,11 +270,14 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 								}
 			ApplyDamage(damageTable)
 		end
-		for i = 1, attacks do
-			if enemies[i] then
-				self:GetParent().splitattack = false
-				self:GetParent():PerformAttack(enemies[i], true, true, true, true, false, false, true)
-				self:GetParent().splitattack = true
+		if self:GetAbility():IsCooldownReady() then
+			for i = 1, attacks do
+				if enemies[i] then
+					self:GetAbility():UseResources(true, true, true)
+					self:GetParent().splitattack = false
+					self:GetParent():PerformAttack(enemies[i], true, true, true, true, false, false, true)
+					self:GetParent().splitattack = true
+				end
 			end
 		end
 	end
@@ -316,7 +319,7 @@ function modifier_imba_faceless_void_timelord_thinker:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or self:GetParent():IsIllusion() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or self:GetParent():IsIllusion() or not keys.target:IsAlive() then
 		return
 	end
 	if keys.target:IsBuilding() or keys.target:IsOther() then
@@ -511,10 +514,10 @@ function modifier_imba_faceless_void_chronosphere_debuff:CheckState()
 end
 
 function modifier_imba_faceless_void_chronosphere_debuff:DeclareFunctions()
-	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_TURN_RATE_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_EVENT_ON_ATTACK_LANDED}
+	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE_MIN, MODIFIER_PROPERTY_TURN_RATE_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE_MAX, MODIFIER_EVENT_ON_ATTACK_LANDED}
 end
 
-function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_Absolute()
+function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_AbsoluteMin()
 	if self.buff_type == Chronosphere_Caster then
 		return self:GetAbility():GetSpecialValueFor("chrono_ms")
 	elseif self.buff_type == Chronosphere_Ally_Scepter then
@@ -524,9 +527,13 @@ function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_Ab
 	end
 end
 
-function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_Max()
+function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_AbsoluteMax()
 	if self.buff_type ==  Chronosphere_Caster then
 		return 10000
+	elseif self.buff_type == Chronosphere_Ally_Scepter then
+		return self.ms
+	else
+		return nil
 	end
 end
 
@@ -553,7 +560,7 @@ function modifier_imba_faceless_void_chronosphere_debuff:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetCaster() or self:GetAbility() ~= self:GetParent():FindAbilityByName("imba_faceless_void_chronosphere") then
 		return
 	end
-	if keys.target:IsBuilding() or keys.target:IsOther() or not keys.target:HasModifier("modifier_imba_faceless_void_chronosphere_debuff") then
+	if keys.target:IsBuilding() or keys.target:IsOther() or not keys.target:HasModifier("modifier_imba_faceless_void_chronosphere_debuff") or not keys.target:IsAlive() then
 		return
 	end
 	self:IncrementStackCount()

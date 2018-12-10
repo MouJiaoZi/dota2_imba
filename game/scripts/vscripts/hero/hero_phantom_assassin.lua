@@ -269,7 +269,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or not keys.target:IsAlive() then
 		return
 	end
 	if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() and self:GetParent():IsRealHero() then

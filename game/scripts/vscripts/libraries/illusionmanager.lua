@@ -106,7 +106,6 @@ function modifier_imba_illusion_hidden_model:GetModifierModelChange() return "mo
 function IllusionManager:CreateIllusion(hBaseUnit, vSpawnAbs, vSpawnForward, iOutgoingDMG, iIncomingDMG, iIllsuionType, fDuration, hOwner, sUniqueString)
 	local owner = hOwner or hBaseUnit
 	local illusion
-
 	if sUniqueString then
 		if not uniqueIllsuionTable[sUniqueString] or uniqueIllsuionTable[sUniqueString]:IsNull() then
 			uniqueIllsuionTable[sUniqueString] = CreateUnitByName(hBaseUnit:GetUnitName(), vSpawnAbs, true, owner, owner, owner:GetTeamNumber())
@@ -145,6 +144,8 @@ local forbidden_buff = {
 	"modifier_morphling_replicate",
 	"modifier_gyrocopter_flak_cannon_scepter",
 	"modifier_morphling_replicate_manager",
+	"modifier_imba_burrow",
+	"modifier_doom_bringer_devour",
 	}
 
 function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDMG, iIncomingDMG, iIllsuionType, fDuration)
@@ -217,9 +218,8 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 			if (buff.AllowIllusionDuplicate and not buff:AllowIllusionDuplicate()) or (buff:GetAbility():IsItem() and buff:GetName() ~= "midifier_imba_armlet_active_unique") or IsInTable(buff:GetName(), forbidden_buff) then
 				--nothing
 			else
-				--print(buff:GetName(), "123")
 				local caster = buff:GetCaster() == hBaseUnit and hIllusion or buff:GetCaster()
-				local ibuff = hIllusion:AddNewModifier(caster, buff:GetAbility(), buff:GetName(), {duration = buff:GetDuration()})
+				local ibuff = hIllusion:AddNewModifier(caster, buff:GetAbility(), buff:GetName(), {duration = buff:GetRemainingTime()})
 				if ibuff then
 					ibuff:SetStackCount(buff:GetStackCount())
 				end

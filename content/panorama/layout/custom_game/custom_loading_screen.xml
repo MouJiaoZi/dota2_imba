@@ -15,9 +15,16 @@
 		</Panel>
 
 		<!-- This is comes form LOD REDUX github.com/darklordabc/Legends-of-Dota-Redux/ !-->
-		 <Panel id="LoDLoadingTip" class="workingPanel">
-            <Image id="LoDLoadingTipImage" />
-            <Panel hittest="false" id="LoDLoadingTipText"/>
-        </Panel>
+		<Panel id="LoDLoadingTip" class="workingPanel">
+			<Image id="LoDLoadingTipImage" />
+			<Panel hittest="false" id="LoDLoadingTipText"/>
+		</Panel>
+		<Panel id="DMOMGVotePanel" class="OMGPanel TopBottomFlow" hittest="true" hittestchildren="true">
+			<Label id="DMOMGVoteTitle" class="OMGTitle" text="#IMBA_HUD_OMGVoteTitle" />
+			<Label id="DMOMGVoteNum" class="OMGNum" text="0" />
+			<Button id="DMOMGVoteButton" class="OMGVoteButton" onactivate="IMBAVoteForOMG();">
+				<Label text="+1" />
+			</Button>
+		</Panel>
 	</Panel>
 </root>

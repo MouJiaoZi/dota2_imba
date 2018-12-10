@@ -76,7 +76,7 @@ function modifier_imba_shotgun_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and self.ability:IsCooldownReady() and self:GetParent().splitattack and not self:GetParent():HasModifier("modifier_imba_starfury_unique") and not self:GetParent():IsIllusion() then
+	if keys.attacker == self:GetParent() and self.ability:IsCooldownReady() and self:GetParent().splitattack and not self:GetParent():HasModifier("modifier_imba_starfury_unique") and not self:GetParent():IsIllusion() and keys.target:IsAlive() then
 		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), keys.target:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("proc_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_ANY_ORDER, false)
 		local targets = self.ability:GetSpecialValueFor("max_targets")
 		local target = 0

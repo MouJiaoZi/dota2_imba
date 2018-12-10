@@ -25,6 +25,9 @@ end
 
 function ArcaneOrb_AttackLanded(keys)
 	local caster = keys.attacker
+	if caster:IsIllusion() then
+		return
+	end
 	local target = keys.target
 	local ability = keys.ability
 	if target:IsIllusion() or target:IsCreature() then

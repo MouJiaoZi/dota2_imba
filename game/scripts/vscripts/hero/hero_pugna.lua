@@ -286,7 +286,7 @@ function modifier_imba_nether_ward:GetAuraSearchFlags() return DOTA_UNIT_TARGET_
 function modifier_imba_nether_ward:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
 function modifier_imba_nether_ward:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
 function modifier_imba_nether_ward:DeclareFunctions() return {MODIFIER_EVENT_ON_SPENT_MANA, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_IGNORE_CAST_ANGLE, MODIFIER_PROPERTY_CASTTIME_PERCENTAGE, MODIFIER_PROPERTY_CAST_RANGE_BONUS} end
-function modifier_imba_nether_ward:GetModifierCastRangeBonus() return 50000 end
+function modifier_imba_nether_ward:GetModifierCastRangeBonus() return 1000 end
 function modifier_imba_nether_ward:GetModifierPercentageCasttime() return -100 end
 function modifier_imba_nether_ward:GetModifierIgnoreCastAngle() return 360 end
 function modifier_imba_nether_ward:GetModifierHPRegenAmplify_Percentage() return -100 end
@@ -441,7 +441,8 @@ function modifier_imba_nether_ward:OnSpentMana(keys)
 		"monkey_king_primal_spring",
 		"monkey_king_wukongs_command",
 		"imba_skywrath_mage_concussive_shot",
-		"imba_silencer_glaives_of_wisdom"
+		"imba_silencer_glaives_of_wisdom",
+		"keeper_of_the_light_will_o_wisp",
 	}
 	if IsInTable(keys.ability:GetName(), forbidden_abilities) or (keys.ability.IsNetherWardStealable and not keys.ability:IsNetherWardStealable()) or not self:GetParent():IsIdle() or bit.band(keys.ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_CHANNELLED) == DOTA_ABILITY_BEHAVIOR_CHANNELLED or keys.ability:IsItem() then
 		return

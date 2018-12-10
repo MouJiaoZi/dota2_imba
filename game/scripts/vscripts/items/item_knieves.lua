@@ -69,7 +69,7 @@ function modifier_imba_yasha_unique:OnCreated() self.ability = self:GetAbility()
 function modifier_imba_yasha_unique:OnDestroy() self.ability = nil end
 
 function modifier_imba_yasha_unique:OnAttackLanded(keys)
-	if not IsServer() or keys.attacker ~= self:GetParent() or not self:GetParent().splitattack or self:GetParent():IsIllusion() then
+	if not IsServer() or keys.attacker ~= self:GetParent() or not self:GetParent().splitattack or self:GetParent():IsIllusion() or not keys.target:IsAlive() then
 		return
 	end
 	local buff = self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_yasha_stacks", {duration = self.ability:GetSpecialValueFor("stack_duration")})
@@ -141,7 +141,7 @@ function modifier_imba_sange_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent():IsIllusion() or self:GetParent() ~= keys.attacker or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() then
+	if self:GetParent():IsIllusion() or self:GetParent() ~= keys.attacker or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() or not keys.target:IsAlive() then
 		return
 	end
 	local max_stacks = (self.ability:GetSpecialValueFor("maim_cap") - self.ability:GetSpecialValueFor("maim_base")) / self.ability:GetSpecialValueFor('maim_stacking')
@@ -227,7 +227,7 @@ function modifier_imba_azura_unique:OnDestroy() self.ability = nil end
 function modifier_imba_azura_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
 
 function modifier_imba_azura_unique:OnAttackLanded(keys)
-	if not IsServer() or self:GetParent() ~= keys.attacker then
+	if not IsServer() or self:GetParent() ~= keys.attacker or not keys.target:IsAlive() then
 		return
 	end
 	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) then
@@ -313,7 +313,7 @@ function modifier_imba_sange_and_yasha_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent():IsIllusion() or self:GetParent() ~= keys.attacker or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() then
+	if self:GetParent():IsIllusion() or self:GetParent() ~= keys.attacker or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() or not keys.target:IsAlive() then
 		return
 	end
 	local buff = self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_yasha_stacks", {duration = self.ability:GetSpecialValueFor("passive_duration")})
@@ -383,7 +383,7 @@ function modifier_imba_sange_and_azura_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent() ~= keys.attacker or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() then
+	if self:GetParent() ~= keys.attacker or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
 	local buff2 = keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_maim", {duration = self.ability:GetSpecialValueFor("passive_duration")})
@@ -479,7 +479,7 @@ function modifier_imba_azura_and_yasha_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
 	local buff = self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_yasha_stacks", {duration = self.ability:GetSpecialValueFor("stack_duration")})
@@ -577,7 +577,7 @@ function modifier_imba_triumvirate_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
 	local buff = self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_yasha_stacks", {duration = self.ability:GetSpecialValueFor("stack_duration")})
@@ -695,7 +695,7 @@ function modifier_imba_manta_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
 	if RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) then
@@ -782,7 +782,7 @@ function modifier_imba_heavens_halberd_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent():IsIllusion() or self:GetParent() ~= keys.attacker or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() then
+	if self:GetParent():IsIllusion() or self:GetParent() ~= keys.attacker or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() or not keys.target:IsAlive() then
 		return
 	end
 	local max_stacks = (self.ability:GetSpecialValueFor("maim_cap") - self.ability:GetSpecialValueFor("maim_base")) / self.ability:GetSpecialValueFor('maim_stacking')

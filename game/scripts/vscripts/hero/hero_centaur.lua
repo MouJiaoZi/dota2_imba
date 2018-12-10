@@ -292,9 +292,6 @@ function modifier_imba_centaur_stampede:OnCreated()
 				end
 			end
 		end
-		if self:GetParent() ~= self:GetCaster() then
-			return
-		end
 		self:StartIntervalThink(0.1)
 	end
 end
@@ -304,21 +301,23 @@ function modifier_imba_centaur_stampede:OnIntervalThink()
 	if not self:GetParent():HasModifier("modifier_treant_natures_guise_near_tree_display") then
 		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), ability:GetSpecialValueFor("tree_radius"), true)
 	end
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-	for _, enemy in pairs(enemies) do
-		if not IsInTable(enemy, self:GetAbility().hit) then
-			ability.hit[#ability.hit + 1] = enemy
-			local dmg = ability:GetSpecialValueFor("strength_damage") / 100 * self:GetCaster():GetStrength()
-			local damageTable = {
-								victim = enemy,
-								attacker = self:GetParent(),
-								damage = dmg,
-								damage_type = ability:GetAbilityDamageType(),
-								damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
-								ability = ability, --Optional.
-								}
-			ApplyDamage(damageTable)
-			enemy:AddNewModifier(self:GetCaster(), ability, "modifier_imba_stunned", {duration = ability:GetSpecialValueFor("stun_duration")})
+	if self:GetParent() == self:GetCaster() then
+		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+		for _, enemy in pairs(enemies) do
+			if not IsInTable(enemy, self:GetAbility().hit) then
+				ability.hit[#ability.hit + 1] = enemy
+				local dmg = ability:GetSpecialValueFor("strength_damage") / 100 * self:GetCaster():GetStrength()
+				local damageTable = {
+									victim = enemy,
+									attacker = self:GetParent(),
+									damage = dmg,
+									damage_type = ability:GetAbilityDamageType(),
+									damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
+									ability = ability, --Optional.
+									}
+				ApplyDamage(damageTable)
+				enemy:AddNewModifier(self:GetCaster(), ability, "modifier_imba_stunned", {duration = ability:GetSpecialValueFor("stun_duration")})
+			end
 		end
 	end
 end
@@ -330,10 +329,10 @@ function modifier_imba_centaur_stampede:OnDestroy()
 end
 
 function modifier_imba_centaur_stampede:DeclareFunctions()
-	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, }
+	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE_MIN, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,}
 end
 
-function modifier_imba_centaur_stampede:GetModifierMoveSpeed_Absolute() return 550 end
+function modifier_imba_centaur_stampede:GetModifierMoveSpeed_AbsoluteMin() return 550 end
 
 function modifier_imba_centaur_stampede:GetModifierIncomingDamage_Percentage()
 	if self:GetCaster():HasScepter() then

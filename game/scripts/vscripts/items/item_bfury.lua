@@ -35,7 +35,7 @@ function modifier_imba_bfury_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or not keys.target:IsAlive() then
 		return
 	end
 	local cleave_pct = self:GetParent():IsRangedAttacker() and self:GetAbility():GetSpecialValueFor("ranged_cleave_damage") or self:GetAbility():GetSpecialValueFor("melee_cleave_damage")

@@ -357,7 +357,7 @@ function imba_crystal_maiden_freezing_field:OnSpellStart()
 	else
 		self.thinker = CreateModifierThinker(caster, self, "modifier_imba_freezing_field_thinker", {duration = self:GetSpecialValueFor("duration") + 0.1}, pos, caster:GetTeamNumber(), false)
 	end
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	local frostbite = caster:FindAbilityByName("imba_crystal_maiden_frostbite")
 	if frostbite and frostbite:GetLevel() > 0 then
 		for _, enemy in pairs(enemies) do

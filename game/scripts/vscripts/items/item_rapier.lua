@@ -1,5 +1,25 @@
 
 
+LinkLuaModifier("modifier_imba_rapier_vision", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
+
+modifier_imba_rapier_vision = class({})
+
+function modifier_imba_rapier_vision:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(1.0)
+	end
+end
+
+function modifier_imba_rapier_vision:OnIntervalThink()
+	if not self:GetAbility() or self:GetAbility():IsNull() or self:GetAbility():GetPurchaser() then
+		self:Destroy()
+		return
+	end
+	for i = 2, 3 do
+		AddFOWViewer(i, self:GetAbility():GetAbsOrigin(), 300, 1.0, false)
+	end
+end
+
 item_imba_rapier = class({})
 
 LinkLuaModifier("modifier_imba_rapier_unique", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
@@ -12,6 +32,12 @@ function item_imba_rapier:OnOwnerDied()
 	if not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		self:LaunchLoot(false, 250, 0.5, self:GetCaster():GetAbsOrigin() + RandomVector(100))
+		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
+		Notifications:BottomToAll({text="#"..self:GetPurchaser():GetUnitName(), continue=true})
+		Notifications:BottomToAll({text="IMBA_RAPIER_DROPPED", continue=true})
+		Notifications:BottomToAll({text="#DOTA_Tooltip_ability_"..self:GetName(), continue=true})
+		self:SetPurchaser(nil)
+		CreateModifierThinker(nil, self, "modifier_imba_rapier_vision", {}, self:GetAbsOrigin(), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -29,7 +55,6 @@ function modifier_imba_rapier_unique:GetModifierPreAttack_BonusDamage() return s
 item_imba_rapier_2 = class({})
 
 LinkLuaModifier("modifier_imba_rapier_three_unique", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_rapier_three_pfx_dummy", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
 
 item_imba_rapier_2 = class({})
 
@@ -41,8 +66,12 @@ function item_imba_rapier_2:OnOwnerDied()
 		local pos = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100
 		pos = RotatePosition(self:GetCaster():GetAbsOrigin(), QAngle(0, RandomInt(0, 360), 0), pos)
 		self:LaunchLoot(false, 250, 0.5, pos)
-		self.dummy.pos = pos
-		self.dummy:FindModifierByName("modifier_rapier_three_pfx_dummy"):SetStackCount(0)
+		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
+		Notifications:BottomToAll({text="#"..self:GetPurchaser():GetUnitName(), continue=true})
+		Notifications:BottomToAll({text="IMBA_RAPIER_DROPPED", continue=true})
+		Notifications:BottomToAll({text="#DOTA_Tooltip_ability_"..self:GetName(), continue=true})
+		self:SetPurchaser(nil)
+		CreateModifierThinker(nil, self, "modifier_imba_rapier_vision", {}, self:GetAbsOrigin(), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -59,38 +88,6 @@ function modifier_imba_rapier_three_unique:DeclareFunctions() return {MODIFIER_P
 function modifier_imba_rapier_three_unique:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_rapier_three_unique:GetModifierProvidesFOWVision() return 1 end
 
-function modifier_imba_rapier_three_unique:OnCreated()
-	if IsServer() then
-		local item = self:GetAbility()
-		if not item.dummy then
-			item.dummy = CreateModifierThinker(nil, nil, "modifier_rapier_three_pfx_dummy", {}, self:GetParent():GetAbsOrigin(), 0, false)
-			--item.dummy.master = self:GetAbility()
-		end
-		item.dummy:FindModifierByName("modifier_rapier_three_pfx_dummy"):SetStackCount(1)
-	end
-end
-
-modifier_rapier_three_pfx_dummy = class({})
-
-function modifier_rapier_three_pfx_dummy:OnCreated()
-	if IsServer() then
-		self.pfx = ParticleManager:CreateParticle("particles/item/rapier/item_rapier_4.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		self:StartIntervalThink(0.1)
-	end
-end
-
-function modifier_rapier_three_pfx_dummy:OnIntervalThink()
-	local dummy = self:GetParent()
-	if self:GetStackCount() == 0 then
-		AddFOWViewer(DOTA_TEAM_GOODGUYS, dummy.pos, 10.0, 0.1, false)
-		AddFOWViewer(DOTA_TEAM_BADGUYS, dummy.pos, 10.0, 0.1, false)
-		dummy:SetAbsOrigin(dummy.pos)
-		dummy:RemoveNoDraw()
-	else
-		dummy:AddNoDraw()
-	end
-end
-
 
 
 item_imba_rapier_magic = class({})
@@ -105,6 +102,12 @@ function item_imba_rapier_magic:OnOwnerDied()
 	if not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		self:LaunchLoot(false, 250, 0.5, self:GetCaster():GetAbsOrigin() + RandomVector(100))
+		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
+		Notifications:BottomToAll({text="#"..self:GetPurchaser():GetUnitName(), continue=true})
+		Notifications:BottomToAll({text="IMBA_RAPIER_DROPPED", continue=true})
+		Notifications:BottomToAll({text="#DOTA_Tooltip_ability_"..self:GetName(), continue=true})
+		self:SetPurchaser(nil)
+		CreateModifierThinker(nil, self, "modifier_imba_rapier_vision", {}, self:GetAbsOrigin(), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -123,7 +126,6 @@ function modifier_imba_rapier_magic_unique:GetModifierSpellAmplify_Percentage() 
 item_imba_rapier_magic_2 = class({})
 
 LinkLuaModifier("modifier_imba_rapier_magic_three_unique", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_rapier_magic_three_pfx_dummy", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
 
 item_imba_rapier_magic_2 = class({})
 
@@ -135,8 +137,12 @@ function item_imba_rapier_magic_2:OnOwnerDied()
 		local pos = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100
 		pos = RotatePosition(self:GetCaster():GetAbsOrigin(), QAngle(0, RandomInt(0, 360), 0), pos)
 		self:LaunchLoot(false, 250, 0.5, pos)
-		self.dummy.pos = pos
-		self.dummy:FindModifierByName("modifier_rapier_magic_three_pfx_dummy"):SetStackCount(0)
+		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
+		Notifications:BottomToAll({text="#"..self:GetPurchaser():GetUnitName(), continue=true})
+		Notifications:BottomToAll({text="IMBA_RAPIER_DROPPED", continue=true})
+		Notifications:BottomToAll({text="#DOTA_Tooltip_ability_"..self:GetName(), continue=true})
+		self:SetPurchaser(nil)
+		CreateModifierThinker(nil, self, "modifier_imba_rapier_vision", {}, self:GetAbsOrigin(), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -153,45 +159,12 @@ function modifier_imba_rapier_magic_three_unique:DeclareFunctions() return {MODI
 function modifier_imba_rapier_magic_three_unique:GetModifierSpellAmplify_Percentage() return self:GetAbility():GetSpecialValueFor("spell_power") end
 function modifier_imba_rapier_magic_three_unique:GetModifierProvidesFOWVision() return 1 end
 
-function modifier_imba_rapier_magic_three_unique:OnCreated()
-	if IsServer() then
-		local item = self:GetAbility()
-		if not item.dummy then
-			item.dummy = CreateModifierThinker(nil, nil, "modifier_rapier_magic_three_pfx_dummy", {}, self:GetParent():GetAbsOrigin(), 0, false)
-			--item.dummy.master = self:GetAbility()
-		end
-		item.dummy:FindModifierByName("modifier_rapier_magic_three_pfx_dummy"):SetStackCount(1)
-	end
-end
-
-modifier_rapier_magic_three_pfx_dummy = class({})
-
-function modifier_rapier_magic_three_pfx_dummy:OnCreated()
-	if IsServer() then
-		self.pfx = ParticleManager:CreateParticle("particles/item/rapier/item_rapier_10.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		self:StartIntervalThink(0.1)
-	end
-end
-
-function modifier_rapier_magic_three_pfx_dummy:OnIntervalThink()
-	local dummy = self:GetParent()
-	if self:GetStackCount() == 0 then
-		AddFOWViewer(DOTA_TEAM_GOODGUYS, dummy.pos, 10.0, 0.1, false)
-		AddFOWViewer(DOTA_TEAM_BADGUYS, dummy.pos, 10.0, 0.1, false)
-		dummy:SetAbsOrigin(dummy.pos)
-		dummy:RemoveNoDraw()
-	else
-		dummy:AddNoDraw()
-	end
-end
-
 
 
 item_imba_rapier_cursed = class({})
 
 LinkLuaModifier("modifier_imba_rapier_super_passive", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rapier_super_unique", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_rapier_super_pfx_dummy", "items/item_rapier", LUA_MODIFIER_MOTION_NONE)
 
 item_imba_rapier_cursed = class({})
 
@@ -203,8 +176,12 @@ function item_imba_rapier_cursed:OnOwnerDied()
 		local pos = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100
 		pos = RotatePosition(self:GetCaster():GetAbsOrigin(), QAngle(0, RandomInt(0, 360), 0), pos)
 		self:LaunchLoot(false, 250, 0.5, pos)
-		self.dummy.pos = pos
-		self.dummy:FindModifierByName("modifier_rapier_super_pfx_dummy"):SetStackCount(0)
+		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
+		Notifications:BottomToAll({text="#"..self:GetPurchaser():GetUnitName(), continue=true})
+		Notifications:BottomToAll({text="IMBA_RAPIER_DROPPED", continue=true})
+		Notifications:BottomToAll({text="#DOTA_Tooltip_ability_"..self:GetName(), continue=true})
+		self:SetPurchaser(nil)
+		CreateModifierThinker(nil, self, "modifier_imba_rapier_vision", {}, self:GetAbsOrigin(), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -224,12 +201,6 @@ function modifier_imba_rapier_super_passive:GetModifierProvidesFOWVision() retur
 
 function modifier_imba_rapier_super_passive:OnCreated()
 	if IsServer() then
-		local item = self:GetAbility()
-		if not item.dummy then
-			item.dummy = CreateModifierThinker(nil, nil, "modifier_rapier_super_pfx_dummy", {}, self:GetParent():GetAbsOrigin(), 0, false)
-			--item.dummy.master = self:GetAbility()
-		end
-		item.dummy:FindModifierByName("modifier_rapier_super_pfx_dummy"):SetStackCount(1)
 		self:StartIntervalThink(0.1)
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_rapier_super_unique", {})
 	end
@@ -262,24 +233,3 @@ function modifier_imba_rapier_super_unique:IsPurgeException() 	return false end
 function modifier_imba_rapier_super_unique:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING} end
 function modifier_imba_rapier_super_unique:GetModifierIncomingDamage_Percentage() return (0 - self.ability:GetSpecialValueFor("damage_reduction")) end
 function modifier_imba_rapier_super_unique:GetModifierStatusResistanceStacking() return self.ability:GetSpecialValueFor("disable_reduction") end
-
-modifier_rapier_super_pfx_dummy = class({})
-
-function modifier_rapier_super_pfx_dummy:OnCreated()
-	if IsServer() then
-		self.pfx = ParticleManager:CreateParticle("particles/item/rapier/item_rapier_cursed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		self:StartIntervalThink(0.1)
-	end
-end
-
-function modifier_rapier_super_pfx_dummy:OnIntervalThink()
-	local dummy = self:GetParent()
-	if self:GetStackCount() == 0 then
-		AddFOWViewer(DOTA_TEAM_GOODGUYS, dummy.pos, 10.0, 0.1, false)
-		AddFOWViewer(DOTA_TEAM_BADGUYS, dummy.pos, 10.0, 0.1, false)
-		dummy:SetAbsOrigin(dummy.pos)
-		dummy:RemoveNoDraw()
-	else
-		dummy:AddNoDraw()
-	end
-end

@@ -469,11 +469,6 @@
 				"var_type"				"FIELD_INTEGER"
 				"bonus_intellect"		"4"
 			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"4"
-			}
 		}
 	}
 
@@ -540,11 +535,6 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"bonus_intellect"		"4"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"4"
 			}
 		}
 	}
@@ -613,15 +603,9 @@
 				"var_type"				"FIELD_INTEGER"
 				"bonus_intellect"		"8"
 			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"4"
-			}
 		}
 	}
 	
-
 	//=================================================================================================================
 	// Recipe: Mekansm
 	//=================================================================================================================
@@ -3441,7 +3425,7 @@
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"1400"	
+		"ItemCost"						"0"	
 		"ItemShopTags"					""
 		
 		// Recipe
@@ -3450,7 +3434,7 @@
 		"ItemResult"					"item_imba_heart"
 		"ItemRequirements"
 		{
-			"01"						"item_reaver;item_vitality_booster"
+			"01"						"item_reaver;item_vitality_booster;item_ring_of_tarrasque;item_ring_of_tarrasque"
 		}
 	}
 
@@ -3488,7 +3472,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_health"			"300"
+				"bonus_health"			"600"
 			}
 			"03"
 			{
@@ -4132,7 +4116,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"ID"							"2184"
 		"BaseClass"						"item_lua"
-		"AbilityTextureName" 			"custom/imba_greatwyrm_plate"
+		"AbilityTextureName" 			"custom/greatwyrm_plate_0"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
@@ -4141,7 +4125,7 @@
 
 		// Stats		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"60.0"
+		"AbilityCooldown"				"40.0"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -4193,8 +4177,8 @@
 			}
 			"08"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"duration"				"7"
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"7.0"
 			}
 			"09"
 			{
@@ -4209,7 +4193,7 @@
 			"11"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"statue_resis"			"30"
+				"statue_resis"			"40"
 			}
 			"12"
 			{
@@ -4225,6 +4209,16 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"max_damage_reduce"		"80"
+			}
+			"15"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"disable_duration"		"2.5"
+			}
+			"16"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"disable_out_dmg_reduce" "50"
 			}
 		}
 	}
@@ -7656,106 +7650,6 @@
 	}
 	
 	//=================================================================================================================
-	// Recipe: Ring of Aquila
-	//=================================================================================================================
-	"item_recipe_imba_ring_of_aquila"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"2105"
-		"BaseClass"						"item_datadriven"
-		"AbilityTextureName" 			"custom/imba_recipe"
-		
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"0"	
-		"ItemShopTags"					""
-		
-		// Recipe
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemRecipe"					"1"
-		"ItemResult"					"item_imba_ring_of_aquila"
-		"ItemRequirements"
-		{
-			"01"						"item_imba_wraith_band;item_imba_ring_of_basilius"
-		}
-	}
-
-	//=================================================================================================================
-	// Ring of Aquila
-	//=================================================================================================================
-	"item_imba_ring_of_aquila"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"1212"
-		"BaseClass"						"item_ring_of_aquila"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE"
-		
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"840"
-		"ItemShopTags"					""
-		"ItemQuality"					"rare"
-		"ItemAliases"					"roa;ring of aquila"
-		"ItemShareability"				""		
-		"ItemDisassembleRule"			"DOTA_ITEM_DISASSEMBLE_ALWAYS"
-
-		// Sound
-		//-------------------------------------------------------------------------------------------------------------
-		"UIPickupSound"					"Item.PickUpRingShop"
-		"UIDropSound"					"Item.DropRingShop"
-		"WorldDropSound"				"Item.DropRingWorld"
-		
-		// Special	
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"12"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_strength"		"4"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_agility"			"12"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_intellect"		"4"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_armor"			"0"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"aura_radius"			"1200"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"aura_mana_regen"		"2.0"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"aura_bonus_armor"		"3"
-			}
-		}		
-	}
-
-
-	//=================================================================================================================
 	// Recipe: White Queen Cape
 	//=================================================================================================================
 	"item_recipe_imba_white_queen_cape"
@@ -7912,99 +7806,6 @@
 			}
 		}
 	}
-
-	//=================================================================================================================
-	// Recipe: Lotus Orb
-	//=================================================================================================================
-	//"item_recipe_imba_lotus_orb"
-	//{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-	//	"ID"							"2116"
-	//	"BaseClass"						"item_datadriven"
-	//	"AbilityTextureName" 			"custom/imba_recipe"
-	//	"Model"							"models/props_gameplay/recipe.mdl"
-		
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-	//	"ItemCost"						"900"	
-	//	"ItemShopTags"					""
-		
-		// Recipe
-		//-------------------------------------------------------------------------------------------------------------
-	//	"ItemRecipe"					"1"
-	//	"ItemResult"					"item_imba_lotus_orb"
-	//	"ItemRequirements"
-	//	{
-	//		"01"						"item_pers;item_platemail"
-	//	}
-	//}
-	
-	//=================================================================================================================
-	// Lotus Orb
-	//=================================================================================================================
-	//"item_imba_lotus_orb"
-	//{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-	//	"ID"							"2117"
-	//	"BaseClass"						"item_lotus_orb"
-	//	"AbilityTextureName" 			"item_imba_lotus_orb"
-	//	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
-	//	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
-	//	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
-	//	"FightRecapLevel"				"1"
-		
-	//	"AbilityCooldown"				"12.0"
-	//	"AbilityCastRange"				"1000"
-	//	"AbilityManaCost"				"50"
-
-
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-	//	"ItemCost"						"4050"
-	//	"ItemShopTags"					"regen_health;regen_mana;str;agi;int;hard_to_tag"
-	//	"ItemQuality"					"epic"
-	//	"ItemAliases"					"ls;lotus orb"
-	//	"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_IN_SPEECH | DECLARE_PURCHASES_TO_SPECTATORS"
-	//	"ItemDisassembleRule"			"DOTA_ITEM_DISASSEMBLE_ALWAYS"
-		
-		// Special	
-		//-------------------------------------------------------------------------------------------------------------
-	//	"AbilitySpecial"
-	//	{
-	//		"01"
-	//		{
-	//			"var_type"				"FIELD_INTEGER"
-	//			"bonus_damage"			"15"
-	//		}
-	//		"02"
-	//		{
-	//			"var_type"				"FIELD_INTEGER"
-	//			"bonus_armor"			"12"
-	//		}
-	//		"03"
-	//		{
-	//			"var_type"				"FIELD_INTEGER"
-	//			"bonus_health_regen"	"10"
-	//		}
-	//		"04"
-	//		{
-	//			"var_type"				"FIELD_INTEGER"
-	//			"bonus_mana_regen"		"200"
-	//		}			
-	//		"05"
-	//		{
-	//			"var_type"				"FIELD_FLOAT"
-	//			"active_duration"		"6"
-	//		}
-	//		"06"
-	//		{
-	//			"var_type"				"FIELD_FLOAT"
-	//			"cast_range_tooltip"	"1000"
-	//		}
-	//	}
-	//}
 
 	//=================================================================================================================
 	// Recipe: Octarine Core
@@ -8697,6 +8498,11 @@
 				"var_type"				"FIELD_INTEGER"
 				"new_ms_limit"			"700"
 			}
+			"06"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_armor"			"10"
+			}
 		}
 	}
 
@@ -9251,79 +9057,6 @@
 				"max_stacks"			"250"
 			}
 		}
-		
-		"Modifiers"
-		{
-			"modifier_item_imba_initiate_robe"
-			{
-				"Passive"				"1"
-				"IsHidden"				"1"
-				"IsPurgable"			"0"
-				"IsBuff"				"1"
-				
-				"Attributes" 			"MODIFIER_ATTRIBUTE_MULTIPLE"
-				
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS"		"%magic_resist"
-					"MODIFIER_PROPERTY_MANA_REGEN_CONSTANT"				"1.0"		// this is hardcoded due to an obscure engine bug
-				}
-			}
-			
-			"modifier_item_imba_initiate_robe_unique"
-			{
-				"Passive"				"1"
-				"IsHidden"				"1"
-				"IsPurgable"			"0"
-				"IsBuff"				"1"
-
-				"ThinkInterval"			"0.03"
-
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"items/item_initiate_robe.lua"
-						"Function"			"InitiateRobeThink"
-						
-						"modifier_stacks"	"modifier_item_imba_initiate_robe_stacks"
-						"particle_shield"	"particles/item/initiate_robe/initiate_robe_shield.vpcf"
-					}
-				}
-
-				"OnCreated"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"internal/util.lua"
-						"Function"			"IllusionPassiveRemover"
-
-						"modifier"			"modifier_item_imba_initiate_robe_unique"
-					}
-				}
-
-				"OnDestroy"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"items/item_initiate_robe.lua"
-						"Function"			"InitiateRobeEnd"
-						
-						"modifier_stacks"	"modifier_item_imba_initiate_robe_stacks"
-					}
-				}
-			}
-
-			"modifier_item_imba_initiate_robe_stacks"
-			{
-				"Passive"				"0"
-				"IsHidden"				"0"
-				"IsPurgable"			"0"
-				"IsBuff"				"1"
-
-				"TextureName"			"custom/imba_initiate_robe"
-			}
-		}
 	}
 
 	//=================================================================================================================
@@ -9771,7 +9504,7 @@
 	//=================================================================================================================
 	"item_imba_rapier"
 	{
-		// General
+		// General`
 		//-------------------------------------------------------------------------------------------------------------
 		"ID"									"2065"
 		"BaseClass"								"item_lua"
@@ -9779,6 +9512,7 @@
 		"AbilityBehavior"						"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"									"models/props_gameplay/divine_rapier.mdl"
 		"ScriptFile"							"items/item_rapier.lua"
+		"Effect"								"particles/item/rapier/rapier_trail_regular.vpcf"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -9847,6 +9581,7 @@
 		"AbilityBehavior"						"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"									"models/props_gameplay/divine_rapier.mdl"
 		"ScriptFile"							"items/item_rapier.lua"
+		"Effect"								"particles/item/rapier/item_rapier_4.vpcf"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -9916,6 +9651,7 @@
 		"AbilityBehavior"						"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"									"models/props_gameplay/divine_rapier.mdl"
 		"ScriptFile"							"items/item_rapier.lua"
+		"Effect"								"particles/item/rapier/rapier_trail_arcane.vpcf"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -9984,6 +9720,7 @@
 		"AbilityBehavior"						"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"									"models/props_gameplay/divine_rapier.mdl"
 		"ScriptFile"							"items/item_rapier.lua"
+		"Effect"								"particles/item/rapier/item_rapier_10.vpcf"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -10052,6 +9789,7 @@
 		"AbilityBehavior"						"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"									"models/props_gameplay/divine_rapier.mdl"
 		"ScriptFile"							"items/item_rapier.lua"
+		"Effect"								"particles/item/rapier/item_rapier_cursed.vpcf"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -10360,5 +10098,174 @@
 		}
 	}
 
-	//next free ID: 2226
+	//=================================================================================================================
+	// Crown
+	//=================================================================================================================
+	"item_recipe_imba_crown"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2226"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName" 			"custom/imba_recipe"
+		"Model"							"models/props_gameplay/recipe.mdl"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"2000"
+		"ItemShopTags"					""
+		
+		// Recipe
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemRecipe"					"1"
+		"ItemResult"					"item_imba_crown"
+		"ItemRequirements"
+		{
+			"01"						"item_imba_null_talisman;item_imba_wraith_band;item_imba_bracer"
+		}
+	}
+
+	//=================================================================================================================
+	// Crown
+	//=================================================================================================================
+	"item_imba_crown"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2227"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+		"BaseClass"             		"item_crown"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"0"
+		"ItemShopTags"					"agi;int;str"
+		"ItemQuality"					"component"
+		"ItemAliases"					"crown"
+		"ShouldBeInitiallySuggested"	"1"
+		"SideShop"						"0"
+
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_all_stats"		"16"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Crown
+	//=================================================================================================================
+	"item_recipe_imba_ancient_crown"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2228"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName" 			"custom/imba_recipe"
+		"Model"							"models/props_gameplay/recipe.mdl"
+		
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"1000"
+		"ItemShopTags"					""
+		
+		// Recipe
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemRecipe"					"1"
+		"ItemResult"					"item_imba_ancient_crown"
+		"ItemRequirements"
+		{
+			"01"						"item_imba_crown;item_helm_of_the_dominator"
+		}
+	}
+
+	//=================================================================================================================
+	// Crown
+	//=================================================================================================================
+	"item_imba_ancient_crown"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2229"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+		"BaseClass"             		"item_lua"
+		"AbilityTextureName"			"custom/ancient_crown"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"0"
+		"ItemShopTags"					"agi;int;str"
+		"ItemQuality"					"component"
+		"ItemAliases"					"crown"
+		"ShouldBeInitiallySuggested"	"1"
+		"SideShop"						"0"
+
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_all_stats"		"16"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Super Observer Ward
+	//=================================================================================================================
+	"item_imba_super_ward"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2230"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+		"BaseClass"             		"item_lua"
+		"AbilityTextureName"			"custom/super_ward"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
+		"Model"							"models/particle/legion_duel_banner.vmdl"
+		"ScriptFile"					"items/item_super_ward.lua"
+		"AbilityCastRange"				"200"
+		"AbilityCooldown"				"200"
+		"AbilitySharedCooldown"			"superward"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"100000"
+		"ItemQuality"					"component"
+		"ShouldBeInitiallySuggested"	"0"
+		"SideShop"						"0"
+		"ItemStockInitial"				"0"
+		"ItemInitialStockTime"			"300.0"
+		"ItemStockTime"					"600.0"
+		"ItemStockMax"					"1"
+		"ItemShareability"				"ITEM_FULLY_SHAREABLE_STACKING"
+		"ItemPermanent"					"1"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES"
+		"ItemSellable"					"0"
+		"ItemKillable"					"0"
+
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"duration"				"300"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"cast_range"			"200"
+			}
+		}
+	}
+
+	//next free ID: 2231
 }

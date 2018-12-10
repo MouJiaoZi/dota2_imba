@@ -136,7 +136,7 @@ function modifier_imba_desolator_unique:DeclareFunctions() return {MODIFIER_EVEN
 function modifier_imba_desolator_unique:GetIMBAProjectileName() return "particles/items_fx/desolator_projectile.vpcf" end
 
 function modifier_imba_desolator_unique:OnAttackLanded(keys)
-	if not IsServer() or keys.attacker ~= self:GetParent() or self:GetParent():HasModifier("modifier_imba_desolator2_unique")  or not self:GetParent().splitattack then
+	if not IsServer() or keys.attacker ~= self:GetParent() or self:GetParent():HasModifier("modifier_imba_desolator2_unique")  or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	local has = false
@@ -266,7 +266,7 @@ function modifier_imba_desolator2_unique:DeclareFunctions() return {MODIFIER_EVE
 function modifier_imba_desolator2_unique:GetIMBAProjectileName() return "particles/items_fx/desolator_projectile.vpcf" end
 
 function modifier_imba_desolator2_unique:OnAttackLanded(keys)
-	if not IsServer() or keys.attacker ~= self:GetParent()  or not self:GetParent().splitattack then
+	if not IsServer() or keys.attacker ~= self:GetParent()  or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	local has = false

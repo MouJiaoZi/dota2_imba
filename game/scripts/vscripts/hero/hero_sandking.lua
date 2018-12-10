@@ -310,6 +310,7 @@ function modifier_imba_caustic_finale:OnDestroy()
 		end
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_sandking/sandking_caustic_finale_explode.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
+		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_caustic_finale_slow", {duration = self:GetAbility():GetSpecialValueFor("slow_duration")})
 	end
 end
 

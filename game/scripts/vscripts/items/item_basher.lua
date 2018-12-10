@@ -47,7 +47,7 @@ function modifier_imba_basher_unique:OnAttackLanded(keys)
 	if self:GetParent():HasModifier("modifier_imba_fervor_passive") or self:GetParent():HasModifier("modifier_imba_darkness_caster") or self:GetParent():HasModifier("modifier_imba_faceless_void_timelord_thinker") or self:GetParent():HasModifier("modifier_imba_take_aim_near") then
 		return
 	end
-	if keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():IsIllusion() and not self:GetParent():HasModifier("modifier_imba_abyssal_blade_unique") and self.ability:IsCooldownReady() then
+	if keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():IsIllusion() and not self:GetParent():HasModifier("modifier_imba_abyssal_blade_unique") and self.ability:IsCooldownReady() and keys.target:IsAlive() then
 		local pct = self:GetParent():IsRangedAttacker() and self.ability:GetSpecialValueFor("bash_chance_ranged") or self.ability:GetSpecialValueFor("bash_chance_melee")
 		if RollPercentage(pct) then
 			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = self.ability:GetSpecialValueFor("bash_duration")})
@@ -150,7 +150,7 @@ function modifier_imba_abyssal_blade_unique:OnAttackLanded(keys)
 	if self:GetParent():HasModifier("modifier_imba_fervor_passive") or self:GetParent():HasModifier("modifier_imba_darkness_caster") or self:GetParent():HasModifier("modifier_imba_faceless_void_timelord_thinker") or self:GetParent():HasModifier("modifier_imba_take_aim_near") then
 		return
 	end
-	if keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():IsIllusion() and not self:GetParent():HasModifier("modifier_imba_abyssal_blade_cooldown") then
+	if keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():IsIllusion() and not self:GetParent():HasModifier("modifier_imba_abyssal_blade_cooldown") and keys.target:IsAlive() then
 		local pct = self:GetParent():IsRangedAttacker() and self.ability:GetSpecialValueFor("bash_chance_ranged") or self.ability:GetSpecialValueFor("bash_chance_melee")
 		if RollPercentage(pct) then
 			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = self.ability:GetSpecialValueFor("bash_duration")})

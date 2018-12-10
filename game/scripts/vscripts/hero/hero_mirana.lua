@@ -42,7 +42,7 @@ function imba_mirana_starfall:OnSpellStart()
 		StarFallAttack(self, caster, enemy, self:GetSpecialValueFor("damage"))
 		enemy:AddNewModifier(caster, self, "modifier_imba_starfall_debuff", {duration = self:GetSpecialValueFor("secondary_duration")})
 	end
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Ability.Starfall", caster)
+	caster:EmitSound("Ability.Starfall")
 	local ability = caster:FindAbilityByName("imba_mirana_cosmic_dust")
 	if ability and ability:GetAutoCastState() and (not GameRules:IsDaytime() or caster:HasScepter()) and ability:IsCooldownReady() then
 		ability:OnSpellStart()
@@ -68,7 +68,6 @@ function modifier_imba_starfall_debuff:OnDestroy()
 		end
 	end
 end
-
 
 imba_mirana_arrow = class({})
 
@@ -428,4 +427,3 @@ function modifier_imba_moonlight_shadow_fade:OnCreated()
 		ParticleManager:ReleaseParticleIndex(pfx)
 	end
 end
-function modifier_imba_moonlight_shadow_fade:OnRefresh() self:OnCreated() end

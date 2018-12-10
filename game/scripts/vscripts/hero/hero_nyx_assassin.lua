@@ -373,6 +373,11 @@ end
 
 function modifier_imba_burrow:GetModifierCastRangeBonus() return self:GetAbility():GetSpecialValueFor("cast_range_bonus") end
 
+function modifier_imba_burrow:OnCreated()
+	if IsServer() and self:GetParent():IsIllusion() then
+		self:Destroy()
+	end
+end
 
 imba_nyx_assassin_vendetta = class({})
 

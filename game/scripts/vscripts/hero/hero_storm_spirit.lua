@@ -185,7 +185,7 @@ function modifier_imba_overload_passive:OnAttackLanded(keys)
 	if not IsServer() or keys.attacker ~= self:GetParent() then
 		return
 	end
-	if keys.target:IsBuilding() or keys.target:IsCourier() then
+	if keys.target:IsBuilding() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
 	local caster = self:GetParent()

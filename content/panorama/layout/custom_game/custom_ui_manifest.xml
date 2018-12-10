@@ -76,6 +76,7 @@
 		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/multiteam_hero_select_overlay.xml" />
 		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/imba_hero_selection_hack.xml" /> 
 		<CustomUIElement type="EndScreen" layoutfile="file://{resources}/layout/custom_game/imba_end_screen.xml" />
+		<CustomUIElement type="GameSetup" layoutfile="file://{resources}/layout/custom_game/team_select.xml" />
 
 		<!-- From Overthrow.
 

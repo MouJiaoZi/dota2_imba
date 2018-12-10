@@ -57,6 +57,7 @@ local noDamageFilterUnits = {
 	"npc_dota_unit_tombstone2",
 	"npc_dota_unit_tombstone3",
 	"npc_dota_unit_tombstone4",
+	"npc_dota_unit_undying_zombie",
 }
 
 function IMBA:DamageFilter(keys)
@@ -241,7 +242,7 @@ function IMBA:DamageFilter(keys)
 		local victim = target
 		local game_time = GameRules:GetDOTATime(false, false)
 		local base_gold = victim:GetLevel() * 10
-		if game_time > 90 then
+		if game_time > 60 then
 			base_gold = base_gold + PlayerResource:GetGoldPerMin(victim:GetPlayerID()) * 0.05
 		end
 		local bounty = base_gold * math.max((1 - PlayerResource.IMBA_PLAYER_DEATH_STREAK[victim:GetPlayerID() + 1] / 10), 0)
@@ -256,77 +257,60 @@ function IMBA:DamageFilter(keys)
 			victim:SetMinimumGoldBounty(0)
 			victim:SetMaximumGoldBounty(0)
 		end
-		local reincarnation = false
-		for _, buff in pairs(target_buffs) do
-			if not buff:IsNull() and buff:HasFunction(MODIFIER_PROPERTY_REINCARNATION) and buff:ReincarnateTime() then
-				reincarnation = true
-				break
-			end
+
+		------------respawn-------------
+		local game_time = GameRules:GetDOTATime(false, false)
+
+		local respawn_timer = victim:GetIMBARespawnTime()
+
+		if game_time > 1200 then
+			respawn_timer = respawn_timer + ((game_time - 1200) / 60)
+			GameRules:SetSafeToLeave(true)
 		end
 
-		if not reincarnation then
-			Timers:CreateTimer(0.5, function()
-					if not victim:IsAlive() and not victim:IsReincarnating() then
-						local player_id = victim:GetPlayerID()
-						local game_time = GameRules:GetDOTATime(false, false)
+		GameRules:GetGameModeEntity():SetFixedRespawnTime(respawn_timer)
 
-						local respawn_timer = victim:GetIMBARespawnTime()
+		local buy_back_cost = 0
 
-						if game_time > 1800 then
-							respawn_timer = respawn_timer + ((game_time - 1800) / 60)
-							GameRules:SetSafeToLeave(true)
-						end
+		buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim:GetPlayerID()) / 20 + math.min(victim:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
 
-						-- Set up the respawn timer
-						victim:SetTimeUntilRespawn(respawn_timer - 0.5)
+		if GameRules:IsCheatMode() then
+			--buy_back_cost = 0
+		end
 
-						local buy_back_cost = 0
+		PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
 
-						buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim:GetPlayerID()) / 20 + math.min(victim:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
+		PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
 
-						if GameRules:IsCheatMode() then
-							--buy_back_cost = 0
-						end
+		-- Setup buyback cooldown
+		local buyback_cooldown = 0
+		if BUYBACK_COOLDOWN_ENABLED and game_time > BUYBACK_COOLDOWN_START_POINT then
+			buyback_cooldown = math.min(BUYBACK_COOLDOWN_GROW_FACTOR * (game_time - BUYBACK_COOLDOWN_START_POINT), BUYBACK_COOLDOWN_MAXIMUM)
+		end
 
-						PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
+		PlayerResource:SetCustomBuybackCooldown(player_id, buyback_cooldown)
 
-						-- Setup buyback cooldown
-						local buyback_cooldown = 0
-						if BUYBACK_COOLDOWN_ENABLED and game_time > BUYBACK_COOLDOWN_START_POINT then
-							buyback_cooldown = math.min(BUYBACK_COOLDOWN_GROW_FACTOR * (game_time - BUYBACK_COOLDOWN_START_POINT), BUYBACK_COOLDOWN_MAXIMUM)
-						end
+		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
+		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
+		PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
 
-						PlayerResource:SetCustomBuybackCooldown(player_id, buyback_cooldown)
-						--Lose Gold
-						local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
-						local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
-						PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
+		if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+			local line_duration = 7
 
-						print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
+			local death_player = victim:GetPlayerID()
+			local kill_player = attacker:GetPlayerID()
+			if death_player and kill_player then
+				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
+				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
+				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
+				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
 
-						--Death Streak
-						if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
-							local line_duration = 7
-
-							local death_player = victim:GetPlayerID()
-							local kill_player = attacker:GetPlayerID()
-							if death_player and kill_player then
-								CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
-								CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
-								CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
-								CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
-
-								if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
-									Notifications:BottomToAll({hero = victim:GetName(), duration = line_duration})
-									Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
-									Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
-								end
-							end
-						end
-					end
-					return nil
+				if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
+					Notifications:BottomToAll({hero = victim:GetName(), duration = line_duration})
+					Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
+					Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
 				end
-			)
+			end
 		end
 	end
 
@@ -373,6 +357,7 @@ function IMBA:OrderFilter(keys)
 	------------------------------------------------------------------------------------
 
 	if unit:IsCourier() then
+		unit:SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_id_const)), PLAYER_COLORS[keys.issuer_player_id_const][1], PLAYER_COLORS[keys.issuer_player_id_const][2], PLAYER_COLORS[keys.issuer_player_id_const][3])
 		local hero = PlayerResource:GetPlayer(keys.issuer_player_id_const):GetAssignedHero()
 		if hero then
 			unit:RemoveModifierByName("modifier_imba_courier_marker")
@@ -799,8 +784,8 @@ function IMBA:SpawnRoshan()
 
 	--- IMBA Roshan Set
 	SetCreatureHealth(unit, 12000 + (roshan_kill - 1) * 2000, true)
-	--local ability1 = unit:AddAbility("huskar_berserkers_blood")
-	--ability1:SetLevel(4)
+	local ability1 = unit:AddAbility("imba_huskar_berserkers_blood")
+	ability1:SetLevel(4)
 	local buff1 = unit:AddNewModifier(unit, nil, "modifier_imba_roshan_upgrade", {})
 	buff1:SetStackCount(roshan_kill - 1)
 	local buff2 = unit:AddNewModifier(unit, nil, "modifier_roshan_devotion", {})
@@ -1022,4 +1007,18 @@ function UpDatePlayerInfo()
 			CustomNetTables:SetTableValue("imba_player_info", tostring(i), playerTable)
 		end
 	end
+end
+
+function VoteForOMG(unused, kv)
+	local total = PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_GOODGUYS) + PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_BADGUYS)
+	local need = math.floor(total * 0.6)
+	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree
+	agree = agree + 1
+	enable = 0
+	if agree >= need then
+		enable = 1
+	end
+	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = agree, ["enable"] = enable})
+	CustomGameEventManager:Send_ServerToAllClients("updata_omg_vote", {})
+	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
 end

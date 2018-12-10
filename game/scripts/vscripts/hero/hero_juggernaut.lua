@@ -338,7 +338,7 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
 	local buff = self:GetParent():FindModifierByName("modifier_imba_blade_dance_stacks")

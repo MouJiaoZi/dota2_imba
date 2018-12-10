@@ -41,7 +41,7 @@ function modifier_imba_multicast_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or not self:GetAbility():IsCooldownReady() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or not self:GetAbility():IsCooldownReady() or not keys.target:IsAlive() then
 		return
 	end
 	if not self:GetParent().splitattack then

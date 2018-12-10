@@ -1,5 +1,10 @@
 require('events/imba_events')
 
+GOOD_PLAYERS = 0
+BAD_PLAYERS = 0
+GOOD_PLAYERS_ABA = 0
+BAD_PLAYERS_ABA = 0
+
 -- This file contains all barebones-registered events and has already set up the passed-in parameters for your use.
 if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK == nil then
 	CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK = {}
@@ -13,20 +18,97 @@ end
 
 -- Cleanup a player when they leave
 function GameMode:OnDisconnect(keys)
-	DebugPrint('[BAREBONES] Player Disconnected ' .. tostring(keys.userid))
-	DebugPrintTable(keys)
+	-- GetConnectionState values:
+	-- 0 - no connection
+	-- 1 - bot connected
+	-- 2 - player connected
+	-- 3 - bot/player disconnected.
 
-	local name = keys.name
-	local networkid = keys.networkid
-	local reason = keys.reason
-	local userid = keys.userid
+	-- Typical keys:
+	-- PlayerID: 2
+	-- name: Zimberzimber
+	-- networkid: [U:1:95496383]
+	-- reason: 2
+	-- splitscreenplayer: -1
+	-- userid: 7
+	-- xuid: 76561198055762111
 
+	local playerName = keys.name
+	local playerHero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[keys.PlayerID + 1]
+	local playerID = keys.PlayerID
+	local time = 0
+	local max_time = 300
+	local line_duration = 7
+
+	--[[if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+		GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
+		if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
+			Timers:CreateTimer(15.0, function()
+				Notifications:BottomToAll({text = "#imba_team_good_abandon_message", duration = line_duration, style = {color = "DodgerBlue"} })
+				if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
+					GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
+					GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
+				end
+				return nil
+			end
+			)
+		end
+	end
+	if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+		BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
+		if BAD_PLAYERS_ABA >= BAD_PLAYERS then
+			Timers:CreateTimer(15.0, function()
+				Notifications:BottomToAll({text = "#imba_player_reconnect_message", duration = line_duration, style = {color = "DodgerBlue"} })
+				if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
+					GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
+					GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
+				end
+				return nil
+			end
+			)
+		end
+	end]]
+
+	Timers:CreateTimer(1.0, function()
+		time = time + 1
+		if GameRules:State_Get() <= DOTA_GAMERULES_STATE_PRE_GAME or DOTA_GAMERULES_STATE_PRE_GAME >= DOTA_GAMERULES_STATE_POST_GAME then
+			return nil
+		end
+		if PlayerResource:GetConnectionState(playerID) == 3 then
+			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
+			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
+			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
+			return nil
+		end
+		if time >= max_time then
+			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
+			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
+			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
+			return nil
+		end
+		if PlayerResource:GetConnectionState(playerID) == 2 then
+			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
+			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
+			Notifications:BottomToAll({text = "#imba_player_reconnect_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
+			if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+				GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA - 1
+			end
+			if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+				BAD_PLAYERS_ABA = BAD_PLAYERS_ABA - 1
+			end
+			return nil
+		end
+		return 1.0
+	end
+	)
 end
+
+
 
 local selectedHero = {}
 
 local tick = 0
-local waitTick = 20
+local waitTick = 10
 if GameRules:IsCheatMode() then
 	waitTick = 3
 end
@@ -41,6 +123,7 @@ function GameMode:OnGameRulesStateChange(keys)
 	print("Game State:",newState)
 
 	if newState == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
+		CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = 0, ["enable"] = 0})
 		Timers:CreateTimer(1.0, function()
 			PauseGame(false)
 			if GameRules:State_Get() > DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
@@ -73,6 +156,9 @@ function GameMode:OnGameRulesStateChange(keys)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_PRE_GAME then--and not GameRules:IsCheatMode() then
+		if GetMapName() == "dbii_death_match" then
+			GameRules:SetSafeToLeave(true)
+		end
 		IMBA:StartGameAPI()
 		--[[Timers:CreateTimer(0, function()
 			local thinkers = Entities:FindAllByName("npc_dota_thinker")
@@ -86,6 +172,21 @@ function GameMode:OnGameRulesStateChange(keys)
 				end
 			end
 			return 30.0
+		end-6855 -6425 512
+	6922 6180 512
+		)
+		Timers:CreateTimer(600.0, function()
+			local super_ward = CreateItem("item_imba_super_ward", nil, nil)
+			if super_ward then
+				CreateItemOnPositionSync(Vector(-6855,-6425,512), super_ward)
+				super_ward:LaunchLoot(false, 100, 0.5, Vector(-6855,-6425,512))
+			end
+			super_ward = CreateItem("item_imba_super_ward", nil, nil)
+			if super_ward then
+				CreateItemOnPositionSync(Vector(6922,6180,512), super_ward)
+				super_ward:LaunchLoot(false, 100, 0.5, Vector(6922,6180,512))
+			end
+			return 300.0
 		end
 		)]]
 		if USE_CUSTOM_TEAM_COLORS_FOR_PLAYERS then
@@ -103,6 +204,7 @@ function GameMode:OnGameRulesStateChange(keys)
 					local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 					for _, tower in pairs(towers) do
 						if string.find(tower:GetUnitName(), "_tower1_") then --T1 Tower set
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							local ability = tower:AddAbility(RandomFromTable(IMBA_TOWER_ABILITY_1))
 							ability:SetLevel(1)
 							if (string.find(tower:GetName(), "_top") or string.find(tower:GetName(), "_bot")) and GetMapName() == "dbii_death_match" then
@@ -111,6 +213,7 @@ function GameMode:OnGameRulesStateChange(keys)
 						end
 						if string.find(tower:GetUnitName(), "_tower2_") then --T2 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 800, true)
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							for i=1, 2 do
 								local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
 								while true do
@@ -126,6 +229,7 @@ function GameMode:OnGameRulesStateChange(keys)
 						end
 						if string.find(tower:GetUnitName(), "_tower3_") then --T3 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 1300, true)
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							for i=1, 3 do
 								local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
 								while true do
@@ -143,6 +247,7 @@ function GameMode:OnGameRulesStateChange(keys)
 						end
 						if string.find(tower:GetUnitName(), "_tower4") then --T4 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 2200, true)
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							for i=1, 3 do
 								local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
 								while true do
@@ -159,20 +264,23 @@ function GameMode:OnGameRulesStateChange(keys)
 							abi:SetLevel(1)
 						end
 						if string.find(tower:GetUnitName(), "_melee_rax_") then
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							SetCreatureHealth(tower, 4000, true)
 						end
 						if string.find(tower:GetUnitName(), "_range_rax_") then
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							SetCreatureHealth(tower, 3200, true)
 						end
 						if string.find(tower:GetName(), "_fort") and GetMapName() == "dbii_death_match" then
 							tower:AddNewModifier(tower, nil, "modifier_imba_base_protect", {})
+							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 						end
 					end
 				end
 				if tick >= 2 and not announce then
 					announce = true
 					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_20_SCES", duration = waitTick - 2})
-					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
+					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = waitTick - 2})
 				end
 				PauseGame(true)
 				tick = tick + 0.1
@@ -252,6 +360,11 @@ function GameMode:OnNPCSpawned(keys)
 			callback = function()
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
+					if npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+						GOOD_PLAYERS = GOOD_PLAYERS + 1
+					else
+						BAD_PLAYERS = BAD_PLAYERS + 1
+					end
 				end
 
 				--[[local abilityName = RandomFromTable(IMBA_RANDOM_ABILITIES)
@@ -268,8 +381,8 @@ function GameMode:OnNPCSpawned(keys)
 			end
 		})
 
-
 		npc:AddNewModifier(npc, nil, "modifier_imba_talent_modifier_adder", {})
+		npc:AddNewModifier(npc, nil, "modifier_imba_movespeed_controller", {})
 
 		local chicken = npc:AddItemByName("item_courier")
 		npc:CastAbilityNoTarget(chicken, npc:GetPlayerID())
@@ -292,6 +405,14 @@ function GameMode:OnNPCSpawned(keys)
 			return 0.2
 		end
 		)
+
+		if GetMapName() == "dbii_death_match" and CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable == 1 then
+			IMBAEvents:DeathMatchRandomOMG(npc)
+		end
+	end
+
+	if npc:IsRealHero() and IsInTable(npc, CDOTA_PlayerResource.IMBA_PLAYER_HERO) and GetMapName() == "dbii_death_match" and CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable == 1 then
+		IMBAEvents:DeathMatchRandomOMG(npc)
 	end
 
 	--Roshan Setup
@@ -382,39 +503,11 @@ end
 function GameMode:OnPlayerReconnect(keys)
 	DebugPrint( '[BAREBONES] OnPlayerReconnect' )
 	DebugPrintTable(keys) 
-	local new_state = GameRules:State_Get()
-	--[[if new_state > DOTA_GAMERULES_STATE_HERO_SELECTION then
-		local playerID = keys.PlayerID
 
-		if PlayerResource:HasSelectedHero(playerID) or PlayerResource:HasRandomed(playerID) then
-			-- This playerID already had a hero before disconnect
-		else
-			Timers:CreateTimer(5, function()
-				if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_CONNECTED then
-					while true do
-						local heroname = RandomFromTable(HeroList)[1]
-						if not PlayerResource:IsHeroSelected(heroname) then
-							local hero = CreateHeroForPlayer(PlayerResource:GetSelectedHeroName(playerID), PlayerResource:GetPlayer(playerID))
-							hero:SetControllableByPlayer(playerID, false)
-							if PlayerResource:GetTeam(playerID) == DOTA_TEAM_GOODGUYS then
-								FindClearSpaceForUnit(hero, Vector(-6811, -6686, 512), true)
-							else
-								FindClearSpaceForUnit(hero, Vector(6985, 6326, 512), true)
-							end
-							break
-						end
-					end
-					DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID.." that reconnected.")
-					return nil
-				end
-				if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_DISCONNECTED then
-					return nil
-				end
-				return 1.0
-			end
-			)
-		end
-	end]]
+	local player_id = keys.PlayerID
+	local playerHero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[keys.PlayerID + 1]
+
+	
 end
 
 -- An item was purchased by a player
@@ -573,6 +666,14 @@ function GameMode:OnTeamKillCredit(keys)
 	local killerTeamNumber = keys.teamnumber
 end
 
+local noDamageFilterUnits = {
+	"npc_dota_unit_tombstone1",
+	"npc_dota_unit_tombstone2",
+	"npc_dota_unit_tombstone3",
+	"npc_dota_unit_tombstone4",
+	"npc_dota_unit_undying_zombie",
+}
+
 -- An entity died
 function GameMode:OnEntityKilled( keys )
 	DebugPrint( '[BAREBONES] OnEntityKilled Called' )
@@ -582,12 +683,20 @@ function GameMode:OnEntityKilled( keys )
 	-- The Unit that was Killed
 	local killed_unit = EntIndexToHScript( keys.entindex_killed )
 
+	local victim = killed_unit
+
+	if IsInTable(victim:GetName(), noDamageFilterUnits) then
+		return
+	end
+
 	-- The Killing entity
 	local killer = nil
 
 	if keys.entindex_attacker ~= nil then
 		killer = EntIndexToHScript( keys.entindex_attacker )
 	end
+
+	local attacker = killer
 
 	-- The ability/item used to kill, or nil if not killed by an item/ability
 	local ability = nil
@@ -598,41 +707,29 @@ function GameMode:OnEntityKilled( keys )
 
 	local damagebits = keys.damagebits -- This might always be 0 and therefore useless
 
-	--GameMode:_OnEntityKilled( keys )
-
-	-------------------------------------------------------------------------------------------------
-	-- IMBA: True Hero Death Setup (bb, respawn timer, death streak, lose gold)
-	-------------------------------------------------------------------------------------------------
-
-	--[[local victim_respawn = killed_unit
-	if killed_unit:IsClone() then
-		victim_respawn = killed_unit:GetCloneSource()
-	end
-	
-	if victim_respawn:IsRealHero() and not victim_respawn:IsReincarnating() then
-
-		local player_id = victim_respawn:GetPlayerID()
+	--[[if victim:IsRealHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+		local player_id = victim:GetPlayerID()
 		local game_time = GameRules:GetDOTATime(false, false)
 
-		local respawn_timer = victim_respawn:GetIMBARespawnTime()
+		local respawn_timer = victim:GetIMBARespawnTime()
 
-		if game_time > 1800 then
-			respawn_timer = respawn_timer + math.floor((game_time - 1800) / 60)
+		if game_time > 1200 then
+			respawn_timer = respawn_timer + ((game_time - 1200) / 60)
 			GameRules:SetSafeToLeave(true)
 		end
 
 		-- Set up the respawn timer
-		victim_respawn:SetTimeUntilRespawn(respawn_timer)
+		victim:SetTimeUntilRespawn(respawn_timer - 0.5)
 
 		local buy_back_cost = 0
 
-		buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim_respawn:GetPlayerID()) / 20 + math.min(victim_respawn:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim_respawn:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
+		buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim:GetPlayerID()) / 20 + math.min(victim:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
 
 		if GameRules:IsCheatMode() then
 			--buy_back_cost = 0
 		end
 
-		PlayerResource:SetCustomBuybackCost(victim_respawn:GetPlayerID(), buy_back_cost)
+		PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
 
 		-- Setup buyback cooldown
 		local buyback_cooldown = 0
@@ -641,34 +738,32 @@ function GameMode:OnEntityKilled( keys )
 		end
 
 		PlayerResource:SetCustomBuybackCooldown(player_id, buyback_cooldown)
-		--PlayerResource:SetBuybackCooldownTime(player_id, buyback_cooldown)
-		--victim_respawn:SetBuybackCooldownTime(buyback_cooldown)
+		--Lose Gold
+		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
+		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
+		PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
 
-		--death streak
-		if killer and killer:IsRealHero() and IsEnemy(killer, victim_respawn) then
+		print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
+
+		--Death Streak
+		if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
 			local line_duration = 7
 
-			local death_player = victim_respawn:GetPlayerID()
-			local kill_player = killer:GetPlayerID()
+			local death_player = victim:GetPlayerID()
+			local kill_player = attacker:GetPlayerID()
+			if death_player and kill_player then
+				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
+				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
+				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
+				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
 
-			CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
-			CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
-			CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
-			CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
-
-			if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
-				Notifications:BottomToAll({hero = victim_respawn:GetName(), duration = line_duration})
-				Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
-				Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
+				if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
+					Notifications:BottomToAll({hero = victim:GetName(), duration = line_duration})
+					Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
+					Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
+				end
 			end
 		end
-
-		--Lose Gold
-		local maxLoseGold = PlayerResource:GetUnreliableGold(victim_respawn:GetPlayerID())
-		local netWorth = PlayerResource:GetGoldSpentOnItems(victim_respawn:GetPlayerID())
-		PlayerResource:ModifyGold(victim_respawn:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
-
-		print(victim_respawn:GetName(), "respawn time:", victim_respawn:GetIMBARespawnTime(), "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
 	end]]
 
 	-------------------------------------------------------------------------------------------------

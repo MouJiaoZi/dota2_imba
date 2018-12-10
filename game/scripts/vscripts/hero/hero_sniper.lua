@@ -74,7 +74,7 @@ function modifier_imba_headshot:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and (keys.target:IsHero() or keys.target:IsCreep()) and not self:GetParent():IsIllusion() then
+	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and (keys.target:IsHero() or keys.target:IsCreep()) and not self:GetParent():IsIllusion() and keys.target:IsAlive() then
 		if not self:GetParent():HasModifier("modifier_imba_take_aim_far") and not self:GetParent():HasModifier("modifier_imba_take_aim_near") and RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) then
 			keys.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_headshot_normal_debuff", {duration = self:GetAbility():GetSpecialValueFor('normal_duration')})
 			local damageTable = {

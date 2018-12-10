@@ -6,5 +6,6 @@
     "selection",
 	"imba_player_base",
 	"imba_player_info",
+	"imba_omg",
   ]
 }

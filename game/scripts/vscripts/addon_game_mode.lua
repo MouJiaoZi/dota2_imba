@@ -48,6 +48,7 @@ function Precache( context )
 	LinkLuaModifier("modifier_paralyzed", "modifier/modifier_paralyzed.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_courier_marker", "modifier/modifier_imba_courier_marker.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_courier_prevent", "modifier/modifier_imba_courier_marker.lua", LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier("modifier_imba_movespeed_controller", "modifier/modifier_imba_movespeed_controller.lua", LUA_MODIFIER_MOTION_NONE )
 
 	-- Items
 	PrecacheResource("particle", "particles/econ/items/effigies/status_fx_effigies/gold_effigy_ambient_dire_lvl2.vpcf", context)

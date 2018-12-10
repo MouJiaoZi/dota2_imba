@@ -72,7 +72,7 @@ var IMBAHeroes =
 ["npc_dota_hero_broodmother", 0],
 ["npc_dota_hero_skeleton_king", 1],
 ["npc_dota_hero_queenofpain", 1],
-["npc_dota_hero_huskar", 0],
+["npc_dota_hero_huskar", 2],
 ["npc_dota_hero_jakiro", 1],
 ["npc_dota_hero_batrider", 0],
 ["npc_dota_hero_warlock", 1],
@@ -132,6 +132,57 @@ var IMBAHeroes =
 ["npc_dota_hero_grimstroke", 0]
 ];
 
+var OMGHeroes = 
+["npc_dota_hero_abaddon",
+"npc_dota_hero_alchemist",
+"npc_dota_hero_ancient_apparition",
+"npc_dota_hero_antimage",
+"npc_dota_hero_axe",
+"npc_dota_hero_bane",
+"npc_dota_hero_bounty_hunter",
+"npc_dota_hero_centaur",
+"npc_dota_hero_chaos_knight",
+"npc_dota_hero_crystal_maiden",
+"npc_dota_hero_dazzle",
+"npc_dota_hero_dragon_knight",
+"npc_dota_hero_drow_ranger",
+"npc_dota_hero_earthshaker",
+"npc_dota_hero_jakiro",
+"npc_dota_hero_juggernaut",
+"npc_dota_hero_kunkka",
+"npc_dota_hero_lich",
+"npc_dota_hero_lina",
+"npc_dota_hero_lion",
+"npc_dota_hero_luna",
+"npc_dota_hero_medusa",
+"npc_dota_hero_mirana",
+"npc_dota_hero_naga_siren",
+"npc_dota_hero_furion",
+"npc_dota_hero_necrolyte",
+"npc_dota_hero_obsidian_destroyer",
+"npc_dota_hero_omniknight",
+"npc_dota_hero_phantom_assassin",
+"npc_dota_hero_phantom_lancer",
+"npc_dota_hero_phoenix",
+"npc_dota_hero_puck",
+"npc_dota_hero_queenofpain",
+"npc_dota_hero_sand_king",
+"npc_dota_hero_shadow_demon",
+"npc_dota_hero_nevermore",
+"npc_dota_hero_slark",
+"npc_dota_hero_sniper",
+"npc_dota_hero_storm_spirit",
+"npc_dota_hero_sven",
+"npc_dota_hero_templar_assassin",
+"npc_dota_hero_terrorblade",
+"npc_dota_hero_tinker",
+"npc_dota_hero_ursa",
+"npc_dota_hero_vengefulspirit",
+"npc_dota_hero_venomancer",
+"npc_dota_hero_wisp",
+"npc_dota_hero_witch_doctor",
+"npc_dota_hero_zuus"];
+
 /*var heroArray = new Array();
 var heroType = new Array();
 
@@ -139,9 +190,9 @@ for(var i=0; i<IMBAHeroes.length; i++)
 {
 	heroArray[i] = IMBAHeroes[i][0];
 	heroType[i] = IMBAHeroes[i][1];
-}
+}*/
 
-//$.Msg(IMBAHeroes[2][0]);*/
+$.Msg(OMGHeroes[0]);
 
 var total;
 var current = 0;
@@ -178,6 +229,11 @@ function UpdateHeroCard()
 			{
 				heroIMG.GetParent().AddClass("IMBA_HeroCard");
 				heroIMG.GetParent().style.boxShadow=HeroCardStyle[IMBAHeroes[j][1]];
+				/**if(Game.GetMapInfo().map_display_name == "dbii_death_match" && CustomNetTables.GetTableValue("imba_omg", "enable_omg").enable == 1)
+				{
+					heroIMG.GetParent().GetParent().FindChildTraverse("HitTarget").visible = 0;
+					heroIMG.GetParent().GetParent().FindChildTraverse("HitBlocker").visible = 1;
+				}*/
 				break;
 			}
 		}

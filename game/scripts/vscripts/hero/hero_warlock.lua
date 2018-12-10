@@ -362,7 +362,7 @@ function ChaoticOffering( keys )
 	local particle_golem_5 = keys.particle_golem_5
 	local modifier_golem = keys.modifier_golem
 	local modifier_main_golem = keys.modifier_main_golem
-	local scepter = HasScepter(caster)
+	local scepter = caster:HasScepter()
 
 	-- Parameters
 	local stun_radius = ability:GetLevelSpecialValueFor("stun_radius", ability_level)
@@ -394,7 +394,7 @@ function ChaoticOffering( keys )
 	end
 
 	-- Play impact sound
-	if RandomInt(1, 100) <= 10 then
+	if RandomInt(1, 100) ~= 10 then
 
 		-- YOU FACE JARAXXUS! Adjust model and particles
 		infernal_ambient_particle = particle_golem_5
@@ -724,5 +724,120 @@ function GolemPermanentImmolation( keys )
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _,enemy in pairs(enemies) do
 		ApplyDamage({attacker = caster, victim = enemy, ability = ability, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+	end
+end
+
+
+
+
+---------------------------------
+
+CreateEmptyTalents("warlock")
+
+
+imba_warlock_fatal_bonds = class({})
+
+LinkLuaModifier("modifier_imba_fetal_bonds_caster", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_fetal_bonds_target", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+
+function imba_warlock_fatal_bonds:IsHiddenWhenStolen() 		return false end
+function imba_warlock_fatal_bonds:IsRefreshable() 			return true end
+function imba_warlock_fatal_bonds:IsStealable() 			return true end
+function imba_warlock_fatal_bonds:IsNetherWardStealable()	return true end
+function imba_warlock_fatal_bonds:GetAOERadius() return self:GetSpecialValueFor("search_aoe") end
+function imba_warlock_fatal_bonds:GetCastRange() return self.BaseClass.GetCastRange(self, Vector(0,0,0), self:GetCaster()) end
+
+function imba_warlock_fatal_bonds:OnSpellStart()
+	local caster = self:GetCaster()
+	local target = self:GetCursorTarget()
+	if target:TriggerStandardTargetSpell(self) then
+		return
+	end
+	target:EmitSound("Hero_Warlock.FatalBonds")
+	local linkTarget = {target, }
+	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	for i=1, self:GetSpecialValueFor("count") do
+		if enemies[i] and enemies[i] ~= target then
+			linkTarget[#linkTarget + 1] = enemies[i]
+		end
+	end
+	local casterBuff = caster:AddNewModifier(caster, self, "modifier_imba_fetal_bonds_caster", {duration = self:GetSpecialValueFor("duration") + 0.1})
+	casterBuff.targets = {}
+	for i=1, #linkTarget do
+		local targetBuff = linkTarget[i]:AddNewModifier(caster, self, "modifier_imba_fetal_bonds_target", {duration = self:GetSpecialValueFor("duration")})
+		targetBuff.buff = casterBuff
+		casterBuff.targets[#casterBuff.targets + 1] = linkTarget[i]
+	end
+end
+
+modifier_imba_fetal_bonds_caster = class({})
+
+function modifier_imba_fetal_bonds_caster:IsDebuff()			return false end
+function modifier_imba_fetal_bonds_caster:IsHidden() 			return true end
+function modifier_imba_fetal_bonds_caster:IsPurgable() 			return false end
+function modifier_imba_fetal_bonds_caster:IsPurgeException() 	return false end
+function modifier_imba_fetal_bonds_caster:RemoveOnDeath() return false end
+function modifier_imba_fetal_bonds_caster:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+
+function modifier_imba_fetal_bonds_caster:FetalBond(fDamage, hUnit)
+	if not IsServer() then
+		return
+	end
+	for i=1, #self.targets do
+		if self.targets[i] and self.targets[i] ~= hUnit then
+			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_warlock/warlock_fatal_bonds_hit.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			ParticleManager:SetParticleControlEnt(pfx, 0, hUnit, PATTACH_POINT_FOLLOW, "attach_hitloc", hUnit:GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlEnt(pfx, 1, self.targets[i], PATTACH_POINT_FOLLOW, "attach_hitloc", self.targets[i]:GetAbsOrigin(), true)
+			ParticleManager:ReleaseParticleIndex(pfx)
+			ApplyDamage({attacker = self:GetParent(), victim = self.targets[i], damage = fDamage * (self:GetAbility():GetSpecialValueFor("damage_share_percentage") / 100), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_REFLECTION + DOTA_DAMAGE_FLAG_HPLOSS, ability = self:GetAbility()})
+		end
+	end
+end
+
+function modifier_imba_fetal_bonds_caster:OnDestroy()
+	if IsServer() then
+		self.targets = nil
+	end
+end
+
+modifier_imba_fetal_bonds_target = class({})
+
+function modifier_imba_fetal_bonds_target:IsDebuff()			return true end
+function modifier_imba_fetal_bonds_target:IsHidden() 			return false end
+function modifier_imba_fetal_bonds_target:IsPurgable() 			return true end
+function modifier_imba_fetal_bonds_target:IsPurgeException() 	return true end
+function modifier_imba_fetal_bonds_target:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_fetal_bonds_target:GetEffectName() return "particles/units/heroes/hero_warlock/warlock_fatal_bonds_icon.vpcf" end
+function modifier_imba_fetal_bonds_target:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
+function modifier_imba_fetal_bonds_target:ShouldUseOverheadOffset() return true end
+function modifier_imba_fetal_bonds_target:DeclareFunctions() return {MODIFIER_EVENT_ON_TAKEDAMAGE, MODIFIER_EVENT_ON_DEATH} end
+
+function modifier_imba_fetal_bonds_target:OnTakeDamage(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.unit ~= self:GetParent() or bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION or not self.buff then
+		return
+	end
+	self.buff:FetalBond(keys.damage, self:GetParent())
+end
+
+function modifier_imba_fetal_bonds_target:OnDeath(keys)
+	if not IsServer() or keys.unit ~= self:GetParent() or not self:GetParent():IsRealHero() then
+		return
+	end
+	self:GetAbility():EndCooldown()
+end
+
+function modifier_imba_fetal_bonds_target:OnDestroy()
+	if IsServer() then
+		if self.buff and self.buff.targets then
+			for i=1, #self.buff.targets do
+				if self.buff.targets[i] == self:GetParent() then
+					self.buff.targets[i] = nil
+				end
+			end
+			self.buff = nil
+		end
 	end
 end

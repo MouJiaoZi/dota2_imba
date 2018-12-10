@@ -278,6 +278,7 @@ function TrueKill(caster, target, ability)
 	target:RemoveModifierByName("modifier_imba_cheese_death_prevention")
 	target:RemoveModifierByName("modifier_item_imba_rapier_cursed_unique")
 	target:RemoveModifierByName("modifier_imba_reincarnation_scepter_aura")
+	target:RemoveModifierByName("modifier_imba_vampiric_aura_effect")
 	
 
 
@@ -916,8 +917,8 @@ function CDOTA_BaseNPC_Hero:GetRespawnTimeChangeNormal()
 end
 
 function IsInTable(value, table)
-	for _, v in pairs(table) do
-		if v == value then
+	for i=0, #table do
+		if table[i] == value then
 			return true
 		end
 	end
@@ -1032,4 +1033,54 @@ function FindStoneRemnant(pos, radius)
 		end
 	end
 	return stone
+end
+
+function CDOTA_BaseNPC:GetMoveSpeedIncrease()
+	local buffs = self:FindAllModifiers()
+	local baseSpeed = self:GetBaseMoveSpeed()
+	local agiSpeed = (GameRules:GetGameModeEntity():GetCustomAttributeDerivedStatValue(DOTA_ATTRIBUTE_AGILITY_MOVE_SPEED_PERCENT, self) * self:GetAgility()) * baseSpeed
+	local constant = 0
+	local percentage = 0
+	local pct_u_1 = {}
+	local pct_u_2 = {}
+	local pct_boots = {}
+	local con_u_2 = {}
+	for i=1, #buffs do
+		local buff = buffs[i]
+		if buff.GetModifierMoveSpeedBonus_Constant then
+			constant = constant + buff:GetModifierMoveSpeedBonus_Constant()
+		end
+		if buff.GetModifierMoveSpeedBonus_Percentage then
+			percentage = percentage + buff:GetModifierMoveSpeedBonus_Percentage()
+		end
+		if buff.GetModifierMoveSpeedBonus_Percentage_Unique then
+			pct_u_1[#pct_u_1 + 1] = buff:GetModifierMoveSpeedBonus_Percentage_Unique()
+		end
+		if buff.GetModifierMoveSpeedBonus_Percentage_Unique_2 then
+			pct_u_2[#pct_u_2 + 1] = buff:GetModifierMoveSpeedBonus_Percentage_Unique_2()
+		end
+		if buff.GetModifierMoveSpeedBonus_Special_Boots then
+			pct_boots[#pct_boots + 1] = buff:GetModifierMoveSpeedBonus_Special_Boots()
+		end
+		if buff.GetModifierMoveSpeedBonus_Special_Boots_2 then
+			con_u_2[#con_u_2 + 1] = buff:GetModifierMoveSpeedBonus_Special_Boots_2()
+		end
+	end
+	for i=0, 5 do
+		local item = self:GetItemInSlot(i)
+		if item and (item:GetName() == "item_boots" or item:GetName() == "item_phase_boots" or item:GetName() == "item_travel_boots" or item:GetName() == "item_travel_boots_2" or item:GetName() == "item_power_treads" or item:GetName() == "item_imba_power_treads_2" or item:GetName() == "item_tranquil_boots") then
+			pct_u_1[#pct_u_1 + 1] = item:GetSpecialValueFor("bonus_movement_speed")
+		end
+	end
+	local sort = table.sort
+	sort(pct_u_1)
+	sort(pct_u_2)
+	sort(pct_boots)
+	sort(con_u_2)
+	percentage = #pct_u_1 > 0 and percentage + pct_u_1[#pct_u_1] or percentage
+	percentage = #pct_u_2 > 0 and percentage + pct_u_2[#pct_u_2] or percentage
+	percentage = #pct_boots > 0 and percentage + pct_boots[#pct_boots] or percentage
+	constant = #con_u_2 > 0 and constant + con_u_2[#con_u_2] or constant
+	local speed_con = baseSpeed + constant
+	return (constant + agiSpeed + speed_con * (percentage / 100))
 end

@@ -53,3 +53,46 @@ var $img_s = $img[tips_n];
 var $tio_s = $tip[tips_n];
 
 setHint($img_s, $tio_s);
+
+function SetOMGUI()
+{
+	if(Game.GetLocalPlayerInfo() == undefined)
+	{
+		$.Schedule(1, SetOMGUI);
+		return;
+	}
+	if(Game.GetMapInfo().map_display_name != "dbii_death_match")
+	{
+		FindDotaHudElement("DMOMGVotePanel").visible = 0;
+		return;
+	}
+	FindDotaHudElement("DMOMGVotePanel").visible = 1;
+	FindDotaHudElement("DMOMGVotePanel").style.opacity = 1;
+}
+
+SetOMGUI();
+
+function IMBAVoteForOMG()
+{
+	FindDotaHudElement("DMOMGVoteButton").enabled = 0;
+	FindDotaHudElement("DMOMGVoteButton").style.backgroundColor = 'gradient( linear, 0% 0%, 0% 100%, from( #808080FF ), to( #404040FF ) )';
+	GameEvents.SendCustomGameEventToServer("vote_for_omg", {});
+}
+
+function UpdataVote()
+{
+	var votes = CustomNetTables.GetTableValue("imba_omg", "enable_omg").agree;
+	var enable = CustomNetTables.GetTableValue("imba_omg", "enable_omg").enable;
+	FindDotaHudElement("DMOMGVoteNum").text = votes;
+	if(enable == 1)
+	{
+		FindDotaHudElement("DMOMGVoteNum").style.color = '#48FF00';
+	}
+	else
+	{
+		FindDotaHudElement("DMOMGVoteNum").style.color = '#FF0000';
+	}
+	//$.Msg(votes, "   ", enable);
+}
+
+GameEvents.Subscribe("updata_omg_vote", UpdataVote);

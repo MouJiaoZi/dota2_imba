@@ -41,6 +41,7 @@ require('internal/events')
 require('settings')
 -- events.lua is where you can specify the actions to be taken when any event occurs and is one of the core barebones files.
 require('events')
+require('events/imba_events')
 
 require('imba')
 
@@ -140,7 +141,7 @@ function GameMode:InitGameMode()
 	DebugPrint('[BAREBONES] Starting to load Barebones gamemode...')
 
 	-- Commands can be registered for debugging purposes or as functions that can be called by the custom Scaleform UI
-	Convars:RegisterCommand( "command_example", Dynamic_Wrap(GameMode, 'ExampleConsoleCommand'), "A console command example", FCVAR_CHEAT )
+	--Convars:RegisterCommand( "command_example", Dynamic_Wrap(GameMode, 'ExampleConsoleCommand'), "A console command example", FCVAR_CHEAT )
 
 	DebugPrint('[BAREBONES] Done loading Barebones gamemode!\n\n')
 

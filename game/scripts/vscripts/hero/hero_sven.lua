@@ -127,7 +127,7 @@ function modifier_imba_great_cleave_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or self:GetParent():PassivesDisabled() then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or not keys.target:IsAlive() then
 		return
 	end
 	if not keys.attacker:HasModifier("modifier_imba_great_cleave_active") then
@@ -269,7 +269,7 @@ function modifier_imba_god_strength_allies:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or not self:GetCaster():HasScepter() then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or not self:GetCaster():HasScepter() or not keys.target:IsAlive() then
 		return
 	end
 	local dmg = keys.damage * (self:GetAbility():GetSpecialValueFor("ally_cleave_pct_scepter") / 100)
@@ -281,7 +281,7 @@ function modifier_special_bonus_imba_sven_1:DeclareFunctions() return {MODIFIER_
 
 function modifier_special_bonus_imba_sven_1:OnAttackLanded(keys)
 	if IsServer() then
-		if self:GetParent():FindAbilityByName("imba_sven_gods_strength") and keys.attacker == self:GetParent() then
+		if self:GetParent():FindAbilityByName("imba_sven_gods_strength") and keys.attacker == self:GetParent() and keys.target:IsAlive() then
 			local ability = self:GetParent():FindAbilityByName("imba_sven_gods_strength")
 			if not ability:IsCooldownReady() then
 				ability_cd = ability:GetCooldownTimeRemaining()

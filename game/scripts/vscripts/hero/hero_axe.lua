@@ -186,7 +186,7 @@ function modifier_imba_axe_counter_helix:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.target ~= self:GetParent() or self:GetParent():PassivesDisabled() or not self:GetAbility():IsCooldownReady() or self:GetParent():IsIllusion() then
+	if keys.target ~= self:GetParent() or self:GetParent():PassivesDisabled() or not self:GetAbility():IsCooldownReady() or self:GetParent():IsIllusion() or not self:GetParent():IsAlive() then
 		return
 	end
 	if math.random(1,100) > self:GetAbility():GetSpecialValueFor("proc_chance") or not self:GetAbility():IsCooldownReady() or not self:GetParent():IsAlive() or self:GetParent():IsHexed() then

@@ -8,6 +8,11 @@ imba_omniknight_purification = class({})
 LinkLuaModifier("modifier_imba_purification_passive", "hero/hero_omniknight", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_purification_passive_cooldown", "hero/hero_omniknight", LUA_MODIFIER_MOTION_NONE)
 
+LinkLuaModifier("modifier_imba_a", "hero/hero_omniknight", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_b", "hero/hero_omniknight", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_c", "hero/hero_omniknight", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_d", "hero/hero_omniknight", LUA_MODIFIER_MOTION_NONE)
+
 function imba_omniknight_purification:IsHiddenWhenStolen() 		return false end
 function imba_omniknight_purification:IsRefreshable() 			return true end
 function imba_omniknight_purification:IsStealable() 			return true end
@@ -36,7 +41,7 @@ function imba_omniknight_purification:OnSpellStart()
 							attacker = caster,
 							damage = heal * (self:GetSpecialValueFor("damage_factor") / 100),
 							damage_type = self:GetAbilityDamageType(),
-							damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
 							ability = self, --Optional.
 							}
 		ApplyDamage(damageTable)

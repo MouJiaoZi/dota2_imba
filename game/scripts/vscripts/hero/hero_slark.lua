@@ -7,6 +7,7 @@ imba_slark_shadow_dance = class({})
 LinkLuaModifier("modifier_imba_shadow_dance_passive", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_shadow_dance_active", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_shadow_dance_effect", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_shadow_dance_dummy", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
 
 function imba_slark_shadow_dance:IsHiddenWhenStolen() 		return false end
 function imba_slark_shadow_dance:IsRefreshable() 			return true end
@@ -68,12 +69,16 @@ function modifier_imba_shadow_dance_passive:OnIntervalThink()
 	end
 	if day and can_be_seen then
 		self:SetStackCount(8)
+		self:GetParent():RemoveModifierByName("modifier_imba_shadow_dance_dummy")
 	elseif day and not can_be_seen then
 		self:SetStackCount(4)
+		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_shadow_dance_dummy", {})
 	elseif not day and can_be_seen then
 		self:SetStackCount(2)
+		self:GetParent():RemoveModifierByName("modifier_imba_shadow_dance_dummy")
 	elseif not day and not can_be_seen then
 		self:SetStackCount(1)
+		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_shadow_dance_dummy", {})
 	end
 end
 
@@ -173,3 +178,10 @@ function modifier_imba_shadow_dance_effect:CheckState() return {[MODIFIER_STATE_
 function modifier_imba_shadow_dance_effect:GetStatusEffectName() return "particles/status_fx/status_effect_slark_shadow_dance.vpcf" end
 function modifier_imba_shadow_dance_effect:StatusEffectPriority() return 15 end
 function modifier_imba_shadow_dance_effect:GetPriority() return MODIFIER_PRIORITY_ULTRA end
+
+modifier_imba_shadow_dance_dummy = class({})
+
+function modifier_imba_shadow_dance_dummy:IsDebuff()			return false end
+function modifier_imba_shadow_dance_dummy:IsHidden() 			return false end
+function modifier_imba_shadow_dance_dummy:IsPurgable() 			return false end
+function modifier_imba_shadow_dance_dummy:IsPurgeException() 	return false end

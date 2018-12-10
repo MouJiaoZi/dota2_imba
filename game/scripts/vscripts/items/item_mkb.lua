@@ -47,7 +47,7 @@ function modifier_imba_mkb_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or self:GetParent():IsIllusion() or not self:GetParent().splitattack then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or self:GetParent():IsIllusion() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	local buff = self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_mkb_charge", {duration = self.ability:GetSpecialValueFor("proc_duration")})

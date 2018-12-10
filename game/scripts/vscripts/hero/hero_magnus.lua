@@ -174,7 +174,7 @@ function modifier_imba_empower:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or not keys.target:IsAlive() then
 		return
 	end
 	local dmg = keys.damage * ((self:GetParent():IsRangedAttacker() and self:GetAbility():GetSpecialValueFor("cleave_damage_ranged") or self:GetAbility():GetSpecialValueFor("cleave_damage_pct")) / 100)

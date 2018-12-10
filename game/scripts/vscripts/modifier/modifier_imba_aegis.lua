@@ -78,9 +78,9 @@ function modifier_imba_roshan_upgrade:GetModifierPhysicalArmorBonus() return (se
 function modifier_imba_roshan_upgrade:GetPriority() return MODIFIER_PRIORITY_HIGH end
 function modifier_imba_roshan_upgrade:CheckState()
 	if self:GetStackCount() < 8 then
-		return {[MODIFIER_STATE_STUNNED] = false}
+		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_UNSLOWABLE] = true}
 	else
-		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_CANNOT_MISS] = true, [MODIFIER_STATE_DISARMED] = false, [MODIFIER_STATE_ROOTED] = false} 
+		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_CANNOT_MISS] = true, [MODIFIER_STATE_DISARMED] = false, [MODIFIER_STATE_ROOTED] = false, [MODIFIER_STATE_UNSLOWABLE] = true} 
 	end
 end
 

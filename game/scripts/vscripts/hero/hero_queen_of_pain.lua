@@ -104,7 +104,7 @@ function modifier_imba_shadow_strike_passive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsMagicImmune() or not IsEnemy(keys.target, keys.attacker) or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() then
+	if keys.attacker ~= self:GetParent() or keys.target:IsMagicImmune() or not IsEnemy(keys.target, keys.attacker) or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
 	if not keys.target:HasModifier("modifier_imba_shadow_strike_base_slow") then

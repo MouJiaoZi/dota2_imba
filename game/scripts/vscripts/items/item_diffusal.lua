@@ -82,7 +82,7 @@ function modifier_imba_diffusal_1_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or not self:GetParent().splitattack then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	if self:GetParent():HasModifier("modifier_imba_diffusal_2_unique") or self:GetParent():HasModifier("modifier_imba_diffusal_3_unique") then
@@ -165,7 +165,7 @@ function modifier_imba_diffusal_2_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or not self:GetParent().splitattack then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	if self:GetParent():HasModifier("modifier_imba_diffusal_3_unique") then
@@ -251,7 +251,7 @@ function modifier_imba_diffusal_3_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or not self:GetParent().splitattack then
+	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or keys.target:GetMaxMana() <= 0 or keys.target:IsMagicImmune() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	local mana_burn = self:GetParent():IsIllusion() and self.ability:GetSpecialValueFor("illusion_mana_burn") or self.ability:GetSpecialValueFor("mana_burn")

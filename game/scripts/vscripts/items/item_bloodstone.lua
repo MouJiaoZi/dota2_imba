@@ -13,7 +13,7 @@ function item_imba_bloodstone:GetIntrinsicModifierName() return "modifier_imba_b
 
 function item_imba_bloodstone:OnSpellStart()
 	local caster = self:GetCaster()
-	caster:Kill(self, caster)
+	TrueKill(caster, caster, self)
 end
 
 modifier_imba_bloodstone_passive = class({})

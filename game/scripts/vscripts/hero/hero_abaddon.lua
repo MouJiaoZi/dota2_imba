@@ -214,7 +214,7 @@ function modifier_frostmourne:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetCaster() then
 		return
 	end
-	if keys.target:IsOther() or keys.target:GetTeamNumber() == self:GetCaster():GetTeamNumber() then
+	if keys.target:IsOther() or keys.target:GetTeamNumber() == self:GetCaster():GetTeamNumber() or not keys.target:IsAlive() then
 		return
 	end
 	if keys.target:HasModifier("modifier_frostmourne_debuff") then
@@ -252,7 +252,7 @@ function modifier_frostmourne_debuff:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.target ~= self:GetParent() then
+	if keys.target ~= self:GetParent() or not keys.target:IsAlive() or not keys.attacker:IsAlive() then
 		return
 	end
 	if keys.attacker:IsBuilding() or keys.attacker:IsOther() or keys.attacker:GetTeamNumber() == self:GetParent():GetTeamNumber() then

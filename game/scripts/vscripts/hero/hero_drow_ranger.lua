@@ -14,6 +14,9 @@ end
 
 function FrostArrows_AttackLanded(keys)
 	local caster = keys.attacker
+	if caster:IsIllusion() then
+		return
+	end
 	local target = keys.target
 	local ability = keys.ability
 	local duration = ability:GetSpecialValueFor("frost_arrows_creep_duration")
@@ -405,7 +408,7 @@ function modifier_imba_marksmanship_effect:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and self:GetParent():HasScepter() and self:GetParent().splitattack then
+	if keys.attacker == self:GetParent() and self:GetParent():HasScepter() and self:GetParent().splitattack and keys.target:IsAlive() then
 		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), keys.target:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("splinter_radius_scepter"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NOT_NIGHTMARED, FIND_ANY_ORDER, false)
 		for _ , enemy in pairs(enemies) do
 			if enemy ~= keys.target then

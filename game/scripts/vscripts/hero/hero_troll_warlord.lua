@@ -179,7 +179,7 @@ function modifier_imba_fervor_passive:IsPurgeException() 	return false end
 function modifier_imba_fervor_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
 function modifier_imba_fervor_passive:OnAttackLanded(keys)
 	if IsServer() then
-		if not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") and not self:GetParent():IsIllusion() and not keys.target:IsBoss() then
+		if not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") and not self:GetParent():IsIllusion() and not keys.target:IsBoss() and keys.target:IsAlive() then
 			local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_fervor_dummy", {duration = self:GetAbility():GetSpecialValueFor("duration")})
 			buff:SetStackCount(buff:GetStackCount() + 1)
 		end
@@ -225,7 +225,7 @@ function modifier_imba_berserkers_rage_passive:IsPurgeException() 	return false 
 function modifier_imba_berserkers_rage_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
 
 function modifier_imba_berserkers_rage_passive:OnAttackLanded(keys)
-	if IsServer() and self:GetParent() == keys.attacker and self:GetParent().splitattack then
+	if IsServer() and self:GetParent() == keys.attacker and self:GetParent().splitattack and keys.target:IsAlive() then
 		if RollPercentage(self:GetAbility():GetSpecialValueFor("bash_chance")) and (keys.target:IsHero() or keys.target:IsCreep()) and self:GetParent():IsRealHero() then
 			keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("bash_duration")})
 			keys.target:EmitSound("Hero_TrollWarlord.BerserkersRage.Stun")
@@ -295,7 +295,7 @@ function modifier_imba_battle_trance_stacks:IsPurgeException() 	return false end
 function modifier_imba_battle_trance_stacks:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_imba_battle_trance_stacks:OnAttackLanded(keys)
 	if IsServer() then
-		if keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") then
+		if keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") and keys.target:IsAlive() then
 			self:IncrementStackCount()
 		end
 	end

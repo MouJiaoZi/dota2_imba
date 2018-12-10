@@ -22,7 +22,8 @@ function modifier_imba_phase_boots2_passive:IsHidden() 			return true end
 function modifier_imba_phase_boots2_passive:IsPurgable() 		return false end
 function modifier_imba_phase_boots2_passive:IsPurgeException() 	return false end
 function modifier_imba_phase_boots2_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_phase_boots2_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE} end
+function modifier_imba_phase_boots2_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
+function modifier_imba_phase_boots2_passive:GetModifierPhysicalArmorBonus() return self:GetAbility():GetSpecialValueFor("bonus_armor") end
 function modifier_imba_phase_boots2_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_as") end
 function modifier_imba_phase_boots2_passive:GetModifierMoveSpeedBonus_Special_Boots() return self:GetAbility():GetSpecialValueFor("bonus_movement_speed") end
 function modifier_imba_phase_boots2_passive:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
@@ -33,8 +34,8 @@ function modifier_item_imba_phase_boots_2_move_speed:IsDebuff()			return false e
 function modifier_item_imba_phase_boots_2_move_speed:IsHidden() 		return false end
 function modifier_item_imba_phase_boots_2_move_speed:IsPurgable() 		return true end
 function modifier_item_imba_phase_boots_2_move_speed:IsPurgeException() return true end
-function modifier_item_imba_phase_boots_2_move_speed:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
-function modifier_item_imba_phase_boots_2_move_speed:GetModifierMoveSpeed_Max() return self:GetAbility():GetSpecialValueFor("new_ms_limit") end
+function modifier_item_imba_phase_boots_2_move_speed:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
+function modifier_item_imba_phase_boots_2_move_speed:GetIMBAMaxMovespeed() return self:GetAbility():GetSpecialValueFor("new_ms_limit") end
 function modifier_item_imba_phase_boots_2_move_speed:GetModifierMoveSpeedBonus_Percentage() return self:GetAbility():GetSpecialValueFor("phase_ms") end
 
 item_imba_tranquil_boots_2 = class({})

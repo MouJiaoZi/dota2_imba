@@ -244,7 +244,7 @@ function modifier_imba_tidebringer:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:GetTeamNumber() == self:GetParent():GetTeamNumber() or keys.target:IsOther() or self:IsHidden() then
+	if keys.attacker ~= self:GetParent() or keys.target:GetTeamNumber() == self:GetParent():GetTeamNumber() or keys.target:IsOther() or self:IsHidden() or not keys.target:IsAlive() then
 		return
 	end
 	local pfx_name = "particles/units/heroes/hero_kunkka/kunkka_spell_tidebringer.vpcf"
