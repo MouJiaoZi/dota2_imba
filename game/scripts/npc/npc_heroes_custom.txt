@@ -758,12 +758,12 @@
 
 		
 		"Ability10"					"special_bonus_exp_boost_15"
-		"Ability11"					"special_bonus_all_stats_6"
+		"Ability11"					"special_bonus_strength_5"
 		"Ability12"					"special_bonus_cast_range_100"
 		"Ability13"					"special_bonus_movement_speed_20"
-		"Ability14"					"special_bonus_hp_200"
-		"Ability15"					"special_bonus_respawn_reduction_35"
-		"Ability16"					"special_bonus_cooldown_reduction_15"
+		"Ability14"					"special_bonus_cooldown_reduction_12"
+		"Ability15"					"special_bonus_all_stats_15"
+		"Ability16"					"special_bonus_imba_warlock_1"
 		"Ability17"					"special_bonus_20_bash_2"
 	}
 	"npc_dota_hero_beastmaster"
@@ -1661,12 +1661,12 @@
 		
 		"Ability10"					"special_bonus_armor_5"
 		"Ability11"					"special_bonus_attack_speed_25"
-		"Ability12"					"special_bonus_gold_income_5"
+		"Ability12"					"special_bonus_unique_silencer_2"
 		"Ability13"					"special_bonus_movement_speed_25"
 		"Ability14"					"special_bonus_attack_range_50"
 		"Ability15"					"special_bonus_unique_silencer"
 		"Ability16"					"special_bonus_unique_silencer_3"
-		"Ability17"					"special_bonus_unique_silencer_2"
+		"Ability17"					"special_bonus_gold_income_30"
 		
 	}
 	"npc_dota_hero_obsidian_destroyer"

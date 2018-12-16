@@ -11,7 +11,7 @@ function imba_luna_moon_glaive:GetIntrinsicModifierName() return "modifier_imba_
 
 function imba_luna_moon_glaive:GlaiveAttck(source, damage, bounce)
 	local target = nil
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), source:GetAbsOrigin(), nil, self:GetSpecialValueFor("range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), source:GetAbsOrigin(), nil, self:GetSpecialValueFor("range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		if enemy ~= source then
 			target = enemy
@@ -47,11 +47,11 @@ function imba_luna_moon_glaive:OnProjectileHit_ExtraData(target, location, keys)
 		target:EmitSound("Hero_Luna.MoonGlaive.Impact")
 		ApplyDamage({victim = target, attacker = self:GetCaster(), damage = damage, ability = self, damage_type = self:GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL})
 		if RollPercentage(self:GetSpecialValueFor("attack_effect_change")) and not self:GetCaster():IsIllusion() then
-			self:GetCaster().splitattack = false
+			self:GetCaster().moonglaive = false
 			self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_luna_moon_glaive_nodmg", {})
-			self:GetCaster():PerformAttack(target, false, true, true, false, false, true, true)
+			self:GetCaster():PerformAttack(target, false, true, true, true, false, true, true)
 			self:GetCaster():RemoveModifierByName("modifier_imba_luna_moon_glaive_nodmg")
-			self:GetCaster().splitattack = true
+			self:GetCaster().moonglaive = true
 		end
 		local bounce = keys.bounces + 1
 		if bounce >= self:GetSpecialValueFor("bounces") then
@@ -75,6 +75,7 @@ function modifier_imba_luna_moon_glaive:OnCreated()
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_luna/luna_ambient_moon_glaive.vpcf", PATTACH_POINT_FOLLOW, self:GetParent())
 		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_weapon", self:GetParent():GetAbsOrigin(), true)
 		self:AddParticle(pfx, false, false, 15, false, false)
+		self:GetParent().moonglaive = true
 	end
 end
 
@@ -82,7 +83,7 @@ function modifier_imba_luna_moon_glaive:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or self:GetParent():HasModifier("modifier_imba_luna_moon_glaive_nodmg") or not self:GetParent().splitattack or not keys.target:IsAlive() then
+	if keys.attacker ~= self:GetParent() or keys.target:IsOther() or self:GetParent():PassivesDisabled() or self:GetParent():HasModifier("modifier_imba_luna_moon_glaive_nodmg") or not self:GetParent().moonglaive or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	local dmg = keys.original_damage

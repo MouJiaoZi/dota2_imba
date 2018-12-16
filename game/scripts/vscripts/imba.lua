@@ -222,19 +222,6 @@ function IMBA:DamageFilter(keys)
 	end
 
 	------------------------------------------------------------------------------------
-	-- Remove item from Roshan
-	------------------------------------------------------------------------------------
-
-	if target:IsBoss() and keys.damage >= target:GetHealth() then
-		for i=0, 8 do
-			local item = target:GetItemInSlot(i)
-			if item and (item:GetName() == "item_imba_greater_crit" or item:GetName() == "item_imba_reverb_rapier" or item:GetName() == "item_imba_monkey_king_bar") then
-				target:RemoveItem(item)
-			end
-		end
-	end
-
-	------------------------------------------------------------------------------------
 	-- True Hero Killed
 	------------------------------------------------------------------------------------
 
@@ -264,7 +251,9 @@ function IMBA:DamageFilter(keys)
 		local respawn_timer = victim:GetIMBARespawnTime()
 
 		if game_time > 1200 then
-			respawn_timer = respawn_timer + ((game_time - 1200) / 60)
+			if game_time > 1800 then
+				respawn_timer = respawn_timer + ((game_time - 1800) / 60)
+			end
 			GameRules:SetSafeToLeave(true)
 		end
 
@@ -275,7 +264,7 @@ function IMBA:DamageFilter(keys)
 		buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim:GetPlayerID()) / 20 + math.min(victim:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
 
 		if GameRules:IsCheatMode() then
-			--buy_back_cost = 0
+			buy_back_cost = 0
 		end
 
 		PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
@@ -288,30 +277,14 @@ function IMBA:DamageFilter(keys)
 			buyback_cooldown = math.min(BUYBACK_COOLDOWN_GROW_FACTOR * (game_time - BUYBACK_COOLDOWN_START_POINT), BUYBACK_COOLDOWN_MAXIMUM)
 		end
 
-		PlayerResource:SetCustomBuybackCooldown(player_id, buyback_cooldown)
-
-		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
-		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
-		PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
-
-		if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
-			local line_duration = 7
-
-			local death_player = victim:GetPlayerID()
-			local kill_player = attacker:GetPlayerID()
-			if death_player and kill_player then
-				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
-				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
-				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
-				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
-
-				if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
-					Notifications:BottomToAll({hero = victim:GetName(), duration = line_duration})
-					Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
-					Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
-				end
-			end
+		if GameRules:IsCheatMode() then
+			buyback_cooldown = 0
 		end
+
+		PlayerResource:SetCustomBuybackCooldown(victim:GetPlayerID(), buyback_cooldown)
+
+		print(victim:GetRespawnTime(), PlayerResource:GetRespawnSeconds(victim:GetPlayerID()))
+
 	end
 
 	------------------------------------------------------------------------------------
@@ -357,7 +330,6 @@ function IMBA:OrderFilter(keys)
 	------------------------------------------------------------------------------------
 
 	if unit:IsCourier() then
-		unit:SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_id_const)), PLAYER_COLORS[keys.issuer_player_id_const][1], PLAYER_COLORS[keys.issuer_player_id_const][2], PLAYER_COLORS[keys.issuer_player_id_const][3])
 		local hero = PlayerResource:GetPlayer(keys.issuer_player_id_const):GetAssignedHero()
 		if hero then
 			unit:RemoveModifierByName("modifier_imba_courier_marker")
@@ -773,14 +745,6 @@ function IMBA:SpawnRoshan()
 	--unit:RemoveAbility("roshan_devotion")
 	--unit:RemoveModifierByName("modifier_roshan_devotion")
 	unit:AddItemByName("item_aegis")
-
-	local items = {"item_imba_greater_crit", "item_imba_reverb_rapier", "item_imba_monkey_king_bar"}
-
-	for i=1, 3 do
-		if RollPercentage(roshan_kill * 3) then
-			unit:AddItemByName(items[i])
-		end
-	end
 
 	--- IMBA Roshan Set
 	SetCreatureHealth(unit, 12000 + (roshan_kill - 1) * 2000, true)

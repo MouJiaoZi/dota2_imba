@@ -8805,7 +8805,7 @@
 		
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1000"
+		"AbilityCastRange"				"2000"
 		"AbilityCastPoint"				"0.3"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_GHOST_SHIP"
 		
@@ -8877,12 +8877,12 @@
 			"14"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"spawn_distance_scepter"		"2000"
+				"spawn_distance_scepter"		"2500"
 			}
 			"15"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"spawn_distance"				"1000"
+				"spawn_distance"				"1500"
 			}
 		}
 	}
@@ -10174,7 +10174,7 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"attack_effect_change"		"50"
+				"attack_effect_change"		"35"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -15182,7 +15182,7 @@
 		"AbilityTextureName"			"storm_spirit_static_remnant"
 		"MaxLevel" 						"4"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
-		"AbilityUnitTargetTeamt"		"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
@@ -15371,7 +15371,7 @@
 		"AbilityTextureName"			"storm_spirit_overload"
 		"MaxLevel" 						"4"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		"AbilityUnitTargetTeamt"		"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
@@ -19062,7 +19062,7 @@
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"						"ability_datadriven"
+		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"warlock_shadow_word"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
@@ -19070,6 +19070,7 @@
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 		"FightRecapLevel"				"1"
+		"ScriptFile"					"hero/hero_warlock.lua"
 
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
@@ -19113,203 +19114,28 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"tick_damage"			"15 25 35 45"
+				"damage_per_second"		"15 25 35 45"
 			}
 			"04"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"tick_ms_debuff"		"-1.5 -2.0 -2.5 -3.0"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tick_as_debuff"		"-2 -3 -4 -5"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tick_damage_debuff"	"-2 -3 -4 -5"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"tick_ms_buff"			"1.5 2.0 2.5 3.0"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tick_as_buff"			"2 3 4 5"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tick_damage_buff"		"2 3 4 5"
-			}
-			"10"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"max_ms"				"18 24 30 36"
 			}
-			"11"
+			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"max_as"				"24 36 48 60"
 			}
-			"12"
+			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"max_damage"			"24 36 48 60"
+				"CalculateSpellDamageTooltip"	"0"
 			}
-			"13"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"total_damage"			"180 300 420 540"
-			}
-			"14"
+			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"spread_aoe"			"600"
-			}
-			"15"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"max_stacks"			"12"
-			}
-		}
-
-		"OnSpellStart"
-		{
-			"RunScript"
-			{
-				"ScriptFile"			"hero/hero_warlock.lua"
-				"Function"				"ShadowWord"
-
-				"sound_cast_good"		"Hero_Warlock.ShadowWordCastGood"
-				"sound_cast_bad"		"Hero_Warlock.ShadowWordCastBad"
-				"sound_target"			"Hero_Warlock.ShadowWord"
-				"modifier_buff"			"modifier_imba_shadow_word_buff"
-				"modifier_debuff"		"modifier_imba_shadow_word_debuff"
-			}
-		}
-
-		"Modifiers"
-		{
-			"modifier_imba_shadow_word_buff"
-			{
-				"Passive"				"0"
-				"IsHidden"				"0"
-				"IsBuff"				"1"
-				"IsPurgable"			"1"
-
-				"Duration"				"%duration"
-
-				"EffectName"			"particles/units/heroes/hero_warlock/warlock_shadow_word_buff.vpcf"
-				"EffectAttachType"		"follow_origin"
-
-				"ThinkInterval"			"%tick_interval"
-
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"			"hero/hero_warlock.lua"
-						"Function"				"ShadowWordTickGood"
-
-						"modifier_stacks"		"modifier_imba_shadow_word_stacks_good"
-					}
-				}
-
-				"OnDestroy"
-				{
-					"RunScript"
-					{
-						"ScriptFile"			"hero/hero_warlock.lua"
-						"Function"				"ShadowWordExplode"
-
-						"particle_explode"		"particles/hero/warlock/shadow_word_explosion_good.vpcf"
-						"sound_explode"			"Imba.WarlockShadowWordExplosion"
-						"sound_cast_good"		"Hero_Warlock.ShadowWordCastGood"
-						"sound_cast_bad"		"Hero_Warlock.ShadowWordCastBad"
-						"sound_target"			"Hero_Warlock.ShadowWord"
-						"modifier_buff"			"modifier_imba_shadow_word_buff"
-						"modifier_debuff"		"modifier_imba_shadow_word_debuff"
-						"modifier_stacks"		"modifier_imba_shadow_word_stacks_good"
-					}
-				}
-			}
-
-			"modifier_imba_shadow_word_debuff"
-			{
-				"Passive"				"0"
-				"IsHidden"				"0"
-				"IsDebuff"				"1"
-				"IsPurgable"			"1"
-
-				"Duration"				"%duration"
-
-				"EffectName"			"particles/units/heroes/hero_warlock/warlock_shadow_word_debuff.vpcf"
-				"EffectAttachType"		"follow_origin"
-
-				"ThinkInterval"			"%tick_interval"
-
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"			"hero/hero_warlock.lua"
-						"Function"				"ShadowWordTickBad"
-
-						"modifier_stacks"		"modifier_imba_shadow_word_stacks_bad"
-					}
-				}
-
-				"OnDestroy"
-				{
-					"RunScript"
-					{
-						"ScriptFile"			"hero/hero_warlock.lua"
-						"Function"				"ShadowWordExplode"
-
-						"particle_explode"		"particles/hero/warlock/shadow_word_explosion_bad.vpcf"
-						"sound_explode"			"Imba.WarlockShadowWordExplosion"
-						"sound_cast_good"		"Hero_Warlock.ShadowWordCastGood"
-						"sound_cast_bad"		"Hero_Warlock.ShadowWordCastBad"
-						"sound_target"			"Hero_Warlock.ShadowWord"
-						"modifier_buff"			"modifier_imba_shadow_word_buff"
-						"modifier_debuff"		"modifier_imba_shadow_word_debuff"
-						"modifier_stacks"		"modifier_imba_shadow_word_stacks_bad"
-					}
-				}
-			}
-
-			"modifier_imba_shadow_word_stacks_good"
-			{
-				"Passive"				"0"
-				"IsHidden"				"1"
-				"IsBuff"				"1"
-				"IsPurgable"			"1"
-			
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE"		"%tick_ms_buff"
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT"		"%tick_as_buff" 
-					"MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE"	"%tick_damage_buff"
-				}
-			}
-
-			"modifier_imba_shadow_word_stacks_bad"
-			{
-				"Passive"				"0"
-				"IsHidden"				"1"
-				"IsDebuff"				"1"
-				"IsPurgable"			"1"
-			
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE"		"%tick_ms_debuff"
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT"		"%tick_as_debuff" 
-					"MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE"	"%tick_damage_debuff"
-				}
 			}
 		}
 	}
@@ -19321,20 +19147,20 @@
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"						"ability_datadriven"
+		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"warlock_upheaval"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 		"FightRecapLevel"				"1"
+		"ScriptFile"					"hero/hero_warlock.lua"
 
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastPoint"				"0.35"
 		"AbilityCastRange"				"1200"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
-		"AOERadius"						"%slow_radius"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -19376,22 +19202,12 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"move_slow_tooltip"		"-7 -14 -21 -28"
+				"move_slow_tooltip"		"7 14 21 28"
 			}
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"attack_slow_tooltip"	"-5 -10 -15 -20"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"move_slow_stack"		"-3.5 -7 -10.5 -14"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"attack_slow_stack"		"-2.5 -5 -7.5 -10"
+				"attack_slow_tooltip"	"5 10 15 20"
 			}
 			"08"
 			{
@@ -19414,108 +19230,6 @@
 				"slow_duration"			"3"
 			}
 		}
-
-		"OnSpellStart"
-		{
-			"RunScript"
-			{
-				"ScriptFile"			"hero/hero_warlock.lua"
-				"Function"				"Upheaval"
-				"Target"				"POINT"
-
-				"sound_loop"			"Hero_Warlock.Upheaval"
-				"modifier_tower"		"modifier_imba_upheaval_aura"
-				"particle_aura"			"particles/units/heroes/hero_warlock/warlock_upheaval.vpcf"
-			}
-		}
-
-		"Modifiers"
-		{
-			"modifier_imba_upheaval_aura"
-			{
-				"Passive"					"0"
-				"IsBuff"					"1"
-				"IsHidden"					"1"
-				"IsPurgable"				"0"
-
-				"ThinkInterval"				"%tick_interval"
-
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"hero/hero_warlock.lua"
-						"Function"			"UpheavalTowerAura"
-
-						"modifier_hero"		"modifier_imba_upheaval_aura_debuff"
-						"modifier_creep"	"modifier_imba_upheaval_aura_debuff_creep"
-					}
-				}
-
-				"OnAttacked"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"hero/hero_warlock.lua"
-						"Function"			"UpheavalTowerDamage"
-
-						"sound_loop"		"Hero_Warlock.Upheaval"
-						"sound_end"			"Hero_Warlock.Upheaval.Stop"
-					}
-				}
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL"		"1"
-					"MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL"		"1"
-					"MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE"			"1"
-					"MODIFIER_PROPERTY_DISABLE_HEALING"					"1"
-				}
-
-				"States"
-				{
-					"MODIFIER_STATE_MAGIC_IMMUNE"	"MODIFIER_STATE_VALUE_ENABLED"
-				}
-			}
-
-			"modifier_imba_upheaval_aura_debuff"
-			{
-				"Passive"					"0"
-				"IsDebuff"					"1"
-				"IsHidden"					"1"
-				"IsPurgable"				"1"
-
-				"Duration"					"%slow_duration"
-
-				"EffectName"				"particles/units/heroes/hero_warlock/warlock_upheaval_debuff.vpcf"
-				"EffectAttachType"			"follow_origin"
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE"	"%move_slow_stack"
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT"	"%attack_slow_stack" 
-				}
-			}
-
-			"modifier_imba_upheaval_aura_debuff_creep"
-			{
-				"Passive"					"0"
-				"IsDebuff"					"1"
-				"IsHidden"					"1"
-				"IsPurgable"				"1"
-
-				"Duration"					"%slow_duration"
-
-				"EffectName"				"particles/units/heroes/hero_warlock/warlock_upheaval_debuff_creep.vpcf"
-				"EffectAttachType"			"follow_origin"
-
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE"	"%move_slow_stack"
-					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT"	"%attack_slow_stack" 
-				}
-			}
-		}
 	}
 
 	//=================================================================================================================
@@ -19525,20 +19239,20 @@
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"						"ability_datadriven"
+		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"warlock_rain_of_chaos"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
 		"FightRecapLevel"				"2"
+		"ScriptFile"					"hero/hero_warlock.lua"
 
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.5"
-		"AbilityCastRange"				"1200"
-		"AOERadius"						"%stun_radius"
+		"AbilityCastPoint"				"0.0"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -19548,21 +19262,6 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityManaCost"				"200 300 400"
 
-		// Precache
-		//-------------------------------------------------------------------------------------------------------------
-		"precache"
-		{
-			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_warlock.vsndevts"
-			"particle"					"particles/units/heroes/hero_warlock/golem_ambient.vpcf"
-			"particle"					"particles/econ/items/warlock/warlock_golem_obsidian/golem_ambient_obsidian.vpcf"
-			"particle"					"particles/econ/items/warlock/warlock_golem_dark_curator/golem_ambient_dark_curator.vpcf"
-			"particle"					"particles/units/heroes/hero_warlock/warlock_rain_of_chaos_start.vpcf"
-			"particle"					"particles/units/heroes/hero_warlock/warlock_rain_of_chaos_staff.vpcf"
-			"particle"					"particles/units/heroes/hero_warlock/warlock_rain_of_chaos.vpcf"
-			"particle"					"particles/hero/warlock/warlock_rain_of_chaos_small.vpcf"
-			"particle"					"particles/hero/warlock/warlock_rain_of_chaos_start_small.vpcf"
-		}
-
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -19570,144 +19269,102 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"stun_radius"			"600"
+				"duration"				"60"
 			}
 			"02"
 			{
-				"var_type"				"FIELD_FLOAT"
-				"stun_duration"			"1.0"
+				"var_type"				"FIELD_INTEGER"
+				"aoe_1"					"700"
 			}
 			"03"
 			{
-				"var_type"				"FIELD_FLOAT"
-				"effect_delay"			"0.5"
+				"var_type"				"FIELD_INTEGER"
+				"aoe_2"					"1200"
 			}
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration"				"65"
+				"aoe_3"					"1700"
 			}
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"base_health"			"900"
+				"dmg_1"					"300"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"health_per_level"		"50 75 100"
+				"dmg_2"					"500"
 			}
 			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"base_damage"			"90 150 220"
+				"dmg_3"					"700"
 			}
 			"08"
 			{
-				"var_type"				"FIELD_FLOAT"
-				"secondary_delay"		"0.97"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"stun_scepter"			"1.0"
-			}
-		}
-
-		"OnAbilityPhaseStart"
-		{
-			"RunScript"
-			{
-				"ScriptFile"			"hero/hero_warlock.lua"
-				"Function"				"ChaoticOfferingPreCast"
-
-				"sound_precast"			"Hero_Warlock.RainOfChaos_buildup"
-				"particle_precast"		"particles/units/heroes/hero_warlock/warlock_rain_of_chaos_staff.vpcf"
-			}
-		}
-
-		"OnSpellStart"
-		{
-			"RunScript"
-			{
-				"ScriptFile"			"hero/hero_warlock.lua"
-				"Function"				"ChaoticOffering"
-				"Target"				"POINT"
-
-				"sound_cast"			"Hero_Warlock.RainOfChaos"
-				"particle_initial"		"particles/units/heroes/hero_warlock/warlock_rain_of_chaos_start.vpcf"
-				"particle_secondary"	"particles/units/heroes/hero_warlock/warlock_rain_of_chaos.vpcf"
-				"particle_golem"		"particles/units/heroes/hero_warlock/golem_ambient.vpcf"
-				"particle_golem_4"		"particles/econ/items/warlock/warlock_golem_obsidian/golem_ambient_obsidian.vpcf"
-				"particle_golem_5"		"particles/econ/items/warlock/warlock_golem_dark_curator/golem_ambient_dark_curator.vpcf"
-				"modifier_golem"		"modifier_imba_rain_of_chaos_golem_innate"
-				"modifier_main_golem"	"modifier_imba_rain_of_chaos_main_golem_marker"
-				"particle_small_1"		"particles/hero/warlock/warlock_rain_of_chaos_start_small.vpcf"
-				"particle_small_2"		"particles/hero/warlock/warlock_rain_of_chaos_small.vpcf"
-			}
-		}
-
-		"Modifiers"
-		{
-			"modifier_imba_rain_of_chaos_golem_innate"
-			{
-				"Passive"				"0"
-				"IsHidden"				"1"
-				"IsBuff"				"1"
-				"IsPurgable"			"0"
-		
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE"		"%base_damage"
-				}
-			}
-
-			"modifier_imba_rain_of_chaos_main_golem_marker"
-			{
-				"Passive"				"0"
-				"IsHidden"				"1"
-				"IsBuff"				"1"
-				"IsPurgable"			"0"
-
-				"ThinkInterval"			"1.0"
-
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"	"hero/hero_warlock.lua"
-						"Function"		"ChaoticOfferingItemUpdate"
-					}
-				}
-
-				"OnDestroy"
-				{
-					"RunScript"
-					{
-						"ScriptFile"	"hero/hero_warlock.lua"
-						"Function"		"ChaoticOfferingGolemDeath"
-					}
-				}
+				"var_type"				"FIELD_INTEGER"
+				"as_bonus"				"50 150 250"
 			}
 		}
 	}
 
-	//=================================================================================================================
-	// Warlock's Infernal Flaming Fists
-	//=================================================================================================================
-	"imba_warlock_flaming_fists"
+	"special_bonus_imba_warlock_1" // Rangeg Ulti
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"							"ability_datadriven"
-		"AbilityType"						"DOTA_ABILITY_TYPE_BASIC"
-		"AbilityBehavior"					"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		"AbilityUnitTargetType"				"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
-		"AbilityUnitDamageType"				"DAMAGE_TYPE_PURE"	
-		"SpellImmunityType"					"SPELL_IMMUNITY_ENEMIES_YES"
-		"AbilityTextureName"				"warlock_golem_flaming_fists"
-		"MaxLevel"							"1"
-		
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_warlock_rain_of_chaos"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"1"
+			}
+		}
+	}
+	
+	//=================================================================================================================
+	// Warlock's Liquid Hellfire
+	//=================================================================================================================
+	"imba_warlock_liquid_hellfire"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"custom/warlock_liquid_hellfire"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_AOE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"FightRecapLevel"				"1"
+		"MaxLevel"						"3"
+		"ScriptFile"					"hero/hero_warlock.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.0"
+		"AbilityCastRange"				"0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"3.0"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -19715,87 +19372,96 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"damage_pct"			"40"
+				"damage"				"20 40 60"
 			}
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"radius"				"300"
+				"damage_per_second"		"75 100 125"
 			}
-		}
-
-		"Modifiers"
-		{
-			"modifier_imba_golem_flaming_fists"
+			"03"
 			{
-				"Passive"					"1"
-				"IsHidden"					"1"
-				"IsBuff"					"1"
-				"IsPurgable"				"0"
-
-				"OnAttackLanded"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"hero/hero_warlock.lua"
-						"Function"			"GolemFlamingFists"
-					}
-				}
+				"var_type"				"FIELD_INTEGER"
+				"aoe"					"240"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"autocast_range"		"1200"
 			}
 		}
 	}
 
 	//=================================================================================================================
-	// Warlock's Infernal Permanent Immolation
+	// Warlock's Fire of Sargeras
 	//=================================================================================================================
-	"imba_warlock_permanent_immolation"
+	"imba_warlock_fire_of_sargeras"
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"							"ability_datadriven"
-		"AbilityType"						"DOTA_ABILITY_TYPE_BASIC"
-		"AbilityBehavior"					"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		"AbilityUnitTargetType"				"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
-		"AbilityUnitDamageType"				"DAMAGE_TYPE_MAGICAL"	
-		"SpellImmunityType"					"SPELL_IMMUNITY_ENEMIES_NO"
-		"AbilityTextureName"				"warlock_golem_permanent_immolation"
-		"MaxLevel"							"1"
-		
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"custom/warlock_fire_of_sargeras"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"FightRecapLevel"				"1"
+		"MaxLevel"						"3"
+		"ScriptFile"					"hero/hero_warlock.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.0"
+		"AbilityCastRange"				"0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0.0"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
 		{
 			"01"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"radius"				"375"
+				"var_type"				"FIELD_FLOAT"
+				"delay"					"3.0"
 			}
 			"02"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"damage_pct"			"3"
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"3.0"
 			}
-		}
-		
-		"Modifiers"
-		{
-			"modifier_imba_golem_permanent_immolation"
+			"03"
 			{
-				"Passive"					"1"
-				"IsHidden"					"1"
-				"IsBuff"					"1"
-				"IsPurgable"				"0"
-
-				"ThinkInterval"				"1.0"
-
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"		"hero/hero_warlock.lua"
-						"Function"			"GolemPermanentImmolation"
-					}
-				}
+				"var_type"				"FIELD_FLOAT"
+				"interval"				"1.0"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"main_damage"			"40 60 80"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"aoe_damage"			"100 150 200"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"200"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"building_pct"			"50"
 			}
 		}
 	}

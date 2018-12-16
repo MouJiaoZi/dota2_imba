@@ -7663,7 +7663,7 @@
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"505"	
+		"ItemCost"						"820"	
 		"ItemShopTags"					""
 		
 		// Recipe
@@ -7672,7 +7672,7 @@
 		"ItemResult"					"item_imba_white_queen_cape"
 		"ItemRequirements"
 		{
-			"01"						"item_belt_of_strength;item_blades_of_attack"
+			"01"						"item_gauntlets;item_blades_of_attack"
 		}
 	}
 	

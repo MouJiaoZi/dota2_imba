@@ -1,736 +1,9 @@
---[[	Author: Firetoad
-		Date: 09.03.2016	]]
-
-function ShadowWord( keys )
-	local caster = keys.caster
-	local target = keys.target
-	local ability = keys.ability
-	local ability_level = ability:GetLevel() - 1
-	local sound_cast_good = keys.sound_cast_good
-	local sound_cast_bad = keys.sound_cast_bad
-	local sound_target = keys.sound_target
-	local modifier_buff = keys.modifier_buff
-	local modifier_debuff = keys.modifier_debuff
-	
-	-- If the target possesses a ready Linken's Sphere, do nothing
-	if target:GetTeam() ~= caster:GetTeam() then
-		if target:TriggerSpellAbsorb(ability) then
-			return nil
-		end
-	end
-	
-	-- If the target is an ally, use "good" sound/modifier
-	if caster:GetTeam() == target:GetTeam() then
-
-		-- Play cast sound
-		caster:EmitSound(sound_cast_good)
-
-		-- Apply modifier
-		ability:ApplyDataDrivenModifier(caster, target, modifier_buff, {})
-		
-	-- Else, use "bad" sound/modifier
-	else
-
-		-- Play cast sound
-		caster:EmitSound(sound_cast_bad)
-
-		-- Apply modifier
-		ability:ApplyDataDrivenModifier(caster, target, modifier_debuff, {})
-	end
-
-
-	-- Mark target for later explosion
-	target.shadow_word_explosion_target = true
-
-	-- Start or reset looping debuff sound
-	target:StopSound(sound_target)
-	target:EmitSound(sound_target)
-end
-
-function ShadowWordTickGood( keys )
-	local caster = keys.caster
-	local target = keys.target
-	local ability = keys.ability
-	local modifier_stacks = keys.modifier_stacks
-
-	-- If the ability was unlearned, remove existing stacks and exit
-	if not ability then
-		target:RemoveModifierByName(modifier_stacks)
-		return nil
-	end
-
-	-- Parameters
-	local ability_level = ability:GetLevel() - 1
-	local tick_damage = ability:GetLevelSpecialValueFor("tick_damage", ability_level)
-	local max_stacks = ability:GetLevelSpecialValueFor("max_stacks", ability_level)
-	
-	-- Apply healing
-	target:Heal(tick_damage, caster)
-	SendOverheadEventMessage(nil, OVERHEAD_ALERT_HEAL, target, tick_damage, nil)
-
-	-- Add a stack of the buff/debuff if below maximum amount of stacks
-	if target:GetModifierStackCount(modifier_stacks, caster) < max_stacks then
-		AddStacks(ability, caster, target, modifier_stacks, 1, true)
-	end
-end
-
-function ShadowWordTickBad( keys )
-	local caster = keys.caster
-	local target = keys.target
-	local ability = keys.ability
-	local modifier_stacks = keys.modifier_stacks
-
-	-- If the ability was unlearned, remove existing stacks and exit
-	if not ability then
-		target:RemoveModifierByName(modifier_stacks)
-		return nil
-	end
-
-	-- Parameters
-	local ability_level = ability:GetLevel() - 1
-	local tick_damage = ability:GetLevelSpecialValueFor("tick_damage", ability_level)
-	local max_stacks = ability:GetLevelSpecialValueFor("max_stacks", ability_level)
-	
-	-- Apply damage
-	ApplyDamage({attacker = caster, victim = target, ability = ability, damage = tick_damage, damage_type = DAMAGE_TYPE_MAGICAL})
-	SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, target, tick_damage, nil)
-
-	-- Add a stack of the buff/debuff if below maximum amount of stacks
-	if target:GetModifierStackCount(modifier_stacks, caster) < max_stacks then
-		AddStacks(ability, caster, target, modifier_stacks, 1, true)
-	end
-end
-
-function ShadowWordExplode( keys )
-	local caster = keys.caster
-	local target = keys.target
-	local ability = keys.ability
-	local particle_explode = keys.particle_explode
-	local sound_explode = keys.sound_explode
-	local sound_cast_good = keys.sound_cast_good
-	local sound_cast_bad = keys.sound_cast_bad
-	local sound_target = keys.sound_target
-	local modifier_buff = keys.modifier_buff
-	local modifier_debuff = keys.modifier_debuff
-	local modifier_stacks = keys.modifier_stacks
-
-	-- If the ability was unlearned, remove existing stacks and exit
-	if not ability then
-		target:RemoveModifierByName(modifier_stacks)
-		return nil
-	end
-
-	-- Parameters
-	local ability_level = ability:GetLevel() - 1
-	local spread_aoe = ability:GetLevelSpecialValueFor("spread_aoe", ability_level)
-	local creep_chance = ability:GetLevelSpecialValueFor("creep_chance", ability_level)
-	local target_loc = target:GetAbsOrigin()
-	local affected_count = 0
-
-	-- Remove existing stacks
-	target:RemoveModifierByName(modifier_stacks)
-
-	-- Stop playing sound loop
-	target:StopSound(sound_target)
-
-	-- If this is the original target, explode
-	if target.shadow_word_explosion_target then
-
-		-- Play explosion sound
-		target:EmitSound(sound_explode)
-
-		-- Play explosion particle
-		local explosion_pfx = ParticleManager:CreateParticle(particle_explode, PATTACH_ABSORIGIN, target)
-		ParticleManager:SetParticleControl(explosion_pfx, 0, target_loc)
-
-		-- Find nearby allies
-		local nearby_allies = FindUnitsInRadius(caster:GetTeamNumber(), target_loc, nil, spread_aoe, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-
-		-- Find nearby enemies
-		local nearby_enemies = FindUnitsInRadius(caster:GetTeamNumber(), target_loc, nil, spread_aoe, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-
-		-- If allies are nearby, play "good" cast sound and apply modifier to them
-		if #nearby_allies > 0 then
-			
-			-- Play sound
-			target:EmitSound(sound_cast_good)
-
-			-- Apply modifier
-			for _,ally in pairs(nearby_allies) do
-
-				-- Do not re-apply to the original target
-				if ally ~= target then
-					ability:ApplyDataDrivenModifier(caster, ally, modifier_buff, {})
-				end
-			end
-		end
-
-		-- If enemies are nearby, play "bad" cast sound and apply modifier to them
-		if #nearby_enemies > 0 then
-			
-			-- Play sound
-			target:EmitSound(sound_cast_bad)
-
-			-- Apply modifier
-			for _,enemy in pairs(nearby_enemies) do
-
-				-- Do not re-apply to the original target
-				if enemy ~= target then
-					ability:ApplyDataDrivenModifier(caster, enemy, modifier_debuff, {})
-				end
-			end
-		end
-	end
-	
-	-- Clean-up explosion target
-	target.shadow_word_explosion_target = nil
-end
-
-function Upheaval( keys )
-	local caster = keys.caster
-	local target = keys.target_points[1]
-	local ability = keys.ability
-	local ability_level = ability:GetLevel() - 1
-	local sound_loop = keys.sound_loop
-	local modifier_tower = keys.modifier_tower
-	local particle_aura = keys.particle_aura
-
-	-- Parameters
-	local duration = ability:GetLevelSpecialValueFor("duration", ability_level)
-	local health = ability:GetLevelSpecialValueFor("health", ability_level)
-	local slow_radius = ability:GetLevelSpecialValueFor("slow_radius", ability_level)
-	local player_id = false
-
-	-- Nonhero caster handling (e.g. Nether Ward)
-	if caster:IsRealHero() then
-		player_id = caster:GetPlayerID()
-	end
-
-	-- Spawn the Upheaval Tower
-	local upheaval_tower = CreateUnitByName("npc_imba_warlock_upheaval_tower", target, false, caster, caster, caster:GetTeam())
-	FindClearSpaceForUnit(upheaval_tower, target, true)
-	if player_id then
-		upheaval_tower:SetControllableByPlayer(player_id, true)
-	end
-
-	-- Keep track of current slow level
-	upheaval_tower.current_upheaval_stack_power = 1
-
-	-- Face the same direction as the caster
-	upheaval_tower:SetForwardVector(caster:GetForwardVector())
-
-	-- Increase health according to ability level
-	SetCreatureHealth(upheaval_tower, health, true)
-
-	-- Prevent nearby units from getting stuck
-	Timers:CreateTimer(0.01, function()
-		local units = FindUnitsInRadius(caster:GetTeamNumber(), upheaval_tower:GetAbsOrigin(), nil, 128, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_ANY_ORDER, false)
-		for _,unit in pairs(units) do
-			FindClearSpaceForUnit(unit, unit:GetAbsOrigin(), true)
-		end
-	end)
-
-	-- Apply the appropriate modifiers
-	upheaval_tower:AddNewModifier(caster, ability, "modifier_kill", {duration = duration})
-	upheaval_tower:AddNewModifier(caster, ability, "modifier_rooted", {})
-	ability:ApplyDataDrivenModifier(caster, upheaval_tower, modifier_tower, {})
-
-	-- Play cast sound
-	upheaval_tower:EmitSound(sound_loop)
-
-	-- Play aura particle
-	upheaval_tower.upheaval_pfx = ParticleManager:CreateParticle(particle_aura, PATTACH_ABSORIGIN_FOLLOW, upheaval_tower)
-	ParticleManager:SetParticleControl(upheaval_tower.upheaval_pfx, 0, upheaval_tower:GetAbsOrigin())
-	ParticleManager:SetParticleControl(upheaval_tower.upheaval_pfx, 1, Vector(slow_radius, 0, 0))
-
-	-- Start tower animation
-	StartAnimation(upheaval_tower, {activity = ACT_DOTA_IDLE, rate = 1.0})
-
-	-- Stop the particle if the tower's duration expires naturally
-	Timers:CreateTimer(duration, function()
-		ParticleManager:DestroyParticle(upheaval_tower.upheaval_pfx, false)
-	end)
-end
-
-function UpheavalTowerDamage( keys )
-	local attacker = keys.attacker
-	local tower = keys.target
-	local ability = keys.ability
-	local sound_loop = keys.sound_loop
-	local sound_end = keys.sound_end
-
-	-- If the ability was unlearned, destroy the tower
-	if not ability then
-
-		-- Stop looping sound and play destruction sound
-		tower:StopSound(sound_loop)
-		tower:EmitSound(sound_end)
-
-		-- Destroy aura particle
-		ParticleManager:DestroyParticle(tower.upheaval_pfx, false)
-
-		-- Play death animation
-		StartAnimation(tower, {activity = ACT_DOTA_DIE, rate = 1.0})
-
-		-- Destroy the tower
-		tower:Kill(ability, attacker)
-		return nil
-	end
-	
-	-- Parameters
-	local damage = 1
-	
-	-- If the attacker is a hero, tower, or Roshan, deal more damage
-	if attacker:IsHero() or attacker:IsTower() or IsRoshan(attacker) then
-		damage = ability:GetLevelSpecialValueFor("hero_damage", ability:GetLevel() - 1)
-	end
-
-	-- If the damage is enough to kill the tower, destroy it
-	if tower:GetHealth() <= damage then
-
-		-- Stop looping sound and play destruction sound
-		tower:StopSound(sound_loop)
-		tower:EmitSound(sound_end)
-
-		-- Destroy aura particle
-		ParticleManager:DestroyParticle(tower.upheaval_pfx, false)
-
-		-- Play death animation
-		StartAnimation(tower, {activity = ACT_DOTA_DIE, rate = 1.0})
-
-		-- Destroy the tower
-		tower:Kill(ability, attacker)
-
-	-- Else, reduce its HP
-	else
-		tower:SetHealth(tower:GetHealth() - damage)
-	end
-end
-
-function UpheavalTowerAura( keys )
-	local caster = keys.caster
-	local tower = keys.target
-	local ability = keys.ability
-	local ability_level = ability:GetLevel() - 1
-	local modifier_hero = keys.modifier_hero
-	local modifier_creep = keys.modifier_creep
-
-	-- Parameters
-	local slow_radius = ability:GetLevelSpecialValueFor("slow_radius", ability_level)
-
-	-- Find enemies in the aura's radius
-	local nearby_enemies = FindUnitsInRadius(caster:GetTeamNumber(), tower:GetAbsOrigin(), nil, slow_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-	for _,enemy in pairs(nearby_enemies) do
-		
-		-- If this is a hero, use the hero particle
-		if enemy:IsHero() then
-			ability:ApplyDataDrivenModifier(caster, enemy, modifier_hero, {})
-			enemy:SetModifierStackCount(modifier_hero, caster, math.max(enemy:GetModifierStackCount(modifier_hero, caster), tower.current_upheaval_stack_power))
-
-		-- Else, use the creep particle
-		else
-			ability:ApplyDataDrivenModifier(caster, enemy, modifier_creep, {})
-			enemy:SetModifierStackCount(modifier_creep, caster, math.max(enemy:GetModifierStackCount(modifier_creep, caster), tower.current_upheaval_stack_power))
-		end
-	end
-
-	-- Increase stack amount
-	tower.current_upheaval_stack_power = tower.current_upheaval_stack_power + 1
-end
-
-function ChaoticOfferingPreCast( keys )
-	local caster = keys.caster
-	local sound_precast = keys.sound_precast
-	local particle_precast = keys.particle_precast
-
-	-- Plays pre-cast sound and particle
-	caster:EmitSound(sound_precast)
-	local staff_pfx = ParticleManager:CreateParticle(particle_precast, PATTACH_ABSORIGIN, caster)
-	ParticleManager:SetParticleControlEnt(staff_pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", caster:GetAbsOrigin(), true)
-end
-
-function ChaoticOffering( keys )
-	local caster = keys.caster
-	local target = keys.target_points[1]
-	local ability = keys.ability
-	local ability_level = ability:GetLevel() - 1
-	local sound_cast = keys.sound_cast
-	local particle_initial = keys.particle_initial
-	local particle_secondary = keys.particle_secondary
-	local particle_golem = keys.particle_golem
-	local particle_golem_4 = keys.particle_golem_4
-	local particle_golem_5 = keys.particle_golem_5
-	local modifier_golem = keys.modifier_golem
-	local modifier_main_golem = keys.modifier_main_golem
-	local scepter = caster:HasScepter()
-
-	-- Parameters
-	local stun_radius = ability:GetLevelSpecialValueFor("stun_radius", ability_level)
-	local stun_duration = ability:GetLevelSpecialValueFor("stun_duration", ability_level)
-	local effect_delay = ability:GetLevelSpecialValueFor("effect_delay", ability_level)
-	local duration = ability:GetLevelSpecialValueFor("duration", ability_level)
-	local base_health = ability:GetLevelSpecialValueFor("base_health", ability_level)
-	local health_per_level = ability:GetLevelSpecialValueFor("health_per_level", ability_level)
-	local player_id = false
-
-	-- Nonhero caster handling (e.g. Nether Ward)
-	if caster:IsRealHero() then
-		player_id = caster:GetPlayerID()
-	end
-
-	-- Grant vision on the target area
-	ability:CreateVisibilityNode(target, stun_radius, stun_duration)
-
-	-- Create particle/sound dummy
-	local dummy_unit = CreateUnitByName("npc_dummy_unit", target, false, nil, nil, caster:GetTeamNumber())
-
-	-- Roll for an infernal model
-	local infernal_ambient_particle
-	local infernal_model = RandomInt(1, 4)
-	if infernal_model == 4 then
-		infernal_ambient_particle = particle_golem_4
-	else
-		infernal_ambient_particle = particle_golem
-	end
-
-	-- Play impact sound
-	if RandomInt(1, 100) ~= 10 then
-
-		-- YOU FACE JARAXXUS! Adjust model and particles
-		infernal_ambient_particle = particle_golem_5
-		infernal_model = 5
-		Timers:CreateTimer(effect_delay, function()
-			if scepter then
-				dummy_unit:EmitSound("Imba.WarlockYouFaceJaraxxusLong")
-			else
-				dummy_unit:EmitSound("Imba.WarlockYouFaceJaraxxus")
-			end
-		end)
-
-	-- No Jaraxxus. Sad.
-	else
-		dummy_unit:EmitSound(sound_cast)
-	end
-
-	-- Play initial particle
-	local initial_pfx = ParticleManager:CreateParticle(particle_initial, PATTACH_ABSORIGIN_FOLLOW, dummy_unit)
-	ParticleManager:SetParticleControl(initial_pfx, 0, target)
-
-	-- Stun nearby enemies
-	local nearby_enemies = FindUnitsInRadius(caster:GetTeamNumber(), target, nil, stun_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-	for _,enemy in pairs(nearby_enemies) do
-		enemy:AddNewModifier(caster, ability, "modifier_imba_stunned", {duration = stun_duration})
-	end
-
-	-- Wait [effect_delay] seconds
-	Timers:CreateTimer(effect_delay, function()
-
-		-- Play impact particle
-		local impact_pfx = ParticleManager:CreateParticle(particle_secondary, PATTACH_ABSORIGIN_FOLLOW, dummy_unit)
-		ParticleManager:SetParticleControl(impact_pfx, 0, target)
-		ParticleManager:SetParticleControl(impact_pfx, 1, Vector(stun_radius, 0, 0))
-
-		-- Destroy trees
-		GridNav:DestroyTreesAroundPoint(target, stun_radius, false)
-
-		-- Spawn the infernal
-		local infernal = CreateUnitByName("npc_imba_warlock_golem_"..infernal_model, target, false, caster, caster, caster:GetTeam())
-		FindClearSpaceForUnit(infernal, target, true)
-		if player_id then
-			infernal:SetControllableByPlayer(player_id, true)
-		end
-
-		-- Face the same direction as the caster
-		infernal:SetForwardVector(caster:GetForwardVector())
-
-		-- Increase health according to ability level
-		SetCreatureHealth(infernal, base_health + health_per_level * caster:GetLevel(), true)
-
-		-- Prevent nearby units from getting stuck
-		Timers:CreateTimer(0.01, function()
-			local units = FindUnitsInRadius(caster:GetTeamNumber(), infernal:GetAbsOrigin(), nil, 128, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_ANY_ORDER, false)
-			for _,unit in pairs(units) do
-				FindClearSpaceForUnit(unit, unit:GetAbsOrigin(), true)
-			end
-		end)
-
-		-- Apply the appropriate modifiers
-		infernal:AddNewModifier(caster, ability, "modifier_kill", {duration = duration})
-		ability:ApplyDataDrivenModifier(caster, infernal, modifier_golem, {})
-
-		-- Level up abilities
-		local ability_flaming_fists = infernal:FindAbilityByName("imba_warlock_flaming_fists")
-		ability_flaming_fists:SetLevel(1)
-		local ability_permanent_immolation = infernal:FindAbilityByName("imba_warlock_permanent_immolation")
-		ability_permanent_immolation:SetLevel(1)
-
-		-- Multi golem handling (for refresher orb or frantic mode)
-		if not caster.chaotic_offering_main_golem_summoned then
-			caster.chaotic_offering_main_golem_summoned = true
-			ability:ApplyDataDrivenModifier(caster, infernal, modifier_main_golem, {})
-		end
-
-		-- Fire infernal ambient particles according to the chosen model
-		if infernal_model == 1 or infernal_model == 2 then
-			local ambient_pfx = ParticleManager:CreateParticle(infernal_ambient_particle, PATTACH_ABSORIGIN_FOLLOW, infernal)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 0, infernal, PATTACH_POINT_FOLLOW, "attach_mane1", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 1, infernal, PATTACH_POINT_FOLLOW, "attach_mane2", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 2, infernal, PATTACH_POINT_FOLLOW, "attach_mane3", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 3, infernal, PATTACH_POINT_FOLLOW, "attach_mane4", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 4, infernal, PATTACH_POINT_FOLLOW, "attach_mane5", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 5, infernal, PATTACH_POINT_FOLLOW, "attach_mane6", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 6, infernal, PATTACH_POINT_FOLLOW, "attach_mane7", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 7, infernal, PATTACH_POINT_FOLLOW, "attach_mane8", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 10, infernal, PATTACH_POINT_FOLLOW, "attach_hand_r", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 11, infernal, PATTACH_POINT_FOLLOW, "attach_hand_l", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 12, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-		elseif infernal_model == 3 then
-			local ambient_pfx = ParticleManager:CreateParticle(infernal_ambient_particle, PATTACH_ABSORIGIN_FOLLOW, infernal)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 0, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 1, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 2, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 3, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 4, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 5, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 6, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 7, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 10, infernal, PATTACH_POINT_FOLLOW, "attach_attack1", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 11, infernal, PATTACH_POINT_FOLLOW, "attach_attack2", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 12, infernal, PATTACH_POINT_FOLLOW, "attach_hitloc", infernal:GetAbsOrigin(), true)
-		elseif infernal_model == 4 then
-			local ambient_pfx = ParticleManager:CreateParticle(infernal_ambient_particle, PATTACH_ABSORIGIN_FOLLOW, infernal)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 12, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-		elseif infernal_model == 5 then
-			local ambient_pfx = ParticleManager:CreateParticle(particle_golem, PATTACH_ABSORIGIN_FOLLOW, infernal)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 0, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 1, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 2, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 3, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 4, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 5, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 6, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 7, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 10, infernal, PATTACH_POINT_FOLLOW, "attach_hand_r", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 11, infernal, PATTACH_POINT_FOLLOW, "attach_hand_l", infernal:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(ambient_pfx, 12, infernal, PATTACH_POINT_FOLLOW, "attach_mouthFire", infernal:GetAbsOrigin(), true)
-		end
-
-		-- If the golem's item table isn't created yet, do it
-		if not caster.chaotic_offering_golem_items then
-			caster.chaotic_offering_golem_items = {}
-		end
-
-		-- Equip the golem with any previously existing items
-		for i = 0, 5 do 
-			local current_item = caster.chaotic_offering_golem_items[i]
-			if current_item == nil then
-				infernal:AddItem(CreateItem("item_imba_dummy", nil, nil))
-			else
-				-- Main golem gets real items
-				if infernal:HasModifier(modifier_main_golem) then
-					infernal:AddItem(current_item)
-
-				-- Secondaries get copies
-				else
-					infernal:AddItem(CreateItem(current_item:GetAbilityName(), nil, nil))
-				end
-			end
-		end
-
-		-- If this is the main golem, destroy the slot-organizing dummies
-		if infernal:HasModifier(modifier_main_golem) then
-			for i = 0, 5 do
-				local current_item = infernal:GetItemInSlot(i)
-				if current_item:GetAbilityName() == "item_imba_dummy" then
-					infernal:RemoveItem(current_item)
-				end
-			end
-		end
-
-		-- Destroy the sound/particle dummy after 3 seconds
-		dummy_unit:AddNewModifier(caster, ability, "modifier_kill", {duration = 3})
-	end)
-
-	-- If the caster has a scepter, spawn lesser infernals after a small delay
-	if scepter then
-
-		-- Parameters
-		local particle_small_1 = keys.particle_small_1
-		local particle_small_2 = keys.particle_small_2
-		local secondary_delay = ability:GetLevelSpecialValueFor("secondary_delay", ability_level)
-		local stun_scepter = ability:GetLevelSpecialValueFor("stun_scepter", ability_level)
-
-		-- Infernal creation delay
-		Timers:CreateTimer(secondary_delay, function()
-
-			-- Stun nearby enemies again
-			local secondary_enemies = FindUnitsInRadius(caster:GetTeamNumber(), target, nil, stun_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-			for _,enemy in pairs(secondary_enemies) do
-				enemy:AddNewModifier(caster, ability, "modifier_imba_stunned", {duration = stun_scepter})
-			end
-
-			-- Impact sound
-			dummy_unit:EmitSound(sound_cast)
-			
-			-- Infernal creation loop
-			for infernal_count = 0,4 do
-
-				-- Spawn the infernals in a pentagram around the central one
-				local small_target = RotatePosition(target, QAngle(0, -infernal_count * 360 / 5, 0), target + (target - caster:GetAbsOrigin()):Normalized() * stun_radius / 2)
-
-				-- Particles dummy unit
-				local small_dummy = CreateUnitByName("npc_dummy_unit", small_target, false, nil, nil, caster:GetTeamNumber())
-
-				-- Particle part 1
-				local initial_small_pfx = ParticleManager:CreateParticle(particle_small_1, PATTACH_ABSORIGIN_FOLLOW, small_dummy)
-				ParticleManager:SetParticleControl(initial_small_pfx, 0, small_target)
-
-				-- Destroy the sound/particle dummy after 3 seconds
-				small_dummy:AddNewModifier(caster, ability, "modifier_kill", {duration = 3})
-
-				-- [effect_delay] delay
-				Timers:CreateTimer(effect_delay, function()
-					
-					-- Impact particle
-					local impact_small_pfx = ParticleManager:CreateParticle(particle_small_2, PATTACH_ABSORIGIN_FOLLOW, small_dummy)
-					ParticleManager:SetParticleControl(impact_small_pfx, 0, small_target)
-					ParticleManager:SetParticleControl(impact_small_pfx, 1, Vector(stun_radius / 2, 0, 0))
-
-					-- Spawn the infernal
-					local infernal_small = CreateUnitByName("npc_imba_warlock_golem_extra", small_target, false, caster, caster, caster:GetTeam())
-					FindClearSpaceForUnit(infernal_small, small_target, true)
-					infernal_small:SetControllableByPlayer(player_id, true)
-
-					-- Face the same direction as the caster
-					infernal_small:SetForwardVector(caster:GetForwardVector())
-
-					-- Prevent nearby units from getting stuck
-					Timers:CreateTimer(0.01, function()
-						local units = FindUnitsInRadius(caster:GetTeamNumber(), infernal_small:GetAbsOrigin(), nil, 128, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_ANY_ORDER, false)
-						for _,unit in pairs(units) do
-							FindClearSpaceForUnit(unit, unit:GetAbsOrigin(), true)
-						end
-					end)
-
-					-- Apply the appropriate modifiers
-					infernal_small:AddNewModifier(caster, ability, "modifier_kill", {duration = duration})
-
-					-- Level up abilities
-					local ability_flaming_fists = infernal_small:FindAbilityByName("imba_warlock_flaming_fists")
-					ability_flaming_fists:SetLevel(1)
-					local ability_permanent_immolation = infernal_small:FindAbilityByName("imba_warlock_permanent_immolation")
-					ability_permanent_immolation:SetLevel(1)
-				end)
-			end
-		end)
-	end
-end
-
-function ChaoticOfferingItemUpdate( keys )
-	local infernal = keys.target
-	local caster = infernal:GetOwnerEntity()
-
-	-- Nonhero caster handling (e.g. Nether Ward)
-	if not caster:IsRealHero() then
-		return nil
-	end
-	
-	-- Update the golem's persistent item table
-	for i = 0, 5 do
-		local current_item = infernal:GetItemInSlot(i)
-		if current_item then
-			if current_item:GetOwner() == infernal then
-				caster.chaotic_offering_golem_items[i] = current_item
-			else
-				infernal:DropItemAtPositionImmediate(current_item, infernal:GetAbsOrigin())
-				caster.chaotic_offering_golem_items[i] = nil
-			end
-		else
-			caster.chaotic_offering_golem_items[i] = nil
-		end
-	end
-end
-
-function ChaoticOfferingGolemDeath( keys )
-	local infernal = keys.target
-	local caster = infernal:GetOwnerEntity()
-
-	-- Nonhero caster handling (e.g. Nether Ward)
-	if not caster:IsRealHero() then
-		return nil
-	end
-
-	-- Free up space for a new main golem
-	caster.chaotic_offering_main_golem_summoned = nil
-
-	-- If the golem's item table isn't created yet, do it
-	if not caster.chaotic_offering_golem_items then
-		caster.chaotic_offering_golem_items = {}
-	end
-	
-	-- Store the items currently in the golem for later
-	for i = 0, 5 do
-		local current_item = infernal:GetItemInSlot(i)
-		if current_item then
-			if current_item:GetOwner() == infernal then
-				caster.chaotic_offering_golem_items[i] = current_item
-			else
-				caster.chaotic_offering_golem_items[i] = nil
-			end
-		else
-			caster.chaotic_offering_golem_items[i] = nil
-		end
-	end
-end
-
-function GolemFlamingFists( keys )
-	local caster = keys.caster
-	local target = keys.target
-	local ability = keys.ability
-	local ability_level = ability:GetLevel() - 1
-
-	-- Parameters
-	local damage_pct = ability:GetLevelSpecialValueFor("damage_pct", ability_level)
-	local radius = ability:GetLevelSpecialValueFor("radius", ability_level)
-
-	-- If the target is a building, do nothing
-	if target:IsBuilding() then
-		return nil
-	end
-
-	-- Calculate damage
-	local damage = caster:GetAverageTrueAttackDamage(caster) * damage_pct / 100
-
-	-- Damage enemies in the effect radius
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-	for _,enemy in pairs(enemies) do
-		ApplyDamage({attacker = caster, victim = enemy, ability = ability, damage = damage, damage_type = DAMAGE_TYPE_PURE})
-	end
-end
-
-function GolemPermanentImmolation( keys )
-	local caster = keys.caster
-	local ability = keys.ability
-	local ability_level = ability:GetLevel() - 1
-
-	-- Parameters
-	local radius = ability:GetLevelSpecialValueFor("radius", ability_level)
-	local damage_pct = ability:GetLevelSpecialValueFor("damage_pct", ability_level)
-
-	-- Calculate damage
-	local damage = caster:GetMaxHealth() * damage_pct / 100
-
-	-- Damage enemies in the effect radius
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-	for _,enemy in pairs(enemies) do
-		ApplyDamage({attacker = caster, victim = enemy, ability = ability, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
-	end
-end
-
-
-
 
 ---------------------------------
+
+
+--models/items/warlock/golem/hellsworn_golem/hellsworn_golem.vmdl
+-- EmitSound("Imba.WarlockYouFaceJaraxxus")
 
 CreateEmptyTalents("warlock")
 
@@ -783,6 +56,7 @@ function modifier_imba_fetal_bonds_caster:FetalBond(fDamage, hUnit)
 	if not IsServer() then
 		return
 	end
+	hUnit:EmitSound("Hero_Warlock.FatalBondsDamage")
 	for i=1, #self.targets do
 		if self.targets[i] and self.targets[i] ~= hUnit then
 			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_warlock/warlock_fatal_bonds_hit.vpcf", PATTACH_CUSTOMORIGIN, nil)
@@ -790,6 +64,7 @@ function modifier_imba_fetal_bonds_caster:FetalBond(fDamage, hUnit)
 			ParticleManager:SetParticleControlEnt(pfx, 1, self.targets[i], PATTACH_POINT_FOLLOW, "attach_hitloc", self.targets[i]:GetAbsOrigin(), true)
 			ParticleManager:ReleaseParticleIndex(pfx)
 			ApplyDamage({attacker = self:GetParent(), victim = self.targets[i], damage = fDamage * (self:GetAbility():GetSpecialValueFor("damage_share_percentage") / 100), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_REFLECTION + DOTA_DAMAGE_FLAG_HPLOSS, ability = self:GetAbility()})
+			self.targets[i]:EmitSound("Hero_Warlock.FatalBondsDamage")
 		end
 	end
 end
@@ -841,3 +116,559 @@ function modifier_imba_fetal_bonds_target:OnDestroy()
 		end
 	end
 end
+
+imba_warlock_shadow_word = class({})
+
+LinkLuaModifier("modifier_imba_shadow_word_buff", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_shadow_word_debuff", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+
+function imba_warlock_shadow_word:IsHiddenWhenStolen() 		return false end
+function imba_warlock_shadow_word:IsRefreshable() 			return true end
+function imba_warlock_shadow_word:IsStealable() 			return true end
+function imba_warlock_shadow_word:IsNetherWardStealable()	return true end
+
+function imba_warlock_shadow_word:OnSpellStart()
+	local caster = self:GetCaster()
+	local target = self:GetCursorTarget()
+	if target:TriggerStandardTargetSpell(self) then
+		return
+	end
+	if IsEnemy(caster, target) then
+		target:EmitSound("Hero_Warlock.ShadowWordCastBad")
+		target:AddNewModifier(caster, self, "modifier_imba_shadow_word_debuff", {duration = self:GetSpecialValueFor("duration")})
+	else
+		target:EmitSound("Hero_Warlock.ShadowWordCastGood")
+		target:AddNewModifier(caster, self, "modifier_imba_shadow_word_buff", {duration = self:GetSpecialValueFor("duration")})
+	end
+	caster:EmitSound("Hero_Warlock.Incantations")
+end
+
+modifier_imba_shadow_word_buff = class({})
+
+function modifier_imba_shadow_word_buff:IsDebuff()			return false end
+function modifier_imba_shadow_word_buff:IsHidden() 			return false end
+function modifier_imba_shadow_word_buff:IsPurgable() 		return true end
+function modifier_imba_shadow_word_buff:IsPurgeException() 	return true end
+function modifier_imba_shadow_word_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE} end
+function modifier_imba_shadow_word_buff:GetModifierMoveSpeedBonus_Percentage() return (math.min((self:GetElapsedTime() / self:GetDuration()), 1.0) * self:GetAbility():GetSpecialValueFor("max_ms")) end
+function modifier_imba_shadow_word_buff:GetModifierAttackSpeedBonus_Constant() return (math.min((self:GetElapsedTime() / self:GetDuration()), 1.0) * self:GetAbility():GetSpecialValueFor("max_as")) end
+function modifier_imba_shadow_word_buff:GetModifierBaseDamageOutgoing_Percentage() return (math.min((self:GetElapsedTime() / self:GetDuration()), 1.0) * self:GetAbility():GetSpecialValueFor("max_damage")) end
+function modifier_imba_shadow_word_buff:GetEffectName() return "particles/units/heroes/hero_warlock/warlock_shadow_word_buff.vpcf" end
+function modifier_imba_shadow_word_buff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+
+function modifier_imba_shadow_word_buff:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("tick_interval"))
+		self:GetParent():EmitSound("Hero_Warlock.ShadowWord")
+	end
+end
+
+function modifier_imba_shadow_word_buff:OnIntervalThink()
+	local heal = self:GetAbility():GetSpecialValueFor("damage_per_second") / (1.0 / self:GetAbility():GetSpecialValueFor("tick_interval"))
+	heal = (1 + self:GetCaster():GetSpellAmplification(false)) * heal
+	self:GetParent():Heal(heal, self:GetAbility())
+	SendOverheadEventMessage(nil, OVERHEAD_ALERT_HEAL, self:GetParent(), heal, nil)
+end
+
+function modifier_imba_shadow_word_buff:OnDestroy()
+	if IsServer() then
+		self:GetParent():StopSound("Hero_Warlock.ShadowWord")
+		if self:GetStackCount() >= 0 then
+			self:GetParent():EmitSound("Imba.WarlockShadowWordExplosion")
+			local pfx = ParticleManager:CreateParticle("particles/hero/warlock/shadow_word_explosion_good.vpcf", PATTACH_ABSORIGIN, self:GetParent())
+			ParticleManager:ReleaseParticleIndex(pfx)
+			local unit = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("spread_aoe"), DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+			for i=1, #unit do
+				if self:GetParent() ~= unit[i] then
+					if IsEnemy(self:GetCaster(), unit[i]) then
+						unit[i]:EmitSound("Hero_Warlock.ShadowWordCastBad")
+						local buff = unit[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_shadow_word_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+						buff:SetStackCount(-1)
+					else
+						unit[i]:EmitSound("Hero_Warlock.ShadowWordCastGood")
+						local buff = unit[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_shadow_word_buff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+						buff:SetStackCount(-1)
+					end
+				end
+			end
+		end
+	end
+end
+
+modifier_imba_shadow_word_debuff = class({})
+
+function modifier_imba_shadow_word_debuff:IsDebuff()			return false end
+function modifier_imba_shadow_word_debuff:IsHidden() 			return false end
+function modifier_imba_shadow_word_debuff:IsPurgable() 			return true end
+function modifier_imba_shadow_word_debuff:IsPurgeException() 	return true end
+function modifier_imba_shadow_word_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE} end
+function modifier_imba_shadow_word_debuff:GetModifierMoveSpeedBonus_Percentage() return (0 - (math.min((self:GetElapsedTime() / self:GetDuration()), 1.0) * self:GetAbility():GetSpecialValueFor("max_ms"))) end
+function modifier_imba_shadow_word_debuff:GetModifierAttackSpeedBonus_Constant() return (0 - (math.min((self:GetElapsedTime() / self:GetDuration()), 1.0) * self:GetAbility():GetSpecialValueFor("max_as"))) end
+function modifier_imba_shadow_word_debuff:GetModifierBaseDamageOutgoing_Percentage() return (0 - (math.min((self:GetElapsedTime() / self:GetDuration()), 1.0) * self:GetAbility():GetSpecialValueFor("max_damage"))) end
+function modifier_imba_shadow_word_debuff:GetEffectName() return "particles/units/heroes/hero_warlock/warlock_shadow_word_debuff.vpcf" end
+function modifier_imba_shadow_word_debuff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+
+function modifier_imba_shadow_word_debuff:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("tick_interval"))
+		self:GetParent():EmitSound("Hero_Warlock.ShadowWord")
+	end
+end
+
+function modifier_imba_shadow_word_debuff:OnIntervalThink()
+	local dmg = self:GetAbility():GetSpecialValueFor("damage_per_second") / (1.0 / self:GetAbility():GetSpecialValueFor("tick_interval"))
+	ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = dmg, damage_type = self:GetAbility():GetAbilityDamageType()})
+end
+
+function modifier_imba_shadow_word_debuff:OnDestroy()
+	if IsServer() then
+		self:GetParent():StopSound("Hero_Warlock.ShadowWord")
+		if self:GetStackCount() >= 0 then
+			self:GetParent():EmitSound("Imba.WarlockShadowWordExplosion")
+			local pfx = ParticleManager:CreateParticle("particles/hero/warlock/shadow_word_explosion_bad.vpcf", PATTACH_ABSORIGIN, self:GetParent())
+			ParticleManager:ReleaseParticleIndex(pfx)
+			local unit = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("spread_aoe"), DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+			for i=1, #unit do
+				if self:GetParent() ~= unit[i] then
+					if IsEnemy(self:GetCaster(), unit[i]) then
+						unit[i]:EmitSound("Hero_Warlock.ShadowWordCastBad")
+						local buff = unit[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_shadow_word_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+						buff:SetStackCount(-1)
+					else
+						unit[i]:EmitSound("Hero_Warlock.ShadowWordCastGood")
+						local buff = unit[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_shadow_word_buff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+						buff:SetStackCount(-1)
+					end
+				end
+			end
+		end
+	end
+end
+
+imba_warlock_upheaval = class({})
+
+LinkLuaModifier("modifier_imba_upheaval_npc", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_upheaval_aura_debuff", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+
+function imba_warlock_upheaval:IsHiddenWhenStolen() 	return false end
+function imba_warlock_upheaval:IsRefreshable() 			return true end
+function imba_warlock_upheaval:IsStealable() 			return true end
+function imba_warlock_upheaval:IsNetherWardStealable()	return false end
+function imba_warlock_upheaval:GetAOERadius() return self:GetSpecialValueFor("slow_radius") end
+
+function imba_warlock_upheaval:OnSpellStart()
+	local caster = self:GetCaster()
+	local pos = self:GetCursorPosition()
+	local npc = CreateUnitByName("npc_imba_warlock_upheaval_tower", pos, false, caster, caster, caster:GetTeamNumber())
+	FindClearSpaceForUnit(npc, pos, true)
+	npc:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
+	npc:AddNewModifier(caster, self, "modifier_imba_upheaval_npc", {duration = self:GetSpecialValueFor("duration")})
+end
+
+modifier_imba_upheaval_npc = class({})
+
+function modifier_imba_upheaval_npc:IsDebuff()			return false end
+function modifier_imba_upheaval_npc:IsHidden() 			return true end
+function modifier_imba_upheaval_npc:IsPurgable() 		return false end
+function modifier_imba_upheaval_npc:IsPurgeException() 	return false end
+function modifier_imba_upheaval_npc:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = true} end
+function modifier_imba_upheaval_npc:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_DISABLE_HEALING} end
+function modifier_imba_upheaval_npc:GetDisableHealing() return 1 end
+
+function modifier_imba_upheaval_npc:GetModifierIncomingDamage_Percentage(keys)
+	if not IsServer() or keys.target ~= self:GetParent() or keys.original_damage <= 0 then
+		return
+	end
+	local damage = self:GetAbility():GetSpecialValueFor("hero_damage")
+	if not keys.attacker:IsRealHero() and not keys.attacker:IsTower() and not keys.attacker:IsBoss() then
+		damage = 1
+	end
+	local health = self:GetParent():GetHealth()
+	if health - damage <= 0 then
+		self:GetParent():Kill(self:GetAbility(), keys.attacker)
+	else
+		self:GetParent():SetHealth(health - damage)
+	end
+	return -1000000
+end
+
+function modifier_imba_upheaval_npc:OnCreated()
+	if IsServer() then
+		self:GetParent():EmitSound("Hero_Warlock.Upheaval")
+		SetCreatureHealth(self:GetParent(), self:GetAbility():GetSpecialValueFor("health"), true)
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_warlock/warlock_upheaval.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor("slow_radius"),self:GetAbility():GetSpecialValueFor("slow_radius"),self:GetAbility():GetSpecialValueFor("slow_radius")))
+		self:AddParticle(pfx, false, false, 15, false, false)
+		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("tick_interval"))
+	end
+end
+
+function modifier_imba_upheaval_npc:OnIntervalThink()
+	self:SetStackCount(self:GetStackCount() + 1)
+	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("slow_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	for i=1, #enemy do
+		local buff = enemy[i]:FindModifierByName("modifier_imba_upheaval_aura_debuff")
+		if buff then
+			buff:SetStackCount(self:GetStackCount())
+		end
+	end
+end
+
+function modifier_imba_upheaval_npc:OnDestroy()
+	if IsServer() then
+		self:GetParent():StopSound("Hero_Warlock.Upheaval")
+	end
+end
+
+function modifier_imba_upheaval_npc:IsAura() return true end
+function modifier_imba_upheaval_npc:GetAuraDuration() return self:GetAbility():GetSpecialValueFor("slow_duration") end
+function modifier_imba_upheaval_npc:GetModifierAura() return "modifier_imba_upheaval_aura_debuff" end
+function modifier_imba_upheaval_npc:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("slow_radius") end
+function modifier_imba_upheaval_npc:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_NONE end
+function modifier_imba_upheaval_npc:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
+function modifier_imba_upheaval_npc:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
+
+modifier_imba_upheaval_aura_debuff = class({})
+
+function modifier_imba_upheaval_aura_debuff:IsDebuff()			return true end
+function modifier_imba_upheaval_aura_debuff:IsHidden() 			return false end
+function modifier_imba_upheaval_aura_debuff:IsPurgable() 		return false end
+function modifier_imba_upheaval_aura_debuff:IsPurgeException() 	return false end
+function modifier_imba_upheaval_aura_debuff:GetEffectName() return "particles/units/heroes/hero_warlock/warlock_upheaval_debuff.vpcf" end
+function modifier_imba_upheaval_aura_debuff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+function modifier_imba_upheaval_aura_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_upheaval_aura_debuff:GetModifierMoveSpeedBonus_Percentage() return (0 - (self:GetStackCount() / (1.0 / self:GetAbility():GetSpecialValueFor("tick_interval"))) * self:GetAbility():GetSpecialValueFor("move_slow_tooltip")) end
+function modifier_imba_upheaval_aura_debuff:GetModifierAttackSpeedBonus_Constant() return (0 - (self:GetStackCount() / (1.0 / self:GetAbility():GetSpecialValueFor("tick_interval"))) * self:GetAbility():GetSpecialValueFor("move_slow_tooltip")) end
+
+imba_warlock_rain_of_chaos = class({})
+
+LinkLuaModifier("modifier_imba_rain_of_chaos_invul", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_rain_of_chaos", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_rain_of_chaos_attack_range", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_rain_of_chaos_storm", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+
+function imba_warlock_rain_of_chaos:IsHiddenWhenStolen() 	return false end
+function imba_warlock_rain_of_chaos:IsRefreshable() 		return true end
+function imba_warlock_rain_of_chaos:IsStealable() 			return false end
+function imba_warlock_rain_of_chaos:IsNetherWardStealable()	return false end
+
+function imba_warlock_rain_of_chaos:OnSpellStart()
+	local caster = self:GetCaster()
+	local pos = caster:GetAbsOrigin()
+	if RollPercentage(20) then
+		caster:EmitSound("Imba.WarlockYouFaceJaraxxus")
+	end
+	caster:EmitSound("Hero_Warlock.RainOfChaos")
+	local pfx_pre = ParticleManager:CreateParticle("particles/units/heroes/hero_warlock/warlock_rain_of_chaos_start.vpcf", PATTACH_CUSTOMORIGIN, caster)
+	ParticleManager:SetParticleControl(pfx_pre, 0, pos)
+	ParticleManager:ReleaseParticleIndex(pfx_pre)
+	caster:AddNewModifier(caster, self, "modifier_imba_rain_of_chaos_invul", {duration = 0.5})
+	Timers:CreateTimer(0.5, function()
+			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_warlock/warlock_rain_of_chaos.vpcf", PATTACH_CUSTOMORIGIN, caster)
+			ParticleManager:SetParticleControl(pfx, 0, pos)
+			ParticleManager:SetParticleControl(pfx, 1, Vector(500,0,0))
+			ParticleManager:ReleaseParticleIndex(pfx)
+			caster:AddNewModifier(caster, self, "modifier_imba_rain_of_chaos", {duration = self:GetSpecialValueFor("duration")})
+			if not caster:HasTalent("special_bonus_imba_warlock_1") then
+				caster:AddNewModifier(caster, self, "modifier_imba_rain_of_chaos_attack_range", {duration = self:GetSpecialValueFor("duration")})
+			end
+			return nil
+		end
+	)
+end
+
+modifier_imba_rain_of_chaos_invul = class({})
+
+function modifier_imba_rain_of_chaos_invul:IsDebuff()			return false end
+function modifier_imba_rain_of_chaos_invul:IsHidden() 			return true end
+function modifier_imba_rain_of_chaos_invul:IsPurgable() 		return false end
+function modifier_imba_rain_of_chaos_invul:IsPurgeException() 	return false end
+function modifier_imba_rain_of_chaos_invul:GetEffectName() return "particles/hero/warlock/warlock_hands_of_goredan_ring.vpcf" end
+function modifier_imba_rain_of_chaos_invul:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+function modifier_imba_rain_of_chaos_invul:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
+function modifier_imba_rain_of_chaos_invul:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE} end
+function modifier_imba_rain_of_chaos_invul:GetModifierModelChange() return "models/development/invisiblebox.vmdl" end
+
+modifier_imba_rain_of_chaos = class({})
+
+function modifier_imba_rain_of_chaos:IsDebuff()			return false end
+function modifier_imba_rain_of_chaos:IsHidden() 		return false end
+function modifier_imba_rain_of_chaos:IsPurgable() 		return false end
+function modifier_imba_rain_of_chaos:IsPurgeException() return false end
+function modifier_imba_rain_of_chaos:AllowIllusionDuplicate() return false end
+function modifier_imba_rain_of_chaos:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE, MODIFIER_EVENT_ON_ATTACK_START, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_CASTTIME_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_rain_of_chaos:GetModifierModelChange() return "models/items/warlock/golem/hellsworn_golem/hellsworn_golem.vmdl" end 
+function modifier_imba_rain_of_chaos:GetEffectName() return "particles/hero/warlock/warlock_hands_of_goredan_ring.vpcf" end
+function modifier_imba_rain_of_chaos:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+function modifier_imba_rain_of_chaos:GetModifierPercentageCasttime() return 100 end
+function modifier_imba_rain_of_chaos:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("as_bonus") end
+
+function modifier_imba_rain_of_chaos:OnAttackStart(keys)
+	if IsServer() and keys.attacker == self:GetParent() then
+		self:GetParent():EmitSound("Hero_WarlockGolem.PreAttack")
+	end
+end
+
+function modifier_imba_rain_of_chaos:OnAttackLanded(keys)
+	if IsServer() and keys.attacker == self:GetParent() then
+		keys.target:EmitSound("Hero_WarlockGolem.Attack")
+	end
+end
+
+function modifier_imba_rain_of_chaos:OnCreated()
+	if IsServer() then
+		local caster = self:GetParent()
+		local abilities = {"imba_warlock_liquid_hellfire", "imba_warlock_fire_of_sargeras", }
+		for i=0, 1 do
+			local ability = caster:AddAbility(abilities[i+1])
+			ability:SetLevel(self:GetAbility():GetLevel())
+			ability:ToggleAutoCast()
+		end
+		self:GetParent():StartGesture(ACT_DOTA_SPAWN)
+		Timers:CreateTimer(FrameTime(), function()
+				local pfx_hand = ParticleManager:CreateParticle("particles/econ/items/warlock/warlock_hellsworn_construct/golem_hellsworn_ambient_hands.vpcf", PATTACH_CUSTOMORIGIN, caster)
+				ParticleManager:SetParticleControlEnt(pfx_hand, 10, caster, PATTACH_POINT_FOLLOW, "attach_hand_l", caster:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_hand, 11, caster, PATTACH_POINT_FOLLOW, "attach_hand_r", caster:GetAbsOrigin(), true)
+				self:AddParticle(pfx_hand, false, false, 15, false, false)
+				local pfx_smoke = ParticleManager:CreateParticle("particles/econ/items/warlock/warlock_hellsworn_construct/golem_hellsworn_ambient_mouth.vpcf", PATTACH_CUSTOMORIGIN, caster)
+				ParticleManager:SetParticleControlEnt(pfx_smoke, 12, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true)
+				self:AddParticle(pfx_smoke, false, false, 15, false, false)
+				local pfx_mane = ParticleManager:CreateParticle("particles/econ/items/warlock/warlock_hellsworn_construct/golem_hellsworn_ambient_mane.vpcf", PATTACH_CUSTOMORIGIN, caster)
+				for i=0, 7 do
+					ParticleManager:SetParticleControlEnt(pfx_mane, i, caster, PATTACH_POINT_FOLLOW, "attach_mane"..(i+1), caster:GetAbsOrigin(), true)
+				end
+				self:AddParticle(pfx_mane, false, false, 15, false, false)
+				return nil
+			end
+		)
+	end
+end
+
+function modifier_imba_rain_of_chaos:OnDestroy()
+	if IsServer() then
+		local caster = self:GetParent()
+		local abilities = {"imba_warlock_liquid_hellfire", "imba_warlock_fire_of_sargeras", }
+		for i=0, 1 do
+			caster:RemoveAbility(abilities[i+1])
+		end
+		for i=1, 3 do
+			CreateModifierThinker(caster, self:GetAbility(), "modifier_imba_rain_of_chaos_storm", {duration = (2.0 * i), aoe = self:GetAbility():GetSpecialValueFor("aoe_"..i), damage = self:GetAbility():GetSpecialValueFor("dmg_"..i)}, self:GetParent():GetAbsOrigin(), caster:GetTeamNumber(), false)
+		end
+	end
+end
+
+modifier_imba_rain_of_chaos_attack_range = class({})
+
+function modifier_imba_rain_of_chaos_attack_range:IsDebuff()			return false end
+function modifier_imba_rain_of_chaos_attack_range:IsHidden() 			return true end
+function modifier_imba_rain_of_chaos_attack_range:IsPurgable() 			return false end
+function modifier_imba_rain_of_chaos_attack_range:IsPurgeException() 	return false end
+function modifier_imba_rain_of_chaos_attack_range:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACK_RANGE_BONUS} end
+function modifier_imba_rain_of_chaos_attack_range:GetModifierAttackRangeBonus() return (0 - self:GetStackCount()) end
+
+function modifier_imba_rain_of_chaos_attack_range:OnCreated()
+	if IsServer() then
+		self:SetStackCount(self:GetParent():GetBaseAttackRange() - 150)
+		self.attack_cap = self:GetParent():GetAttackCapability()
+		self:GetParent():SetAttackCapability(DOTA_UNIT_CAP_MELEE_ATTACK)
+	end
+end
+
+function modifier_imba_rain_of_chaos_attack_range:OnDestroy()
+	if IsServer() then
+		self:GetParent():SetAttackCapability(self.attack_cap)
+		self.attack_cap = nil
+	end
+end
+
+modifier_imba_rain_of_chaos_storm = class({})
+
+function modifier_imba_rain_of_chaos_storm:OnCreated(keys)
+	if IsServer() then
+		self.aoe = keys.aoe
+		self.dmg = keys.damage
+		local pfx = ParticleManager:CreateParticle("particles/hero/warlock/warlock_storm_aoe.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self.aoe, 1, 1))
+		ParticleManager:SetParticleControl(pfx, 2, Vector(800, 0, 0))
+		self:AddParticle(pfx, false, false, 15, false, false)
+	end
+end
+
+function modifier_imba_rain_of_chaos_storm:OnDestroy()
+	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/hero/warlock/warlock_storm_shockwave.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self.aoe, self.aoe, (self.aoe / 300)))
+		ParticleManager:ReleaseParticleIndex(pfx)
+		self:GetParent():EmitSound("DOTA_Item.MeteorHammer.Impact")
+		local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.aoe, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+		for i=1, #enemy do
+			ApplyDamage({victim = enemy[i], attacker = self:GetCaster(), damage = self.dmg, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})
+		end
+		self.aoe = nil
+		self.dmg = nil
+	end
+end
+
+imba_warlock_liquid_hellfire = class({})
+
+LinkLuaModifier("modifier_imba_liquid_hellfire_autocast", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_liquid_hellfire_thinker", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+
+function imba_warlock_liquid_hellfire:IsHiddenWhenStolen() 		return false end
+function imba_warlock_liquid_hellfire:IsRefreshable() 			return true end
+function imba_warlock_liquid_hellfire:IsStealable() 			return false end
+function imba_warlock_liquid_hellfire:IsNetherWardStealable()	return false end
+function imba_warlock_liquid_hellfire:GetCastRange() return self:GetSpecialValueFor("autocast_range") - self:GetCaster():GetCastRangeBonus() end
+function imba_warlock_liquid_hellfire:GetIntrinsicModifierName() return "modifier_imba_liquid_hellfire_autocast" end
+
+function imba_warlock_liquid_hellfire:OnSpellStart()
+	local caster = self:GetCaster()
+	local pos = self:GetCursorPosition()
+	local pfx_fly = ParticleManager:CreateParticle("particles/hero/warlock/warlock_liquid_hellfire_fly.vpcf", PATTACH_CUSTOMORIGIN, nil)
+	ParticleManager:SetParticleControl(pfx_fly, 0, caster:GetAbsOrigin() + Vector(0,0,1500))
+	ParticleManager:SetParticleControl(pfx_fly, 1, pos)
+	ParticleManager:SetParticleControl(pfx_fly, 2, Vector(0.3,0,0))
+	ParticleManager:ReleaseParticleIndex(pfx_fly)
+	Timers:CreateTimer(0.3, function()
+			local buff = caster:FindModifierByName("modifier_imba_rain_of_chaos")
+			if buff then
+				local thinker = CreateModifierThinker(caster, self, "modifier_imba_liquid_hellfire_thinker", {duration = buff:GetRemainingTime()}, pos, caster:GetTeamNumber(), false)
+				thinker:EmitSound("Hero_Invoker.ChaosMeteor.Impact")
+				local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+				for i=1, #enemies do
+					ApplyDamage({victim = enemies[i], attacker = caster, damage = self:GetSpecialValueFor("damage"), damage_type = self:GetAbilityDamageType(), ability = self})
+				end
+			end
+			return nil
+		end
+	)
+end
+
+modifier_imba_liquid_hellfire_autocast = class({})
+
+function modifier_imba_liquid_hellfire_autocast:IsDebuff()			return false end
+function modifier_imba_liquid_hellfire_autocast:IsHidden() 			return true end
+function modifier_imba_liquid_hellfire_autocast:IsPurgable() 		return false end
+function modifier_imba_liquid_hellfire_autocast:IsPurgeException() 	return false end
+
+function modifier_imba_liquid_hellfire_autocast:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(0.2)
+	end
+end
+
+function modifier_imba_liquid_hellfire_autocast:OnIntervalThink()
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("autocast_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_FARTHEST, false)
+	if enemies[1] and self:GetAbility():IsFullyCastable() then
+		self:GetParent():SetCursorPosition(enemies[1]:GetAbsOrigin())
+		self:GetAbility():OnSpellStart()
+		self:GetAbility():UseResources(true, true, true)
+	end
+end
+
+modifier_imba_liquid_hellfire_thinker = class({})
+
+function modifier_imba_liquid_hellfire_thinker:OnCreated()
+	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/hero/warlock/warlock_liquid_hellfire_fire.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetDuration(), 0 ,0))
+		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 1, self:GetParent():GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 3, self:GetParent():GetAbsOrigin())
+		self:AddParticle(pfx, false, false, 15, false, false)
+		self:StartIntervalThink(0.2)
+	end
+end
+
+function modifier_imba_liquid_hellfire_thinker:OnIntervalThink()
+	local dmg = self:GetAbility():GetSpecialValueFor("damage_per_second") / (1.0 / 0.2)
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	for i=1, #enemies do
+		ApplyDamage({victim = enemies[i], attacker = self:GetCaster(), damage = dmg, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})
+	end
+end
+
+imba_warlock_fire_of_sargeras = class({})
+
+LinkLuaModifier("modifier_imba_fire_of_sargeras_passive", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_fire_of_sargeras_debuff", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+
+function imba_warlock_fire_of_sargeras:GetIntrinsicModifierName() return "modifier_imba_fire_of_sargeras_passive" end
+
+modifier_imba_fire_of_sargeras_passive = class({})
+
+function modifier_imba_fire_of_sargeras_passive:IsDebuff()			return false end
+function modifier_imba_fire_of_sargeras_passive:IsHidden() 			return true end
+function modifier_imba_fire_of_sargeras_passive:IsPurgable() 		return false end
+function modifier_imba_fire_of_sargeras_passive:IsPurgeException() 	return false end
+function modifier_imba_fire_of_sargeras_passive:AllowIllusionDuplicate() return false end
+function modifier_imba_fire_of_sargeras_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
+
+function modifier_imba_fire_of_sargeras_passive:OnAttackLanded(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.attacker ~= self:GetParent() or keys.target:IsMagicImmune() or keys.target:IsOther() or keys.target:IsCourier() or self:GetParent():IsIllusion() then
+		return
+	end
+	if keys.target:IsBuilding() and keys.target:HasModifier("modifier_imba_fire_of_sargeras_debuff") then
+		return
+	end
+	keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_fire_of_sargeras_debuff", {duration = self:GetAbility():GetSpecialValueFor("delay")})
+end
+
+modifier_imba_fire_of_sargeras_debuff = class({})
+
+function modifier_imba_fire_of_sargeras_debuff:IsDebuff()			return true end
+function modifier_imba_fire_of_sargeras_debuff:IsHidden() 			return false end
+function modifier_imba_fire_of_sargeras_debuff:IsPurgable() 		return false end
+function modifier_imba_fire_of_sargeras_debuff:IsPurgeException() 	return false end
+function modifier_imba_fire_of_sargeras_debuff:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_fire_of_sargeras_debuff:DestroyOnExpire() return false end
+
+function modifier_imba_fire_of_sargeras_debuff:OnCreated()
+	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/dire_fx/fire_barracks.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+		self:AddParticle(pfx, false, false, 15, false, false)
+		self:SetStackCount(self:GetAbility():GetSpecialValueFor("duration") / self:GetAbility():GetSpecialValueFor("interval") + 0)
+		self:StartIntervalThink(0.1)
+	end
+end
+
+function modifier_imba_fire_of_sargeras_debuff:OnIntervalThink()
+	if not self:GetAbility() then
+		self:Destroy()
+	end
+	if self:GetElapsedTime() >= self:GetDuration() then
+		self:SetStackCount(self:GetStackCount() - 1)
+		self:SetDuration(self:GetAbility():GetSpecialValueFor("interval"), true)		
+		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+		local damage_main = self:GetAbility():GetSpecialValueFor("main_damage")
+		local damage_aoe = self:GetAbility():GetSpecialValueFor("aoe_damage")
+		for i=1, #enemies do
+			local dmg = damage_aoe
+			if enemies[i] == self:GetParent() then
+				dmg = damage_main
+				if self:GetParent():IsBuilding() then
+					dmg = dmg * (self:GetAbility():GetSpecialValueFor("building_pct") / 100)
+				end
+				ApplyDamage({victim = enemies[i], attacker = self:GetCaster(), damage = dmg, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})
+				self:GetParent():EmitSound("Hero_Invoker.ChaosMeteor.Damage")
+			else
+				if not enemies[i]:IsBuilding() then
+					ApplyDamage({victim = enemies[i], attacker = self:GetCaster(), damage = dmg, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})
+				end
+			end
+		end
+		local pfx = ParticleManager:CreateParticle("particles/hero/warlock/warlock_fire_of_sargeras_burst.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:ReleaseParticleIndex(pfx)
+		if self:GetStackCount() == 0 then
+			self:Destroy()
+		end
+	end
+end
+
+--particles/dire_fx/fire_barracks.vpcf

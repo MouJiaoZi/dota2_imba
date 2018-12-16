@@ -14,7 +14,7 @@ function imba_earth_spirit_stone_caller:IsNetherWardStealable()	return false end
 function imba_earth_spirit_stone_caller:IsTalentAbility() return true end
 
 function imba_earth_spirit_stone_caller:CastFilterResultTarget(target)
-	if (not self:GetCaster():HasScepter() and target ~= self:GetCaster()) or not target:IsHero() or (target:IsHero() and self:GetCaster():HasModifier("modifier_imba_stone_remnant_prevent")) or (IsEnemy(target, self:GetCaster()) and target:IsMagicImmune()) then
+	if (not self:GetCaster():HasScepter() and target ~= self:GetCaster()) or not target:IsHero() or (target:IsHero() and target ~= self:GetCaster() and self:GetCaster():HasModifier("modifier_imba_stone_remnant_prevent")) or (IsEnemy(target, self:GetCaster()) and target:IsMagicImmune()) then
 		return UF_FAIL_CUSTOM
 	end
 end
@@ -188,6 +188,7 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 	--Motion 
 	local speed = self:GetSpecialValueFor("speed")
 	local distance = target:HasModifier("modifier_imba_stone_remnant_status") and self:GetSpecialValueFor("rock_distance") or self:GetSpecialValueFor("unit_distance")
+	distance = distance + caster:GetCastRangeBonus()
 	local duration = distance / speed
 	local time = 0
 	local remnant_buff_ability
@@ -356,8 +357,8 @@ function imba_earth_spirit_rolling_boulder:OnSpellStart()
 	local delay = self:GetSpecialValueFor("delay")
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
 	local speed = self:GetSpecialValueFor("speed")
-	local distance = self:GetSpecialValueFor("distance")
-	local speed_rock = self:GetSpecialValueFor("rock_speed")
+	local distance = self:GetSpecialValueFor("distance") + caster:GetCastRangeBonus()
+	local speed_rock = self:GetSpecialValueFor("rock_speed") + caster:GetCastRangeBonus()
 	local distance_rock = self:GetSpecialValueFor("rock_distance")
 	local buff = caster:AddNewModifier(caster, self, "modifier_imba_rolling_boulder_motion", {})
 	buff.total = 0

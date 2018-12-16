@@ -686,7 +686,7 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 	"modifier_slark_pounce",
 	"modifier_spirit_breaker_charge_of_darkness",
 	"modifier_tusk_walrus_punch_air_time",
-	"modifier_earthshaker_enchant_totem_leap"
+	"modifier_earthshaker_enchant_totem_leap",
 	}
 
 	-- Fetch all modifiers

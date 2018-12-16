@@ -475,7 +475,7 @@ function modifier_imba_courier_buff:IsHidden() return true end
 function modifier_imba_courier_buff:IsPurgable() return false end
 function modifier_imba_courier_buff:IsPurgeException() return false end
 
-function modifier_imba_courier_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE} end
+function modifier_imba_courier_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_EVENT_ON_ORDER} end
 function modifier_imba_courier_buff:GetModifierMoveSpeed_Max() return 10000 end
 function modifier_imba_courier_buff:GetModifierMoveSpeed_Absolute() return 1000 end
 function modifier_imba_courier_buff:GetModifierMoveSpeedBonus_Percentage() return 100 end
@@ -493,6 +493,12 @@ function modifier_imba_courier_buff:OnIntervalThink()
 	end
 	if self:GetParent().courier_num then
 		self:GetParent():MoveToPosition(IMBA_COURIER_POSITION[self:GetParent():GetTeamNumber()][self:GetParent().courier_num])
+	end
+end
+
+function modifier_imba_courier_buff:OnOrder(keys)
+	if IsServer() and keys.unit == self:GetParent() then 
+		self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 	end
 end
 

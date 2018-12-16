@@ -436,11 +436,7 @@ function modifier_imba_suicide_motion:OnDestroy()
 			ParticleManager:SetParticleControl(pfx, 2, Vector(ability:GetSpecialValueFor("radius"),1,1))
 			ParticleManager:ReleaseParticleIndex(pfx)
 			local hp_cost = parent:GetMaxHealth() * (ability:GetSpecialValueFor("hp_cost") / 100)
-			if hp_cost >= parent:GetHealth() then
-				parent:Kill(ability, parent)
-			else
-				parent:SetHealth(parent:GetHealth() - hp_cost)
-			end
+			ApplyDamage({victim = parent, attacker = parent, ability = ability, damage_type = DAMAGE_TYPE_MAGICAL, damage_flags = DOTA_DAMAGE_FLAG_HPLOSS, damage = hp_cost})
 			local enemies = FindUnitsInRadius(parent:GetTeamNumber(), parent:GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 			for _, enemy in pairs(enemies) do
 				ApplyDamage({victim = enemy, attacker = parent, ability = ability, damage_type = ability:GetAbilityDamageType(), damage = ability:GetSpecialValueFor("damage")})

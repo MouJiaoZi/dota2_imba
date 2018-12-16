@@ -273,7 +273,7 @@ function modifier_imba_caustic_finale_passive:OnTakeDamage(keys)
 		return
 	end
 	if not self:GetParent():IsIllusion() and not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and not keys.unit:IsCourier() and not keys.unit:HasModifier("modifier_imba_caustic_finale") and not keys.unit:IsMagicImmune() then
-		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "modifier_item_imba_nether_wand_burn" or keys.inflictor:GetName() == "modifier_item_imba_elder_staff_burn") then
+		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "item_imba_nether_wand" or keys.inflictor:GetName() == "item_imba_elder_staff") then
 			return
 		end
 		keys.unit:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_caustic_finale", {duration = self:GetAbility():GetSpecialValueFor("debuff_duration")})
@@ -325,13 +325,30 @@ function modifier_imba_caustic_finale_slow:GetModifierMoveSpeedBonus_Percentage(
 
 imba_sandking_treacherous_sands = class({})
 
+function imba_sandking_treacherous_sands:IsHiddenWhenStolen() 		return false end
+function imba_sandking_treacherous_sands:IsRefreshable() 			return true end
+function imba_sandking_treacherous_sands:IsStealable() 				return false end
+function imba_sandking_treacherous_sands:IsNetherWardStealable()	return false end
+
 function imba_sandking_treacherous_sands:IsTalentAbility() return true end
-function imba_sandking_treacherous_sands:OnUpgrade() self:ToggleAbility() end
-function imba_sandking_treacherous_sands:ResetToggleOnRespawn() return false end
-function imba_sandking_treacherous_sands:OnToggle()
-	
+
+function imba_sandking_treacherous_sands:OnOwnerDied()
+	self.toggle = self:GetToggleState()
 end
 
+function imba_sandking_treacherous_sands:OnOwnerSpawned()
+	if self.toggle == nil then
+		self:ToggleAbility()
+		self.toggle = true
+	end
+	if self.toggle ~= self:GetToggleState() then
+		self:ToggleAbility()
+	end
+end
+
+function imba_sandking_treacherous_sands:OnToggle()
+	self.toggle = self:GetToggleState()
+end
 
 imba_sandking_epicenter = class({})
 

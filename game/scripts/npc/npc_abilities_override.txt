@@ -4060,12 +4060,6 @@
 	//=================================================================================================================
 	"backdoor_protection"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"5350"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		"MaxLevel"						"1"
-
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -4083,7 +4077,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"regen_rate"			"900"
+				"regen_rate"			"90000"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -4094,12 +4088,6 @@
 	//=================================================================================================================
 	"backdoor_protection_in_base"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"5351"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		"MaxLevel"						"1"
-
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -4107,12 +4095,12 @@
 			"01"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"activation_time"		"15.0"
+				"activation_time"		"1.0"
 			}
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"regen_rate"			"900"
+				"regen_rate"			"90000"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -16601,7 +16589,7 @@
 			"04"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"split_shot_bonus_range"		"100"
+				"split_shot_bonus_range"		"300"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -16615,7 +16603,7 @@
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastRange"				"700"
-		"AbilityCastPoint"				"0.4 0.4 0.4 0.4"
+		"AbilityCastPoint"				"0.4 0.3 0.2 0.1"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -16623,7 +16611,7 @@
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"140"
+		"AbilityManaCost"				"150 100 50 0"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -18377,370 +18365,6 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"speed"					"1300 1600 1900"
-			}
-		}
-	}
-
-	//=================================================================================================================
-	// Earth Spirit: Boulder Smash
-	//=================================================================================================================
-	"earth_spirit_boulder_smash"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"150"
-		"AbilityCastPoint"				"0.01"
-		
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"22.0 18.0 14.0 10.0"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"100"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"radius"				"180"	// NOTE: This radius must match the radius for geomagnetic grip
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"rock_search_aoe"				"200"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"rock_damage"			"50 100 150 200"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"stun_duration"			"1.5 1.7 1.9 2.1"
-				"LinkedSpecialBonus"	"special_bonus_unique_earth_spirit_3"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"speed"					"1400"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"unit_distance"			"500.0 600.0 700.0 800.0"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"rock_distance"			"2000.0"
-			}			
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"remnant_smash_radius_tooltip"			"200"
-			}			
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
-	}
-
-
-	//=================================================================================================================
-	// Earth Spirit: Rolling Boulder
-	//=================================================================================================================
-	"earth_spirit_rolling_boulder"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"3000"
-		"AbilityCastPoint"				"0.01"
-
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"16.0 12.0 8.0 4.0"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"50"
-
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"radius"				"150"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"speed"					"1300"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"rock_speed"			"2400"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"distance"				"1000.0"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"rock_distance"			"1600.0"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"delay"					"0.6"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"damage"				"100"
-				"LinkedSpecialBonus"	"special_bonus_unique_earth_spirit"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"move_slow"				"80"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"slow_duration"			"1.7 2.0 2.3 2.6"
-			}
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
-	}
-
-	
-	//=================================================================================================================
-	// Earth Spirit: Geomagnetic Grip
-	//=================================================================================================================
-	"earth_spirit_geomagnetic_grip"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1100"
-		"AbilityCastPoint"				"0.01"
-		
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"13"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"100"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"radius"				"180"	// NOTE: This radius must match the radius for boulder smash
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"miss_rate"			"75"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"miss_duration"			"3.0 4.0 5.0 6.0"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"pull_units_per_second_heroes"		"1000"
-			}				
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"rock_damage"			"50 100 150 200"
-			}				
-			"06"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"pull_units_per_second"		"1400"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"speed"					"1200"
-			}	
-			"08"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"total_pull_distance"		"1400"
-			}			
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
-	}
-
-	//=================================================================================================================
-	// Earth Spirit: Stone Caller
-	//=================================================================================================================
-	"earth_spirit_stone_caller"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1100"
-		"AbilityCastPoint"				"0.0"
-		"AbilityCastAnimation"			"ACT_INVALID"
-
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"0.0"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"0"
-
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"max_charges"				"10"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"charge_restore_time"				"10.0"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"duration"				"60.0"
-			}
-		}
-	}
-
-	//=================================================================================================================
-	// Earth Spirit: Petrify ( scepter ability )
-	//=================================================================================================================
-	"earth_spirit_petrify"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"125"
-		"AbilityCastPoint"				"0.2"
-		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_5"
-		
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"45"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"150"
-		
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"duration"		"5"
-			}
-
-			"02"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"damage"	"300"
-			}
-
-			"03"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"aoe"		"300"
-			}
-		}
-	}
-
-	//=================================================================================================================
-	// Earth Spirit: Magnetize
-	//=================================================================================================================
-	"earth_spirit_magnetize"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"500"
-		"AbilityCastPoint"				"0.01"
-		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_6"
-		
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"100 90 80"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"100.0"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"cast_radius"			"500"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"damage_per_second"			"50 75 100"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"damage_duration"			"10.0"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"rock_search_radius"			"400"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"rock_explosion_radius"			"600"
-			}			
-			"06"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"damage_interval"			"1.0"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"rock_explosion_delay"			"8.0"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"silence_duration"			"5.0"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"slow_duration"			"3.0"
 			}
 		}
 	}

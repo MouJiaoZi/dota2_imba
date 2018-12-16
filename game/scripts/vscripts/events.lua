@@ -74,7 +74,7 @@ function GameMode:OnDisconnect(keys)
 		if GameRules:State_Get() <= DOTA_GAMERULES_STATE_PRE_GAME or DOTA_GAMERULES_STATE_PRE_GAME >= DOTA_GAMERULES_STATE_POST_GAME then
 			return nil
 		end
-		if PlayerResource:GetConnectionState(playerID) == 3 then
+		if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_ABANDONED then
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
@@ -86,7 +86,7 @@ function GameMode:OnDisconnect(keys)
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
 			return nil
 		end
-		if PlayerResource:GetConnectionState(playerID) == 2 then
+		if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_CONNECTED then
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_reconnect_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
@@ -457,8 +457,25 @@ function GameMode:OnNPCSpawned(keys)
 	if not npc.firstSpawn then
 		npc.firstSpawn = true
 		npc.splitattack = true
+		--[[if npc:IsCourier() then
+			npc:SetControllableByPlayer(-1, true)
+		end]]
 	end
 
+	if npc:GetUnitName() == "npc_dota_hero_silencer" then
+		Timers:CreateTimer(FrameTime(), function()
+				local buff = npc:FindModifierByName("modifier_silencer_int_steal")
+				if buff and buff:GetDuration() < 0 then
+					buff:SetDuration(1500, true)
+					if GetMapName() == "dbii_5v5" then
+						buff:SetDuration(2100, true)
+					end
+					return nil
+				end
+				return 1.0
+			end
+		)
+	end
 end
 
 -- An entity somewhere has been hurt.  This event fires very often with many units so don't do too many expensive
@@ -707,43 +724,14 @@ function GameMode:OnEntityKilled( keys )
 
 	local damagebits = keys.damagebits -- This might always be 0 and therefore useless
 
-	--[[if victim:IsRealHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
-		local player_id = victim:GetPlayerID()
-		local game_time = GameRules:GetDOTATime(false, false)
+	if victim:IsRealHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
 
-		local respawn_timer = victim:GetIMBARespawnTime()
-
-		if game_time > 1200 then
-			respawn_timer = respawn_timer + ((game_time - 1200) / 60)
-			GameRules:SetSafeToLeave(true)
-		end
-
-		-- Set up the respawn timer
-		victim:SetTimeUntilRespawn(respawn_timer - 0.5)
-
-		local buy_back_cost = 0
-
-		buy_back_cost = BUYBACK_BASE_COST + PlayerResource:GetGoldSpentOnBuybacks(victim:GetPlayerID()) / 20 + math.min(victim:GetLevel(), 25) * BUYBACK_COST_PER_LEVEL + math.max(victim:GetLevel() - 25, 0) * BUYBACK_COST_PER_LEVEL_AFTER_25 + game_time * BUYBACK_COST_PER_SECOND
-
-		if GameRules:IsCheatMode() then
-			--buy_back_cost = 0
-		end
-
-		PlayerResource:SetCustomBuybackCost(victim:GetPlayerID(), buy_back_cost)
-
-		-- Setup buyback cooldown
-		local buyback_cooldown = 0
-		if BUYBACK_COOLDOWN_ENABLED and game_time > BUYBACK_COOLDOWN_START_POINT then
-			buyback_cooldown = math.min(BUYBACK_COOLDOWN_GROW_FACTOR * (game_time - BUYBACK_COOLDOWN_START_POINT), BUYBACK_COOLDOWN_MAXIMUM)
-		end
-
-		PlayerResource:SetCustomBuybackCooldown(player_id, buyback_cooldown)
 		--Lose Gold
 		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
 		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
 		PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
 
-		print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
+		--print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
 
 		--Death Streak
 		if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
@@ -764,7 +752,7 @@ function GameMode:OnEntityKilled( keys )
 				end
 			end
 		end
-	end]]
+	end
 
 	-------------------------------------------------------------------------------------------------
 	-- IMBA: Roshan

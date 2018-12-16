@@ -195,10 +195,9 @@ function modifier_imba_lion_hex:IsHidden() 			return false end
 function modifier_imba_lion_hex:IsPurgable() 		return false end
 function modifier_imba_lion_hex:IsPurgeException() 	return false end
 function modifier_imba_lion_hex:CheckState() return {[MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_MUTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_HEXED] = true} end
-function modifier_imba_lion_hex:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
+function modifier_imba_lion_hex:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end
 function modifier_imba_lion_hex:GetModifierModelChange() return "models/props_gameplay/frog.vmdl" end
-function modifier_imba_lion_hex:GetModifierMoveSpeed_Absolute() return self:GetAbility():GetSpecialValueFor("move_speed") end
-function modifier_imba_lion_hex:GetModifierMoveSpeed_Limit() return self:GetAbility():GetSpecialValueFor("move_speed") end
+function modifier_imba_lion_hex:GetModifierMoveSpeedBonus_Constant() return -50000 end
 
 function modifier_imba_lion_hex:OnCreated()
 	if IsServer() then
