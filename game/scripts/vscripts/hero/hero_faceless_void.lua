@@ -371,14 +371,18 @@ function imba_faceless_void_chronosphere:OnSpellStart()
 										return nil
 									end,1.8)
 	end
-	CreateChronosphere(caster, self, pos, radius, time, 1)
-	EmitSoundOnLocationWithCaster(pos, "Hero_FacelessVoid.Chronosphere", caster)
+	local thinker = CreateChronosphere(caster, self, pos, radius, time, 1)
+	thinker:EmitSound("Hero_FacelessVoid.Chronosphere")
+	if caster:HasTalent("special_bonus_imba_faceless_void_3") then
+		caster:GiveMana(caster:GetTalentValue("special_bonus_imba_faceless_void_3"))
+	end
 end
 
 function CreateChronosphere(caster, ability, position, radius, duration, ally_behavior)
 	-- Ally Behavior: 1 = Stun Allies, 2 = DO NOT EFFECT Allies, 4 = DO NOT EFFECT SPELL IMMUNE Enemies ////  add them up
 	ially_behavior = ally_behavior or 1
-	CreateModifierThinker(caster, ability, "modifier_imba_faceless_void_chronosphere_thinker", {duration = duration, radius = radius, ally_behavior = ially_behavior}, position, caster:GetTeamNumber(), false)
+	local thinker = CreateModifierThinker(caster, ability, "modifier_imba_faceless_void_chronosphere_thinker", {duration = duration, radius = radius, ally_behavior = ially_behavior}, position, caster:GetTeamNumber(), false)
+	return thinker
 end
 
 modifier_imba_faceless_void_chronosphere_aoe = class({})

@@ -69,15 +69,15 @@
 	<Panel>
 		<!-- CustomUIElements go here.-->
 
-		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/barebones_notifications.xml" /> 
+		<CustomUIElement type="GameSetup" layoutfile="file://{resources}/layout/custom_game/team_select.xml" />
 		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/barebones_notifications.xml" /> 
 		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/imba_hud_hack.xml" />
 		<CustomUIElement type="FlyoutScoreboard" layoutfile="file://{resources}/layout/custom_game/imba_scoreboard.xml"/>
 		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/multiteam_hero_select_overlay.xml" />
 		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/imba_hero_selection_hack.xml" /> 
+		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/barebones_notifications.xml" /> 
 		<CustomUIElement type="EndScreen" layoutfile="file://{resources}/layout/custom_game/imba_end_screen.xml" />
-		<CustomUIElement type="GameSetup" layoutfile="file://{resources}/layout/custom_game/team_select.xml" />
-
+		
 		<!-- From Overthrow.
 
 				<CustomUIElement type="HudTopBar"           layoutfile="file://{resources}/layout/custom_game/multiteam_top_scoreboard.xml" />
@@ -87,6 +87,7 @@
 				<CustomUIElement type="HeroSelection"       layoutfile="file://{resources}/layout/custom_game/multiteam_hero_select_overlay.xml" />
 				<CustomUIElement type="EndScreen"           layoutfile="file://{resources}/layout/custom_game/multiteam_end_screen.xml" />
 				<CustomUIElement type="GameInfo"            layoutfile="file://{resources}/layout/custom_game/overthrow_game_info.xml" />
+
 		-->
 	</Panel>
 </root>

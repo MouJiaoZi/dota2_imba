@@ -258,7 +258,6 @@ IMBA_TOWER_ABILITY_2 = {
 "imba_tower_spacecow",
 "imba_tower_permabash",
 "imba_tower_split",
-"imba_tower_salvo",
 }
 
 IMBA_TOWER_ABILITY_3 = {
@@ -283,7 +282,6 @@ IMBA_TOWER_ABILITY_3 = {
 "imba_tower_essence_drain",
 "imba_tower_multihit",
 "imba_tower_split",
-"imba_tower_salvo",
 }
 
 IMBA_TOWER_ABILITY_4 = {

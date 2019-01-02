@@ -15,12 +15,18 @@ function imba_furion_force_of_nature:GetAOERadius() return self:GetSpecialValueF
 function imba_furion_force_of_nature:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
+	local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 1.0}, pos, caster:GetTeamNumber(), false)
+	sound:EmitSound("Hero_Furion.TreantSpawn")
 	local trees = GridNav:GetAllTreesAroundPoint(pos, self:GetSpecialValueFor("area_of_effect"), false)
 	local count = 0
 	for _, tree in pairs(trees) do
-		if tree:IsStanding() then
+		if not tree.IsStanding or tree:IsStanding() then
 			count = count + 1
-			tree:CutDown(caster:GetTeamNumber())
+			if tree.IsStanding then
+				tree:CutDown(caster:GetTeamNumber())
+			else
+				GridNav:DestroyTreesAroundPoint(tree:GetAbsOrigin(), 30, false)
+			end
 			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_furion/furion_force_of_nature_cast.vpcf", PATTACH_CUSTOMORIGIN, nil)
 			ParticleManager:SetParticleControl(pfx, 0, pos)
 			ParticleManager:SetParticleControl(pfx, 1, pos)

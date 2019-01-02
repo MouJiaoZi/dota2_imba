@@ -214,14 +214,21 @@ function modifier_imba_blur_detected:CheckState()
 		return {[MODIFIER_STATE_NOT_ON_MINIMAP_FOR_ENEMIES] = true}
 	end
 end
---function modifier_imba_blur_detected:GetModifierInvisibilityLevel() return (self:GetParent():HasTalent("special_bonus_imba_phantom_assassin_2") and 1 or 0) end
 
 imba_phantom_assassin_coup_de_grace = class({})
 
 LinkLuaModifier("modifier_imba_coup_de_grace", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_coup_de_grace_check", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_coup_de_grace_stacks", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 
 function imba_phantom_assassin_coup_de_grace:GetIntrinsicModifierName() return "modifier_imba_coup_de_grace" end
+
+modifier_imba_coup_de_grace_check = class({})
+
+function modifier_imba_coup_de_grace_check:IsHidden()			return true end
+function modifier_imba_coup_de_grace_check:IsDebuff()			return false end
+function modifier_imba_coup_de_grace_check:IsPurgable() 		return false end
+function modifier_imba_coup_de_grace_check:IsPurgeException() 	return false end
 
 modifier_imba_coup_de_grace = class({})
 
@@ -229,39 +236,19 @@ function modifier_imba_coup_de_grace:IsDebuff()			return false end
 function modifier_imba_coup_de_grace:IsHidden() 		return true end
 function modifier_imba_coup_de_grace:IsPurgable() 		return false end
 function modifier_imba_coup_de_grace:IsPurgeException() return false end
-function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_START} end
-function modifier_imba_coup_de_grace:GetIMBAPhysicalCirtChance() return self.cirt end
-function modifier_imba_coup_de_grace:GetIMBAPhysicalCirtBonus() return self:GetAbility():GetSpecialValueFor("crit_bonus") end
+function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
 
-function modifier_imba_coup_de_grace:OnTriggerIMBAPhyicalCirt(keys)
-	if not IsServer() then
-		return
-	end
-	if self:GetParent():IsRangedAttacker() then
-		self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
-	end
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_phantom_assassin/phantom_assassin_crit_impact.vpcf", PATTACH_CUSTOMORIGIN, keys.target)
-	ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.target:GetAbsOrigin(), true)
-	ParticleManager:SetParticleControl(pfx, 1, keys.target:GetAbsOrigin())
-	ParticleManager:SetParticleControlOrientation(pfx, 1, self:GetParent():GetForwardVector() * -1, self:GetParent():GetRightVector(), self:GetParent():GetUpVector())
-	ParticleManager:ReleaseParticleIndex(pfx)
-end
-
-function modifier_imba_coup_de_grace:OnAttackStart(keys)
-	if not IsServer() then
-		return
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and not self:GetParent():IsRangedAttacker() then
-		if RollPercentage((self:GetAbility():GetSpecialValueFor("crit_chance") + self:GetParent():GetModifierStackCount("modifier_imba_coup_de_grace_stacks", self:GetParent()))) then
-			self.cirt = 100
+function modifier_imba_coup_de_grace:GetModifierPreAttack_CriticalStrike(keys)
+	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
+		local pct = self:GetAbility():GetSpecialValueFor("crit_chance") + self:GetParent():GetModifierStackCount("modifier_imba_coup_de_grace_stacks", nil)
+		if RollPercentage(pct) then
 			self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
-			self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
+			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_coup_de_grace_check", {})
+			return self:GetAbility():GetSpecialValueFor("crit_bonus")
 		else
-			self.cirt = 0
+			self:GetParent():RemoveModifierByName("modifier_imba_coup_de_grace_check")
+			return 0
 		end
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and self:GetParent():IsRangedAttacker() then
-		self.cirt = (self:GetAbility():GetSpecialValueFor("crit_chance") + self:GetParent():GetModifierStackCount("modifier_imba_coup_de_grace_stacks", self:GetParent()))
 	end
 end
 
@@ -271,6 +258,14 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 	end
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or not keys.target:IsAlive() then
 		return
+	end
+	if self:GetParent():HasModifier("modifier_imba_coup_de_grace_check") then
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_phantom_assassin/phantom_assassin_crit_impact.vpcf", PATTACH_CUSTOMORIGIN, keys.target)
+		ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 1, keys.target:GetAbsOrigin())
+		ParticleManager:SetParticleControlOrientation(pfx, 1, self:GetParent():GetForwardVector() * -1, self:GetParent():GetRightVector(), self:GetParent():GetUpVector())
+		ParticleManager:ReleaseParticleIndex(pfx)
+		self:GetParent():RemoveModifierByName("modifier_imba_coup_de_grace_check")
 	end
 	if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() and self:GetParent():IsRealHero() then
 		TrueKill(self:GetParent(), keys.target, self:GetAbility())

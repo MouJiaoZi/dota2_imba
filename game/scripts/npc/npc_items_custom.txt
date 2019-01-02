@@ -4730,7 +4730,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"crit_chance"			"5"
+				"crit_chance"			"25"
 			}
 			"03"
 			{

@@ -57,7 +57,7 @@ function item_imba_blink_boots:OnSpellStart()
 	if (caster:GetAbsOrigin() - pos):Length2D() > max_distance then
 		pos = caster:GetAbsOrigin() + direction * max_distance
 	end
-	local extra_distance = math.max(0, (pos - caster:GetAbsOrigin()):Length2D() - self:GetSpecialValueFor("max_blink_range") + caster:GetCastRangeBonus())
+	local extra_distance = math.max(0, (pos - caster:GetAbsOrigin()):Length2D() - (self:GetSpecialValueFor("max_blink_range") + caster:GetCastRangeBonus()))
 	local extra_cd = (self:GetCooldown(-1) + (extra_distance / self:GetSpecialValueFor("max_extra_tooltip")) * self:GetSpecialValueFor("max_extra_cooldown")) * (1 - caster:GetCooldownReduction() / 100)
 	self:EndCooldown()
 	self:StartCooldown(extra_cd)

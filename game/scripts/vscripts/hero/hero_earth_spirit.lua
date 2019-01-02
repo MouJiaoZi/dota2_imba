@@ -14,7 +14,7 @@ function imba_earth_spirit_stone_caller:IsNetherWardStealable()	return false end
 function imba_earth_spirit_stone_caller:IsTalentAbility() return true end
 
 function imba_earth_spirit_stone_caller:CastFilterResultTarget(target)
-	if (not self:GetCaster():HasScepter() and target ~= self:GetCaster()) or not target:IsHero() or (target:IsHero() and target ~= self:GetCaster() and self:GetCaster():HasModifier("modifier_imba_stone_remnant_prevent")) or (IsEnemy(target, self:GetCaster()) and target:IsMagicImmune()) then
+	if target ~= self:GetCaster() then
 		return UF_FAIL_CUSTOM
 	end
 end
@@ -28,13 +28,6 @@ function imba_earth_spirit_stone_caller:OnSpellStart()
 	local pos = self:GetCursorPosition()
 	if self:GetCursorTarget() == caster then
 		pos = caster:GetAbsOrigin() + caster:GetForwardVector() * 100
-	end
-	if self:GetCursorTarget() and self:GetCursorTarget() ~= caster then
-		if not self:GetCursorTarget():TriggerStandardTargetSpell(self) then
-			self:GetCursorTarget():AddNewModifier(caster, self, "modifier_imba_stone_remnant_status", {duration = self:GetSpecialValueFor("duration_scepter")})
-		end
-		caster:AddNewModifier(caster, self, "modifier_imba_stone_remnant_prevent", {duration = self:GetSpecialValueFor("hero_cooldown_scepter")})
-		return
 	end
 	local stone = CreateUnitByName("npc_imba_earth_spirit_stone", pos, false, caster, caster, caster:GetTeamNumber())
 	stone:SetForwardVector(caster:GetForwardVector())
@@ -360,7 +353,7 @@ function imba_earth_spirit_rolling_boulder:OnSpellStart()
 	local distance = self:GetSpecialValueFor("distance") + caster:GetCastRangeBonus()
 	local speed_rock = self:GetSpecialValueFor("rock_speed") + caster:GetCastRangeBonus()
 	local distance_rock = self:GetSpecialValueFor("rock_distance")
-	local buff = caster:AddNewModifier(caster, self, "modifier_imba_rolling_boulder_motion", {})
+	local buff = caster:AddNewModifier(caster, self, "modifier_imba_rolling_boulder_motion", {duration = 10.0})
 	buff.total = 0
 	buff.direction = direction
 	buff.speed = speed
@@ -679,15 +672,30 @@ function imba_earth_spirit_petrify:IsNetherWardStealable()	return false end
 function imba_earth_spirit_petrify:IsTalentAbility() return true end
 function imba_earth_spirit_petrify:GetIntrinsicModifierName() return "modifier_imba_petrify_controller" end
 function imba_earth_spirit_petrify:GetAbilityTextureName() return "custom/earth_spirit_petrify_"..self:GetCaster():GetModifierStackCount("modifier_imba_petrify_controller", nil) end
+function imba_earth_spirit_petrify:GetCooldown()
+	if IsServer() then
+		return (self:GetCaster():HasScepter() and (self:GetCaster() ~= self:GetCursorTarget() and self:GetSpecialValueFor("hero_cooldown_scepter") or 0) or 0)
+	else
+		return self:GetSpecialValueFor("hero_cooldown_scepter")
+	end
+end
 
 function imba_earth_spirit_petrify:OnSpellStart()
-	local buff = self:GetCaster():FindModifierByName("modifier_imba_petrify_controller")
-	if buff then
-		local stack = buff:GetStackCount()
-		if stack == 2 then
-			buff:SetStackCount(0)
-		else
-			buff:SetStackCount(buff:GetStackCount()+1)
+	local caster = self:GetCaster()
+	local target = self:GetCursorTarget()
+	if target == caster then
+		local buff = self:GetCaster():FindModifierByName("modifier_imba_petrify_controller")
+		if buff then
+			local stack = buff:GetStackCount()
+			if stack == 2 then
+				buff:SetStackCount(0)
+			else
+				buff:SetStackCount(buff:GetStackCount()+1)
+			end
+		end
+	elseif caster:HasScepter() then
+		if not self:GetCursorTarget():TriggerStandardTargetSpell(self) then
+			self:GetCursorTarget():AddNewModifier(caster, self, "modifier_imba_stone_remnant_status", {duration = self:GetSpecialValueFor("duration_scepter")})
 		end
 	end
 end

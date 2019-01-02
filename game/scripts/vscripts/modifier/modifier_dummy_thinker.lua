@@ -30,3 +30,26 @@ function modifier_imba_base_protect:OnIntervalThink()
 		end
 	end
 end
+
+modifier_imba_t2_tower_vision = class({})
+
+function modifier_imba_t2_tower_vision:IsDebuff()			return false end
+function modifier_imba_t2_tower_vision:IsHidden() 			return true end
+function modifier_imba_t2_tower_vision:IsPurgable() 		return false end
+function modifier_imba_t2_tower_vision:IsPurgeException() 	return false end
+
+function modifier_imba_t2_tower_vision:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(0.5)
+	end
+end
+
+function modifier_imba_t2_tower_vision:OnIntervalThink()
+	if GameRules:State_Get() >= DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		if self:GetParent():IsAlive() then
+			AddFOWViewer(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 1400, 0.5, false)
+		else
+			self:Destroy()
+		end
+	end
+end

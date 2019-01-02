@@ -3195,7 +3195,7 @@
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"             		"special_bonus_reincarnation_200"
-		"MaxLevel" 						"7"
+		"MaxLevel" 						"1"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		
@@ -3207,6 +3207,30 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"value"						"60"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Talent Reincarnation
+	//=================================================================================================================
+	"special_bonus_reincarnation_100"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"special_bonus_reincarnation_200"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"100"
 			}
 		}
 	}
@@ -4077,7 +4101,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"regen_rate"			"90000"
+				"regen_rate"			"900"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -4095,7 +4119,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"activation_time"		"1.0"
+				"activation_time"		"15.0"
 			}
 			"02"
 			{
@@ -6233,214 +6257,6 @@
 	}	
 	
 	//=================================================================================================================
-	// Ability: Static Remnant
-	//=================================================================================================================
-	"storm_spirit_static_remnant"
-	{
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"1.0"
-		"AbilityDuration"				"12.0 12.0 12.0 12.0"
-
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"100"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"static_remnant_radius"		"235"		
-			}
-			"02"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"static_remnant_damage_radius"	"260"
-			}
-			"03"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"static_remnant_delay"		"0.3"
-			}
-			"04"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"static_remnant_damage"			"120 160 200 240"
-				"LinkedSpecialBonus"	"special_bonus_unique_storm_spirit_5"
-			}
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
-	}
-
-	//=================================================================================================================
-	// Ability: Electric Vortex
-	//=================================================================================================================
-	"storm_spirit_electric_vortex"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
-		"AbilityCastRange"				"500"
-
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"21 20 19 18"
-		"AbilityDuration"				"1.0 1.5 2.0 2.5"
-	
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"85"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"electric_vortex_pull_units_per_second"			"100 150 200 250"		
-			}
-			"02"
-			{
-				"var_type"						"FIELD_FLOAT"
-				"electric_vortex_pull_tether_range"			"1200.0"		
-			}
-			"03"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"electric_vortex_self_slow"	"0"
-			}
-			"04"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"electric_vortex_self_slow_duration"	"0.0"
-			}
-			"05"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"duration"	"1.0 1.5 2.0 2.5"
-				"LinkedSpecialBonus"	"special_bonus_unique_storm_spirit"
-			}
-			"06"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"radius_scepter"	"575"
-			}
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
-	}
-		
-	//=================================================================================================================
-	// Ability: Storm Spirit Overload
-	//=================================================================================================================
-	"storm_spirit_overload"
-	{
-		"AbilityDuration"				"0.6 0.8 1.0 1.2"
-		
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"overload_aoe"					"300"
-			}
-			
-			"02"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"overload_move_slow"			"-80"
-			}
-			
-			"03"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"overload_attack_slow"			"-50"
-			}
-			"04"
-			{
-				"var_type"						"FIELD_FLOAT"
-				"tooltip_duration"				"0.6 0.8 1.0 1.2"
-			}
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
-	}
-	
-	//=================================================================================================================
-	// Ability: Storm Spirit Ball Lightning
-	//=================================================================================================================
-	"storm_spirit_ball_lightning"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.2"
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_4"
-		
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"30"
-		
-		// Damage.
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityDamage"					"8 12 16"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"										"FIELD_INTEGER"
-				"ball_lightning_initial_mana_percentage"		"8"
-			}
-			"02"
-			{
-				"var_type"										"FIELD_INTEGER"
-				"ball_lightning_initial_mana_base"				"0"		
-			}
-			"03"
-			{
-				"var_type"							"FIELD_INTEGER"
-				"ball_lightning_move_speed"			"1250 1875 2500"		
-			}
-			"04"
-			{
-				"var_type"							"FIELD_INTEGER"
-				"ball_lightning_aoe"				"200"		
-			}
-			"05"
-			{
-				"var_type"							"FIELD_INTEGER"
-				"ball_lightning_travel_cost_base"	"12"		
-			}
-			"06"
-			{
-				"var_type"								"FIELD_FLOAT"
-				"ball_lightning_travel_cost_percent"	"0.9"		
-			}
-			"07"
-			{
-				"var_type"								"FIELD_INTEGER"
-				"ball_lightning_vision_radius"			"400"		
-			}
-			"08"
-			{
-				"var_type"								"FIELD_FLOAT"
-				"blocker_duration"			"5"		
-			}
-			"09"
-			{
-				"var_type"								"FIELD_INTEGER"
-				"scepter_remnant_interval"			"300"		
-			}
-		}
-	}
-	
-	//=================================================================================================================
 	// Tiny: Avalanche
 	//=================================================================================================================
 	"tiny_avalanche"
@@ -6597,7 +6413,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"attack_count"				"5 10 15 20"
+				"attack_count"				"5 7 9 11"
 			}
 			"02"
 			{
@@ -6693,7 +6509,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"attack_speed_reduction"	"30 15 0"
+				"attack_speed_reduction"	"50 100 150"
 			}
 		}
 	}
@@ -7065,7 +6881,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"duration"				"1.5"
+				"duration"				"0.5 0.8 1.1 1.4"
 			}
 			"03"
 			{
@@ -7221,15 +7037,15 @@
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastRange"				"375"
-		"AbilityCastPoint"				"0.4"
+		"AbilityCastPoint"				"0.0"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"7.0 6.0 5.0 4.0"
+		"AbilityCooldown"				"7.0 5.0 3.0 1.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"50 40 30 20"
+		"AbilityManaCost"				"50"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -7295,7 +7111,7 @@
 			"02"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"speed"				"725"
+				"speed"				"1650"
 			}
 			"03"
 			{	
@@ -7517,7 +7333,7 @@
 			"01"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"bonus_attack_speed"			"400"
+				"bonus_attack_speed"			"400 800 1200"
 			}
 			"02"
 			{
@@ -10179,7 +9995,7 @@
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"charge_restore_time"	"25.0"
+				"charge_restore_time"	"10.0"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -13202,7 +13018,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"hp_regen"			"5 9 13 17"
+				"hp_regen"			"20 30 40 50"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -13280,6 +13096,7 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"crit_chance"			"60"
+				"LinkedSpecialBonus"		"special_bonus_unique_lycan_5"
 			}
 			"06"
 			{
@@ -16131,7 +15948,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"0.0"
+		"AbilityCooldown"				"5.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -16583,7 +16400,7 @@
 			"03"
 			{	
 				"var_type"					"FIELD_INTEGER"
-				"arrow_count"				"3 3 4 5"
+				"arrow_count"				"3 4 5 6"
 				"LinkedSpecialBonus"			"special_bonus_unique_medusa_2"
 			}
 			"04"
@@ -17188,44 +17005,6 @@
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
-	}
-
-	//=================================================================================================================
-	// Bristleback: Bristleback
-	//=================================================================================================================
-	"bristleback_bristleback"
-	{
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"side_damage_reduction"			"10 20 30 40"
-			}
-			"02"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"back_damage_reduction"			"20 40 60 80"
-			}
-			"03"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"side_angle"					"110"
-			}
-			"04"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"back_angle"					"70"
-			}
-			"05"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"quill_release_threshold"		"210 170 130 90"
-			}
-		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
 	}
 
 	//=================================================================================================================
@@ -19224,7 +19003,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"22"
+		"AbilityCooldown"				"14"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------

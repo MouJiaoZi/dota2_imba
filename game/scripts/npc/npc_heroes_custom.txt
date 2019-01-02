@@ -328,12 +328,12 @@
 		"Ability6"					"imba_pudge_dismember"
 
 		
-		"Ability10"					"special_bonus_strength_6"
+		"Ability10"					"special_bonus_hp_150"
 		"Ability11"					"special_bonus_mp_regen_2"
 		"Ability12"					"special_bonus_attack_speed_35"
 		"Ability13"					"special_bonus_movement_speed_20"
 		"Ability14"					"special_bonus_armor_6"
-		"Ability15"					"special_bonus_respawn_reduction_35"
+		"Ability15"					"special_bonus_reincarnation_100"
 		"Ability16"					"special_bonus_imba_pudge_2"
 		"Ability17"					"special_bonus_imba_pudge_1"
 
@@ -490,7 +490,7 @@
 		"AttackRange"				"500"
 		
 		"Ability10"		"special_bonus_armor_6"
-		"Ability11"		"special_bonus_exp_boost_25"
+		"Ability11"		"special_bonus_exp_boost_15"
 		"Ability12"		"special_bonus_movement_speed_30"
 		"Ability13"		"special_bonus_unique_zeus"
 		"Ability14"		"special_bonus_cast_range_100"
@@ -758,13 +758,13 @@
 
 		
 		"Ability10"					"special_bonus_exp_boost_15"
-		"Ability11"					"special_bonus_strength_5"
+		"Ability11"					"special_bonus_intelligence_6"
 		"Ability12"					"special_bonus_cast_range_100"
 		"Ability13"					"special_bonus_movement_speed_20"
 		"Ability14"					"special_bonus_cooldown_reduction_12"
-		"Ability15"					"special_bonus_all_stats_15"
+		"Ability15"					"special_bonus_all_stats_12"
 		"Ability16"					"special_bonus_imba_warlock_1"
-		"Ability17"					"special_bonus_20_bash_2"
+		"Ability17"					"special_bonus_imba_warlock_2"
 	}
 	"npc_dota_hero_beastmaster"
 	{
@@ -843,9 +843,9 @@
 		"Ability6"					"imba_faceless_void_chronosphere"
 
 		
-		"Ability10"					"special_bonus_attack_speed_20"
-		"Ability11"					"special_bonus_strength_5"
-		"Ability12"					"special_bonus_armor_4"
+		"Ability10"					"special_bonus_armor_3"
+		"Ability11"					"special_bonus_imba_faceless_void_3"
+		"Ability12"					"special_bonus_attack_speed_25"
 		"Ability13"					"special_bonus_attack_damage_30"
 		"Ability14"					"special_bonus_hp_200"
 		"Ability15"					"special_bonus_mp_350"
@@ -1083,7 +1083,7 @@
 
 		"AttributeBaseIntelligence"	"28"
 
-		"Ability10"					"special_bonus_evasion_25"
+		"Ability10"					"special_bonus_exp_boost_15"
 		"Ability11"					"special_bonus_attack_damage_90"
 		"Ability12"					"special_bonus_unique_dark_seer_4"
 		"Ability13"					"special_bonus_unique_dark_seer_2"
@@ -1201,7 +1201,7 @@
 		"Ability12"					"special_bonus_cooldown_reduction_15"
 		"Ability13"					"special_bonus_armor_5"
 		"Ability14"					"special_bonus_hp_200"
-		"Ability15"					"special_bonus_attack_speed_30"
+		"Ability15"					"special_bonus_attack_damage_100"
 		"Ability16"					"special_bonus_unique_broodmother_1"
 		"Ability17"					"special_bonus_unique_broodmother_2"
 	}
@@ -1236,6 +1236,8 @@
 		"AttackRate"				"1.7"
 
 		"ProjectileSpeed"			"3000"
+		
+		"AttackRange"				"555"
 
 		"Ability10"		"special_bonus_strength_7"
 		"Ability11"		"special_bonus_exp_boost_35"
@@ -1243,7 +1245,7 @@
 		"Ability13"		"special_bonus_unique_weaver_1"
 		"Ability14"		"special_bonus_unique_weaver_2"
 		"Ability15"		"special_bonus_unique_weaver_4"
-		"Ability16"		"special_bonus_strength_8"
+		"Ability16"		"special_bonus_all_stats_10"
 		"Ability17"		"special_bonus_unique_weaver_5"
 		
 	}
@@ -1660,13 +1662,14 @@
 		"Ability6"					"silencer_global_silence"
 		
 		"Ability10"					"special_bonus_armor_5"
-		"Ability11"					"special_bonus_attack_speed_25"
-		"Ability12"					"special_bonus_unique_silencer_2"
+		"Ability11"					"special_bonus_attack_speed_15"
+		"Ability12"					"special_bonus_hp_175"
 		"Ability13"					"special_bonus_movement_speed_25"
 		"Ability14"					"special_bonus_attack_range_50"
 		"Ability15"					"special_bonus_unique_silencer"
 		"Ability16"					"special_bonus_unique_silencer_3"
 		"Ability17"					"special_bonus_gold_income_30"
+		"Ability18"					"imba_force_load"
 		
 	}
 	"npc_dota_hero_obsidian_destroyer"
@@ -1690,7 +1693,7 @@
 		"Ability13"					"special_bonus_attack_speed_20"
 		"Ability14"					"special_bonus_intelligence_15"
 		"Ability15"					"special_bonus_hp_200"
-		"Ability16"					"special_bonus_attack_range_100"
+		"Ability16"					"special_bonus_spell_lifesteal_20"
 		"Ability17"					"special_bonus_spell_amplify_10"
 	}
 	"npc_dota_hero_lycan"
@@ -1984,7 +1987,7 @@
 		"Ability12"					"special_bonus_attack_damage_90"
 		"Ability13"					"special_bonus_unique_treant_3"
 		"Ability14"					"special_bonus_unique_treant_4"
-		"Ability15"					"special_bonus_unique_treant_2"
+		"Ability15"					"special_bonus_attack_speed_60"
 		"Ability16"					"special_bonus_unique_treant_5"
 		"Ability17"					"special_bonus_unique_treant_7"
 
@@ -2157,29 +2160,6 @@
 	}
 	"npc_dota_hero_wisp"
 	{
-		"Model"		"models/heroes/wisp/wisp.vmdl"
-		"Portrait"		"vgui/hud/heroportraits/portrait_wisp"
-		"SoundSet"		"Hero_Wisp"
-		"IdleSoundLoop"		"Hero_Wisp.IdleLoop"
-		"Enabled"		"1"
-		"Role"			"Support,Escape,Nuker"
-		"Rolelevels"	"3,2,1"
-		"Complexity"	"3"
-		"Team"		"Good"
-		"HeroID"		"91"
-		"ModelScale"		"0.930000"
-		"workshop_guide_name"		"Io"
-		"PickSound"		"wisp_move03"
-		"BanSound"		"wisp_shitty_crummy_wizard"
-		"CMEnabled"		"1"
-		"NameAliases"		"wisp"
-		"NoCombine"		"1"
-		"Legs"	"0"
-		"LastHitChallengeRival"		"npc_dota_hero_zuus"
-		"AbilityDraftDisabled"		"1"
-		"HeroSelectSoundEffect"		"Hero_Wisp.Pick"
-		"GibType"		"ethereal"
-		"GibTintColor"	"171 230 255 255"
 		"Ability1"		"wisp_tether"
 		"Ability2"		"wisp_spirits"
 		"Ability3"		"wisp_overcharge"		
@@ -2189,85 +2169,15 @@
 		"Ability7"		"wisp_tether_break"
 		"Ability8"		"wisp_spirits_in"
 
-		"Ability10"					"special_bonus_exp_boost_25"
-		"Ability11"					"special_bonus_unique_wisp_4"
+		"Ability10"					"special_bonus_exp_boost_15"
+		"Ability11"					"special_bonus_strength_6"
 		"Ability12"					"special_bonus_unique_wisp_5"
-		"Ability13"					"special_bonus_strength_6"
+		"Ability13"					"special_bonus_unique_wisp_4"
 		"Ability14"					"special_bonus_hp_regen_10"
-		"Ability15"					"special_bonus_respawn_reduction_40"
+		"Ability15"					"special_bonus_mp_regen_8"
 		"Ability16"					"special_bonus_attack_speed_100"
 		"Ability17"					"special_bonus_attack_range_125"
 
-		"AbilityDraftIgnoreCount" "7"
-		"ArmorPhysical"		"-2.000000"
-		"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
-		"AttackDamageMin"		"22"
-		"AttackDamageMax"		"31"
-		"AttackRate"		"1.700000"
-		"AttackAnimationPoint"		"0.150000"
-		"AttackAcquisitionRange"		"800"
-		"AttackRange"		"575"
-		"ProjectileModel"		"particles/units/heroes/hero_wisp/wisp_base_attack.vpcf"
-		"ProjectileSpeed"		"1200"
-		"AttributePrimary"		"DOTA_ATTRIBUTE_STRENGTH"
-		"AttributeBaseStrength"		"17"
-		"AttributeStrengthGain"		"2.200000"
-		"AttributeBaseAgility"		"14"
-		"AttributeAgilityGain"		"1.600000"
-		"AttributeBaseIntelligence"		"23"
-		"AttributeIntelligenceGain"		"1.700000"
-		"MovementSpeed"		"280"
-		"MovementTurnRate"		"0.700000"
-		"particle_folder"		"particles/units/heroes/hero_wisp"
-		"GameSoundsFile"		"soundevents/game_sounds_heroes/game_sounds_wisp.vsndevts"
-		"VoiceFile"		"soundevents/voscripts/game_sounds_vo_wisp.vsndevts"
-		"RenderablePortrait"
-		{
-		}
-		"precache"
-		{
-			"model"		"models/development/invisiblebox.vmdl"
-		}
-		"ItemSlots"
-		{
-		    "0"
-			{
-				"SlotIndex"		"0"
-				"SlotName"		"head"
-				"SlotText"		"#LoadoutSlot_Head_Accessory"
-				"TextureWidth"		"256"
-				"TextureHeight"		"256"
-				"MaxPolygonsLOD0"	"2300"
-				"MaxPolygonsLOD1"	"2300"
-			}
-			"1"
-			{
-				"SlotIndex"		"1"
-				"SlotName"		"taunt"
-				"SlotText"		"#LoadoutSlot_Taunt"
-			}
-			"2"
-			{
-				"SlotIndex"		"2"
-				"SlotName"		"ambient_effects"
-				"SlotText"		"#LoadoutSlot_Ambient_Effects"
-				"DisplayInLoadout"		"0"
-			}
-		}
-		"Bot"
-		{
-			"HeroType"		"DOTA_BOT_PURE_SUPPORT"
-			"LaningInfo"
-			{
-				"SoloDesire"		"0"
-				"RequiresBabysit"		"0"
-				"ProvidesBabysit"		"2"
-				"SurvivalRating"		"2"
-				"RequiresFarm"		"1"
-				"ProvidesSetup"		"0"
-				"RequiresSetup"		"2"
-			}
-		}
 	}
 	"npc_dota_hero_visage"
 	{
@@ -2549,7 +2459,7 @@
 		"Ability8"		"shredder_return_chakram_2"
 		
 		"Ability10"		"special_bonus_spell_amplify_6"
-		"Ability11"		"special_bonus_exp_boost_25"
+		"Ability11"		"special_bonus_exp_boost_15"
 		"Ability12"		"special_bonus_attack_damage_100"
 		"Ability13"		"special_bonus_unique_timbersaw_2"
 		"Ability14"		"special_bonus_strength_15"
@@ -2565,10 +2475,11 @@
 
 		"Ability1"		"bristleback_viscous_nasal_goo"
 		"Ability2"		"bristleback_quill_spray"
-		"Ability3"		"bristleback_bristleback"
+		"Ability3"		"imba_bristleback_bristleback"
 		"Ability4"		"generic_hidden"
 		"Ability5"		"generic_hidden"
 		"Ability6"		"bristleback_warpath"
+		
 		"Ability10"		"special_bonus_movement_speed_20"
 		"Ability11"		"special_bonus_mp_regen_2"
 		"Ability12"		"special_bonus_hp_250"
@@ -2676,7 +2587,7 @@
 		"Ability5"		"generic_hidden"
 		"Ability6"		"legion_commander_duel"
 		"Ability10"		"special_bonus_strength_8"
-		"Ability11"		"special_bonus_exp_boost_25"
+		"Ability11"		"special_bonus_exp_boost_15"
 		"Ability12"		"special_bonus_attack_speed_30"
 		"Ability13"		"special_bonus_unique_legion_commander_4"
 		"Ability14"		"special_bonus_movement_speed_50"
@@ -2744,34 +2655,13 @@
 	}
 	"npc_dota_hero_terrorblade"
 	{
-		"Model"		"models/heroes/terrorblade/terrorblade.vmdl"
-		"SoundSet"		"Hero_Terrorblade"
-		"HeroID"		"109"
-		"Enabled"		"1"
-		"CMEnabled"		"1"
-		"new_player_enable"		"1"
-		"HeroUnlockOrder"		"1"
-		"Role"			"Carry,Pusher,Nuker"
-		"Rolelevels"	"3,2,1"
-		"Complexity"	"2"
-		"Team"		"Bad"
-		"Portrait"		"vgui/hud/heroportraits/portrait_terrorblade"
-		"ModelScale"		"1.100000"
-		"LoadoutScale"		"0.900000"
-		"SpectatorLoadoutScale" "0.92"
-		"NameAliases"		"tb"
-		"workshop_guide_name"		"Terrorblade"
-		"PickSound"		"terrorblade_terr_spawn_01"
-		"BanSound"		"terrorblade_terr_anger_03"
-		"HeroSelectSoundEffect"		"Hero_Terrorblade.Pick"
-		"GibType"		"ethereal"
-		"GibTintColor"	"113 74 91 255"
 		"Ability1"		"terrorblade_reflection"
 		"Ability2"		"terrorblade_conjure_image"
 		"Ability3"		"terrorblade_metamorphosis"
-		"Ability4"		"generic_hidden"
+		//"Ability4"		"imba_terrorblade_demonic_power"
 		"Ability5"		"generic_hidden"
 		"Ability6"		"terrorblade_sunder"
+		
 		"Ability10"		"special_bonus_movement_speed_20"
 		"Ability11"		"special_bonus_evasion_10"
 		"Ability12"		"special_bonus_hp_300"
@@ -2940,7 +2830,7 @@
 		"Ability5"		"generic_hidden"
 		"Ability6"		"oracle_false_promise"
 		"Ability10"		"special_bonus_unique_oracle_2"
-		"Ability11"		"special_bonus_exp_boost_25"
+		"Ability11"		"special_bonus_exp_boost_15"
 		"Ability12"		"special_bonus_cast_range_150"
 		"Ability13"		"special_bonus_gold_income_20"
 		"Ability14"		"special_bonus_movement_speed_65"
@@ -3116,7 +3006,7 @@
 				"7"		"oracle_purifying_flames"
 				"8"		"oracle_fortunes_end"
 				"9"		"oracle_fortunes_end"
-				"10"		"special_bonus_exp_boost_25"
+				"10"		"special_bonus_exp_boost_15"
 				"11"		"oracle_fortunes_end"
 				"12"		"oracle_false_promise"
 				"13"		"oracle_fates_edict"

@@ -475,7 +475,7 @@ function modifier_imba_courier_buff:IsHidden() return true end
 function modifier_imba_courier_buff:IsPurgable() return false end
 function modifier_imba_courier_buff:IsPurgeException() return false end
 
-function modifier_imba_courier_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_EVENT_ON_ORDER} end
+function modifier_imba_courier_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_MAX, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_EVENT_ON_ORDER, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_courier_buff:GetModifierMoveSpeed_Max() return 10000 end
 function modifier_imba_courier_buff:GetModifierMoveSpeed_Absolute() return 1000 end
 function modifier_imba_courier_buff:GetModifierMoveSpeedBonus_Percentage() return 100 end
@@ -483,22 +483,46 @@ function modifier_imba_courier_buff:GetModifierPercentageCooldown() return 90 en
 
 function modifier_imba_courier_buff:OnCreated()
 	if IsServer() then
+		self.distance = 0
 		self:StartIntervalThink(1.0)
+		self:OnIntervalThink()
 	end
 end
 
 function modifier_imba_courier_buff:OnIntervalThink()
+	if not self.pos and self:GetParent().courier_num then
+		self.pos = IMBA_COURIER_POSITION[self:GetParent():GetTeamNumber()][self:GetParent().courier_num]
+	end
 	if not self:GetParent():IsIdle() or not self:GetParent():HasModifier("modifier_fountain_aura_buff") then
 		return
 	end
-	if self:GetParent().courier_num then
-		self:GetParent():MoveToPosition(IMBA_COURIER_POSITION[self:GetParent():GetTeamNumber()][self:GetParent().courier_num])
+	if self.pos then
+		self:GetParent():MoveToPosition(self.pos)
 	end
 end
 
 function modifier_imba_courier_buff:OnOrder(keys)
-	if IsServer() and keys.unit == self:GetParent() then 
-		self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+	if IsServer() and keys.unit == self:GetParent() and self.pos then
+		if (keys.ability and (keys.ability:GetAbilityName() == "courier_go_to_secretshop" or keys.ability:GetAbilityName() == "courier_transfer_items")) then
+			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
+			self:SetStackCount(keys.issuer_player_index + 1)
+		elseif keys.new_pos ~= Vector(0,0,0) then
+			local distance = (keys.new_pos - self.pos):Length2D()
+			if distance > self.distance then
+				self.distance = distance
+				self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+				self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
+				self.pid = keys.issuer_player_index
+				self:SetStackCount(keys.issuer_player_index + 1)
+			end
+		end
+	end
+end
+
+function modifier_imba_courier_buff:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		GameRules:SendCustomMessage("Courier Controller: "..self.id..". Game Time: "..GameRules:GetGameTime()..". Player: "..PlayerResource:GetPlayerName(self.pid), 0, 0)
 	end
 end
 

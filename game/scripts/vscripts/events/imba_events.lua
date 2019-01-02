@@ -10,6 +10,7 @@ function IMBAEvents:DeathMatchRandomOMG(npc)
 		end
 	end
 	for i=1, #abilityName do
+		print(abilityName[i])
 		npc:RemoveAbility(abilityName[i])
 	end
 	local buffs = npc:FindAllModifiers()
@@ -17,6 +18,7 @@ function IMBAEvents:DeathMatchRandomOMG(npc)
 		if string.find(buffs[i]:GetName(), "modifier_imba_talent_modifier_adder") or string.find(buffs[i]:GetName(), "modifier_imba_movespeed_controller") then
 			--
 		else
+			print(buffs[i]:GetName())
 			npc:RemoveModifierByName(buffs[i]:GetName())
 		end
 	end

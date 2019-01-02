@@ -47,6 +47,8 @@ require('imba')
 
 require('libraries/abilitychargecontroller')
 
+require('libraries/pseudoRandom')
+
 require('libraries/keyvalues')
 
 require('libraries/talentmanager')

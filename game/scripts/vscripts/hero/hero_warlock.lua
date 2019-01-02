@@ -12,6 +12,7 @@ imba_warlock_fatal_bonds = class({})
 
 LinkLuaModifier("modifier_imba_fetal_bonds_caster", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fetal_bonds_target", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_fetal_bonds_refresh_cooldown", "hero/hero_warlock", LUA_MODIFIER_MOTION_NONE)
 
 function imba_warlock_fatal_bonds:IsHiddenWhenStolen() 		return false end
 function imba_warlock_fatal_bonds:IsRefreshable() 			return true end
@@ -28,7 +29,7 @@ function imba_warlock_fatal_bonds:OnSpellStart()
 	end
 	target:EmitSound("Hero_Warlock.FatalBonds")
 	local linkTarget = {target, }
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_ANY_ORDER, false)
 	for i=1, self:GetSpecialValueFor("count") do
 		if enemies[i] and enemies[i] ~= target then
 			linkTarget[#linkTarget + 1] = enemies[i]
@@ -52,7 +53,7 @@ function modifier_imba_fetal_bonds_caster:IsPurgeException() 	return false end
 function modifier_imba_fetal_bonds_caster:RemoveOnDeath() return false end
 function modifier_imba_fetal_bonds_caster:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
-function modifier_imba_fetal_bonds_caster:FetalBond(fDamage, hUnit)
+function modifier_imba_fetal_bonds_caster:FetalBond(fDamage, hUnit, hAttacker)
 	if not IsServer() then
 		return
 	end
@@ -63,7 +64,7 @@ function modifier_imba_fetal_bonds_caster:FetalBond(fDamage, hUnit)
 			ParticleManager:SetParticleControlEnt(pfx, 0, hUnit, PATTACH_POINT_FOLLOW, "attach_hitloc", hUnit:GetAbsOrigin(), true)
 			ParticleManager:SetParticleControlEnt(pfx, 1, self.targets[i], PATTACH_POINT_FOLLOW, "attach_hitloc", self.targets[i]:GetAbsOrigin(), true)
 			ParticleManager:ReleaseParticleIndex(pfx)
-			ApplyDamage({attacker = self:GetParent(), victim = self.targets[i], damage = fDamage * (self:GetAbility():GetSpecialValueFor("damage_share_percentage") / 100), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_REFLECTION + DOTA_DAMAGE_FLAG_HPLOSS, ability = self:GetAbility()})
+			ApplyDamage({attacker = hAttacker, victim = self.targets[i], damage = fDamage * (self:GetAbility():GetSpecialValueFor("damage_share_percentage") / 100), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_REFLECTION + DOTA_DAMAGE_FLAG_HPLOSS + DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL, ability = self:GetAbility()})
 			self.targets[i]:EmitSound("Hero_Warlock.FatalBondsDamage")
 		end
 	end
@@ -94,14 +95,15 @@ function modifier_imba_fetal_bonds_target:OnTakeDamage(keys)
 	if keys.unit ~= self:GetParent() or bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION or not self.buff then
 		return
 	end
-	self.buff:FetalBond(keys.damage, self:GetParent())
+	self.buff:FetalBond(keys.damage, self:GetParent(), keys.attacker)
 end
 
 function modifier_imba_fetal_bonds_target:OnDeath(keys)
-	if not IsServer() or keys.unit ~= self:GetParent() or not self:GetParent():IsRealHero() then
+	if not IsServer() or keys.unit ~= self:GetParent() or not self:GetParent():IsRealHero() or self:GetCaster():HasModifier("modifier_imba_fetal_bonds_refresh_cooldown") then
 		return
 	end
 	self:GetAbility():EndCooldown()
+	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_fetal_bonds_refresh_cooldown", {duration = (self:GetAbility():GetSpecialValueFor("refresh_cooldown") + self:GetCaster():GetTalentValue("special_bonus_imba_warlock_2"))})
 end
 
 function modifier_imba_fetal_bonds_target:OnDestroy()
@@ -116,6 +118,13 @@ function modifier_imba_fetal_bonds_target:OnDestroy()
 		end
 	end
 end
+
+modifier_imba_fetal_bonds_refresh_cooldown = class({})
+
+function modifier_imba_fetal_bonds_refresh_cooldown:IsDebuff()			return false end
+function modifier_imba_fetal_bonds_refresh_cooldown:IsHidden() 			return false end
+function modifier_imba_fetal_bonds_refresh_cooldown:IsPurgable() 		return false end
+function modifier_imba_fetal_bonds_refresh_cooldown:IsPurgeException() 	return false end
 
 imba_warlock_shadow_word = class({})
 
@@ -135,10 +144,12 @@ function imba_warlock_shadow_word:OnSpellStart()
 	end
 	if IsEnemy(caster, target) then
 		target:EmitSound("Hero_Warlock.ShadowWordCastBad")
-		target:AddNewModifier(caster, self, "modifier_imba_shadow_word_debuff", {duration = self:GetSpecialValueFor("duration")})
+		local buff = target:AddNewModifier(caster, self, "modifier_imba_shadow_word_debuff", {duration = self:GetSpecialValueFor("duration")})
+		buff:SetStackCount(0)
 	else
 		target:EmitSound("Hero_Warlock.ShadowWordCastGood")
-		target:AddNewModifier(caster, self, "modifier_imba_shadow_word_buff", {duration = self:GetSpecialValueFor("duration")})
+		local buff =target:AddNewModifier(caster, self, "modifier_imba_shadow_word_buff", {duration = self:GetSpecialValueFor("duration")})
+		buff:SetStackCount(0)
 	end
 	caster:EmitSound("Hero_Warlock.Incantations")
 end
@@ -197,7 +208,7 @@ end
 
 modifier_imba_shadow_word_debuff = class({})
 
-function modifier_imba_shadow_word_debuff:IsDebuff()			return false end
+function modifier_imba_shadow_word_debuff:IsDebuff()			return true end
 function modifier_imba_shadow_word_debuff:IsHidden() 			return false end
 function modifier_imba_shadow_word_debuff:IsPurgable() 			return true end
 function modifier_imba_shadow_word_debuff:IsPurgeException() 	return true end
@@ -304,6 +315,10 @@ function modifier_imba_upheaval_npc:OnCreated()
 end
 
 function modifier_imba_upheaval_npc:OnIntervalThink()
+	if not self:GetParent():IsAlive() then
+		self:Destroy()
+		return
+	end
 	self:SetStackCount(self:GetStackCount() + 1)
 	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("slow_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
@@ -452,7 +467,7 @@ function modifier_imba_rain_of_chaos:OnDestroy()
 			caster:RemoveAbility(abilities[i+1])
 		end
 		for i=1, 3 do
-			CreateModifierThinker(caster, self:GetAbility(), "modifier_imba_rain_of_chaos_storm", {duration = (2.0 * i), aoe = self:GetAbility():GetSpecialValueFor("aoe_"..i), damage = self:GetAbility():GetSpecialValueFor("dmg_"..i)}, self:GetParent():GetAbsOrigin(), caster:GetTeamNumber(), false)
+			CreateModifierThinker(caster, self:GetAbility(), "modifier_imba_rain_of_chaos_storm", {duration = (3.0 * i), aoe = self:GetAbility():GetSpecialValueFor("aoe_"..i), damage = self:GetAbility():GetSpecialValueFor("dmg_"..i)}, self:GetParent():GetAbsOrigin(), caster:GetTeamNumber(), false)
 		end
 	end
 end
@@ -583,6 +598,9 @@ function modifier_imba_liquid_hellfire_thinker:OnCreated()
 end
 
 function modifier_imba_liquid_hellfire_thinker:OnIntervalThink()
+	if not self:GetCaster():HasModifier("modifier_imba_rain_of_chaos") then
+		self:Destroy()
+	end
 	local dmg = self:GetAbility():GetSpecialValueFor("damage_per_second") / (1.0 / 0.2)
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for i=1, #enemies do
@@ -625,6 +643,7 @@ function modifier_imba_fire_of_sargeras_debuff:IsDebuff()			return true end
 function modifier_imba_fire_of_sargeras_debuff:IsHidden() 			return false end
 function modifier_imba_fire_of_sargeras_debuff:IsPurgable() 		return false end
 function modifier_imba_fire_of_sargeras_debuff:IsPurgeException() 	return false end
+function modifier_imba_fire_of_sargeras_debuff:RemoveOnDeath() return false end
 function modifier_imba_fire_of_sargeras_debuff:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_fire_of_sargeras_debuff:DestroyOnExpire() return false end
 
@@ -639,7 +658,7 @@ function modifier_imba_fire_of_sargeras_debuff:OnCreated()
 end
 
 function modifier_imba_fire_of_sargeras_debuff:OnIntervalThink()
-	if not self:GetAbility() then
+	if not self:GetCaster():HasModifier("modifier_imba_rain_of_chaos") then
 		self:Destroy()
 	end
 	if self:GetElapsedTime() >= self:GetDuration() then

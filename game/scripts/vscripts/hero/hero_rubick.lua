@@ -25,8 +25,9 @@ function imba_rubick_telekinesis_land:OnSpellStart()
 		ParticleManager:ReleaseParticleIndex(self.pfx)
 		self.pfx = nil
 	end
-	self.pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_rubick/rubick_telekinesis_marker.vpcf", PATTACH_WORLDORIGIN, nil)
+	self.pfx = ParticleManager:CreateParticleForTeam("particles/econ/items/rubick/rubick_force_ambient/rubick_telekinesis_marker_force.vpcf", PATTACH_CUSTOMORIGIN, nil, self:GetCaster():GetTeamNumber())
 	ParticleManager:SetParticleControl(self.pfx, 0, target_buff.pos)
+	ParticleManager:SetParticleControl(self.pfx, 1, Vector(target_buff:GetRemainingTime() + 0.5, 0, 0))
 	ParticleManager:SetParticleControl(self.pfx, 2, target_buff:GetParent():GetAbsOrigin())
 end
 
@@ -160,6 +161,7 @@ function modifier_imba_telekinesis_end_motion:OnDestroy()
 			end
 		end
 		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
+		GridNav:DestroyTreesAroundPoint(self.pos, self:GetAbility():GetSpecialValueFor("landing_stun_radius"), false)
 		self.pos = nil
 		self.startpos = nil
 	end

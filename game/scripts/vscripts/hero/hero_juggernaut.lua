@@ -293,9 +293,17 @@ end
 imba_juggernaut_blade_dance = class({})
 
 LinkLuaModifier("modifier_imba_blade_dance_passive", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_blade_dance_check", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_blade_dance_stacks", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
 
 function imba_juggernaut_blade_dance:GetIntrinsicModifierName() return "modifier_imba_blade_dance_passive" end
+
+modifier_imba_blade_dance_check = class({})
+
+function modifier_imba_blade_dance_check:IsHidden()			return true end
+function modifier_imba_blade_dance_check:IsDebuff()			return false end
+function modifier_imba_blade_dance_check:IsPurgable() 		return false end
+function modifier_imba_blade_dance_check:IsPurgeException() return false end
 
 modifier_imba_blade_dance_passive = class({})
 
@@ -304,33 +312,18 @@ function modifier_imba_blade_dance_passive:IsDebuff()			return false end
 function modifier_imba_blade_dance_passive:IsPurgable() 		return false end
 function modifier_imba_blade_dance_passive:IsPurgeException() 	return false end
 
-function modifier_imba_blade_dance_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_START} end
-function modifier_imba_blade_dance_passive:GetIMBAPhysicalCirtChance() return self.cirt end
-function modifier_imba_blade_dance_passive:GetIMBAPhysicalCirtBonus() return self:GetAbility():GetSpecialValueFor("crit_damage") end
+function modifier_imba_blade_dance_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
 
-function modifier_imba_blade_dance_passive:OnTriggerIMBAPhyicalCirt(keys)
-	local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_stacks", {duration = self:GetAbility():GetSpecialValueFor("bonus_duration")})
-	buff:SetStackCount(buff:GetStackCount() + 1)
-	if self:GetParent():IsRangedAttacker() then
-		self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
-	end
-end
-
-function modifier_imba_blade_dance_passive:OnAttackStart(keys)
-	if not IsServer() then
-		return
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and not self:GetParent():IsRangedAttacker() then
+function modifier_imba_blade_dance_passive:GetModifierPreAttack_CriticalStrike(keys)
+	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
 		if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance")) then
-			self.cirt = 100
 			self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
-			self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
+			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_check", {})
+			return self:GetAbility():GetSpecialValueFor("crit_damage")
 		else
-			self.cirt = 0
+			self:GetParent():RemoveModifierByName("modifier_imba_blade_dance_check")
+			return 0
 		end
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and self:GetParent():IsRangedAttacker() then
-		self.cirt = self:GetAbility():GetSpecialValueFor("crit_chance")
 	end
 end
 
@@ -340,6 +333,10 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	end
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
+	end
+	if self:GetParent():HasModifier("modifier_imba_blade_dance_check") then
+		self:GetParent():RemoveModifierByName("modifier_imba_blade_dance_check")
+		self:GetParent():AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_stacks", {duration = self:GetAbility():GetSpecialValueFor("bonus_duration")}, 1, false, true)
 	end
 	local buff = self:GetParent():FindModifierByName("modifier_imba_blade_dance_stacks")
 	if buff then

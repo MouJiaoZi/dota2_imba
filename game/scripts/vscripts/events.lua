@@ -40,11 +40,15 @@ function GameMode:OnDisconnect(keys)
 	local max_time = 300
 	local line_duration = 7
 
+	if not playerHero then
+		return
+	end
+
 	--[[if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
 		GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
 		if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
+			Notifications:BottomToAll({text = "#imba_team_good_abandon_message", duration = line_duration, style = {color = "DodgerBlue"} })
 			Timers:CreateTimer(15.0, function()
-				Notifications:BottomToAll({text = "#imba_team_good_abandon_message", duration = line_duration, style = {color = "DodgerBlue"} })
 				if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
 					GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
 					GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
@@ -57,8 +61,8 @@ function GameMode:OnDisconnect(keys)
 	if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
 		BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
 		if BAD_PLAYERS_ABA >= BAD_PLAYERS then
+			Notifications:BottomToAll({text = "#imba_team_bad_abandon_message", duration = line_duration, style = {color = "DodgerBlue"} })
 			Timers:CreateTimer(15.0, function()
-				Notifications:BottomToAll({text = "#imba_player_reconnect_message", duration = line_duration, style = {color = "DodgerBlue"} })
 				if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
 					GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
 					GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
@@ -75,27 +79,37 @@ function GameMode:OnDisconnect(keys)
 			return nil
 		end
 		if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_ABANDONED then
+			if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+				GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
+			end
+			if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+				BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
+			end
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
+			IMBA:StartGoldShare(playerID)
+			GameRules:SetSafeToLeave(true)
+			GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
 			return nil
 		end
 		if time >= max_time then
+			if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+				GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
+			end
+			if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+				BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
+			end
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
+			GameRules:SetSafeToLeave(true)
 			return nil
 		end
 		if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_CONNECTED then
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_reconnect_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
-			if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-				GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA - 1
-			end
-			if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
-				BAD_PLAYERS_ABA = BAD_PLAYERS_ABA - 1
-			end
 			return nil
 		end
 		return 1.0
@@ -135,6 +149,9 @@ function GameMode:OnGameRulesStateChange(keys)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_HERO_SELECTION then
+		if GameRules:IsCheatMode() then
+			GameRules:SetSafeToLeave(true)
+		end
 		Timers:CreateTimer(5, function()
 			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
 			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
@@ -158,6 +175,7 @@ function GameMode:OnGameRulesStateChange(keys)
 	if newState == DOTA_GAMERULES_STATE_PRE_GAME then--and not GameRules:IsCheatMode() then
 		if GetMapName() == "dbii_death_match" then
 			GameRules:SetSafeToLeave(true)
+			GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
 		end
 		IMBA:StartGameAPI()
 		--[[Timers:CreateTimer(0, function()
@@ -226,6 +244,10 @@ function GameMode:OnGameRulesStateChange(keys)
 									end
 								end
 							end
+							------
+							if not string.find(tower:GetUnitName(), "mid") then
+								tower:AddNewModifier(tower, nil, "modifier_imba_t2_tower_vision", {})
+							end
 						end
 						if string.find(tower:GetUnitName(), "_tower3_") then --T3 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 1300, true)
@@ -279,8 +301,15 @@ function GameMode:OnGameRulesStateChange(keys)
 				end
 				if tick >= 2 and not announce then
 					announce = true
-					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_20_SCES", duration = waitTick - 2})
-					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = waitTick - 2})
+					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_20_SCES", duration = 100})
+					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 100})
+					Timers:CreateTimer({
+						useGameTime = false,
+						endTime = waitTick-2, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
+						callback = function()
+							Notifications:ClearBottomFromAll()
+						end
+					})
 				end
 				PauseGame(true)
 				tick = tick + 0.1
@@ -288,7 +317,7 @@ function GameMode:OnGameRulesStateChange(keys)
 					return 0.1
 				else
 					PauseGame(false)
-					GameMode:ResetCameraForAll()
+					--GameMode:ResetCameraForAll()
 					return nil
 				end
 			end
@@ -462,19 +491,12 @@ function GameMode:OnNPCSpawned(keys)
 		end]]
 	end
 
-	if npc:GetUnitName() == "npc_dota_hero_silencer" then
-		Timers:CreateTimer(FrameTime(), function()
-				local buff = npc:FindModifierByName("modifier_silencer_int_steal")
-				if buff and buff:GetDuration() < 0 then
-					buff:SetDuration(1500, true)
-					if GetMapName() == "dbii_5v5" then
-						buff:SetDuration(2100, true)
-					end
-					return nil
-				end
-				return 1.0
-			end
-		)
+	if npc:GetUnitName() == "npc_dota_hero_silencer" and not npc:HasModifier("modifier_imba_silencer_int_steal") then
+		local duration = 1500
+		if GetMapName() == "dbii_5v5" then
+			duration = 2500
+		end
+		npc:AddNewModifier(npc, nil, "modifier_imba_silencer_int_steal", {duration = duration})
 	end
 end
 
@@ -595,6 +617,10 @@ function GameMode:OnPlayerLevelUp(keys)
 	DebugPrintTable(keys)
 
 	local player = EntIndexToHScript(keys.player)
+	if not player then
+		return
+	end
+
 	local level = keys.level
 	local hero = player:GetAssignedHero()
 	local hero_level = hero:GetLevel()
@@ -725,6 +751,10 @@ function GameMode:OnEntityKilled( keys )
 	local damagebits = keys.damagebits -- This might always be 0 and therefore useless
 
 	if victim:IsRealHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+
+		if GameRules:GetDOTATime(false, false) >= 1200 then
+			GameRules:SetSafeToLeave(true)
+		end
 
 		--Lose Gold
 		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
@@ -924,6 +954,10 @@ function GameMode:OnPlayerChat(keys)
 	local text = keys.text
 
 	if not (string.byte(text) == 45) then
+		return nil
+	end
+
+	if not GameRules:IsCheatMode() then
 		return nil
 	end
 

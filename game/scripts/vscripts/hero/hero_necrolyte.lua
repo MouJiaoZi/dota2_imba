@@ -70,8 +70,9 @@ function modifier_death_pulse_thinker:OnIntervalThink(bFirst)
 	if IsServer() then
 		local ability = self:GetAbility()
 		local caster = self:GetCaster()
-		if caster:GetMana() < ability:GetManaCost(ability:GetLevel()-1) then
+		if caster:GetMana() < ability:GetManaCost(ability:GetLevel()-1) or not caster:IsAlive() then
 			ability:ToggleAbility()
+			self:StartIntervalThink(-1)
 			return
 		end
 		caster:SpendMana(ability:GetManaCost(ability:GetLevel()-1), ability)
@@ -168,7 +169,7 @@ function modifier_imba_heartstopper_aura:OnIntervalThink()
 	self:SetStackCount(math.min(self:GetStackCount() + 1, self:GetAbility():GetSpecialValueFor("max_stacks")))
 end
 
-function modifier_imba_heartstopper_aura:DeclareFunctions() return {MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS} end
+function modifier_imba_heartstopper_aura:DeclareFunctions() return {MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE} end
 
 function modifier_imba_heartstopper_aura:GetModifierMagicalResistanceBonus()
 	if self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber() then
@@ -178,13 +179,7 @@ function modifier_imba_heartstopper_aura:GetModifierMagicalResistanceBonus()
 	end
 end
 
-function modifier_imba_heartstopper_aura:GetIMBAModifierIncomingHealAmp_Percentage()
-	if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then
-		return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("stacks_heal_pct")
-	else
-		return 0
-	end
-end
+function modifier_imba_heartstopper_aura:GetModifierHPRegenAmplify_Percentage() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("stacks_heal_pct")) end
 
 imba_necrolyte_sadist = class({})
 
@@ -333,11 +328,9 @@ function modifier_imba_reapers_scythe_permanent:IsHidden()			return false end
 function modifier_imba_reapers_scythe_permanent:RemoveOnDeath()		return false end
 function modifier_imba_reapers_scythe_permanent:IsPermanent()		return true end
 function modifier_imba_reapers_scythe_permanent:OnRefresh()
-	if self:GetStackCount() > 0 then
-		self:OnCreated()
-	end
+	self:SetStackCount(self:GetStackCount()+1)
 end
-function modifier_imba_reapers_scythe_permanent:OnCreated() self:SetStackCount(self:GetStackCount() + 1) end
+function modifier_imba_reapers_scythe_permanent:OnCreated() self:OnRefresh() end
 function modifier_imba_reapers_scythe_permanent:DeclareFunctions() return {MODIFIER_PROPERTY_RESPAWNTIME_STACKING} end
 function modifier_imba_reapers_scythe_permanent:GetModifierStackingRespawnTime() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("respawn_stack")) end
 

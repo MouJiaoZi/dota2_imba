@@ -385,24 +385,15 @@ function imba_lion_finger_of_death:OnSpellStart()
 							damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
 							ability = self, --Optional.
 							}
-		local info = 
-		{
-			Target = enemy,
-			Source = caster,
-			Ability = self,	
-			EffectName = "particles/units/heroes/hero_lion/lion_spell_finger_of_death.vpcf",
-			iMoveSpeed = 4000,
-			vSourceLoc = caster:GetAttachmentOrigin(caster:ScriptLookupAttachment("attach_attack2")),
-			iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_ATTACK_2,
-			bDrawsOnMinimap = false,
-			bDodgeable = false,
-			bIsAttack = false,
-			bVisibleToEnemies = true,
-			bReplaceExisting = false,
-			flExpireTime = GameRules:GetGameTime() + 10,
-			bProvidesVision = false,
-		}
-		projectile = ProjectileManager:CreateTrackingProjectile(info)
+		local direction = (enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized()
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_lion/lion_spell_finger_of_death.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack2", caster:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(pfx, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(pfx, 2, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 3, caster:GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 4, enemy:GetAbsOrigin())
+		ParticleManager:SetParticleControlForward(pfx, 3, direction)
+		ParticleManager:ReleaseParticleIndex(pfx)
 		enemy:EmitSound("Hero_Lion.FingerOfDeathImpact")
 		Timers:CreateTimer(self:GetSpecialValueFor("damage_delay"), function()
 			local damage_done = ApplyDamage(damageTable)

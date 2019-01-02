@@ -93,6 +93,16 @@ function modifier_imba_torrent_stun:DeclareFunctions() return {MODIFIER_PROPERTY
 function modifier_imba_torrent_stun:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 function modifier_imba_torrent_stun:OnCreated(keys)
 	if IsServer() then
+		local dmg = self:GetAbility():GetSpecialValueFor("damage") + (bit.band(keys.tide, KUNKKA_TIDEBRINGER_TSUNAMI) == KUNKKA_TIDEBRINGER_TSUNAMI and self:GetAbility():GetSpecialValueFor("tsunami_damage") or 0)
+		local damageTable = {
+							victim = self:GetParent(),
+							attacker = self:GetCaster(),
+							damage = dmg,
+							damage_type = self:GetAbility():GetAbilityDamageType(),
+							damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+							ability = self:GetAbility(), --Optional.
+							}
+		ApplyDamage(damageTable)
 		self:CheckMotionControllers()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.tide = keys.tide
@@ -112,18 +122,7 @@ function modifier_imba_torrent_stun:OnIntervalThink()
 		next_pos = GetGroundPosition(self.pos + (self:GetParent():GetAbsOrigin() - self.pos):Normalized() * (self.distance * (1 - motion_progress)), nil)
 	end
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
-	local dmg = self:GetAbility():GetSpecialValueFor("damage") + (bit.band(self.tide, KUNKKA_TIDEBRINGER_TSUNAMI) == KUNKKA_TIDEBRINGER_TSUNAMI and self:GetAbility():GetSpecialValueFor("tsunami_damage") or 0)
-	dmg = dmg / (self:GetDuration() / FrameTime())
-	local damageTable = {
-						victim = self:GetParent(),
-						attacker = self:GetCaster(),
-						damage = dmg,
-						damage_type = self:GetAbility():GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
-						ability = self:GetAbility(), --Optional.
-						}
-	ApplyDamage(damageTable)
+	self:GetParent():SetAbsOrigin(next_pos)	
 end
 
 function modifier_imba_torrent_stun:OnDestroy()
@@ -484,7 +483,6 @@ function imba_kunkka_ghostship:OnProjectileHit_ExtraData(target, location, data)
 	EntIndexToHScript(data.ship):ForceKill(false)
 end
 
-
 modifier_imba_ghostship_debuff = class({})
 
 function modifier_imba_ghostship_debuff:IsMotionController()		return true end
@@ -498,6 +496,7 @@ function modifier_imba_ghostship_debuff:OnCreated(keys)
 	if IsServer() then
 		self:CheckMotionControllers()
 		self.mark = EntIndexToHScript(keys.mark)
+		self.ship = EntIndexToHScript(keys.ship)
 		self.speed = keys.speed
 		self:OnIntervalThink()
 		self:StartIntervalThink(FrameTime())
@@ -512,7 +511,7 @@ function modifier_imba_ghostship_debuff:OnIntervalThink()
 	local target_pos = self.mark:GetAbsOrigin()
 	local distance = self.speed * FrameTime()
 	local next_pos= self:GetParent():GetAbsOrigin() + (target_pos - self:GetParent():GetAbsOrigin()):Normalized() * distance
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetAbsOrigin(self.ship:GetAbsOrigin())
 end
 
 function modifier_imba_ghostship_debuff:OnDestroy()
@@ -569,7 +568,7 @@ function modifier_imba_ghostship_ship:OnIntervalThink()
 	end
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("ghostship_width"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
-		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_ghostship_debuff", {mark = self.mark:entindex(), speed = self.speed})
+		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_ghostship_debuff", {mark = self.mark:entindex(), speed = self.speed, ship = self:GetParent():entindex()})
 	end
 	local allies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("ghostship_width"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, ally in pairs(allies) do
@@ -600,7 +599,7 @@ function modifier_imba_ghostship_rum:GetModifierIncomingDamage_Percentage(keys)
 	if IsServer() then
 		local pct = self:GetCaster():HasScepter() and self:GetAbility():GetSpecialValueFor("rum_reduce_pct_scepter") or self:GetAbility():GetSpecialValueFor("rum_reduce_pct")
 		self:SetStackCount(keys.damage * (pct / 100) + self:GetStackCount())
-		return pct
+		return (0 - pct)
 	end
 end
 

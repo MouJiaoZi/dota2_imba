@@ -34,7 +34,7 @@ function imba_centaur_hoof_stomp:OnSpellStart()
 		ParticleManager:SetParticleControl(pfx, i, caster:GetAbsOrigin())
 	end
 	ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius")))
-
+	GridNav:DestroyTreesAroundPoint(caster:GetAbsOrigin(), self:GetSpecialValueFor("radius"), false)
 	CreateModifierThinker(caster, self, "modifier_imba_hoof_stomp_dummy", {duration = self:GetSpecialValueFor("pit_duration")}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 end
 

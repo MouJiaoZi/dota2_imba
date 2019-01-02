@@ -98,7 +98,7 @@ function modifier_imba_shuriken_toss_chain:OnCreated()
 	local pfx = ParticleManager:CreateParticle("particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook_chain.vpcf", PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControlEnt(pfx, 6, self.dummy, PATTACH_POINT_FOLLOW, "attach_hitloc", target_position, false)
 	ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", target_position, false)
-	self:AddParticle(pfx, false, false, 15, false, false)
+	self:AddParticle(pfx, true, false, 15, false, false)
 	self:StartIntervalThink(0.1)
 end
 
@@ -338,27 +338,13 @@ function modifier_imba_track_cirt:IsHidden() 			return true end
 function modifier_imba_track_cirt:IsPurgable() 			return false end
 function modifier_imba_track_cirt:IsPurgeException() 	return false end
 
-function modifier_imba_track_cirt:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_START} end
-function modifier_imba_track_cirt:GetIMBAPhysicalCirtChance() return self.cirt end
-function modifier_imba_track_cirt:GetIMBAPhysicalCirtBonus() return self:GetAbility():GetSpecialValueFor("crit_percentage") end
+function modifier_imba_track_cirt:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
 
-function modifier_imba_track_cirt:OnAttackStart(keys)
-	if not IsServer() then
-		return
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and not self:GetParent():IsRangedAttacker() then
-		if keys.target:HasModifier("modifier_imba_track") then
-			self.cirt = 100
-			self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
-		else
-			self.cirt = 0
-		end
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and self:GetParent():IsRangedAttacker() and keys.target:HasModifier("modifier_imba_track") then
-		self.cirt = 100
+function modifier_imba_track_cirt:GetModifierPreAttack_CriticalStrike(keys)
+	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and keys.target:HasModifier("modifier_imba_track") then
+		return self:GetAbility():GetSpecialValueFor("crit_percentage")
 	end
 end
-
 
 modifier_imba_track = class({})
 

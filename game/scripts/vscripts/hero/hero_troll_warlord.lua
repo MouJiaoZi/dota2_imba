@@ -16,8 +16,7 @@ function imba_troll_warlord_whirling_axes_melee:IsNetherWardStealable()		return 
 function imba_troll_warlord_whirling_axes_melee:GetCastRange()	return self:GetSpecialValueFor("radius") - self:GetCaster():GetCastRangeBonus() end
 
 function imba_troll_warlord_whirling_axes_melee:OnSpellStart()
-	local caster = self:GetCaster() 
-	print(caster:GetAttackSpeed())
+	local caster = self:GetCaster()
 	StartAnimation(caster, {duration=5, activity=ACT_DOTA_CAST_ABILITY_3, rate=1.5, translate="melee"})
 	caster:EmitSound("Hero_TrollWarlord.WhirlingAxes.Melee")
 	local particle_axe = "particles/units/heroes/hero_troll_warlord/troll_warlord_whirling_axe_melee.vpcf"
@@ -179,7 +178,7 @@ function modifier_imba_fervor_passive:IsPurgeException() 	return false end
 function modifier_imba_fervor_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
 function modifier_imba_fervor_passive:OnAttackLanded(keys)
 	if IsServer() then
-		if not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") and not self:GetParent():IsIllusion() and not keys.target:IsBoss() and keys.target:IsAlive() then
+		if not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") and not self:GetParent():IsIllusion() and keys.target:IsAlive() then
 			local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_fervor_dummy", {duration = self:GetAbility():GetSpecialValueFor("duration")})
 			buff:SetStackCount(buff:GetStackCount() + 1)
 		end

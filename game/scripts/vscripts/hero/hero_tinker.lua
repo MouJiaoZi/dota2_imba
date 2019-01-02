@@ -92,8 +92,8 @@ function imba_tinker_heat_seeking_missile:OnSpellStart()
 	local caster = self:GetCaster()
 	local stack = caster:GetModifierStackCount("modifier_imba_rearm_stack", caster)
 	local missiles = self:GetSpecialValueFor("base_count") + math.floor(stack * self:GetSpecialValueFor("stack_count")) + (caster:HasScepter() and self:GetSpecialValueFor("add_missile_scepter") or 0)
-	local heroes = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
-	local units = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
+	local heroes = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
+	local units = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
 	if #heroes < missiles then
 		local more = missiles - #heroes
 		for i=1, more do
@@ -135,7 +135,7 @@ function imba_tinker_heat_seeking_missile:OnSpellStart()
 end
 
 function imba_tinker_heat_seeking_missile:OnProjectileHit(target, location)
-	if not target then
+	if not target or (target and target:IsMagicImmune()) then
 		return
 	end
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_tinker/tinker_missle_explosion.vpcf", PATTACH_POINT, target)

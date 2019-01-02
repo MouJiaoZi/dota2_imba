@@ -5,7 +5,14 @@ function modifier_imba_courier_marker:IsHidden() 			return true end
 function modifier_imba_courier_marker:IsPurgable() 			return false end
 function modifier_imba_courier_marker:IsPurgeException() 	return false end
 function modifier_imba_courier_marker:RemoveOnDeath() return false end
+function modifier_imba_courier_marker:DeclareFunctions() return {MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_courier_marker:GetTexture() return "centaur_return" end
+
+function modifier_imba_courier_marker:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:GetParent():AddNewModifierWhenPossible(self:GetCaster(), nil, "modifier_imba_courier_prevent", {duration = 600})
+	end
+end
 
 modifier_imba_courier_prevent = class({})
 
@@ -31,7 +38,7 @@ function modifier_imba_courier_prevent:OnIntervalThink()
 	for i=0, 8 do
 		local item = self:GetParent():GetItemInSlot(i)
 		if item and item:GetPurchaser() == self:GetCaster() and self:GetParent():IsInvulnerable() then
-			self:GetParent():DropItemAtPositionImmediate(item, self:GetParent():GetAbsOrigin())
+			self:GetParent():FindAbilityByName("courier_return_stash_items"):OnSpellStart()
 		end
 	end
 end

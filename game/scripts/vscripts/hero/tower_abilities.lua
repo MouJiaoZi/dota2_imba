@@ -1,21 +1,6 @@
 --[[	Author: Firetoad
 		Date: 06.09.2015	]]
 
----License Starts Here-----------------------
--- Copyright (C) 2018  The Dota IMBA Development Team
---
--- Licensed under the Apache License, Version 2.0 (the "License");
--- you may not use this file except in compliance with the License.
--- You may obtain a copy of the License at
---
--- http://www.apache.org/licenses/LICENSE-2.0
---
--- Unless required by applicable law or agreed to in writing, software
--- distributed under the License is distributed on an "AS IS" BASIS,
--- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--- See the License for the specific language governing permissions and
--- limitations under the License.
-
 function Laser( keys )
 	local caster = keys.caster
 	local ability = keys.ability
@@ -921,9 +906,6 @@ function Cannon( keys )
 	end
 end
 
----License Ends Here-----------------------
-
-
 
 
 
@@ -1037,6 +1019,9 @@ function modifier_imba_tower_healer_protect_invul:CheckState() return {[MODIFIER
 imba_necronomicon_archer_multishot = class({})
 
 LinkLuaModifier("modifier_imba_necronomicon_archer_multishot", "hero/tower_abilities", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_necronomicon_archer_multishot_no", "hero/tower_abilities", LUA_MODIFIER_MOTION_NONE)
+
+modifier_imba_necronomicon_archer_multishot_no = class({})
 
 function imba_necronomicon_archer_multishot:GetIntrinsicModifierName() return "modifier_imba_necronomicon_archer_multishot"	 end
 
@@ -1052,13 +1037,15 @@ function modifier_imba_necronomicon_archer_multishot:OnAttack(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent():PassivesDisabled() or keys.attacker ~= self:GetParent() then
+	if self:GetParent():PassivesDisabled() or keys.attacker ~= self:GetParent() or self:GetParent():HasModifier("modifier_imba_necronomicon_archer_multishot_no") then
 		return
 	end
-	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetParent():Script_GetAttackRange() + 50, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetParent():Script_GetAttackRange() + 50, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		if enemy ~= keys.target then
+			self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_necronomicon_archer_multishot_no", {})
 			self:GetParent():PerformAttack(enemy, false, false, true, false, true, false, false)
+			self:GetParent():RemoveModifierByName("modifier_imba_necronomicon_archer_multishot_no")
 		end
 	end
 end

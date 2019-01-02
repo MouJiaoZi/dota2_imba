@@ -162,7 +162,7 @@ function modifier_imba_shadow_dance_active:GetAuraEntityReject(unit)
 	if self:GetCaster():HasScepter() then
 		return false
 	end
-	if self:GetCaster() == self:GetParent() then
+	if self:GetCaster() == unit then
 		return false
 	end
 	return true 

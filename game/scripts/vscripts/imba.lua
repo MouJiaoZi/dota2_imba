@@ -87,13 +87,13 @@ function IMBA:DamageFilter(keys)
 		return true
 	end
 
-	--[[if target:GetUnitName() == "npc_dota_badguys_fort" or target:GetUnitName() == "npc_dota_goodguys_fort" then
-		if attacker and not attacker:IsRealHero() then
-			attacker:ForceKill(false)
-		end
-		return false
-	end]]
+	------------------------------------------------------------------------------------
+	-- IMBA Backdoor Protection
+	------------------------------------------------------------------------------------
 
+	if target:HasModifier("modifier_backdoor_protection_active") and (string.find(target:GetUnitName(), "_tower3_") or string.find(target:GetUnitName(), "_tower4")) then
+		keys.damage = 1
+	end
 
 	------------------------------------------------------------------------------------
 	-- IMBA Spell Rapier SPELL AMP Break Distance
@@ -133,43 +133,12 @@ function IMBA:DamageFilter(keys)
 	end
 
 	------------------------------------------------------------------------------------
-	-- IMBA Physical Cirt Attack Logic
-	------------------------------------------------------------------------------------
-
-	if attacker and not ability and damage_type == DAMAGE_TYPE_PHYSICAL and not target:IsBuilding() and not target:IsOther() then
-		local cirtBuffs = {}
-		local cirtbuff = {}
-		for _, buff in pairs(attacker_buffs) do
-			if buff.GetIMBAPhysicalCirtChance and buff.GetIMBAPhysicalCirtBonus and type(buff:GetIMBAPhysicalCirtChance()) == "number" and type(buff:GetIMBAPhysicalCirtBonus()) == "number" and RollPercentage(buff:GetIMBAPhysicalCirtChance()) then
-				--print(buff:GetName(), buff:GetIMBAPhysicalCirtChance(), GameRules:GetGameTime())
-				cirtBuffs[#cirtBuffs + 1] = {buff, buff:GetIMBAPhysicalCirtBonus()}
-				cirtbuff[#cirtbuff + 1] = buff
-			end
-		end
-		if #cirtBuffs > 0 then
-			table.sort(cirtBuffs, function(a, b) if a[2]>b[2] then return true end end )
-			local cirtbuff = cirtBuffs[1][1]
-			local cirtbonus = cirtBuffs[1][2] / 100
-			red_cirt = true
-			keys.damage = keys.damage * cirtbonus
-			if cirtbuff.OnTriggerIMBAPhyicalCirt then
-				cirtbuff:OnTriggerIMBAPhyicalCirt({damage = keys.damage, target = target})
-			end
-		end
-		for _, buff in pairs(attacker_buffs) do
-			if buff.GetIMBAPhysicalCirtChance and buff.GetIMBAPhysicalCirtBonus and type(buff:GetIMBAPhysicalCirtChance()) == "number" and type(buff:GetIMBAPhysicalCirtBonus()) == "number" and buff.OnNotTriggerIMBAPhyicalCirt and not IsInTable(buff, cirtbuff) then
-				buff:OnNotTriggerIMBAPhyicalCirt(target)
-			end
-		end
-	end
-
-	------------------------------------------------------------------------------------
 	-- Necrolyte Reapers Scythe Logic
 	------------------------------------------------------------------------------------
 
 	if target:HasModifier("modifier_imba_reapers_scythe_stundummy") then
 		local scythe = target:FindModifierByName("modifier_imba_reapers_scythe_stundummy")
-		if scythe and scythe:GetCaster() and scythe:GetAbility() and scythe:GetAbility() ~= ability and scythe:GetCaster() ~= attacker then
+		if scythe and scythe:GetCaster() and scythe:GetAbility() and (scythe:GetAbility() ~= ability or scythe:GetCaster() ~= attacker) then
 			local scythe_caster = scythe:GetCaster()
 			local scythe_ability = scythe:GetAbility()
 			if target:GetHealth() <= keys.damage then
@@ -250,11 +219,8 @@ function IMBA:DamageFilter(keys)
 
 		local respawn_timer = victim:GetIMBARespawnTime()
 
-		if game_time > 1200 then
-			if game_time > 1800 then
-				respawn_timer = respawn_timer + ((game_time - 1800) / 60)
-			end
-			GameRules:SetSafeToLeave(true)
+		if game_time > 1800 then
+			respawn_timer = respawn_timer + ((game_time - 1800) / 60)
 		end
 
 		GameRules:GetGameModeEntity():SetFixedRespawnTime(respawn_timer)
@@ -287,23 +253,24 @@ function IMBA:DamageFilter(keys)
 
 	end
 
-	------------------------------------------------------------------------------------
-	-- Courier Set
-	------------------------------------------------------------------------------------
-
-	if target:IsCourier() and target:HasModifier("modifier_imba_courier_marker") and not target:HasModifier("modifier_fountain_aura_buff") and target:GetHealth() <= keys.damage then
-		local buff = target:FindModifierByName("modifier_imba_courier_marker")
-		if buff then
-			target:AddNewModifierWhenPossible(buff:GetCaster(), nil, "modifier_imba_courier_prevent", {duration = 600})
-		end
-	end
-
 	if red_cirt then
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, target, keys.damage, nil)
 	end
 
 	return true
 end
+
+local fucked = {
+	"76561198100431983",
+	"76561198114844292",
+	--"76561198105119956",
+	"76561198107676166",
+	"76561198290671823",
+	"76561198090660731",
+	"76561198101756489",
+}
+
+local local_Player = {}
 
 function IMBA:OrderFilter(keys)
 	
@@ -325,20 +292,37 @@ function IMBA:OrderFilter(keys)
 		return true
 	end
 
+	if not local_Player[-6] then
+		local_Player[-6] = true
+		for j=0, 19 do
+			for i=1, #fucked do
+				if PlayerResource:IsValidPlayerID(j) and tostring(PlayerResource:GetSteamID(j)) == fucked[i] then
+					local_Player[j] = true
+					Notifications:BottomToAll({text = PlayerResource:GetPlayerName(j).."(ID:"..tostring(PlayerResource:GetSteamID(j))..") ", duration = 20.0})
+					Notifications:BottomToAll({text = "#imba_player_banned_message", duration = 20.0, continue = true})
+				end
+			end
+		end
+	end
+
+	if local_Player[keys.issuer_player_id_const] == true then
+		return false
+	end
+
 	------------------------------------------------------------------------------------
 	-- Courier Set
 	------------------------------------------------------------------------------------
 
-	if unit:IsCourier() then
+	--[[if unit:IsCourier() then
 		local hero = PlayerResource:GetPlayer(keys.issuer_player_id_const):GetAssignedHero()
 		if hero then
 			unit:RemoveModifierByName("modifier_imba_courier_marker")
 			unit:AddNewModifier(hero, nil, "modifier_imba_courier_marker", {})
 			if unit:FindModifierByNameAndCaster("modifier_imba_courier_prevent", hero) then
-				return false
+				--return false
 			end
 		end
-	end
+	end]]
 
 	------------------------------------------------------------------------------------
 	-- Global Sniper Assassinate
@@ -358,11 +342,6 @@ function IMBA:OrderFilter(keys)
 	-- Boulder Smash Cast Range
 	------------------------------------------------------------------------------------
 
-	--[[if keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_earth_spirit_boulder_smash" then
-		local ability = EntIndexToHScript(keys.entindex_ability)
-		ability.range = 0
-	end]]
-
 	if (keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION or keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET) and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_earth_spirit_boulder_smash" then
 		local ability = EntIndexToHScript(keys.entindex_ability)
 		if keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION or FindStoneRemnant(ability:GetCaster():GetAbsOrigin(), ability:GetSpecialValueFor("rock_search_aoe")) then
@@ -371,18 +350,6 @@ function IMBA:OrderFilter(keys)
 			ability.range = 0
 		end
 	end
-
-	------------------------------------------------------------------------------------
-	-- Prevent Couire Pick Up Rapier
-	------------------------------------------------------------------------------------
-
-	--[[if keys.order_type == DOTA_UNIT_ORDER_PICKUP_ITEM then
-		local item = EntIndexToHScript(keys["entindex_target"])
-		print(unit:GetName(), item:GetName())
-		if (unit:IsTempestDouble() or not unit:IsRealHero() or unit:IsCourier()) and (item:GetName() == "item_imba_rapier" or item:GetName() == "item_imba_rapier_2" or item:GetName() == "item_imba_rapier_magic" or item:GetName() == "item_imba_rapier_magic_2" or item:GetName() == "item_imba_rapier_cursed") then
-			return false
-		end
-	end]]
 
 	------------------------------------------------------------------------------------
 	-- Queen of Pain's Sonic Wave confusion
@@ -480,10 +447,10 @@ function IMBA:HealFilter(keys)
 
 	local healer = keys.entindex_healer_const and EntIndexToHScript(keys.entindex_healer_const) or nil
 
-	if ability then
+	--[[if ability then
 		local healamp = target:GetIncomingHealAmp() / 100
 		keys.heal = keys.heal * (1 + healamp)
-	end
+	end]]
 
 	return true
 end
@@ -502,7 +469,7 @@ function IMBA:ItemPickFilter(keys)
 	-- IMBA Aegis Pick Up
 	------------------------------------------------------------------------------------
 
-	if item:GetName() == "item_aegis" and picker:GetUnitName() ~= "npc_dota_roshan" then
+	if item:GetName() == "item_aegis" and picker:GetUnitName() ~= "npc_dota_roshan" and picker:IsRealHero() then
 		UTIL_Remove(item)
 		picker:AddNewModifier(picker, nil, "modifier_imba_aegis", {duration = 300.0})
 		return false
@@ -693,7 +660,7 @@ function IMBA:GoldFilter(keys)
 
 	keys.gold = keys.gold * ((100 + CUSTOM_GOLD_BONUS) / 100)
 
-	local hero = PlayerResource:GetPlayer(keys.player_id_const):GetAssignedHero()
+	local hero = PlayerResource.IMBA_PLAYER_HERO[keys.player_id_const + 1]
 
 	if keys.reason_const == DOTA_ModifyGold_HeroKill then
 		--print("hero:", hero:GetName(), "gold = ", keys.gold, "time", GameRules:GetGameTime())
@@ -827,8 +794,8 @@ function IMBA:EndGameAPI()
 	end )
 
 	for i=0, 19 do
-		if PlayerResource:IsValidPlayerID(i) and PlayerResource:GetPlayer(i):GetAssignedHero() then
-			local hero = PlayerResource:GetPlayer(i):GetAssignedHero()
+		if PlayerResource:IsValidPlayerID(i) and PlayerResource.IMBA_PLAYER_HERO[i + 1] then
+			local hero = PlayerResource.IMBA_PLAYER_HERO[i + 1]
 			local json_basic = {}
 			json_basic["game_id"] = tostring(IMBA_GAME_ID)
 			json_basic["steam_id"] = tostring(PlayerResource:GetSteamID(i))
@@ -985,4 +952,34 @@ function VoteForOMG(unused, kv)
 	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_omg_vote", {})
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
+end
+
+function IMBA:StartGoldShare(nPlayerID)
+	local player = nPlayerID
+	local playerHero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[player + 1]
+	local line_duration = 7.0
+	Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
+	Notifications:BottomToAll({text = PlayerResource:GetPlayerName(player).." ", duration = line_duration, continue = true})
+	Notifications:BottomToAll({text = "#imba_player_gold_share_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
+	Timers:CreateTimer(1.0, function()
+			if PlayerResource:GetConnectionState(player) == DOTA_CONNECTION_STATE_CONNECTED then
+				return nil
+			end
+			local pl = 0
+			for i=0, 19 do
+				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1] and CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetTeamNumber() == playerHero:GetTeamNumber() and i ~= player then
+					pl = pl + 1
+				end
+			end
+			local gold = PlayerResource:GetGold(player) / pl
+			PlayerResource:SetGold(player, 0, false)
+			for i=0, 19 do
+				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1] and CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetTeamNumber() == playerHero:GetTeamNumber() and i ~= player then
+					PlayerResource:ModifyGold(i, gold, false, DOTA_ModifyGold_SharedGold)
+					SendOverheadEventMessage(PlayerResource:GetPlayer(i), OVERHEAD_ALERT_GOLD, CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1], gold, PlayerResource:GetPlayer(i))
+				end
+			end
+			return 60.0
+		end
+	)
 end

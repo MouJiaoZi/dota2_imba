@@ -450,7 +450,7 @@ function modifier_imba_vendetta:OnAbilityExecuted(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit ~= self:GetParent() then
+	if keys.unit ~= self:GetParent() or keys.ability:GetName() == "imba_nyx_assassin_spiked_carapace" then
 		return
 	end
 	self:Destroy()

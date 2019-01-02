@@ -370,7 +370,7 @@ function IncreaseAttackSpeedCap(unit, new_cap)
 		unit.current_modified_bat = unit:GetBaseAttackTime()
 	end
 
-	-- Get current attack speed, limited to new_cap
+	--[[ Get current attack speed, limited to new_cap
 	local buffs = unit:FindAllModifiers()
 	local as = 0
 	for _, buff in pairs(buffs) do
@@ -381,7 +381,11 @@ function IncreaseAttackSpeedCap(unit, new_cap)
 	if unit:IsHero() then
 		local agi_as = GameRules:GetGameModeEntity():GetCustomAttributeDerivedStatValue(DOTA_ATTRIBUTE_AGILITY_ATTACK_SPEED, unit)
 		as = as + agi_as * unit:GetAgility()
-	end
+	end]]
+	GameRules:GetGameModeEntity():SetMaximumAttackSpeed(new_cap)
+	local as = unit:GetAttackSpeed() * 100
+	GameRules:GetGameModeEntity():SetMaximumAttackSpeed(MAXIMUM_ATTACK_SPEED)
+
 	local current_as = math.min(as, new_cap)
 
 	-- Should we reduce BAT?

@@ -386,7 +386,11 @@ function modifier_imba_freezing_field_thinker:GetAttributes() return MODIFIER_AT
 
 function modifier_imba_freezing_field_thinker:OnCreated()
 	if IsServer() then
-		EmitSoundOn("hero_Crystal.freezingField.wind", self:GetParent())
+		if RollPercentage(80) then
+			self:GetParent():EmitSound("hero_Crystal.freezingField.wind")
+		else
+			self:GetParent():EmitSound("Imba.CrystalMaidenLetItGo0"..RandomInt(1, 3))
+		end
 		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("explosion_interval"))
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_crystalmaiden/maiden_freezing_field_snow.vpcf", PATTACH_WORLDORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
@@ -403,6 +407,8 @@ function modifier_imba_freezing_field_thinker:OnIntervalThink()
 	local center_point = self:GetParent():GetAbsOrigin()
 	local max_distance = self:GetAbility():GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("special_bonus_imba_crystal_maiden_2")
 	local point = GetGroundPosition(GetRandomPosition2D(center_point, max_distance), self:GetCaster())
+	local sound = CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_dummy_thinker", {duration = 0.1}, point, self:GetCaster():GetTeamNumber(), false)
+	sound:EmitSound("hero_Crystal.freezingField.explosion")
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_crystalmaiden/maiden_freezing_field_explosion.vpcf", PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx, 0, point)
 	ParticleManager:ReleaseParticleIndex(pfx)
