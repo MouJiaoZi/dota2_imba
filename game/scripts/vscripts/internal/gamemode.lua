@@ -8,11 +8,17 @@ function GameMode:_InitGameMode()
 	CustomGameEventManager:RegisterListener("toggle_share_hero", ToggleDisableShareHero)
 	CustomGameEventManager:RegisterListener("toggle_disable_player_help", ToggleDisablePlayerHelp)
 	CustomGameEventManager:RegisterListener("update_imba_player_info", UpDatePlayerInfo)
+
 	CustomGameEventManager:RegisterListener("vote_for_omg", VoteForOMG)
+	CustomGameEventManager:RegisterListener("vote_for_ak", VoteForAK)
+	CustomGameEventManager:RegisterListener("vote_for_31", VoteFor31)
+	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = 0, ["enable"] = 0})
+	CustomNetTables:SetTableValue("imba_omg", "enable_ak", {["agree"] = 0, ["enable"] = 0})
+	CustomNetTables:SetTableValue("imba_omg", "enable_31", {["agree"] = 0, ["enable"] = 0})
 
 	-- IMBA
 	GameRules:SetUseBaseGoldBountyOnHeroes(USE_STANDARD_HERO_GOLD_BOUNTY)
-	GameRules:SetStrategyTime(0)
+	GameRules:SetStrategyTime(10)
 
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled( ENABLE_HERO_RESPAWN )
@@ -21,6 +27,7 @@ function GameMode:_InitGameMode()
 	GameRules:SetHeroSelectionTime( HERO_SELECTION_TIME )
 	GameRules:SetPreGameTime( PRE_GAME_TIME)
 	GameRules:SetShowcaseTime(0)
+	GameRules:SetHeroSelectPenaltyTime(0)
 	GameRules:SetPostGameTime( POST_GAME_TIME )
 	GameRules:SetTreeRegrowTime( TREE_REGROW_TIME )
 	GameRules:SetUseCustomHeroXPValues ( USE_CUSTOM_XP_VALUES )
@@ -161,7 +168,9 @@ mode = nil
 function GameMode:_CaptureGameMode()
 	if mode == nil then
 		-- Set GameMode parameters
-		mode = GameRules:GetGameModeEntity()        
+		mode = GameRules:GetGameModeEntity()
+		mode:SetDraftingBanningTimeOverride(10)
+		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME)
 		mode:SetRecommendedItemsDisabled( RECOMMENDED_BUILDS_DISABLED )
 		mode:SetCameraDistanceOverride( CAMERA_DISTANCE_OVERRIDE )
 		mode:SetCustomBuybackCostEnabled( CUSTOM_BUYBACK_COST_ENABLED )

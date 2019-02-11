@@ -229,7 +229,7 @@ function modifier_imba_land_mines_charge:OnAttack(keys)
 	if self:GetStackCount() > 0 then
 		self:SetStackCount(self:GetStackCount() - 1)
 		throw = true
-	elseif RollPercentage(self.ability:GetSpecialValueFor("throw_chance")) then  
+	elseif PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("throw_chance")) then  
 		throw = true
 	end
 	if throw then

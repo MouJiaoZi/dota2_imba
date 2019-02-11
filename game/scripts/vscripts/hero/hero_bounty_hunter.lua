@@ -235,7 +235,7 @@ function imba_bounty_hunter_shadow_jaunt:GetCustomCastErrorTarget(target)
 	if target == self:GetCaster() then
 		return "#dota_hud_error_cant_cast_on_self"
 	elseif not target:IsHero() then
-		return "dota_hud_error_cant_cast_on_other"
+		return "#dota_hud_error_cant_cast_on_other"
 	end
 end
 
@@ -305,7 +305,7 @@ function imba_bounty_hunter_track:IsNetherWardStealable() 	return true end
 function imba_bounty_hunter_track:GetIntrinsicModifierName() return "modifier_imba_track_cirt" end
 
 function imba_bounty_hunter_track:OnUpgrade()
-	if self:GetLevel() >= 2 then
+	if self:GetLevel() >= 1 then
 		local ability = self:GetCaster():FindAbilityByName("imba_bounty_hunter_shadow_jaunt")
 		if ability then
 			ability:SetLevel(1)

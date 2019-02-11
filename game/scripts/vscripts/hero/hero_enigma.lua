@@ -41,11 +41,13 @@ end
 
 function modifier_imba_enigma_malefice:OnIntervalThink()
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("glitch_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-	local all = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, 1500, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_CLOSEST, false)
-	local pulse = {}
-	for _, a in pairs(all) do
-		if a:HasModifier("modifier_imba_enigma_midnight_pulse_thinker") then
-			pulse[#pulse + 1] = a
+	local all = Entities:FindAllByNameWithin("npc_dota_thinker", self:GetParent():GetAbsOrigin(), 5000)
+	local distance = 5000
+	local pulse = nil
+	for i=1, #all do
+		if all[i]:FindModifierByNameAndCaster("modifier_imba_enigma_midnight_pulse_thinker", self:GetCaster()) and (self:GetParent():GetAbsOrigin() - all[i]:GetAbsOrigin()):Length2D() < distance then
+			pulse = all[i]
+			distance = (self:GetParent():GetAbsOrigin() - all[i]:GetAbsOrigin()):Length2D()
 		end
 	end
 	local pull_delay = self:GetAbility():GetSpecialValueFor("pull_delay")
@@ -69,8 +71,8 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 		local black_hole = self:GetCaster():FindAbilityByName("imba_enigma_black_hole")
 		if black_hole and black_hole:IsChanneling() then
 			target_pos = black_hole.pos
-		elseif #pulse > 0 then
-			target_pos = pulse[1]:GetAbsOrigin()
+		elseif pulse then
+			target_pos = pulse:GetAbsOrigin()
 		else
 			target_pos = self:GetCaster():GetAbsOrigin()
 		end

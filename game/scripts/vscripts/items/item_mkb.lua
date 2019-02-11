@@ -56,9 +56,14 @@ function modifier_imba_mkb_unique:OnAttackLanded(keys)
 		buff:Destroy()
 		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), keys.target:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("pulverize_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
 		for _, enemy in pairs(enemies) do
-			enemy:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_stunned", {duration = self.ability:GetSpecialValueFor("pulverize_stun")})
-			ApplyDamage({victim = enemy, attacker = self:GetParent(), damage = self.ability:GetSpecialValueFor("pulverize_damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability})
-			enemy:EmitSound("DOTA_Item.MKB.Minibash")
+			if enemy == keys.target or not enemy:IsMagicImmune() then
+				enemy:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = self.ability:GetSpecialValueFor("pulverize_stun")})
+				ApplyDamage({victim = enemy, attacker = self:GetParent(), damage = self.ability:GetSpecialValueFor("pulverize_damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability})
+				enemy:EmitSound("DOTA_Item.MKB.Minibash")
+				local pfx = ParticleManager:CreateParticle("particles/item/jingu_bang/jingu_bang_pulverize.vpcf", PATTACH_ABSORIGIN, enemy)
+				ParticleManager:SetParticleControl(pfx, 1, Vector(100,0,0))
+				ParticleManager:ReleaseParticleIndex(pfx)
+			end
 		end
 		keys.target:EmitSound("Hero_Brewmaster.ThunderClap")
 	end

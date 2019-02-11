@@ -117,6 +117,7 @@ function imba_lich_frost_armor:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	target:AddNewModifier(caster, self, "modifier_imba_frost_armor", {duration = self:GetSpecialValueFor("tooltip_duration")}) 
+	target:EmitSound("Imba.Hero_Lich.Frost_Armor")
 end
 
 modifier_imba_frost_armor = class({})
@@ -132,10 +133,9 @@ function modifier_imba_frost_armor:GetModifierPhysicalArmorBonus() return self:G
 
 function modifier_imba_frost_armor:OnCreated()
 	if IsServer() then
-		EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_Lich.FrostArmor", self:GetParent())
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_lich/lich_frost_armor.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_lich/lich_frost_armor.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
 		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetModifierPhysicalArmorBonus(), self:GetModifierPhysicalArmorBonus(), self:GetModifierPhysicalArmorBonus()))
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor("armor_bonus"), self:GetAbility():GetSpecialValueFor("armor_bonus"), self:GetAbility():GetSpecialValueFor("armor_bonus")))
 		ParticleManager:SetParticleControlEnt(pfx, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 		self:AddParticle(pfx, false, false, 15, false, true)
 	end
@@ -194,7 +194,7 @@ function imba_lich_dark_ritual:OnSpellStart()
 	ParticleManager:SetParticleControlEnt(pfx, 1, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true)
 	ParticleManager:ReleaseParticleIndex(pfx)
 	target:Kill(self, caster)
-	caster:EmitSound("Ability.DarkRitual")
+	target:EmitSound("Imba.Hero_Lich.Dark_Ritual")
 end
 
 imba_lich_chain_frost = class({})
@@ -210,11 +210,6 @@ function imba_lich_chain_frost:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	local speed = self:GetSpecialValueFor("projectile_speed")
-	local aura = 0
-	if caster:HasTalent("special_bonus_imba_lich_1") and caster:FindAbilityByName("imba_lich_frost_nova") then
-		local ability = caster:FindAbilityByName("imba_lich_frost_nova")
-		aura = CreateModifierThinker(caster, ability, "modifier_imba_frost_nova_passvie", {}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
-	end
 
 	local info = {
 				Target = target,
@@ -230,7 +225,7 @@ function imba_lich_chain_frost:OnSpellStart()
 				bReplaceExisting = false,                         -- Optional
 				flExpireTime = GameRules:GetGameTime() + 60,      -- Optional but recommended
 				bProvidesVision = false,                           -- Optional
-				ExtraData = {speed = speed, first = 1, bounces = 0, aura = aura}
+				ExtraData = {speed = speed, first = 1, bounces = 0}
 				}
 	ProjectileManager:CreateTrackingProjectile(info)
 	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Lich.ChainFrost", caster)
@@ -238,9 +233,6 @@ end
 
 function imba_lich_chain_frost:OnProjectileThink_ExtraData(location, keys)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), location, self:GetSpecialValueFor("vision_radius"), FrameTime(), false)
-	if keys.aura ~= 0 then
-		EntIndexToHScript(keys.aura):SetAbsOrigin(location)
-	end
 end
 
 function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
@@ -271,6 +263,9 @@ function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
 	ApplyDamage(damageTable)
 	if self:GetCaster():HasTalent("special_bonus_imba_lich_2") then
 		target:AddNewModifier(self:GetCaster(), self, "modifier_paralyzed", {duration = self:GetCaster():GetTalentValue("special_bonus_imba_lich_2")})
+	end
+	if self:GetCaster():HasTalent("special_bonus_imba_lich_3") and not target:IsMagicImmune() then
+		target:AddNewModifier(self:GetCaster(), self, "modifier_lich_sinister_gaze", {duration = self:GetCaster():GetTalentValue("special_bonus_imba_lich_3")})
 	end
 	local hero_got = false
 	local next_target = nil
@@ -306,14 +301,11 @@ function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
 					bReplaceExisting = false,                         -- Optional
 					flExpireTime = GameRules:GetGameTime() + 60,      -- Optional but recommended
 					bProvidesVision = false,                           -- Optional
-					ExtraData = {speed = speed, first = 0, bounces = bounces, aura = keys.aura}
+					ExtraData = {speed = speed, first = 0, bounces = bounces}
 					}
 		Timers:CreateTimer(interval, function()
 			ProjectileManager:CreateTrackingProjectile(info)
 		end)
-		return true
-	elseif keys.aura ~= 0 then
-		EntIndexToHScript(keys.aura):ForceKill(false)
 		return true
 	end
 end

@@ -64,6 +64,31 @@
 		GameUI.CustomUIConfig().player_colors[22] = "#CBFF59;";
 		GameUI.CustomUIConfig().player_colors[23] = "#6CA7FF;";
 
+		function FindDotaHudElement(sElement)
+		{
+			var BaseHud = $.GetContextPanel().GetParent().GetParent().GetParent();
+			return BaseHud.FindChildTraverse(sElement);
+		}
+
+		var block = $.CreatePanel('Button', FindDotaHudElement("PreGame"), 'IMBA_CLICK_BLOCKER');
+		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
+		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.height = "50000px";
+		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.width = "50000px";
+
+		ShowLoading();
+
+		function ShowLoading()
+		{
+			if (!Game.GameStateIs(3))
+			{
+				FindDotaHudElement("PreGame").style.opacity = "0";
+				$.Schedule(0.5, ShowLoading);
+			}
+			else
+			{
+				FindDotaHudElement("PreGame").style.opacity = "1";
+			}
+		}
 	</script> 
 
 	<Panel>

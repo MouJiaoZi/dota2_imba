@@ -119,9 +119,17 @@ function modifier_imba_rapier_magic_unique:IsPurgable() 		return false end
 function modifier_imba_rapier_magic_unique:IsPurgeException() 	return false end
 function modifier_imba_rapier_magic_unique:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_rapier_magic_unique:DeclareFunctions() return {MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
-function modifier_imba_rapier_magic_unique:GetModifierSpellAmplify_Percentage() return self:GetAbility():GetSpecialValueFor("spell_power") end
-
-
+function modifier_imba_rapier_magic_unique:GetModifierSpellAmplify_Percentage()
+	if IsServer() then
+		if self:GetParent():IsIllusion() then
+			return 0
+		else
+			return self:GetAbility():GetSpecialValueFor("spell_power")
+		end
+	else
+		return self:GetAbility():GetSpecialValueFor("spell_power")
+	end
+end
 
 item_imba_rapier_magic_2 = class({})
 
@@ -156,7 +164,17 @@ function modifier_imba_rapier_magic_three_unique:GetEffectName() return "particl
 function modifier_imba_rapier_magic_three_unique:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_rapier_magic_three_unique:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_rapier_magic_three_unique:DeclareFunctions() return {MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_PROVIDES_FOW_POSITION} end
-function modifier_imba_rapier_magic_three_unique:GetModifierSpellAmplify_Percentage() return self:GetAbility():GetSpecialValueFor("spell_power") end
+function modifier_imba_rapier_magic_three_unique:GetModifierSpellAmplify_Percentage()
+	if IsServer() then
+		if self:GetParent():IsIllusion() then
+			return 0
+		else
+			return self:GetAbility():GetSpecialValueFor("spell_power")
+		end
+	else
+		return self:GetAbility():GetSpecialValueFor("spell_power")
+	end
+end
 function modifier_imba_rapier_magic_three_unique:GetModifierProvidesFOWVision() return 1 end
 
 
@@ -195,7 +213,17 @@ function modifier_imba_rapier_super_passive:GetEffectName() return "particles/it
 function modifier_imba_rapier_super_passive:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_rapier_super_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_rapier_super_passive:DeclareFunctions() return {MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PROVIDES_FOW_POSITION} end
-function modifier_imba_rapier_super_passive:GetModifierSpellAmplify_Percentage() return self:GetAbility():GetSpecialValueFor("spell_power") end
+function modifier_imba_rapier_super_passive:GetModifierSpellAmplify_Percentage()
+	if IsServer() then
+		if self:GetParent():IsIllusion() then
+			return 0
+		else
+			return self:GetAbility():GetSpecialValueFor("spell_power")
+		end
+	else
+		return self:GetAbility():GetSpecialValueFor("spell_power")
+	end
+end
 function modifier_imba_rapier_super_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_rapier_super_passive:GetModifierProvidesFOWVision() return 1 end
 

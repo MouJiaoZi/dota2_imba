@@ -32,7 +32,7 @@ function modifier_imba_silencer_int_steal:OnDeath(keys)
 	if not IsServer() then
 		return
 	end
-	if not IsEnemy(self:GetParent(), keys.unit) or not self:GetParent():IsAlive() or (self:GetParent():GetAbsOrigin() - keys.unit:GetAbsOrigin()):Length2D() > 925 or keys.unit:IsReincarnating() or self:GetParent():IsIllusion() then
+	if not IsEnemy(self:GetParent(), keys.unit) or not keys.unit:IsRealHero() or not self:GetParent():IsAlive() or (self:GetParent():GetAbsOrigin() - keys.unit:GetAbsOrigin()):Length2D() > 925 or keys.unit:IsReincarnating() or self:GetParent():IsIllusion() then
 		return
 	end
 	if self:GetRemainingTime() <= 0 then

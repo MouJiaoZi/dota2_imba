@@ -69,7 +69,11 @@ function modifier_imba_tranquil_boots2_passive:OnAttackLanded(keys)
 	end
 end
 
-function modifier_imba_tranquil_boots2_passive:IsAura() return (self:GetAbility() and self:GetAbility():IsCooldownReady() or false) end
+function modifier_imba_tranquil_boots2_passive:IsAura()
+	if IsServer() then
+		return (self:GetAbility() and self:GetAbility():IsCooldownReady() or false)
+	end
+end
 function modifier_imba_tranquil_boots2_passive:GetAuraDuration() return 0.1 end
 function modifier_imba_tranquil_boots2_passive:GetModifierAura() return "modifier_item_imba_tranquil_boots_2_stacks" end
 function modifier_imba_tranquil_boots2_passive:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("radius") end

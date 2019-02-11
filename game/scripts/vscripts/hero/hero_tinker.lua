@@ -192,10 +192,13 @@ function imba_tinker_march_of_the_machines:OnAbilityPhaseStart()
 end
 
 function imba_tinker_march_of_the_machines:OnUpgrade()
-	if not self:GetCaster():IsIllusion() and not self.spawner then
+	if not self:GetCaster():IsIllusion() and not self.spawner and not self:GetCaster():HasModifier("modifier_morphling_replicate") then
 		local caster = self:GetCaster()
 		self.spawner = CreateUnitByName("npc_imba_tinker_mom_spawner", GetRandomPosition2D(caster:GetAbsOrigin(), 300), false, caster, caster, caster:GetTeamNumber())
 		self.spawner:AddNewModifier(self:GetCaster(), self, "modifier_imba_march_of_the_machines_thinker", {})
+	end
+	if self:GetCaster():HasModifier("modifier_morphling_replicate") then
+		self:SetActivated(false)
 	end
 end
 

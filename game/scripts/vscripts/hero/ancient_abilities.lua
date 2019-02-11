@@ -466,6 +466,7 @@ IMBA_COURIER_POSITION[3][10] = Vector(6875, 6775, 256)
 imba_courier_speed = class({})
 
 LinkLuaModifier("modifier_imba_courier_buff", "hero/ancient_abilities", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_courier_transfer_owning", "hero/ancient_abilities", LUA_MODIFIER_MOTION_NONE)
 
 function imba_courier_speed:GetIntrinsicModifierName() return "modifier_imba_courier_buff" end
 
@@ -506,6 +507,7 @@ function modifier_imba_courier_buff:OnOrder(keys)
 		if (keys.ability and (keys.ability:GetAbilityName() == "courier_go_to_secretshop" or keys.ability:GetAbilityName() == "courier_transfer_items")) then
 			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
+			self.pid = keys.issuer_player_index
 			self:SetStackCount(keys.issuer_player_index + 1)
 		elseif keys.new_pos ~= Vector(0,0,0) then
 			local distance = (keys.new_pos - self.pos):Length2D()
@@ -522,9 +524,28 @@ end
 
 function modifier_imba_courier_buff:OnDeath(keys)
 	if IsServer() and keys.unit == self:GetParent() then
-		GameRules:SendCustomMessage("Courier Controller: "..self.id..". Game Time: "..GameRules:GetGameTime()..". Player: "..PlayerResource:GetPlayerName(self.pid), 0, 0)
+		GameRules:SendCustomMessage("Courier Controller: "..self.id..". Game Time: "..GameRules:GetGameTime()..". Player: "..PlayerResource:GetPlayerName(tonumber(self.pid)), 0, 0)
 	end
 end
 
 -- good : -7000, -6537, 512
 -- bad :  7040 6332 518
+
+modifier_imba_courier_transfer_owning = class({})
+
+function modifier_imba_courier_transfer_owning:IsHidden() return (not self:GetParent():HasModifier("modifier_courier_transfer_items")) end
+function modifier_imba_courier_transfer_owning:IsPurgable() return false end
+function modifier_imba_courier_transfer_owning:IsPurgeException() return false end
+function modifier_imba_courier_transfer_owning:GetTexture() return "shadow_shaman_voodoo" end
+
+function modifier_imba_courier_transfer_owning:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(0.1)
+	end
+end
+
+function modifier_imba_courier_transfer_owning:OnIntervalThink()
+	if not self:GetParent():HasModifier("modifier_courier_transfer_items") then
+		self:Destroy()
+	end
+end

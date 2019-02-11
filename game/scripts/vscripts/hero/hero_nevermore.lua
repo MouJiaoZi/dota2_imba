@@ -102,7 +102,7 @@ function modifier_imba_necromastery_counter:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:GetTeamNumber() == self:GetParent():GetTeamNumber() or not keys.target:IsHero() or not keys.target:IsAlive() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:GetTeamNumber() == self:GetParent():GetTeamNumber() or not keys.target:IsHero() or not keys.target:IsAlive() or self:GetParent():IsIllusion() then
 		return 
 	end
 	for i=1, self:GetAbility():GetSpecialValueFor("hero_attack_souls") + math.floor(self:GetParent():GetLevel() / self:GetAbility():GetSpecialValueFor("harvest_levels_per_soul")) do
@@ -127,7 +127,7 @@ function modifier_imba_necromastery_counter:OnTakeDamage(keys)
 end
 
 function modifier_imba_necromastery_counter:OnDeath(keys)
-	if not IsServer() then
+	if not IsServer() or self:GetParent():IsIllusion() then
 		return
 	end
 	if keys.unit == self:GetParent() then

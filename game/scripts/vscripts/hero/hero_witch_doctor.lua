@@ -24,7 +24,7 @@ function imba_witch_doctor_paralyzing_cask:OnSpellStart()
 end
 
 function imba_witch_doctor_paralyzing_cask:OnProjectileHit(target, vLocation)
-	EmitSoundOn("Hero_WitchDoctor.Paralyzing_Cask_Bounce", target)
+	target:EmitSound("Hero_WitchDoctor.Paralyzing_Cask_Bounce")
 	local bounce_delay  = self:GetSpecialValueFor("bounce_delay")
 	local bounce_range = self:GetSpecialValueFor("bounce_range")
 	local caster = self:GetCaster()
@@ -33,8 +33,10 @@ function imba_witch_doctor_paralyzing_cask:OnProjectileHit(target, vLocation)
 		if self.remainingBounces then self.remainingBounces = self.remainingBounces - 1 end
 		local healdmg = self:GetSpecialValueFor("hero_damage")
 		if target:GetTeamNumber() ~= caster:GetTeamNumber() then
-			target:AddNewModifier(target, self, "modifier_imba_stunned", {Duration = self:GetSpecialValueFor("hero_duration")})
-			ApplyDamage({victim = target, attacker = caster, damage = healdmg, damage_type = self:GetAbilityDamageType()})
+			if not target:IsMagicImmune() then
+				target:AddNewModifier(target, self, "modifier_imba_stunned", {Duration = self:GetSpecialValueFor("hero_duration")})
+				ApplyDamage({victim = target, attacker = caster, damage = healdmg, damage_type = self:GetAbilityDamageType()})
+			end
 		else
 			target:Heal(healdmg, caster)
 			SendOverheadEventMessage(nil, OVERHEAD_ALERT_HEAL, target, healdmg, nil)

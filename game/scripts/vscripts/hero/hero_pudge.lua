@@ -134,7 +134,7 @@ function imba_pudge_meat_hook:OnSpellStart()
 	local speed = self:GetSpecialValueFor("base_speed") + caster:GetModifierStackCount("modifier_imba_hook_light_stack", caster) * self:GetSpecialValueFor("stack_speed")
 	local root = caster:AddNewModifier(caster, self, "modifier_imba_meat_hook_self_root", {})
 	local hook = caster:AddNewModifier(caster, self, "modifier_imba_meat_hook_hook_check", {duration = 10.0})
-	local thinker = CreateModifierThinker(caster, self, thinker_modifier_name, {}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
+	local thinker = CreateModifierThinker(caster, self, thinker_modifier_name, {duration = 20.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 	thinker:EmitSound("Hero_Pudge.AttackHookExtend")
 	thinker.root = root
 	thinker.hook = hook
@@ -184,6 +184,9 @@ function imba_pudge_meat_hook:OnProjectileThink_ExtraData(location, keys)
 end
 
 function imba_pudge_meat_hook:OnProjectileHit_ExtraData(target, location, keys)
+	if target and target:HasModifier("modifier_imba_tricks_of_the_trade_caster") then
+		return false
+	end
 	if keys.go == 0 then
 		EntIndexToHScript(keys.thinker).hook:Destroy()
 		EntIndexToHScript(keys.thinker).hook = nil
@@ -540,7 +543,7 @@ function imba_pudge_dismember:IsStealable() 			return true end
 function imba_pudge_dismember:IsNetherWardStealable()	return true end
 function imba_pudge_dismember:GetIntrinsicModifierName() return "modifier_imba_dismember_channel" end
 function imba_pudge_dismember:GetConceptRecipientType() return DOTA_SPEECH_USER_ALL end
-function imba_pudge_dismember:SpeakTrigger() return DOTA_ABILITY_SPEAK_CAST end
+function imba_pudge_dismember:SpeakTrigger() return DOTA_ABILITY_SPEAK_START_ACTION_PHASE end
 function imba_pudge_dismember:GetChannelTime() return (self:GetCaster():GetModifierStackCount("modifier_imba_dismember_channel", self:GetCaster()) / 10) end
 
 function imba_pudge_dismember:OnAbilityPhaseStart()
@@ -552,9 +555,15 @@ function imba_pudge_dismember:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	if target:TriggerStandardTargetSpell(self) then
+		Timers:CreateTimer(FrameTime(), function()
+				self:EndChannel(true)
+				caster:Stop()
+				return nil
+			end
+		)
 		return
 	end
-	target:AddNewModifier(caster, self, "modifier_imba_dismember", {})
+	target:AddNewModifier(caster, self, "modifier_imba_dismember", {duration = (self:GetChannelTime() + FrameTime() * 2)})
 end
 
 modifier_imba_dismember_channel = class({})
@@ -577,7 +586,7 @@ function modifier_imba_dismember:GetOverrideAnimation() return ACT_DOTA_FLAIL en
 
 function modifier_imba_dismember:OnCreated()
 	if IsServer() then
-		self:StartIntervalThink(FrameTime())
+		self:StartIntervalThink(0.5)
 		self:OnIntervalThink()
 	end
 end
@@ -587,7 +596,8 @@ function modifier_imba_dismember:OnIntervalThink()
 		self:Destroy()
 		return
 	end
-	local dmg = (self:GetCaster():GetStrength() * (self:GetAbility():GetSpecialValueFor("strength_damage") / 100) + self:GetAbility():GetSpecialValueFor("dismember_damage")) / (1.0 / FrameTime())
+	self:GetParent():SetAbsOrigin(self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100)
+	local dmg = (self:GetCaster():GetStrength() * (self:GetAbility():GetSpecialValueFor("strength_damage") / 100) + self:GetAbility():GetSpecialValueFor("dismember_damage")) / (1.0 / 0.5)
 	local damageTable = {
 						victim = self:GetParent(),
 						attacker = self:GetCaster(),

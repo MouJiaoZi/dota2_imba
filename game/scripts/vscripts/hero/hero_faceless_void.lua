@@ -126,6 +126,7 @@ function modifier_imba_time_walk_buff:GetModifierAttackSpeedBonus_Constant() ret
 
 modifier_imba_time_walk_damage = class({})
 modifier_imba_time_walk_damage_counter = class({})
+
 function modifier_imba_time_walk_damage:IsDebuff()				return false end
 function modifier_imba_time_walk_damage:IsHidden() 				return true end
 function modifier_imba_time_walk_damage:IsPurgable() 			return false end
@@ -149,6 +150,7 @@ function modifier_imba_time_walk_damage_counter:IsHidden() 				return true end
 function modifier_imba_time_walk_damage_counter:IsPurgable() 			return false end
 function modifier_imba_time_walk_damage_counter:IsPurgeException() 		return false end
 function modifier_imba_time_walk_damage_counter:GetAttributes()			return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_time_walk_damage_counter:RemoveOnDeath() return false end
 
 imba_faceless_void_time_dilation = class({})
 
@@ -249,7 +251,7 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 	if keys.target:IsBuilding() or keys.target:IsOther() then
 		return
 	end
-	if RollPercentage(self:GetAbility():GetSpecialValueFor("bash_chance")) then
+	if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("bash_chance")) then
 		local buff = self:GetParent():GetModifierStackCount("modifier_imba_faceless_void_time_lock_reduce", self:GetParent())
 		local radius = math.max(self:GetAbility():GetSpecialValueFor("radius_min"), self:GetAbility():GetSpecialValueFor("bash_radius") - self:GetAbility():GetSpecialValueFor("radius_reduce") * buff)
 		EmitSoundOnLocationWithCaster(keys.target:GetAbsOrigin(), "Hero_FacelessVoid.TimeLockImpact", self:GetParent())

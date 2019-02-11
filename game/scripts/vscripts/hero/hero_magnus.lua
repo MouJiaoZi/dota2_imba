@@ -272,7 +272,7 @@ function modifier_imba_skewer_caster_motion:OnIntervalThink()
 	local horn_pos = self:GetParent():GetAttachmentOrigin(self:GetParent():ScriptLookupAttachment("attach_horn"))
 	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("skewer_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_DAMAGE_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
-		if not IsInTable(enemy, self.hitted) then
+		if not IsInTable(enemy, self.hitted) and not enemy:HasModifier("modifier_imba_tricks_of_the_trade_caster") then
 			enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_skewer_target_stun", {})
 			self.hitted[#self.hitted+1] = enemy
 		end

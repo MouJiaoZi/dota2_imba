@@ -436,7 +436,7 @@ function imba_kunkka_ghostship:OnSpellStart()
 				local angle = caster:HasScepter() and 10 or 20
 				local new_pos = RotatePosition(spawn_pos, QAngle(0,angle * i,0), pos)
 				local new_spawn_pos = new_pos + (spawn_pos - pos):Normalized() * (distance + 300)
-				local new_mark = CreateModifierThinker(caster, self, "modifier_imba_ghostship_mark", {}, pos, caster:GetTeamNumber(), false):entindex()
+				local new_mark = CreateModifierThinker(caster, self, "modifier_imba_ghostship_mark", {}, new_pos, caster:GetTeamNumber(), false):entindex()
 				local new_ship = CreateModifierThinker(caster, self, "modifier_imba_ghostship_ship", {mark = mark, speed = speed}, spawn_pos, caster:GetTeamNumber(), false)
 				new_ship:EmitSound("Ability.Ghostship")
 				new_ship = new_ship:entindex()

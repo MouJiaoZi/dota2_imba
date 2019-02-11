@@ -182,7 +182,7 @@ function modifier_imba_vampiric_aura_effect:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) ~= DOTA_DAMAGE_FLAG_REFLECTION and bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL) ~= DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL then
+	if keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) ~= DOTA_DAMAGE_FLAG_REFLECTION and bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL) ~= DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL and IsEnemy(keys.attacker, keys.unit) then
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_skeletonking/wraith_king_vampiric_aura_lifesteal.vpcf", PATTACH_CUSTOMORIGIN, keys.attacker)
 		ParticleManager:SetParticleControlEnt(pfx, 0, keys.attacker, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.attacker:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 1, keys.unit, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.unit:GetAbsOrigin(), true)
@@ -219,7 +219,7 @@ function modifier_imba_mortal_strike:GetModifierBonusStats_Strength() return sel
 
 function modifier_imba_mortal_strike:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
-		if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance")) then
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("crit_chance")) then
 			self:GetParent():EmitSound("Hero_SkeletonKing.CriticalStrike")
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_mortal_strike_check", {})
 			return self:GetAbility():GetSpecialValueFor("crit_power")
@@ -428,10 +428,8 @@ function modifier_imba_reincarnation_scepter_aura:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit == self:GetParent() and self.hp <= keys.damage then
-		if self:GetParent():IsRealHero() then
-			self:GetParent():EmitSound("Hero_SkeletonKing.Reincarnate.Ghost")
-		end
+	if keys.unit == self:GetParent() and self.hp <= keys.damage and self:GetParent():IsRealHero() then
+		self:GetParent():EmitSound("Hero_SkeletonKing.Reincarnate.Ghost")
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_reincarnation_scepter_wraith", {duration = self:GetAbility():GetSpecialValueFor("wraith_duration_scepter"), attacker = keys.attacker:entindex()})
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_reincarnation_scepter_no", {duration = self:GetAbility():GetSpecialValueFor("wraith_duration_scepter") + FrameTime()})
 	else

@@ -42,7 +42,7 @@ var IMBAHeroes =
 ["npc_dota_hero_lion", 1],
 ["npc_dota_hero_mirana", 1],
 ["npc_dota_hero_morphling", 0],
-["npc_dota_hero_necrolyte", 1],
+["npc_dota_hero_necrolyte", 2],
 ["npc_dota_hero_nevermore", 1],
 ["npc_dota_hero_night_stalker", 1],
 ["npc_dota_hero_omniknight", 1],
@@ -51,7 +51,7 @@ var IMBAHeroes =
 ["npc_dota_hero_pugna", 1],
 ["npc_dota_hero_rattletrap", 0],
 ["npc_dota_hero_razor", 0],
-["npc_dota_hero_riki", 0],
+["npc_dota_hero_riki", 2],
 ["npc_dota_hero_sand_king", 1],
 ["npc_dota_hero_shadow_shaman", 0],
 ["npc_dota_hero_slardar", 0],
@@ -69,7 +69,7 @@ var IMBAHeroes =
 ["npc_dota_hero_windrunner", 0],
 ["npc_dota_hero_witch_doctor", 1],
 ["npc_dota_hero_zuus", 0],
-["npc_dota_hero_broodmother", 0],
+["npc_dota_hero_broodmother", 2],
 ["npc_dota_hero_skeleton_king", 1],
 ["npc_dota_hero_queenofpain", 1],
 ["npc_dota_hero_huskar", 2],
@@ -120,7 +120,7 @@ var IMBAHeroes =
 ["npc_dota_hero_ember_spirit", 1],
 ["npc_dota_hero_legion_commander", 0],
 ["npc_dota_hero_phoenix", 0],
-["npc_dota_hero_terrorblade", 3],
+["npc_dota_hero_terrorblade", 1],
 ["npc_dota_hero_techies", 1],
 ["npc_dota_hero_oracle", 0],
 ["npc_dota_hero_winter_wyvern", 0],
@@ -192,7 +192,59 @@ for(var i=0; i<IMBAHeroes.length; i++)
 	heroType[i] = IMBAHeroes[i][1];
 }*/
 
-$.Msg(OMGHeroes[0]);
+var enable31 = CustomNetTables.GetTableValue("imba_omg", "enable_31").enable;
+
+var str = CustomNetTables.GetTableValue("imba_hero_selection_list", "str");
+var agi = CustomNetTables.GetTableValue("imba_hero_selection_list", "agi");
+var int = CustomNetTables.GetTableValue("imba_hero_selection_list", "int");
+
+var player_heroes = [];
+var teammates_heroes = [];
+
+if(!Players.IsSpectator(Players.GetLocalPlayer()))
+{
+	player_heroes.push(str[Players.GetLocalPlayer() + 1]);
+	player_heroes.push(agi[Players.GetLocalPlayer() + 1]);
+	player_heroes.push(int[Players.GetLocalPlayer() + 1]);
+	for(var i=0; i<=19; i++)
+	{
+		if(Players.GetLocalPlayer() != i && Players.IsValidPlayerID(i) && Players.GetTeam(Players.GetLocalPlayer()) == Players.GetTeam(i))
+		//if(Players.GetLocalPlayer() != i)
+		{
+			teammates_heroes.push(str[i + 1]);
+			teammates_heroes.push(agi[i + 1]);
+			teammates_heroes.push(int[i + 1]);
+		}
+	}
+}
+
+$.Schedule(0.1, PickButtonHitCheck);
+
+function PickButtonHitCheck()
+{
+	if(Game.GameStateIs(3) && enable31 == 1)
+	{
+		var txt = FindDotaHudElement("HeroInspectHeroName").text
+		var button = FindDotaHudElement("LockInButton");
+		for(var i=0; i<player_heroes.length; i++)
+		{
+			if($.Localize(player_heroes[i]).search(txt) != -1)
+			{
+				button.style.washColor = "#FFFFFF00";
+				button.hittest = true;
+				button.enabled = true;
+				break;
+			}
+			else
+			{
+				button.style.washColor = "#000000E7";
+				button.hittest = (Game.GetAllPlayerIDs().length <= 2);
+				button.enabled = (Game.GetAllPlayerIDs().length <= 2);
+			}
+		}
+		$.Schedule(0.01, PickButtonHitCheck);
+	}
+}
 
 var total;
 var current = 0;
@@ -206,15 +258,24 @@ function FindDotaHudElement(sElement)
 
 function FillTopBarPlayer() 
 {
+	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
 	var herocard = FindDotaHudElement('GridCore');
 	total = herocard.GetChildCount();
 	for(var i=0; i<total; i++)
 	{
-		$.Schedule((0.01 * i), UpdateHeroCard);
+		$.Schedule((0.03 * i), UpdateHeroCard);
 	}
+	$.Schedule((0.03 * (i + 3)), ReEnablePickButton);
 }
 
-function UpdateHeroCard()
+function ReEnablePickButton()
+{
+	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "0.0";
+	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.height = "0%";
+	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.width = "0%";
+}
+
+function UpdateHeroCard() 
 {
 	current = current + 1;
 	var herocard = FindDotaHudElement('GridCore');
@@ -227,18 +288,59 @@ function UpdateHeroCard()
 			var hero = IMBAHeroes[j][0];
 			if(hero.search(heroName) != -1)
 			{
-				heroIMG.GetParent().AddClass("IMBA_HeroCard");
-				heroIMG.GetParent().style.boxShadow=HeroCardStyle[IMBAHeroes[j][1]];
-				/**if(Game.GetMapInfo().map_display_name == "dbii_death_match" && CustomNetTables.GetTableValue("imba_omg", "enable_omg").enable == 1)
+				if(enable31 == 1)
 				{
-					heroIMG.GetParent().GetParent().FindChildTraverse("HitTarget").visible = 0;
-					heroIMG.GetParent().GetParent().FindChildTraverse("HitBlocker").visible = 1;
-				}*/
-				break;
+					heroIMG.GetParent().style.boxShadow = "#FF0000C4 0px 0px 0px 0px";
+					heroIMG.GetParent().style.washColor = "#000000F3";
+					heroIMG.GetParent().GetParent().FindChildTraverse("HitTarget").style.opacity = "0.0";
+					heroIMG.GetParent().GetParent().FindChildTraverse("HitBlocker").style.visibility = "visible";
+					for(var k=0; k<teammates_heroes.length; k++)
+					{
+						if(teammates_heroes[k].search(heroName) != -1)
+						{
+							heroIMG.GetParent().style.washColor = "#000000A3";
+							heroIMG.GetParent().style.boxShadow = "#FFE700CB -5px -5px 10px 10px";
+							heroIMG.GetParent().GetParent().FindChildTraverse("HitTarget").style.opacity = "1.0";
+							heroIMG.GetParent().GetParent().FindChildTraverse("HitBlocker").style.visibility = "collapse";
+							heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedOverlay").GetChild(0).style.verticalAlign = "top";
+							heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedOverlay").GetChild(0).style.marginTop = "15%";
+							break;
+						}
+					}
+					if(str[Players.GetLocalPlayer() + 1].search(heroName) != -1 || agi[Players.GetLocalPlayer() + 1].search(heroName) != -1 || int[Players.GetLocalPlayer() + 1].search(heroName) != -1)
+					{
+						//$.Msg(heroName);
+						heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedBanOverlay").style.opacity = "1.0";
+						heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedBanOverlay").GetChild(0).style.verticalAlign = "top";
+						heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedBanOverlay").GetChild(0).style.marginTop = "15%";
+						heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedOverlay").GetChild(0).style.verticalAlign = "top";
+						heroIMG.GetParent().GetParent().FindChildTraverse("SuggestedOverlay").GetChild(0).style.marginTop = "25%";
+						heroIMG.GetParent().GetParent().FindChildTraverse("HitTarget").style.opacity = "1.0";
+						heroIMG.GetParent().GetParent().FindChildTraverse("HitBlocker").style.visibility = "collapse";
+						heroIMG.GetParent().style.washColor = "#FFFFFF00";
+						heroIMG.GetParent().style.boxShadow = "#FF0000C4 -8px -8px 16px 16px";
+					}
+					/**if(Game.GetMapInfo().map_display_name == "dbii_death_match" && CustomNetTables.GetTableValue("imba_omg", "enable_omg").enable == 1)
+					{
+						heroIMG.GetParent().GetParent().FindChildTraverse("HitTarget").visible = 0;
+						heroIMG.GetParent().GetParent().FindChildTraverse("HitBlocker").visible = 1;
+					}*/
+					break;
+				}
+				else
+				{
+					heroIMG.GetParent().AddClass("IMBA_HeroCard");
+					heroIMG.GetParent().style.boxShadow=HeroCardStyle[IMBAHeroes[j][1]];
+					break;
+				}
+				
 			}
 		}
 	}
 }
 
 
-FillTopBarPlayer() ;
+if(!Players.IsSpectator(Players.GetLocalPlayer()))
+{
+	FillTopBarPlayer() ;
+}

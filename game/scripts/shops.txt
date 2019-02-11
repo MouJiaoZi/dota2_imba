@@ -15,6 +15,7 @@
 		"item"		"item_dust"
 		"item"		"item_bottle"		
 		"item"		"item_imba_soul_of_truth"
+		"item"		"item_imba_suicide"
 	}
 
 	"attributes"

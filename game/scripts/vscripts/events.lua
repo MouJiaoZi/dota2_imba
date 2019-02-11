@@ -90,7 +90,7 @@ function GameMode:OnDisconnect(keys)
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
 			IMBA:StartGoldShare(playerID)
 			GameRules:SetSafeToLeave(true)
-			GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
+			--GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
 			return nil
 		end
 		if time >= max_time then
@@ -137,7 +137,6 @@ function GameMode:OnGameRulesStateChange(keys)
 	print("Game State:",newState)
 
 	if newState == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
-		CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = 0, ["enable"] = 0})
 		Timers:CreateTimer(1.0, function()
 			PauseGame(false)
 			if GameRules:State_Get() > DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
@@ -169,6 +168,25 @@ function GameMode:OnGameRulesStateChange(keys)
 			end
 			CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[i + 1] = 0
 			CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[i + 1] = 0
+			--[[if PlayerResource:IsValidPlayer(i) then
+				Timers:CreateTimer({useGameTime = false,
+									endTime = 1.0,
+									callback = function()
+										if PlayerResource:GetSelectedHeroEntity(i) then
+											print(i, PlayerResource:GetSelectedHeroName(i), "entity index: "..PlayerResource:GetSelectedHeroEntity(i):entindex())
+											local herotable = {
+																["hero_name"] = PlayerResource:GetSelectedHeroName(i),
+																["teamnumber"] = PlayerResource:GetTeam(i),
+																["heroindex"] = PlayerResource:GetSelectedHeroEntity(i):entindex(),
+																["player_name"] = PlayerResource:GetPlayerName(i),
+															}
+											CustomNetTables:SetTableValue("imba_hero_detail", tostring(i), herotable)
+											return nil
+										end
+										return 1.0
+									end
+				})
+			end]]
 		end
 	end
 
@@ -178,35 +196,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
 		end
 		IMBA:StartGameAPI()
-		--[[Timers:CreateTimer(0, function()
-			local thinkers = Entities:FindAllByName("npc_dota_thinker")
-			for _, thinker in pairs(thinkers) do
-				local buffs = thinker:FindAllModifiers()
-				for _, buff in pairs(buffs) do
-					if buff:GetDuration() < 0.0 or buff:GetElapsedTime() >= 20.0 then
-						DebugDrawCircle(thinker:GetAbsOrigin(), Vector(255,0,0), 255, 60, false, 30)
-						DebugDrawText(thinker:GetAbsOrigin(), buff:GetName(), false, 30)
-					end
-				end
-			end
-			return 30.0
-		end-6855 -6425 512
-	6922 6180 512
-		)
-		Timers:CreateTimer(600.0, function()
-			local super_ward = CreateItem("item_imba_super_ward", nil, nil)
-			if super_ward then
-				CreateItemOnPositionSync(Vector(-6855,-6425,512), super_ward)
-				super_ward:LaunchLoot(false, 100, 0.5, Vector(-6855,-6425,512))
-			end
-			super_ward = CreateItem("item_imba_super_ward", nil, nil)
-			if super_ward then
-				CreateItemOnPositionSync(Vector(6922,6180,512), super_ward)
-				super_ward:LaunchLoot(false, 100, 0.5, Vector(6922,6180,512))
-			end
-			return 300.0
-		end
-		)]]
 		if USE_CUSTOM_TEAM_COLORS_FOR_PLAYERS then
 			for i=0, 23 do
 				PlayerResource:SetCustomPlayerColor(i, PLAYER_COLORS[i][1], PLAYER_COLORS[i][2], PLAYER_COLORS[i][3])
@@ -384,7 +373,6 @@ function GameMode:OnNPCSpawned(keys)
 
 	--Game Start Hero Set
 	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerID() and npc:GetPlayerID() and npc:GetPlayerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
-		
 		Timers:CreateTimer({useGameTime = false, endTime = 1.0,
 			callback = function()
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
@@ -406,6 +394,9 @@ function GameMode:OnNPCSpawned(keys)
 				end]]
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
+				if GetMapName() ~= "dbii_death_match" and CustomNetTables:GetTableValue("imba_omg", "enable_ak").enable == 1 then
+					IMBAEvents:GiveAKAbility(npc)
+				end
 				return nil
 			end
 		})
@@ -497,6 +488,12 @@ function GameMode:OnNPCSpawned(keys)
 			duration = 2500
 		end
 		npc:AddNewModifier(npc, nil, "modifier_imba_silencer_int_steal", {duration = duration})
+	end
+
+	if npc:IsNeutralUnitType() then
+		npc:SetDeathXP(npc:GetDeathXP() * 2)
+		npc:SetMinimumGoldBounty(npc:GetMinimumGoldBounty() * 2)
+		npc:SetMaximumGoldBounty(npc:GetMaximumGoldBounty() * 2)
 	end
 end
 
@@ -756,6 +753,11 @@ function GameMode:OnEntityKilled( keys )
 			GameRules:SetSafeToLeave(true)
 		end
 
+		local buff = victim:FindModifierByName("modifier_alchemist_goblins_greed")
+		if buff then
+			buff:Destroy()
+		end
+
 		--Lose Gold
 		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
 		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
@@ -823,17 +825,22 @@ function GameMode:OnEntityKilled( keys )
 	-------------------------------------------------------------------------------------------------
 
 	if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsRealHero() then
-		killed_unit:AddNewModifierWhenPossible(ability:GetCaster(), ability, "modifier_imba_reapers_scythe_permanent", {})
-		if ability:GetCaster():HasScepter() and ability:GetCaster():HasAbility("imba_necrolyte_sadist") and ability:GetCaster():FindAbilityByName("imba_necrolyte_sadist"):GetLevel() > 0 then
+		local buff = killed_unit:FindModifierByName("modifier_imba_reapers_scythe_permanent")
+		if buff then
+			buff:SetStackCount(buff:GetStackCount() + 1)
+		end
+		if ability:GetCaster():HasScepter() then
 			local allies = FindUnitsInRadius(ability:GetCaster():GetTeamNumber(), killed_unit:GetAbsOrigin(), nil, ability:GetSpecialValueFor("sadist_aoe_scepter"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-			local sadist = ability:GetCaster():FindAbilityByName("imba_necrolyte_sadist")
-			for _, ally in pairs(allies) do
-				if ally ~= ability:GetCaster() then
-					for i=1, ability:GetSpecialValueFor("stacks_scepter") do
-						local buff = ally:AddNewModifier(ability:GetCaster(), sadist, "modifier_imba_sadist_effect", {duration = sadist:GetSpecialValueFor("regen_duration")})
-						buff:SetStackCount(buff:GetStackCount() + 1)
+			local sadist = ability:GetCaster():FindAbilityByName("necrolyte_heartstopper_aura")
+			if sadist and sadist:GetLevel() > 0 then
+				for i=1, #allies do
+					if allies[i] ~= ability:GetCaster() then
+						for j=1, ability:GetSpecialValueFor("stacks_scepter") do
+							allies[i]:AddNewModifier(ability:GetCaster(), sadist, "modifier_imba_reapers_scythe_scepter_ally_remover", {duration = sadist:GetSpecialValueFor("regen_duration")})
+							local buff = allies[i]:AddNewModifier(ability:GetCaster(), sadist, "modifier_necrolyte_heartstopper_aura_counter", {duration = sadist:GetSpecialValueFor("regen_duration")})
+							buff:SetStackCount(buff:GetStackCount() + 1)
+						end
 					end
-					ally:AddNewModifier(ability:GetCaster(), sadist, "modifier_imba_sadist_stack", {})
 				end
 			end
 		end
@@ -964,6 +971,12 @@ function GameMode:OnPlayerChat(keys)
 	for str in string.gmatch(text, "%S+") do
 		if str == "-json" then
 			IMBA:EndGameAPI()
+		end
+		if str == "-illunique" then
+			IllusionManager:PrintIllusionUnique()
+		end
+		if str == "-illcommon" then
+			IllusionManager:PrintIllusionCommon()
 		end
 	end
 

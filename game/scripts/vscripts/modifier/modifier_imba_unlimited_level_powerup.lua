@@ -1,7 +1,7 @@
 modifier_imba_unlimited_level_powerup = class({})
 
 function modifier_imba_unlimited_level_powerup:IsDebuff()			return false end
-function modifier_imba_unlimited_level_powerup:IsHidden() 			return (self:GetParent():GetLevel() <= 25) end
+function modifier_imba_unlimited_level_powerup:IsHidden() 			return (not (self:GetStackCount() > 0)) end
 function modifier_imba_unlimited_level_powerup:IsPurgable() 		return false end
 function modifier_imba_unlimited_level_powerup:IsPurgeException() 	return false end
 function modifier_imba_unlimited_level_powerup:GetTexture() return "custom/unlimited_level_powerup" end
@@ -9,7 +9,13 @@ function modifier_imba_unlimited_level_powerup:RemoveOnDeath() return self:GetPa
 
 function modifier_imba_unlimited_level_powerup:OnCreated() self:StartIntervalThink(1.0) end
 
-function modifier_imba_unlimited_level_powerup:OnIntervalThink() self:SetStackCount(math.max((self:GetParent():GetLevel() - 25), 0)) end
+function modifier_imba_unlimited_level_powerup:OnIntervalThink()
+	local level = 25
+	if self:GetParent():HasModifier("modifier_imba_unlimited_powerup_ak") then
+		level = 0
+	end
+	self:SetStackCount(math.max((self:GetParent():GetLevel() - level), 0))
+end
 
 function modifier_imba_unlimited_level_powerup:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE} end
 function modifier_imba_unlimited_level_powerup:GetModifierBonusStats_Intellect() return self:GetStackCount() end
@@ -18,3 +24,42 @@ function modifier_imba_unlimited_level_powerup:GetModifierBonusStats_Strength() 
 function modifier_imba_unlimited_level_powerup:GetModifierPreAttack_BonusDamage() return (2 * self:GetStackCount()) end
 function modifier_imba_unlimited_level_powerup:GetModifierMoveSpeedBonus_Constant() return self:GetStackCount() end
 function modifier_imba_unlimited_level_powerup:GetModifierSpellAmplify_Percentage() return self:GetStackCount() end
+
+modifier_imba_unlimited_powerup_ak = class({})
+
+function modifier_imba_unlimited_powerup_ak:IsDebuff()			return false end
+function modifier_imba_unlimited_powerup_ak:IsHidden() 			return true end
+function modifier_imba_unlimited_powerup_ak:IsPurgable() 		return false end
+function modifier_imba_unlimited_powerup_ak:IsPurgeException() 	return false end
+function modifier_imba_unlimited_powerup_ak:GetTexture() return "custom/unlimited_level_powerup" end
+function modifier_imba_unlimited_powerup_ak:RemoveOnDeath() return self:GetParent():IsIllusion() end
+
+modifier_imba_ak_ability_controller = class({})
+
+function modifier_imba_ak_ability_controller:IsDebuff()			return false end
+function modifier_imba_ak_ability_controller:IsHidden() 		return true end
+function modifier_imba_ak_ability_controller:IsPurgable() 		return false end
+function modifier_imba_ak_ability_controller:IsPurgeException() return false end
+function modifier_imba_ak_ability_controller:RemoveOnDeath() return self:GetParent():IsIllusion() end
+
+function modifier_imba_ak_ability_controller:OnCreated()
+	if IsServer() and self:GetParent():IsRealHero() then
+		self:StartIntervalThink(1.0)
+	end
+end
+
+function modifier_imba_ak_ability_controller:OnIntervalThink()
+	local ability = self:GetAbility()
+	local level = self:GetParent():GetLevel()
+	if ability:GetAbilityType() == 1 then
+		local level_to_set = math.min(math.floor(level / 6), ability:GetMaxLevel())
+		if ability:GetLevel() ~= level_to_set then
+			ability:SetLevel(level_to_set)
+		end
+	else
+		local level_to_set = math.min((math.floor((level + 1) / 2) - 1), ability:GetMaxLevel())
+		if ability:GetLevel() ~= level_to_set then
+			ability:SetLevel(level_to_set)
+		end
+	end
+end

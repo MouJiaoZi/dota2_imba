@@ -75,7 +75,7 @@ function modifier_imba_headshot:OnAttackLanded(keys)
 		return
 	end
 	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and (keys.target:IsHero() or keys.target:IsCreep()) and not self:GetParent():IsIllusion() and keys.target:IsAlive() then
-		if not self:GetParent():HasModifier("modifier_imba_take_aim_far") and not self:GetParent():HasModifier("modifier_imba_take_aim_near") and RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) then
+		if not self:GetParent():HasModifier("modifier_imba_take_aim_far") and not self:GetParent():HasModifier("modifier_imba_take_aim_near") and PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("proc_chance")) then
 			keys.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_headshot_normal_debuff", {duration = self:GetAbility():GetSpecialValueFor('normal_duration')})
 			local damageTable = {
 								victim = keys.target,
@@ -88,7 +88,7 @@ function modifier_imba_headshot:OnAttackLanded(keys)
 			ApplyDamage(damageTable)
 			keys.target:EmitSound("Hero_Sniper.DuckTarget")
 		end
-		if not self:GetParent():HasModifier("modifier_imba_take_aim_far") and self:GetParent():HasModifier("modifier_imba_take_aim_near") and RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) then
+		if not self:GetParent():HasModifier("modifier_imba_take_aim_far") and self:GetParent():HasModifier("modifier_imba_take_aim_near") and PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("proc_chance")) then
 			keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("near_duration")})
 		end
 	end
@@ -99,7 +99,7 @@ function modifier_imba_headshot:OnAttack(keys)
 		return
 	end
 	if keys.attacker == self:GetParent() and not self:GetParent():PassivesDisabled() and (keys.target:IsHero() or keys.target:IsCreep()) and not self:GetParent():IsIllusion() then
-		if self:GetParent():HasModifier("modifier_imba_take_aim_far") and not self:GetParent():HasModifier("modifier_imba_take_aim_near") and RollPercentage(self:GetAbility():GetSpecialValueFor("far_proc_chance")) then
+		if self:GetParent():HasModifier("modifier_imba_take_aim_far") and not self:GetParent():HasModifier("modifier_imba_take_aim_near") and PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("far_proc_chance")) then
 			self:GetAbility():ProcFarAimAttack(keys.target)
 		end
 	end

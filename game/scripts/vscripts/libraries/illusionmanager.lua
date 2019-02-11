@@ -1,3 +1,4 @@
+print("IllusionManager Creating...")
 
 IllusionManager = class({})
 
@@ -73,6 +74,7 @@ function modifier_imba_illusion_hidden:GetModifierModelChange() return "models/d
 function modifier_imba_illusion_hidden:OnCreated()
 	if IsServer() and self:GetParent():GetName() ~= "npc_dota_thinker" then
 		--self:GetParent():AddNoDraw()
+		self.pos = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil) + Vector(0, 0, -1000)
 		self:OnIntervalThink()
 		self:StartIntervalThink(1.0)
 	end
@@ -81,7 +83,7 @@ end
 function modifier_imba_illusion_hidden:OnIntervalThink()
 	--local pos = self:GetCaster():GetAbsOrigin()
 	if self:GetElapsedTime() >= 1.5 then
-		self:GetParent():SetAbsOrigin(Vector(50000,50000,-1000))
+		self:GetParent():SetAbsOrigin(self.pos)
 	end
 	self:GetParent():FindModifierByName("modifier_illusion"):SetDuration(2.0, true)
 	self:GetParent():Stop()
@@ -91,6 +93,7 @@ end
 function modifier_imba_illusion_hidden:OnDestroy()
 	if IsServer() then
 		--self:GetParent():RemoveNoDraw()
+		self.pos = nil
 		self:GetParent():RemoveModifierByName("modifier_imba_illusion_hidden_model")
 	end
 end
@@ -128,14 +131,16 @@ function IllusionManager:CreateIllusion(hBaseUnit, vSpawnAbs, vSpawnForward, iOu
 	local forward = vSpawnForward or owner:GetForwardVector()
 	illusion:Stop()
 	illusion:SetForwardVector(forward)
-	illusion:MakeIllusion()
 	illusion:SetControllableByPlayer(owner:GetPlayerID(), false)
+	illusion:SetPlayerID(owner:GetPlayerID())
+	illusion:SetOwner(owner:GetPlayerOwner())
 	Timers:CreateTimer(FrameTime(), function()
 		FindClearSpaceForUnit(illusion, vSpawnAbs, true)
 		return nil
 	end
 	)
 	IllusionManager:SetUpIllusion(illusion, owner, hBaseUnit, iOutgoingDMG, iIncomingDMG, iIllsuionType, fDuration)
+	illusion:MakeIllusion()
 	return illusion
 end
 
@@ -193,17 +198,16 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 		end
 	end
 	for i=0, 8 do
-		if itemTable[i] then
-			local item = hIllusion:AddItemByName(itemTable[i][1])
-			if itemTable[i][2] ~= nil then
-				item:SetCurrentCharges(itemTable[i][2])
-			end
-			if item:GetName() == "item_imba_armlet" and hBaseUnit:GetModifierStackCount("midifier_imba_armlet_active_unique", nil) > 0 then
-				item:OnSpellStart()
-			end
-		else
-			hIllusion:AddItemByName(dummyItemName)
+		local item = CreateItem(itemTable[i] and itemTable[i][1] or dummyItemName, hIllusion, hIllusion)
+		hIllusion:AddItem(item)
+		if itemTable[i] and itemTable[i][2] ~= nil then
+			item:SetCurrentCharges(itemTable[i][2])
 		end
+		if item:GetName() == "item_imba_armlet" and hBaseUnit:GetModifierStackCount("midifier_imba_armlet_active_unique", nil) > 0 then
+			item:OnSpellStart()
+		end
+		item:SetPurchaser(nil)
+		item:SetStacksWithOtherOwners(true)
 	end
 	for i=0, 8 do
 		local item = hIllusion:GetItemInSlot(i)
@@ -244,6 +248,8 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 	local illusion_type = iIllsuionType
 	local illusionTable = {dmg_out = dmg_out, dmg_in = dmg_in, illusion_type = illusion_type, duration = fDuration}
 	hIllusion:AddNewModifier(hOwner, nil, "modifier_imba_illusion", illusionTable)
+	hIllusion:SetBaseMaxHealth(hBaseUnit:GetMaxHealth())
+	hIllusion:SetMaxHealth(hBaseUnit:GetMaxHealth())
 	hIllusion:SetHealth(hBaseUnit:GetHealth())
 	hIllusion:SetMana(hBaseUnit:GetMana())
 end
@@ -253,18 +259,20 @@ function IllusionManager:Wipe(hIllusion)
 		local ability = hIllusion:GetAbilityByIndex(i)
 		if ability and not ability:IsNull() then
 			hIllusion:RemoveAbility(ability:GetAbilityName())
+			UTIL_Remove(ability)
 		end
 	end
 	for i=0, 8 do
 		local item = hIllusion:GetItemInSlot(i)
 		if item and not item:IsNull() then
 			hIllusion:RemoveItem(item)
+			UTIL_Remove(item)
 		end
 	end
 	hIllusion:RemoveModifierByName("modifier_imba_illusion")
 	local buffs = hIllusion:FindAllModifiers()
 	for _, buff in pairs(buffs) do
-		if buff:GetName() ~= "modifier_imba_illusion_hidden" and buff:GetName() ~= "modifier_illusion" and not buff:IsNull() then
+		if not buff:IsNull() and buff:GetName() ~= "modifier_imba_illusion_hidden" and buff:GetName() ~= "modifier_illusion" then
 			buff:Destroy()
 		end
 	end
@@ -276,5 +284,19 @@ function IllusionManager:IsActive(hIllusion)
 	end
 	if hIllusion:IsIllusion() and hIllusion:HasModifier("modifier_imba_illusion_hidden") then
 		return false
+	end
+end
+
+function IllusionManager:PrintIllusionUnique()
+	print("Total Unique Illusions:", #uniqueIllsuionTable)
+	for k, v in pairs(uniqueIllsuionTable) do
+		print(k, ":", v:GetUnitName())
+	end
+end
+
+function IllusionManager:PrintIllusionCommon()
+	print("Total Common Illusions:", #illsuionTableByModel)
+	for i=1, #illsuionTableByModel do
+		print(illsuionTableByModel[i][1], illsuionTableByModel[i][3]:GetUnitName())
 	end
 end

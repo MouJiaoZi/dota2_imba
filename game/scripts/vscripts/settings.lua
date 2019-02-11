@@ -9,7 +9,7 @@ if GameRules:IsCheatMode() then
 end
 ALLOW_SAME_HERO_SELECTION = false        -- Should we let people select the same hero as each other
 
-HERO_SELECTION_TIME = 60.0              -- How long should we let people select their hero?
+HERO_SELECTION_TIME = 75.0              -- How long should we let people select their hero?
 PRE_GAME_TIME = 60.0                   	-- How long after people select their heroes should the horn blow and the game start?
 POST_GAME_TIME = 30.0                   -- How long should we let people look at the scoreboard before closing the server automatically?
 TREE_REGROW_TIME = 300.0                 -- How long should it take individual trees to respawn after being cut down/destroyed?
@@ -221,6 +221,16 @@ SPELL_AMP_RAPIER_1 = 0.7
 SPELL_AMP_RAPIER_3 = 2.0
 SPELL_AMP_RAPIER_SUPER = 2.0
 
+
+HeroList = {}
+
+IMBA_HEROLIST_STR = {}
+IMBA_HEROLIST_AGI = {}
+IMBA_HEROLIST_INT = {}
+
+IMBA_PICKLIST_STR = {}
+IMBA_PICKLIST_AGI = {}
+IMBA_PICKLIST_INT = {}
 
 IMBA_TOWER_ABILITY_1 = {
 "imba_tower_mana_flare",
@@ -439,9 +449,12 @@ IMBA_RANDOM_ABILITIES = {
 	"enchantress_untouchable",
 	"enchantress_enchant",
 	"enchantress_natures_attendants",
+	"necrolyte_death_pulse",
+	"necrolyte_heartstopper_aura",
+	"necrolyte_sadist",
 	"huskar_inner_fire",
 	"huskar_burning_spear",
-	"huskar_berserkers_blood",
+	"imba_huskar_berserkers_blood",
 	"imba_night_stalker_void",
 	"imba_night_stalker_crippling_fear",
 	"imba_night_stalker_hunter_in_the_night",
@@ -540,7 +553,7 @@ IMBA_RANDOM_ABILITIES = {
 	"shredder_reactive_armor",
 	"bristleback_viscous_nasal_goo",
 	"bristleback_quill_spray",
-	"bristleback_bristleback",
+	"imba_bristleback_bristleback",
 	"tusk_ice_shards",
 	"tusk_frozen_sigil",
 	"tusk_tag_team",
@@ -558,10 +571,6 @@ IMBA_RANDOM_ABILITIES = {
 	"imba_ember_spirit_searing_chains",
 	"imba_ember_spirit_sleight_of_fist",
 	"imba_ember_spirit_flame_guard",
-	"terrorblade_reflection",
-	"terrorblade_conjure_image",
-	"terrorblade_metamorphosis",
-	"phoenix_icarus_dive",
 	"oracle_fortunes_end",
 	"oracle_fates_edict",
 	"oracle_purifying_flames",
@@ -608,11 +617,12 @@ IMBA_RANDOM_ABILITIES_ULTI = {
 	"imba_lina_laguna_blade",
 	"imba_lich_chain_frost",
 	"imba_lion_finger_of_death",
+	"imba_necrolyte_reapers_scythe",
 	"shadow_shaman_mass_serpent_ward",
 	"slardar_amplify_damage",
 	"tidehunter_ravage",
 	"imba_witch_doctor_death_ward",
-	"riki_tricks_of_the_trade",
+	"imba_riki_tricks_of_the_trade",
 	"imba_enigma_black_hole",
 	"imba_sniper_assassinate",
 	"beastmaster_primal_roar",
@@ -632,7 +642,7 @@ IMBA_RANDOM_ABILITIES_ULTI = {
 	"enchantress_impetus",
 	"huskar_life_break",
 	"imba_night_stalker_darkness",
-	"broodmother_insatiable_hunger",
+	"imba_broodmother_insatiable_hunger",
 	"imba_bounty_hunter_track",
 	"weaver_time_lapse",
 	"imba_jakiro_macropyre",
@@ -666,7 +676,6 @@ IMBA_RANDOM_ABILITIES_ULTI = {
 	"imba_abaddon_borrowed_time",
 	"elder_titan_earth_splitter",
 	"legion_commander_duel",
-	"terrorblade_sunder",
 	"phoenix_supernova",
 	"oracle_false_promise",
 	"monkey_king_wukongs_command",

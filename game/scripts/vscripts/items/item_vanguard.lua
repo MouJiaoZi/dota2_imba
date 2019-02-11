@@ -164,6 +164,12 @@ function modifier_imba_greatwyrm_plate_passive:GetModifierIncomingDamage_Percent
 		return (0 - self:GetAbility():GetSpecialValueFor("dmg_reduce"))
 	end
 	if (self:GetParent():IsHexed() or self:GetParent():IsStunned()) and not self:GetParent():HasModifier("modifier_imba_rapier_super_unique") and not self:GetParent():HasModifier("modifier_imba_burrow") then
+		if IsServer() then
+			local pfx = ParticleManager:CreateParticle("particles/items2_fx/vanguard_active_impact.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_ROOTBONE_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:ReleaseParticleIndex(pfx)
+			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_greatwyrm_plate_out_dmg_reduce", {duration = self:GetAbility():GetSpecialValueFor("disable_duration")})
+		end
 		return (0 - math.min(self:GetAbility():GetSpecialValueFor("dmg_reduce") + math.floor(self:GetParent():GetMaxHealth() / self:GetAbility():GetSpecialValueFor("health_dmg_reduce")) * self:GetAbility():GetSpecialValueFor("disable_dmg_reduce"), self:GetAbility():GetSpecialValueFor("max_damage_reduce")))
 	end
 	return 0
@@ -185,36 +191,6 @@ function modifier_imba_greatwyrm_plate_passive:GetModifierMagicalResistanceBonus
 		return (0 - self:GetParent():GetBaseMagicalResistanceValue())
 	else
 		return 0
-	end
-end
-
-function modifier_imba_greatwyrm_plate_passive:OnCreated()
-	if IsServer() and not self:GetParent():IsIllusion() then
-		self:StartIntervalThink(0.1)
-	end
-end
-
-function modifier_imba_greatwyrm_plate_passive:OnIntervalThink()
-	if (self:GetParent():IsStunned() or self:GetParent():IsHexed()) then
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_greatwyrm_plate_out_dmg_reduce", {duration = self:GetAbility():GetSpecialValueFor("disable_duration")})
-	end
-	if (self:GetParent():IsStunned() or self:GetParent():IsHexed()) and not self.pfx then
-		self.pfx = ParticleManager:CreateParticle("particles/item/greatwyrm_plate/greatwyrm_passive.vpcf", PATTACH_POINT_FOLLOW, self:GetParent())
-		ParticleManager:SetParticleControlEnt(self.pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(self.pfx, 4, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-	end
-	if not self:GetParent():IsStunned() and not self:GetParent():IsHexed() and self.pfx then
-		ParticleManager:DestroyParticle(self.pfx, false)
-		ParticleManager:ReleaseParticleIndex(self.pfx)
-		self.pfx = nil
-	end
-end
-
-function modifier_imba_greatwyrm_plate_passive:OnDestroy()
-	if IsServer() and self.pfx then
-		ParticleManager:DestroyParticle(self.pfx, false)
-		ParticleManager:ReleaseParticleIndex(self.pfx)
-		self.pfx = nil
 	end
 end
 

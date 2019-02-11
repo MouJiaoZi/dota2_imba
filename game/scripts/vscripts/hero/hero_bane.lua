@@ -306,9 +306,15 @@ function imba_bane_fiends_grip:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	if target:TriggerStandardTargetSpell(self) then
+		Timers:CreateTimer(FrameTime(), function()
+				self:EndChannel(true)
+				caster:Stop()
+				return nil
+			end
+		)
 		return
 	end
-	local buff = target:AddNewModifier(caster, self, "modifier_imba_bane_fiends_grip", {})
+	local buff = target:AddNewModifier(caster, self, "modifier_imba_bane_fiends_grip", {duration = (self:GetChannelTime() + FrameTime() * 2)})
 	buff:ForceRefresh()
 	buff.cast = true
 end

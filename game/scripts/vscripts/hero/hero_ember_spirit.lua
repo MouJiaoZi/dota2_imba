@@ -68,7 +68,6 @@ function modifier_imba_searing_chains:OnCreated()
 end
 
 function modifier_imba_searing_chains:OnIntervalThink()
-	print(self:GetRemainingTime())
 	local ability = self:GetAbility()
 	local caster = self:GetCaster()
 	local target = self:GetParent()
@@ -142,7 +141,7 @@ function imba_ember_spirit_sleight_of_fist:OnSpellStart()
 				caster:SetAttacking(enemy)
 				caster:PerformAttack(enemy, true, true, true, false, false, false, false)
 			end
-			if ability and ability:GetLevel() > 0 and RollPercentage(self:GetSpecialValueFor("chain_chance")) then
+			if ability and ability:GetLevel() > 0 and PseudoRandom:RollPseudoRandom(self, self:GetSpecialValueFor("chain_chance")) and not enemy:IsMagicImmune() then
 				enemy:AddNewModifier(caster, ability, "modifier_imba_searing_chains", {duration = ability:GetSpecialValueFor("duration")})
 				enemy:EmitSound("Hero_EmberSpirit.SearingChains.Target")
 				local pfx_chain = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_searing_chains_start.vpcf", PATTACH_CUSTOMORIGIN, enemy)
@@ -398,18 +397,20 @@ function modifier_imba_fire_remnant_state:Explode(bActive)
 	end
 	local chain = self:GetCaster():FindAbilityByName("imba_ember_spirit_searing_chains")
 	local shell = self:GetCaster():FindAbilityByName("imba_ember_spirit_flame_guard")
-	if chain and chain:GetLevel() > 0 and RollPercentage(self:GetAbility():GetSpecialValueFor("chain_chance")) then
-		local pos = self:GetCaster():GetAbsOrigin()
-		self:GetCaster():SetAbsOrigin(self:GetParent():GetAbsOrigin())
-		chain:OnSpellStart()
-		FindClearSpaceForUnit(self:GetCaster(), pos, true)
-	end
 	if shell and shell:GetLevel() > 0 then
 		self:GetParent():AddNewModifier(self:GetCaster(), shell, "modifier_imba_flame_guard", {duration = shell:GetSpecialValueFor("duration")})
 	end
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE})
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("chain_chance")) and chain and chain:GetLevel() > 0 then
+			enemy:AddNewModifier(self:GetCaster(), chain, "modifier_imba_searing_chains", {duration = chain:GetSpecialValueFor("duration")})
+			enemy:EmitSound("Hero_EmberSpirit.SearingChains.Target")
+			local pfx_chain = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_searing_chains_start.vpcf", PATTACH_CUSTOMORIGIN, enemy)
+			ParticleManager:SetParticleControl(pfx_chain, 0, self:GetParent():GetAbsOrigin())
+			ParticleManager:SetParticleControlEnt(pfx_chain, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
+			ParticleManager:ReleaseParticleIndex(pfx_chain)
+		end
 	end
 end
 

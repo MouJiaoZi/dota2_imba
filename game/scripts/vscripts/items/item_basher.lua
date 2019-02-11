@@ -44,20 +44,28 @@ function modifier_imba_basher_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_fervor_passive") or self:GetParent():HasModifier("modifier_imba_darkness_caster") or self:GetParent():HasModifier("modifier_imba_faceless_void_timelord_thinker") or self:GetParent():HasModifier("modifier_imba_take_aim_near") then
+	if self:GetParent():HasAbility("slardar_bash") or self:GetParent():HasAbility("spirit_breaker_greater_bash") or self:GetParent():HasAbility("imba_faceless_void_time_lock") or self:GetParent():HasAbility("imba_troll_warlord_berserkers_rage") then
 		return
 	end
 	if keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():IsIllusion() and not self:GetParent():HasModifier("modifier_imba_abyssal_blade_unique") and self.ability:IsCooldownReady() and keys.target:IsAlive() then
 		local pct = self:GetParent():IsRangedAttacker() and self.ability:GetSpecialValueFor("bash_chance_ranged") or self.ability:GetSpecialValueFor("bash_chance_melee")
-		if RollPercentage(pct) then
-			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = self.ability:GetSpecialValueFor("bash_duration")})
+		local bat_pct = ((self:GetParent():GetDefaultBAT() - self:GetParent():GetBaseAttackTime()) / self:GetParent():GetDefaultBAT())
+		if bat_pct > 0 then
+			pct = pct - (pct * bat_pct)
+		end
+		if PseudoRandom:RollPseudoRandom(self.ability, pct) then
+			local bash_duration = self.ability:GetSpecialValueFor("bash_duration")
+			if bat_pct > 0 then
+				bash_duration = bash_duration - (bash_duration * bat_pct)
+			end
+			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = bash_duration})
 			if keys.target:HasModifier("modifier_imba_basher_break_count") then
 				keys.target:RemoveModifierByName("modifier_imba_basher_break_count")
 				keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_basher_break", {duration = self.ability:GetSpecialValueFor("break_duration")})
 			else
 				keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_basher_break_count", {duration = self.ability:GetSpecialValueFor("break_need_duration")})
 			end
-			ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage = self.ability:GetSpecialValueFor("bonus_chance_damage"), damage_type =DAMAGE_TYPE_MAGICAL})
+			ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage = self.ability:GetSpecialValueFor("bonus_chance_damage"), damage_type = DAMAGE_TYPE_MAGICAL})
 			SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, keys.target, self.ability:GetSpecialValueFor("bonus_chance_damage"), nil)
 			keys.target:EmitSound("DOTA_Item.MKB.Minibash")
 			self.ability:UseResources(true, true, true)
@@ -147,13 +155,21 @@ function modifier_imba_abyssal_blade_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_fervor_passive") or self:GetParent():HasModifier("modifier_imba_darkness_caster") or self:GetParent():HasModifier("modifier_imba_faceless_void_timelord_thinker") or self:GetParent():HasModifier("modifier_imba_take_aim_near") then
+	if self:GetParent():HasAbility("slardar_bash") or self:GetParent():HasAbility("spirit_breaker_greater_bash") or self:GetParent():HasAbility("imba_faceless_void_time_lock") or self:GetParent():HasAbility("imba_troll_warlord_berserkers_rage") then
 		return
 	end
 	if keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():IsIllusion() and not self:GetParent():HasModifier("modifier_imba_abyssal_blade_cooldown") and keys.target:IsAlive() then
 		local pct = self:GetParent():IsRangedAttacker() and self.ability:GetSpecialValueFor("bash_chance_ranged") or self.ability:GetSpecialValueFor("bash_chance_melee")
-		if RollPercentage(pct) then
-			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = self.ability:GetSpecialValueFor("bash_duration")})
+		local bat_pct = ((self:GetParent():GetDefaultBAT() - self:GetParent():GetBaseAttackTime()) / self:GetParent():GetDefaultBAT())
+		if bat_pct > 0 then
+			pct = pct - (pct * bat_pct)
+		end
+		if PseudoRandom:RollPseudoRandom(self.ability, pct) then
+			local bash_duration = self.ability:GetSpecialValueFor("bash_duration")
+			if bat_pct > 0 then
+				bash_duration = bash_duration - (bash_duration * bat_pct)
+			end
+			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_bashed", {duration = bash_duration})
 			self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_imba_abyssal_blade_cooldown", {duration = self.ability:GetSpecialValueFor("bash_cooldown")})
 			if keys.target:HasModifier("modifier_imba_basher_break_count") then
 				keys.target:RemoveModifierByName("modifier_imba_basher_break_count")
@@ -161,7 +177,7 @@ function modifier_imba_abyssal_blade_unique:OnAttackLanded(keys)
 			else
 				keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_imba_basher_break_count", {duration = self.ability:GetSpecialValueFor("break_need_duration")})
 			end
-			ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage = self.ability:GetSpecialValueFor("bonus_chance_damage"), damage_type =DAMAGE_TYPE_MAGICAL})
+			ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage = self.ability:GetSpecialValueFor("bonus_chance_damage"), damage_type = DAMAGE_TYPE_MAGICAL})
 			SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, keys.target, self.ability:GetSpecialValueFor("bonus_chance_damage"), nil)
 			keys.target:EmitSound("DOTA_Item.MKB.Minibash")
 		end

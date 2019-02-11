@@ -1,32 +1,77 @@
--- 一个伪随机数生成算法
--- 从下面的这个js代码改写而来的
--- https://jsbin.com/nifutup/1/edit?js,output
--- XavierCHN @ 2018.8
-
 PseudoRandom = class({})
 
-function PseudoRandom:constructor()
-	self.a = 1664525
-	self.c = 1013904223
-	self.m = 2 ^ 32
-	self.seed = RandomInt(1, 999999)
+if not PseudoRandom.RandomInstanceTable then
+	PseudoRandom.RandomInstanceTable = {}
 end
 
-function PseudoRandom:NextRand()
-	self.seed = (self.a * self.seed + self.c) % self.m
-	return self.seed
+PseudoRandom.RandomC = {}
+
+for i=1, 100 do
+	PseudoRandom.RandomC[i] = nil
 end
 
-function PseudoRandom:NextFloat(min, max)
-	return min + (max - min) * self:NextRand() / self.m
+function PseudoRandom:RollPseudoRandom(Instance, pct)
+	if not Instance or pct <= 0 or (type(Instance) ~= "number" and not Instance.entindex) then
+		return false
+	end
+	local hInstance = type(Instance) == "number" and Instance or Instance:entindex()
+	PseudoRandom.RandomC[pct] = PseudoRandom.RandomC[pct] or PseudoRandom:CFromP(pct / 100) * 100
+	local increase = PseudoRandom.RandomC[pct]
+	if not PseudoRandom.RandomInstanceTable[hInstance] then
+		PseudoRandom.RandomInstanceTable[hInstance] = increase
+		return RollPercentage(PseudoRandom.RandomInstanceTable[hInstance])
+	else
+		PseudoRandom.RandomInstanceTable[hInstance] = PseudoRandom.RandomInstanceTable[hInstance] + increase
+		if RollPercentage(PseudoRandom.RandomInstanceTable[hInstance]) then
+			PseudoRandom.RandomInstanceTable[hInstance] = 0
+			return true
+		else
+			return false
+		end
+	end
 end
 
-function PseudoRandom:NextInt(min, max)
-	return min + math.floor(self:NextFloat() * (max - min + 1))
+-- main code comes from https://github.com/Perryvw/LuaLibraries/blob/master/PseudoRNG.lua
+
+function PseudoRandom:CFromP(P)
+	local Cupper = P
+	local Clower = 0
+	local Cmid = 0
+	
+	local p1 = 0
+	local p2 = 1
+	
+	while true do
+		Cmid = (Cupper + Clower) / 2;
+		p1 = PseudoRandom:PFromC(Cmid)
+		if math.abs(p1 - p2) <= 0 then
+			break
+		end
+		
+		if p1 > P then
+			Cupper = Cmid
+		else
+			Clower = Cmid
+		end
+		
+		p2 = p1
+	end
+	
+	return Cmid
 end
 
-PseudoRandom:constructor()
+function PseudoRandom:PFromC(C)
+	local pOnN = 0
+	local pByN = 0
+	local sumPByN = 0
+	
+	local maxFails = math.ceil(1/ C)
+	
+	for N=1,maxFails do
+		pOnN = math.min(1, N * C) * (1 - pByN)
+		pByN = pByN + pOnN
+		sumPByN = sumPByN + N * pOnN
+	end
 
--- Usage
--- local pseudo_random = PesudoRandom()
--- local int = pseudo_random:NextInt(1, 100)
+	return 1/sumPByN
+end

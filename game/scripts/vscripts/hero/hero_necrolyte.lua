@@ -256,11 +256,14 @@ imba_necrolyte_reapers_scythe = class({})
 LinkLuaModifier("modifier_imba_reapers_scythe", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_reapers_scythe_stundummy", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_reapers_scythe_permanent", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_reapers_scythe_scepter_ally_remover", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_reapers_scythe_aura", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
 
 function imba_necrolyte_reapers_scythe:IsHiddenWhenStolen() 	return false end
 function imba_necrolyte_reapers_scythe:IsRefreshable() 			return true end
 function imba_necrolyte_reapers_scythe:IsStealable() 			return true end
 function imba_necrolyte_reapers_scythe:IsNetherWardStealable()	return true end
+function imba_necrolyte_reapers_scythe:GetIntrinsicModifierName() return "modifier_imba_reapers_scythe_aura" end
 
 function imba_necrolyte_reapers_scythe:OnSpellStart()
 	local caster = self:GetCaster()
@@ -319,20 +322,32 @@ function modifier_imba_reapers_scythe:OnDestroy()
 	ApplyDamage(damageTable)	-- Force the killer is nec and permanent debuff ---- vscripts/imba.lua
 end
 
+modifier_imba_reapers_scythe_aura = class({})
+
+function modifier_imba_reapers_scythe_aura:IsDebuff()			return false end --added by vscripts/events.lua // also scepter effect
+function modifier_imba_reapers_scythe_aura:IsPurgable() 		return false end
+function modifier_imba_reapers_scythe_aura:IsPurgeException() 	return false end
+function modifier_imba_reapers_scythe_aura:IsHidden()			return true end
+
+function modifier_imba_reapers_scythe_aura:IsAura() return true end
+function modifier_imba_reapers_scythe_aura:GetAuraDuration() return 10000 end
+function modifier_imba_reapers_scythe_aura:GetModifierAura() return "modifier_imba_reapers_scythe_permanent" end
+function modifier_imba_reapers_scythe_aura:GetAuraRadius() return 50000 end
+function modifier_imba_reapers_scythe_aura:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD end
+function modifier_imba_reapers_scythe_aura:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_BOTH end
+function modifier_imba_reapers_scythe_aura:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
+
 modifier_imba_reapers_scythe_permanent = class({})
 
 function modifier_imba_reapers_scythe_permanent:IsDebuff()			return true end --added by vscripts/events.lua // also scepter effect
 function modifier_imba_reapers_scythe_permanent:IsPurgable() 		return false end
 function modifier_imba_reapers_scythe_permanent:IsPurgeException() 	return false end
-function modifier_imba_reapers_scythe_permanent:IsHidden()			return false end
+function modifier_imba_reapers_scythe_permanent:IsHidden()			return (self:GetStackCount() == 0) end
 function modifier_imba_reapers_scythe_permanent:RemoveOnDeath()		return false end
 function modifier_imba_reapers_scythe_permanent:IsPermanent()		return true end
-function modifier_imba_reapers_scythe_permanent:OnRefresh()
-	self:SetStackCount(self:GetStackCount()+1)
-end
-function modifier_imba_reapers_scythe_permanent:OnCreated() self:OnRefresh() end
+function modifier_imba_reapers_scythe_permanent:GetTexture() return "necrolyte_reapers_scythe" end
 function modifier_imba_reapers_scythe_permanent:DeclareFunctions() return {MODIFIER_PROPERTY_RESPAWNTIME_STACKING} end
-function modifier_imba_reapers_scythe_permanent:GetModifierStackingRespawnTime() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("respawn_stack")) end
+function modifier_imba_reapers_scythe_permanent:GetModifierStackingRespawnTime() return (self:GetStackCount() * 3) end
 
 modifier_imba_reapers_scythe_stundummy = class({})
 
@@ -344,3 +359,18 @@ function modifier_imba_reapers_scythe_stundummy:RemoveOnDeath() 	return false en
 function modifier_imba_reapers_scythe_stundummy:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
 function modifier_imba_reapers_scythe_stundummy:DeclareFunctions() return {MODIFIER_PROPERTY_RESPAWNTIME_STACKING} end
 function modifier_imba_reapers_scythe_stundummy:GetModifierStackingRespawnTime() return self:GetAbility():GetSpecialValueFor("respawn_base") end
+
+modifier_imba_reapers_scythe_scepter_ally_remover = class({})
+
+function modifier_imba_reapers_scythe_scepter_ally_remover:IsDebuff()			return false end
+function modifier_imba_reapers_scythe_scepter_ally_remover:IsPurgable() 		return false end
+function modifier_imba_reapers_scythe_scepter_ally_remover:IsPurgeException() 	return false end
+function modifier_imba_reapers_scythe_scepter_ally_remover:IsHidden()			return true end
+
+function modifier_imba_reapers_scythe_scepter_ally_remover:OnDestroy()
+	if IsServer() then
+		if not self:GetParent():HasAbility("necrolyte_heartstopper_aura") then
+			self:GetParent():RemoveModifierByName("modifier_necrolyte_heartstopper_aura_counter")
+		end
+	end
+end

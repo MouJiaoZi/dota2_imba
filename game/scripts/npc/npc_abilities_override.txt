@@ -3394,7 +3394,7 @@
 	{
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"50"
+		"ItemCost"						"100"
 		"AbilityCastRange"				"1000"
 		
 		// Special	
@@ -3404,7 +3404,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"lifetime"				"360"
+				"lifetime"				"240"
 			}
 			"02"
 			{
@@ -3424,7 +3424,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration_minutes_tooltip"				"6"
+				"duration_minutes_tooltip"				"4"
 			}
 			"06"
 			{
@@ -3766,7 +3766,8 @@
 	//=================================================================================================================
 	"item_courier"
 	{
-		"ItemCost"						"1"
+		"ItemCost"						"10000"
+		"ItemPurchasable"				"0"
 	}
 	
 	//=================================================================================================================
@@ -4521,6 +4522,15 @@
 		"ItemCost"						"700"
 	}
 	
+	//=================================================================================================================
+	// Recipe: Mask of Madness
+	//=================================================================================================================
+	"item_recipe_mask_of_madness"
+	{
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"700"
+	}
 
 	//=================================================================================================================
 	// Ability: Bloodseeker's Bloodrage
@@ -5848,12 +5858,12 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"damage_min"				"15 25 35 45"
+				"damage_min"				"100"
 			}
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"damage_max"				"80 115 150 185"
+				"damage_max"				"100 150 200 250"
 			}
 			"03"
 			{
@@ -5908,7 +5918,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"drain_length"			"8"
+				"drain_length"			"16"
 			}
 			"02"
 			{
@@ -5918,7 +5928,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"drain_rate"			"14 21 28 35"
+				"drain_rate"			"20 30 40 50"
 				"LinkedSpecialBonus"	"special_bonus_unique_razor"
 			}
 			"04"
@@ -5979,7 +5989,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"radius"				"500"		
+				"radius"				"500 600 700 800"		
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -6504,7 +6514,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_damage"				"50 100 150"
+				"bonus_damage"				"20 40 60"
 			}
 			"03"
 			{
@@ -7487,53 +7497,6 @@
 	}
 
 	//=================================================================================================================
-	// Riki: Tricks of the Trade
-	//=================================================================================================================
-	"riki_tricks_of_the_trade"
-	{
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1000"
-		"AbilityCastPoint"				"0.3"
-		"AbilityChannelTime"			"6"
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_4"
-		"AbilityChannelAnimation"		"ACT_DOTA_CHANNEL_ABILITY_4"
-
-		// Ability Data
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"50 45 40"
-		"AbilityManaCost"				"75"
-
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"range"						"500"
-				"LinkedSpecialBonus"		"special_bonus_unique_riki_4"
-			}
-			"02"
-			{
-				"var_type"					"FIELD_FLOAT"
-				"attack_rate"				"0.6 0.55 0.5"
-			}
-			"03"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"duration_tooltip"				"6"
-			}
-			"04"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"scepter_bonus"				"6"
-			}
-		}
-	}
-	
-	//=================================================================================================================
 	// Beastmaster: Wild Axes
 	//=================================================================================================================
 	"beastmaster_wild_axes"
@@ -8330,15 +8293,15 @@
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastRange"				"600"
-		"AbilityCastPoint"				"0.2"
+		"AbilityCastPoint"				"0.0"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"14 13 12 11"
+		"AbilityCooldown"				"8"
 		
 		// Damage.
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityDamage"					"90 170 240 300"
+		"AbilityDamage"					"180 240 300 360"
 		
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -8480,17 +8443,17 @@
 			"01"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"duration"					"60"
+				"duration"					"70"
 			}
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_movement_speed"		"30"
+				"bonus_movement_speed"		"50"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_attack_range"		"350"
+				"bonus_attack_range"		"450"
 			}
 			"04"
 			{
@@ -8500,7 +8463,7 @@
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"corrosive_breath_damage"	"20 20 20"
+				"corrosive_breath_damage"	"20 40 60"
 			}
 			"06"
 			{
@@ -8510,22 +8473,25 @@
 			"07"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"splash_radius"				"300"
+				"splash_radius"				"400"
 			}
 			"08"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"splash_damage_percent"		"100"
+				"splash_damage_percent"		"75"
+				"LinkedSpecialBonus"			"special_bonus_unique_dragon_knight_6"
 			}
 			"09"
 			{
 				"var_type"						"FIELD_INTEGER"
 				"frost_bonus_movement_speed"	"-30"
+				"LinkedSpecialBonus"			"special_bonus_unique_dragon_knight_5"
 			}
 			"10"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"frost_bonus_attack_speed"		"-20"
+				"frost_bonus_attack_speed"		"-50"
+				"LinkedSpecialBonus"			"special_bonus_unique_dragon_knight_5"
 			}
 			"11"
 			{
@@ -8535,9 +8501,8 @@
 			"12"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"frost_aoe"					"300"
+				"frost_aoe"					"400"
 			}
-			
 		}
 	}
 	//=================================================================================================================
@@ -9015,7 +8980,7 @@
 	{
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1000 2000 4000 8000"
+		"AbilityCastRange"				"50000"
 		"AbilityCastPoint"				"0.35"
 		"AbilityCooldown"				"11 10 9 8"
 		"AbilityManaCost"				"130"
@@ -9037,7 +9002,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"cast_range_tooltip"				"1000 2000 4000 8000"
+				"cast_range_tooltip"				"50000"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -9959,7 +9924,7 @@
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastRange"				"1000"
-		"AbilityCastPoint"				"0.4"
+		"AbilityCastPoint"				"0.0"
 		"AbilityCooldown"				"0.0"
 		"AbilityManaCost"				"0"
 			
@@ -10412,20 +10377,25 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"radius"				"200 200 200 200"
+				"movement_speed"		"20"
 			}
 			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"200 200 200 200"
+			}
+			"04"
 			{
 				"var_type"				"FIELD_FLOAT"
 				"duration"				"18.0 18.0 18.0 18.0"
 				"LinkedSpecialBonus"	"special_bonus_unique_batrider_1"
 			}
-			"04"
+			"05"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"tick_interval"			"0.5 0.4 0.3 0.2"
+				"tick_interval"			"0.5"
 			}
-			"05"
+			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"tree_radius"			"100 110 120 130"
@@ -10543,12 +10513,12 @@
 	{
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+		"AbilityCastPoint"				"0.1"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"600 600 600 600"
-		"AbilityCooldown"				"16"
+		"AbilityCastRange"				"1000"
+		"AbilityCooldown"				"10"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -10561,7 +10531,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"damage_min"			"50 100 150 200"
+				"damage_min"			"200"
 			}
 			"02"
 			{
@@ -10622,7 +10592,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"duration"				"12.0"
+				"duration"				"14.0"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -11358,7 +11328,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"damage"				"20"
+				"damage"				"10"
 				"LinkedSpecialBonus"	"special_bonus_unique_spirit_breaker_3"
 			}
 			"03"
@@ -11633,7 +11603,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"400 500 600 700"
+				"radius"					"500"
 			}
 			"02"
 			{
@@ -11786,7 +11756,7 @@
 			"05"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"scepter_radius"				"1200"
+				"scepter_radius"				"700"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -12058,9 +12028,6 @@
 	//=================================================================================================================
 	"alchemist_goblins_greed"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"5368"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 
 		// Special	
@@ -12070,7 +12037,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration"				"40"
+				"duration"				"40 80 12 160"
 			}
 			"02"
 			{
@@ -13061,7 +13028,7 @@
 	{
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"80 60 40"
+		"AbilityCooldown"				"60 50 40"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -13226,7 +13193,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"duration"				"1.2 1.6 2.0 2.4"
+				"duration"				"2.0 2.2 2.4 2.6"
 			}
 		}
 	}
@@ -13417,7 +13384,7 @@
 			"03"
 			{
 				"var_type"			"FIELD_FLOAT"
-				"cry_duration"		"5.0"
+				"cry_duration"		"10.0"
 			}
 			"04"
 			{
@@ -15111,7 +15078,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"strike_interval"			"2.0 1.8 1.6 1.4"
+				"strike_interval"			"2.0 1.5 1.0 0.5"
 			}
 			"04"
 			{
@@ -15190,7 +15157,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"340"
+				"radius"					"340 400 460 520"
 			}
 			"02"
 			{
@@ -15261,7 +15228,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"pulses_scepter"			"28"
+				"pulses_scepter"			"40"
 			}
 		}
 	}
@@ -15477,6 +15444,8 @@
 	//=================================================================================================================
 	"keeper_of_the_light_illuminate"
 	{
+		"MaxLevel"						"7"
+
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastRange"				"1800"
@@ -15484,8 +15453,8 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"10.0 10.0 10.0 10.0"
-		"AbilityChannelTime"			"2.0 3.0 4.0 5.0"
+		"AbilityCooldown"				"10.0"
+		"AbilityChannelTime"			"2.0 3.0 4.0 5.0 4.0 3.0 2.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -15498,12 +15467,12 @@
 			"01"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"damage_per_second"		"100.0 110.0 120.0 130.0"
+				"damage_per_second"		"100.0 110.0 120.0 130.0 187.5 283.5 475"
 			}
 			"02"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"max_channel_time"		"2.0 3.0 4.0 5.0"
+				"max_channel_time"		"2.0 3.0 4.0 5.0 4.0 3.0 2.0"
 			}
 			"03"
 			{
@@ -15553,7 +15522,7 @@
 			"12"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"total_damage"				"200 330 480 650"
+				"total_damage"				"200 330 480 650 750 850 950"
 				"LinkedSpecialBonus"		"special_bonus_unique_keeper_of_the_light"
 			}
 		}
@@ -15701,17 +15670,18 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"650"
+				"radius"					"675"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"hit_count"					"4 5 6"
+				"hit_count"					"4 8 12"
+				"LinkedSpecialBonus"		"special_bonus_unique_keeper_of_the_light_4"
 			}
 			"04"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"off_duration"				"1.75"
+				"off_duration"				"1.3"
 			}
 			"05"
 			{
@@ -15721,12 +15691,17 @@
 			"06"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"off_duration_initial"		"1.0"
+				"off_duration_initial"		"0.0"
 			}
 			"07"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"fixed_movement_speed"		"25"
+			}
+			"08"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"bounty"		"100 125 150"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -15760,7 +15735,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"chill_duration"			"3 4 5 6"
+				"chill_duration"			"6"
 			}
 			"02"
 			{
@@ -15783,7 +15758,7 @@
 	{
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.2 0.2 0.2 0.2"
+		"AbilityCastPoint"				"0.1"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -15809,7 +15784,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"soul_base_damage"			"20"
+				"soul_base_damage"			"100"
 			}
 			"03"
 			{
@@ -15915,12 +15890,12 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"familiar_hp"				"400 550 700"
+				"familiar_hp"				"700 1400 2100"
 			}
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"familiar_armor"			"0 1 2"
+				"familiar_armor"			"4 8 12"
 			}
 			"03"
 			{
@@ -15931,7 +15906,7 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"familiar_attack_damage"	"30 45 60"
+				"familiar_attack_damage"	"60 120 180"
 			}
 		}
 	}
@@ -16090,7 +16065,11 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"2.0"
+		"AbilityCooldown"				"13.0"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"40"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -16099,27 +16078,17 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_attack_speed"		"40 60 80 100"
+				"bonus_attack_speed"		"50 80 110 140"
 			}
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_damage_pct"			"-10 -15 -20 -25"
+				"bonus_damage_pct"			"-15"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"drain_interval"			"0.2 0.2 0.2 0.2"
-			}
-			"04"
-			{
-				"var_type"					"FIELD_FLOAT"
-				"drain_pct"					"0.06"
-			}
-			"05"
-			{
-				"var_type"					"FIELD_FLOAT"
-				"drain_pct_tooltip"			"6.0"
+				"duration"					"10"
 			}
 		}
 	}	
@@ -16129,16 +16098,6 @@
 	//=================================================================================================================
 	"wisp_relocate"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"5488"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_CHANNELLED"
-		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
-		"FightRecapLevel"				"1"
-		"AbilitySound"					"Hero_Wisp.Relocate"
-		"AbilityChannelTime"				"1.5 1.0 0.5"
-
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastPoint"				"0"
@@ -16146,7 +16105,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"130.0 110.0 90.0"
+		"AbilityCooldown"				"90"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -16159,7 +16118,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"cast_delay"				"1.5 1.0 0.5"
+				"cast_delay"				"2.5 1.5 0.5"
 			}
 			"02"
 			{
@@ -16265,19 +16224,14 @@
 			}
 			"05"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"pounce_damage"			"30 60 90 120"
+				"var_type"				"FIELD_FLOAT"
+				"leash_duration"		"2.5 3.0 3.5 4.0"
+				"LinkedSpecialBonus"	"special_bonus_unique_slark"
 			}
 			"06"
 			{
-				"var_type"				"FIELD_FLOAT"
-				"leash_duration"		"2.5 3.5 4.5 5.5"
-				"LinkedSpecialBonus"	"special_bonus_unique_slark"
-			}
-			"07"
-			{
 				"var_type"				"FIELD_INTEGER"
-				"leash_radius"			"325"
+				"leash_radius"			"150"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
@@ -17076,7 +17030,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"shard_damage"				"60 120 180 240"
+				"shard_damage"				"150 200 250 300"
 			}
 			"03"
 			{
@@ -17263,7 +17217,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"crit_multiplier"			"450 550 650"
+				"crit_multiplier"			"550 700 850"
 				"LinkedSpecialBonus"		"special_bonus_unique_tusk"
 			}
 			"02"
@@ -18579,7 +18533,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"36"
+		"AbilityCooldown"				"18"
 		
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -18618,7 +18572,7 @@
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"damage_per_second"		"10 30 50 70"
+				"damage_per_second"		"40 50 60 70"
 			}
 			"07"
 			{
@@ -18717,7 +18671,7 @@
 			"11"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"turn_rate"					"25"
+				"turn_rate"					"50"
 			}
 			"12"
 			{
@@ -18726,6 +18680,137 @@
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+
+	//=================================================================================================================
+	// Phoenix: Fire Spirits
+	//=================================================================================================================
+	"phoenix_fire_spirits"
+	{
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+		"AbilityCastGestureSlot"		"DEFAULT"
+		"AbilityCastRange"				"1400"
+		"AbilityCastPoint"				"0.01 0.01 0.01 0.01"
+		
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"23"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"80 90 100 110"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"hp_cost_perc"		"20"
+			}
+			"02"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"spirit_duration"	"20"
+			}
+			"03"
+			{	
+				"var_type"			"FIELD_INTEGER"
+				"spirit_speed"		"900"
+			}
+			"04"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"radius"			"175 175 175 175"
+			}
+			"05"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"duration"			"4.0"
+			}
+			"06"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"attackspeed_slow"	"-80 -100 -120 -140"
+			}
+			"07"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"damage_per_second"		"40 60 80 100"
+				"LinkedSpecialBonus"	"special_bonus_unique_phoenix_3"
+			}
+			"08"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spirit_count"		"4"
+			}
+			"09"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"tick_interval"		"1.0"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Phoenix: Launch Fire Spirit
+	//=================================================================================================================
+	"phoenix_launch_fire_spirit"
+	{
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"hp_cost_perc"		"20"
+			}
+			"02"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"spirit_duration"	"20.0 20.0 20.0 20.0"
+			}
+			"03"
+			{	
+				"var_type"			"FIELD_INTEGER"
+				"spirit_speed"		"900 900 900 900"
+			}
+			"04"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"radius"			"175 175 175 175"
+			}
+			"05"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"duration"			"4.0"
+			}
+			"06"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"attackspeed_slow"	"-80 -100 -120 -140"
+			}
+			"07"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"damage_per_second"				"40 60 80 100"
+				"LinkedSpecialBonus"	"special_bonus_unique_phoenix_3"
+			}
+			"08"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spirit_count"		"4"
+			}
+			"09"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"tick_interval"		"1.0"
+			}
+		}
 	}
 
 	//=================================================================================================================
@@ -19408,6 +19493,7 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"range"					"900"
+				"LinkedSpecialBonus"	"special_bonus_unique_pangolier_7"
 			}
 			"05"
 			{
@@ -19986,7 +20072,7 @@
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_damage_per_target"	"16 24 32 40"
+				"bonus_damage_per_target"	"20 30 40 50"
 				"LinkedSpecialBonus"		"special_bonus_unique_grimstroke_2"
 				"LinkedSpecialBonusOperation"	"SPECIAL_BONUS_MULTIPLY"
 			}
@@ -20506,5 +20592,176 @@
 		}
 	}
 
+	//=================================================================================================================
+	// Necrolyte: Death Pulse
+	//=================================================================================================================
+	"necrolyte_death_pulse"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"8 6 4 2"
+
+		// Damage.
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityDamage"					"100 140 180 220"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"100 120 140 160"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"area_of_effect"		"475 575 675 775"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"heal"					"100 140 180 220"
+				"LinkedSpecialBonus"		"special_bonus_unique_necrophos_4"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"projectile_speed"		"900"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
+	}
+	
+	//=================================================================================================================
+	// Ability: Necrolyte's Heartstopper Aura
+	//=================================================================================================================
+	"necrolyte_heartstopper_aura"
+	{
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"700"
+
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"aura_radius"			"700"		// If you change this, also change the AbilityCastRange above
+			}
+			"02"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"aura_damage"		"0.5 1.1 1.7 2.3" 
+				"LinkedSpecialBonus"		"special_bonus_unique_necrophos_2"
+			} 	
+			"03"
+			{
+				"var_type"		"FIELD_FLOAT"
+				"health_regen"	"4 8 16 32"
+			}		
+			"04"
+			{
+				"var_type"		"FIELD_FLOAT"
+				"mana_regen"	"2 4 8 16"
+			}	
+			"05"
+			{
+				"var_type"		"FIELD_FLOAT"
+				"regen_duration"		"7"
+			}			
+			"06"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"hero_multiplier" "7"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+	
+	//=================================================================================================================
+	// Ability: Necrolyte's Sadist
+	//=================================================================================================================
+	"necrolyte_sadist"
+	{
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"16"
+		
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"50"
+		
+		
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"		"FIELD_FLOAT"
+				"duration"		"4.5"
+			}				
+			"02"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"heal_bonus"	"25 25 50 75"
+			}			
+			"03"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"movement_speed"			"30"
+				"LinkedSpecialBonus"		"special_bonus_unique_necrophos_3"
+			}			
+			"04"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"slow_aoe"		"450 550 650 750"
+			}		
+			"05"
+			{
+				"var_type"		"FIELD_INTEGER"
+				"bonus_damage" "-40"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
+	}
+		
+	//=================================================================================================================
+	// Ability: Necrolyte's Reaper's Scythe
+	//=================================================================================================================
+	"necrolyte_reapers_scythe"
+	{
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"damage_per_health"			"0.9 1.1 1.3"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"stun_duration"				"1.5 1.5 1.5"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"cooldown_scepter"			"20"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"respawn_constant"		"0"
+			}
+		}
+	}
+	
 
 }

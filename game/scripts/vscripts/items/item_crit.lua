@@ -28,7 +28,7 @@ function modifier_imba_greater_crit_passive:GetModifierPreAttack_CriticalStrike(
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and self:GetParent().splitattack then
 		local pct = self:GetAbility():GetSpecialValueFor("crit_chance") + self:GetParent():GetModifierStackCount("modifier_item_imba_greater_crit_increase_dummy", nil)
 		local dmg = self:GetAbility():GetSpecialValueFor("base_crit_tooltip") + self:GetParent():GetModifierStackCount("modifier_item_imba_greater_crit_increase_dummy", nil)
-		if RollPercentage(pct) then
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), pct) then
 			self:GetParent():EmitSound("DOTA_Item.Daedelus.Crit")
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_greater_crit_check", {})
 			self:GetParent():RemoveModifierByName("modifier_item_imba_greater_crit_increase_dummy")
@@ -41,17 +41,20 @@ function modifier_imba_greater_crit_passive:GetModifierPreAttack_CriticalStrike(
 end
 
 function modifier_imba_greater_crit_passive:OnAttackLanded(keys)
+	local parent = self:GetParent()
 	if not IsServer() then
 		return
 	end
 	if keys.attacker ~= self:GetParent() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
-	if not self:GetParent():HasModifier("modifier_imba_greater_crit_check") and self:GetParent().splitattack then
-		self:GetParent():AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_item_imba_greater_crit_increase_dummy", {}, self:GetAbility():GetSpecialValueFor("crit_increase"), false, true)
+	if not parent:HasModifier("modifier_imba_greater_crit_check") and parent.splitattack then
+		parent:AddModifierStacks(parent, self:GetAbility(), "modifier_item_imba_greater_crit_increase_dummy", {}, self:GetAbility():GetSpecialValueFor("crit_increase"), false, true)
 	end
 	Timers:CreateTimer(FrameTime(), function()
-			self:GetParent():RemoveModifierByName("modifier_imba_greater_crit_check")
+			if not parent:IsNull() then
+				parent:RemoveModifierByName("modifier_imba_greater_crit_check")
+			end
 			return nil
 		end
 	)

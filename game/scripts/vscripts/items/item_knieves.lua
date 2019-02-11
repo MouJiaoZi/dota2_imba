@@ -76,7 +76,7 @@ function modifier_imba_yasha_unique:OnAttackLanded(keys)
 	if buff:GetStackCount() < self.ability:GetSpecialValueFor("max_stacks") then
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
-	if not keys.target:IsBuilding() and not keys.target:IsOther() and RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) then
+	if not keys.target:IsBuilding() and not keys.target:IsOther() and PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
 		local pfx = ParticleManager:CreateParticle("particles/item/yasha/yasha_attack_ghost.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():EmitSound("Hero_PhantomLancer.Doppelganger.Appear")
@@ -150,7 +150,7 @@ function modifier_imba_sange_unique:OnAttackLanded(keys)
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("disarm_chance")) and self.ability:IsCooldownReady() and not keys.target:IsMagicImmune() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("disarm_chance")) and self.ability:IsCooldownReady() and not keys.target:IsMagicImmune() then
 		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("disarm_duration")})
 		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
 		self.ability:UseResources(true, true, true)
@@ -230,7 +230,7 @@ function modifier_imba_azura_unique:OnAttackLanded(keys)
 	if not IsServer() or self:GetParent() ~= keys.attacker or not keys.target:IsAlive() then
 		return
 	end
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
 		self:GetParent():EmitSound("DOTA_Item.FaerieSpark.Activate")
 		local pfx = ParticleManager:CreateParticle("particles/item/azura/azura_mana_regen.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
@@ -323,7 +323,7 @@ function modifier_imba_sange_and_yasha_unique:OnAttackLanded(keys)
 	local buff2 = keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_maim", {duration = self.ability:GetSpecialValueFor("passive_duration")})
 	buff2:SetStackCount(buff2:GetStackCount() + 1)
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) and self:GetParent().splitattack and self.ability:IsCooldownReady() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) and self:GetParent().splitattack and self.ability:IsCooldownReady() then
 		local pfx = ParticleManager:CreateParticle("particles/item/yasha/yasha_attack_ghost.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():EmitSound("Hero_PhantomLancer.Doppelganger.Appear")
@@ -389,7 +389,7 @@ function modifier_imba_sange_and_azura_unique:OnAttackLanded(keys)
 	local buff2 = keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_maim", {duration = self.ability:GetSpecialValueFor("passive_duration")})
 	buff2:SetStackCount(buff2:GetStackCount() + 1)
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) and self.ability:IsCooldownReady() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) and self.ability:IsCooldownReady() then
 		if not keys.target:IsMagicImmune() then
 			keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("proc_duration")})
 			keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
@@ -486,7 +486,7 @@ function modifier_imba_azura_and_yasha_unique:OnAttackLanded(keys)
 	if buff:GetStackCount() < self.ability:GetSpecialValueFor("buff_stacks") then
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) and self:GetParent().splitattack and self.ability:IsCooldownReady() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) and self:GetParent().splitattack and self.ability:IsCooldownReady() then
 		local pfx = ParticleManager:CreateParticle("particles/item/yasha/yasha_attack_ghost.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():EmitSound("Hero_PhantomLancer.Doppelganger.Appear")
@@ -587,7 +587,7 @@ function modifier_imba_triumvirate_unique:OnAttackLanded(keys)
 	local buff2 = keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_maim", {duration = self.ability:GetSpecialValueFor("stack_duration")})
 	buff2:SetStackCount(buff2:GetStackCount() + 1)
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) and self:GetParent().splitattack and self.ability:IsCooldownReady() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) and self:GetParent().splitattack and self.ability:IsCooldownReady() then
 		local pfx = ParticleManager:CreateParticle("particles/item/yasha/yasha_attack_ghost.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():EmitSound("Hero_PhantomLancer.Doppelganger.Appear")
@@ -698,7 +698,7 @@ function modifier_imba_manta_unique:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.target:IsBuilding() or keys.target:IsOther() or keys.target:IsCourier() or not keys.target:IsAlive() then
 		return
 	end
-	if RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
 		for i=1, self:GetAbility():GetSpecialValueFor("proc_max_illusions") do
 			local pos = RotatePosition(keys.target:GetAbsOrigin(), QAngle(0,math.random(0,360),0), self:GetParent():GetAbsOrigin())
 			local pfx = ParticleManager:CreateParticle("particles/item/manta/manta_attack_ghost.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
@@ -736,7 +736,7 @@ function item_imba_heavens_halberd:OnSpellStart()
 	end
 	local duration = target:IsRangedAttacker() and self:GetSpecialValueFor("disarm_range") or self:GetSpecialValueFor("disarm_melee")
 	duration = target:IsMagicImmune() and duration * (1 - self:GetSpecialValueFor("mm_duration_reduce") / 100) or duration
-	if target:HasModifier("modifier_imba_fervor_passive") or target:HasModifier("modifier_imba_darkness_caster") or target:HasModifier("modifier_imba_faceless_void_timelord_thinker") or target:HasModifier("modifier_imba_take_aim_near") then
+	if target:GetBaseAttackTime() < target:GetDefaultBAT() then
 		duration = target:IsRangedAttacker() and self:GetSpecialValueFor("disarm_range") or self:GetSpecialValueFor("disarm_melee")
 	end
 	target:AddNewModifier(caster, self, "modifier_item_imba_sange_disarm", {duration = duration})
@@ -791,7 +791,7 @@ function modifier_imba_heavens_halberd_unique:OnAttackLanded(keys)
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
 	keys.target:EmitSound("DOTA_Item.Maim")
-	if RollPercentage(self.ability:GetSpecialValueFor("disarm_chance")) then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("disarm_chance")) then
 		keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_sange_disarm", {duration = self.ability:GetSpecialValueFor("disarm_passive")})
 		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
 	end

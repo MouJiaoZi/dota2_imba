@@ -86,7 +86,7 @@ function modifier_imba_ability_charge:OnCreated(keys)
 end
 
 function modifier_imba_ability_charge:OnIntervalThink()
-	if not self.caster:HasAbility(self.ability:GetAbilityName()) then
+	if self.ability:IsNull() or not self.caster:HasAbility(self.ability:GetAbilityName()) then
 		self:Destroy()
 	end
 	local duration = self.chargetime
@@ -162,35 +162,56 @@ function modifier_imba_ability_charge_cd_dummy:OnDestroy()
 end
 
 function AbilityChargeController:AbilityChargeInitialize(hAbility, fChargeTime, iMaxCharges, iChargeCost, bResetByRefresh, bCDR)
-	if not hAbility or not fChargeTime or not iMaxCharges then
-		print("parameter error! please check your code!!")
+	Timers:CreateTimer((hAbility:GetLevel() * 0.2), function()
+			if not hAbility or not fChargeTime or not iMaxCharges then
+				print("parameter error! please check your code!!")
+				return
+			end
+			if iChargeCost < 0 or iMaxCharges <= 0 or fChargeTime <= 0 then
+				print("Number error, what are you doing?")
+				return
+			end
+			local caster = hAbility:GetCaster()
+			local bRefresh = 1
+			local bGetCDR = 0
+			if not bResetByRefresh or bResetByRefresh == true then
+				bRefresh = 1
+			else
+				bRefresh = 0
+			end
+			if not bCDR or bCDR == false then
+				bGetCDR = 0
+			else
+				bGetCDR = 1
+			end
+			if AbilityChargeController:IsChargeTypeAbility(hAbility) then
+				AbilityChargeController:ChangeChargeAbilityConfig(hAbility, fChargeTime, iMaxCharges, iChargeCost, bResetByRefresh, bCDR)
+				print("Already has charge buff!!")
+			else
+				caster:AddNewModifierWhenPossible(caster, hAbility, "modifier_imba_ability_charge", {chargetime = fChargeTime, maxcharges = iMaxCharges, chargecost = iChargeCost, refresh = bRefresh, getcdr = bGetCDR})
+			end
+			return nil
+		end
+	)
+end
+
+function AbilityChargeController:ChangeChargeAbilityConfig(hAbility, fChargeTime, iMaxCharges, iChargeCost, bResetByRefresh, bCDR)
+	if not hAbility then return end
+	if not AbilityChargeController:IsChargeTypeAbility(hAbility) then
+		print("Not a charge type ability!")
 		return
 	end
+	local buff = AbilityChargeController:GetChargeModifier(hAbility)
 	if iChargeCost < 0 or iMaxCharges <= 0 or fChargeTime <= 0 then
 		print("Number error, what are you doing?")
 		return
 	end
-	local caster = hAbility:GetCaster()
-	local bRefresh = 1
-	local bGetCDR = 0
-	if not bResetByRefresh or bResetByRefresh == true then
-		bRefresh = 1
-	else
-		bRefresh = 0
-	end
-	if not bCDR or bCDR == false then
-		bGetCDR = 0
-	else
-		bGetCDR = 1
-	end
-	local charge_buffs = caster:FindAllModifiersByName("modifier_imba_ability_charge")
-	for _,charge_buff in pairs(charge_buffs) do
-		if charge_buff.ability == hAbility then
-			print("Already has charge buff!!")
-			return nil
-		end
-	end
-	caster:AddNewModifierWhenPossible(caster, hAbility, "modifier_imba_ability_charge", {chargetime = fChargeTime, maxcharges = iMaxCharges, chargecost = iChargeCost, refresh = bRefresh, getcdr = bGetCDR})
+
+	buff.chargetime = fChargeTime or buff.chargetime 
+	buff.maxcharges = iMaxCharges or buff.maxcharges 
+	buff.chargecost = iChargeCost or buff.chargecost 
+	buff.refresh = bResetByRefresh or buff.refresh 
+	buff.getcdr = bCDR or buff.getcdr
 end
 
 function AbilityChargeController:CostCharge(hAbility, iCost, bIncreaseType)  --bIncreaseType: true is destroy the longest duration buff, false is shortest, default is shortest.
@@ -278,35 +299,14 @@ function AbilityChargeController:CostCharge(hAbility, iCost, bIncreaseType)  --b
 	return true
 end
 
-function AbilityChargeController:ChangeChargeAbilityConfig(hAbility, fChargeTime, iMaxCharges, iChargeCost, bResetByRefresh, bCDR)
-	if not hAbility then return end
-	if not AbilityChargeController:IsChargeTypeAbility(hAbility) then
-		print("Not a charge type ability!")
-		return
-	end
-	local buff = AbilityChargeController:GetChargeModifier(hAbility)
-	if iChargeCost < 0 or iMaxCharges <= 0 or fChargeTime <= 0 then
-		print("Number error, what are you doing?")
-		return
-	end
-
-	buff.chargetime = fChargeTime or buff.chargetime 
-	buff.maxcharges = iMaxCharges or buff.maxcharges 
-	buff.chargecost = iChargeCost or buff.chargecost 
-	buff.refresh = bResetByRefresh or buff.refresh 
-	buff.getcdr = bCDR or buff.getcdr
-end
-
 function AbilityChargeController:IsChargeTypeAbility(hAbility)
 	if not hAbility then return end
 	local ability = hAbility
 	local caster = ability:GetCaster()
 	local control_buffs = caster:FindAllModifiersByName("modifier_imba_ability_charge")
-	local control_buff = nil
 	for _, buff in pairs(control_buffs) do
-		if buff.ability == ability then
-			control_buff = buff
-			return true
+		if buff:GetAbility() == ability then
+			return buff
 		end
 	end
 	return false

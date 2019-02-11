@@ -347,15 +347,16 @@ function PrecacheUnitWithQueue( unit_name )
 
 		-- If something else is being precached, wait two seconds
 		if UNIT_BEING_PRECACHED then
-			return 2
+			return 0.5
 
 		-- Otherwise, start precaching and block other calls from doing so
 		else
 			UNIT_BEING_PRECACHED = true
 			PrecacheUnitByNameAsync(unit_name, function(...) end)
+			print("Unit "..unit_name.." precaching...")
 
 			-- Release the queue after one second
-			Timers:CreateTimer(2, function()
+			Timers:CreateTimer(0.5, function()
 				UNIT_BEING_PRECACHED = false
 			end)
 		end
@@ -662,6 +663,11 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 	local is_motion_controller = false
 	local motion_controller_priority
 	local found_modifier_handler
+
+	if parent:HasModifier("modifier_batrider_flaming_lasso") then
+		self:Destroy()
+		return false
+	end
 
 	local non_imba_motion_controllers ={
 	"modifier_morphling_waveform",
@@ -1010,6 +1016,69 @@ function CDOTA_BaseNPC:GetDefaultBAT()
 	return BAT
 end
 
+function SplitString(szFullString, szSeparator)  
+	local nFindStartIndex = 1  
+	local nSplitIndex = 1  
+	local nSplitArray = {}  
+	while true do  
+		local nFindLastIndex = string.find(szFullString, szSeparator, nFindStartIndex)  
+		if not nFindLastIndex then  
+			nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, string.len(szFullString))  
+			break  
+		end  
+		nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, nFindLastIndex - 1)  
+		nFindStartIndex = nFindLastIndex + string.len(szSeparator)  
+		nSplitIndex = nSplitIndex + 1  
+	end  
+	return nSplitArray  
+end
+
+function RGBConvertToHSV(colorRGB)
+	local r,g,b = colorRGB[1], colorRGB[2], colorRGB[3]
+	local h,s,v = 0,0,0
+
+	local max1 = math.max(r, math.max(g,b))
+	local min1 = math.min(r, math.min(g,b))
+
+	if max1 == min1 then
+		h=0;
+	else
+		if r == max1 then
+			if g >= b then
+				h = 60 * (g-b) / (max1-min1)
+			else
+				h = 60 * (g-b) / (max1-min1) + 360
+			end
+		end
+		if g == max1 then
+			h = 60 * (b-r)/(max1-min1) + 120
+		end
+		if b == max1 then
+			h = 60 * (r-g)/(max1-min1) + 240;
+		end
+	end    
+	
+	if max1 == 0 then
+		s = 0
+	else
+		s = (1- min1 / max1) * 255
+	end
+	
+	v = max1
+	
+	return {h, s, v}
+end
+
+function CDOTA_BaseNPC_Hero:GetHeroColor()
+	local str = HeroKV[self:GetName()]['HeroGlowColor'] or HeroKVBase[self:GetName()]['HeroGlowColor'] or HeroKV[self:GetName()]['GibTintColor'] or HeroKVBase[self:GetName()]['GibTintColor']
+	--print(str)
+	if not str then
+		return {0,0,0}
+	end
+	local color = SplitString(str, " ")
+	return {color[1], color[2], color[3]}
+end
+
 function CDOTA_BaseNPC:AddModifierStacks(hCaster, hAbility, sModifierName, tModifierTable, iStacks, bStatusResis, bRefresh)
 	local buff = nil
 	if self:HasModifier(sModifierName) then
@@ -1040,51 +1109,79 @@ function FindStoneRemnant(pos, radius)
 end
 
 function CDOTA_BaseNPC:GetMoveSpeedIncrease()
-	local buffs = self:FindAllModifiers()
-	local baseSpeed = self:GetBaseMoveSpeed()
-	local agiSpeed = (GameRules:GetGameModeEntity():GetCustomAttributeDerivedStatValue(DOTA_ATTRIBUTE_AGILITY_MOVE_SPEED_PERCENT, self) * self:GetAgility()) * baseSpeed
-	local constant = 0
-	local percentage = 0
-	local pct_u_1 = {}
-	local pct_u_2 = {}
-	local pct_boots = {}
-	local con_u_2 = {}
-	for i=1, #buffs do
-		local buff = buffs[i]
-		if buff.GetModifierMoveSpeedBonus_Constant then
-			constant = constant + buff:GetModifierMoveSpeedBonus_Constant()
+	local ms = 0
+	local has = self:HasModifier("modifier_bloodseeker_thirst")
+	if has then
+		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed()) - self:GetBaseMoveSpeed()
+	else
+		local ability = nil
+		for i=0, 23 do
+			local ab = self:GetAbilityByIndex(i)
+			if string.find(ab:GetAbilityName(), "special_bonus") then
+				ability = ab
+				break
+			end
 		end
-		if buff.GetModifierMoveSpeedBonus_Percentage then
-			percentage = percentage + buff:GetModifierMoveSpeedBonus_Percentage()
+		if not ability then
+			ability = self:AddAbility("imba_dummy_ability")
+			ability:SetLevel(1)
 		end
-		if buff.GetModifierMoveSpeedBonus_Percentage_Unique then
-			pct_u_1[#pct_u_1 + 1] = buff:GetModifierMoveSpeedBonus_Percentage_Unique()
+		local buff = self:AddNewModifier(self, ability, "modifier_bloodseeker_thirst", {})
+		local ms_buff = self:FindModifierByName("modifier_imba_movespeed_controller")
+		local stack
+		if ms_buff then
+			stack = ms_buff:GetStackCount()
+			ms_buff:SetStackCount(0)
 		end
-		if buff.GetModifierMoveSpeedBonus_Percentage_Unique_2 then
-			pct_u_2[#pct_u_2 + 1] = buff:GetModifierMoveSpeedBonus_Percentage_Unique_2()
+		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed()) - self:GetBaseMoveSpeed()
+		if ms_buff then
+			ms_buff:SetStackCount(stack)
 		end
-		if buff.GetModifierMoveSpeedBonus_Special_Boots then
-			pct_boots[#pct_boots + 1] = buff:GetModifierMoveSpeedBonus_Special_Boots()
-		end
-		if buff.GetModifierMoveSpeedBonus_Special_Boots_2 then
-			con_u_2[#con_u_2 + 1] = buff:GetModifierMoveSpeedBonus_Special_Boots_2()
-		end
+		buff:Destroy()
+		ability:EndCooldown()
+		self:RemoveAbility("imba_dummy_ability")
 	end
-	for i=0, 5 do
-		local item = self:GetItemInSlot(i)
-		if item and (item:GetName() == "item_boots" or item:GetName() == "item_phase_boots" or item:GetName() == "item_travel_boots" or item:GetName() == "item_travel_boots_2" or item:GetName() == "item_power_treads" or item:GetName() == "item_imba_power_treads_2" or item:GetName() == "item_tranquil_boots") then
-			pct_u_1[#pct_u_1 + 1] = item:GetSpecialValueFor("bonus_movement_speed")
-		end
+	return ms
+end
+
+function GetHeroMainAttr(sName)
+	return (HeroKV[sName]['AttributePrimary'] or HeroKVBase[sName]['AttributePrimary'])
+end
+
+function GetRandomAvailableHero()
+	local hero = RandomFromTable(HeroList)
+	while hero[2] == 0 do
+		hero = RandomFromTable(HeroList)
 	end
-	local sort = table.sort
-	sort(pct_u_1)
-	sort(pct_u_2)
-	sort(pct_boots)
-	sort(con_u_2)
-	percentage = #pct_u_1 > 0 and percentage + pct_u_1[#pct_u_1] or percentage
-	percentage = #pct_u_2 > 0 and percentage + pct_u_2[#pct_u_2] or percentage
-	percentage = #pct_boots > 0 and percentage + pct_boots[#pct_boots] or percentage
-	constant = #con_u_2 > 0 and constant + con_u_2[#con_u_2] or constant
-	local speed_con = baseSpeed + constant
-	return (constant + agiSpeed + speed_con * (percentage / 100))
+	return hero[1]
+end
+
+function GetRandomAbilityNormal()
+	local hero = GetRandomAvailableHero()
+	while (not Random_Abilities_Normal[hero] or not Random_Abilities_Normal[hero]['ability_count']) do
+		hero = GetRandomAvailableHero()
+	end
+	local count = Random_Abilities_Normal[hero]['ability_count']
+	local ability = Random_Abilities_Normal[hero]['Ability'..RandomInt(1, count)]
+	while not ability do
+		ability = Random_Abilities_Normal[hero]['Ability'..RandomInt(1, count)]
+	end
+	return {hero, ability}
+end
+
+function GetRandomAbilityUltimate()
+	local hero = GetRandomAvailableHero()
+	while (not Rnadom_Abilities_Ultimate[hero] or not Rnadom_Abilities_Ultimate[hero]['ability_count']) do
+		hero = GetRandomAvailableHero()
+	end
+	local count = Rnadom_Abilities_Ultimate[hero]['ability_count']
+	local ability = Rnadom_Abilities_Ultimate[hero]['Ability'..RandomInt(1, count)]
+	while not ability do
+		ability = Rnadom_Abilities_Ultimate[hero]['Ability'..RandomInt(1, count)]
+	end
+	return {hero, ability}
+end
+
+function GetRandomAKAbility()
+	return (RollPercentage(20) and GetRandomAbilityUltimate() or GetRandomAbilityNormal())
 end

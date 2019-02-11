@@ -4,8 +4,10 @@
   [
     "containers_lua",
     "selection",
+	"imba_hero_selection_list",
 	"imba_player_base",
 	"imba_player_info",
 	"imba_omg",
+	"imba_hero_detail",
   ]
 }

@@ -20,7 +20,7 @@ end
 function imba_axe_berserkers_call:OnAbilityPhaseInterrupted() self:GetCaster():FadeGesture(ACT_DOTA_OVERRIDE_ABILITY_1) end
 
 function imba_axe_berserkers_call:OnSpellStart()
-	EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "Hero_Axe.Berserkers_Call", self:GetCaster())
+	self:GetCaster():EmitSound("Hero_Axe.Berserkers_Call")
 	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_berserkers_call_armor", {duration = self:GetSpecialValueFor("duration")})
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),
 									self:GetCaster():GetAbsOrigin(),

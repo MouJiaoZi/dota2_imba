@@ -3502,7 +3502,7 @@
 			"08"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"regen_pct"				"75"
+				"regen_pct"				"45"
 			}
 		}
 	}
@@ -3801,12 +3801,12 @@
 			"08"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"hp_regen_per_charge"		"3.0"
+				"hp_regen_per_charge"		"2.5"
 			}
 			"09"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"mana_regen_per_charge"		"1.5"
+				"mana_regen_per_charge"		"4.0"
 			}
 		}
 	}
@@ -4439,7 +4439,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"50"
+				"bonus_damage"			"60"
 			}
 			"02"
 			{
@@ -6166,7 +6166,7 @@
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"1"	
+		"ItemCost"						"0"	
 		"ItemShopTags"					""
 		
 		// Recipe
@@ -7644,7 +7644,7 @@
 			"12"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"mm_duration_reduce"	"40"
+				"mm_duration_reduce"	"70"
 			}
 		}
 	}
@@ -8230,7 +8230,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"60"
+				"bonus_damage"			"75"
 			}
 			"02"
 			{
@@ -8363,7 +8363,7 @@
 		"ItemResult"					"item_imba_power_treads_2"
 		"ItemRequirements"
 		{
-			"01"						"item_power_treads;item_relic"
+			"01"						"item_power_treads;item_hyperstone"
 		}
 	}
 	
@@ -8404,12 +8404,12 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_attack_speed"			"0"
+				"bonus_attack_speed"			"75"
 			}		
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_damage"			"80"
+				"bonus_damage"			"0"
 			}
 		}
 	}
@@ -8481,7 +8481,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_as"				"70"
+				"bonus_damage"			"50"
 			}					
 			"03"
 			{
@@ -8501,7 +8501,7 @@
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_armor"			"10"
+				"bonus_armor"			"15"
 			}
 		}
 	}
@@ -10158,43 +10158,16 @@
 	}
 
 	//=================================================================================================================
-	// Crown
+	// Suicide
 	//=================================================================================================================
-	"item_recipe_imba_ancient_crown"
+	"item_imba_suicide"
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"ID"							"2228"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
-		"BaseClass"						"item_datadriven"
-		"AbilityTextureName" 			"custom/imba_recipe"
-		"Model"							"models/props_gameplay/recipe.mdl"
-		
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"1000"
-		"ItemShopTags"					""
-		
-		// Recipe
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemRecipe"					"1"
-		"ItemResult"					"item_imba_ancient_crown"
-		"ItemRequirements"
-		{
-			"01"						"item_imba_crown;item_helm_of_the_dominator"
-		}
-	}
-
-	//=================================================================================================================
-	// Crown
-	//=================================================================================================================
-	"item_imba_ancient_crown"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"2229"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
-		"BaseClass"             		"item_lua"
-		"AbilityTextureName"			"custom/ancient_crown"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"BaseClass"             		"item_crown"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilityTextureName" 			"custom/tombstone"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -10202,53 +10175,14 @@
 		"ItemShopTags"					"agi;int;str"
 		"ItemQuality"					"component"
 		"ItemAliases"					"crown"
-		"ShouldBeInitiallySuggested"	"1"
-		"SideShop"						"0"
-
-		// Special	
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_all_stats"		"16"
-			}
-		}
-	}
-
-	//=================================================================================================================
-	// Super Observer Ward
-	//=================================================================================================================
-	"item_imba_super_ward"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"2230"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
-		"BaseClass"             		"item_lua"
-		"AbilityTextureName"			"custom/super_ward"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
-		"Model"							"models/particle/legion_duel_banner.vmdl"
-		"ScriptFile"					"items/item_super_ward.lua"
-		"AbilityCastRange"				"200"
-		"AbilityCooldown"				"200"
-		"AbilitySharedCooldown"			"superward"
-
-		// Item Info
-		//-------------------------------------------------------------------------------------------------------------
-		"ItemCost"						"100000"
-		"ItemQuality"					"component"
 		"ShouldBeInitiallySuggested"	"0"
 		"SideShop"						"0"
+		"ItemCastOnPickup"				"0"
+
 		"ItemStockInitial"				"0"
 		"ItemInitialStockTime"			"300.0"
-		"ItemStockTime"					"600.0"
+		"ItemStockTime"					"3.0"
 		"ItemStockMax"					"1"
-		"ItemShareability"				"ITEM_FULLY_SHAREABLE_STACKING"
-		"ItemPermanent"					"1"
-		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES"
-		"ItemSellable"					"0"
-		"ItemKillable"					"0"
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
@@ -10257,15 +10191,10 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration"				"300"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"cast_range"			"200"
+				"suicide_delay"			"30"
 			}
 		}
 	}
 
-	//next free ID: 2231
+	//next free ID: 2229
 }

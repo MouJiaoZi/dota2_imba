@@ -320,8 +320,10 @@ function imba_obsidian_destroyer_sanity_eclipse:OnSpellStart()
 		else
 			local ability = caster:FindAbilityByName("imba_obsidian_destroyer_astral_imprisonment")
 			if ability and caster:HasScepter() and ability:GetLevel() > 0 then
-				caster:SetCursorCastTarget(enemy)
-				ability:OnSpellStart()
+				if (not enemy:IsOutOfGame() or (enemy:IsOutOfGame() and enemy:HasModifier("modifier_imba_astral_imprisonment"))) and not enemy:HasModifier("modifier_imba_tricks_of_the_trade_caster") then
+					caster:SetCursorCastTarget(enemy)
+					ability:OnSpellStart()
+				end
 			end
 			enemy:SetMana(math.max(0, enemy:GetMana() - enemy:GetMaxMana() * (self:GetSpecialValueFor("mana_burn_pct") / 100)))
 			local dmg = math.max((caster:GetIntellect() - enemy:GetIntellect()) * self:GetSpecialValueFor("damage_multiplier"), 0)
@@ -333,7 +335,9 @@ function imba_obsidian_destroyer_sanity_eclipse:OnSpellStart()
 								damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_INVULNERABILITY, --Optional.
 								ability = self, --Optional.
 								}
-			local dmg_done = ApplyDamage(damageTable)
+			if not enemy:IsOutOfGame() or (enemy:IsOutOfGame() and enemy:HasModifier("modifier_imba_astral_imprisonment")) then
+				ApplyDamage(damageTable)
+			end
 		end
 	end
 end

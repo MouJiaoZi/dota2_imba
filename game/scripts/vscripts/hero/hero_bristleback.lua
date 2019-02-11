@@ -26,7 +26,7 @@ function modifier_imba_bristleback_passive:IsPurgeException() 	return false end
 function modifier_imba_bristleback_passive:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE} end
 
 function modifier_imba_bristleback_passive:GetModifierIncomingDamage_Percentage(keys)
-	if not IsServer() or self:GetParent():PassivesDisabled() or keys.attacker:IsBuilding() then
+	if not IsServer() or self:GetParent():PassivesDisabled() or keys.attacker:IsBuilding() or self:GetParent():IsIllusion() then
 		return
 	end
 	local cast_angle = VectorToAngles(self:GetParent():GetForwardVector() * -1)
@@ -56,7 +56,11 @@ function modifier_imba_bristleback_passive:GetModifierIncomingDamage_Percentage(
 			local max = math.floor(self:GetStackCount() / self:GetAbility():GetSpecialValueFor("quill_release_threshold"))
 			for i=1, max do
 				self:SetStackCount(self:GetStackCount() - self:GetAbility():GetSpecialValueFor("quill_release_threshold"))
-				ability:OnSpellStart()
+				Timers:CreateTimer((i * 0.1), function()
+						ability:OnSpellStart()
+						return nil
+					end
+				)
 			end
 		end
 		return reduce

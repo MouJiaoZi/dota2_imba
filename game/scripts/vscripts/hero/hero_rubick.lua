@@ -12,6 +12,10 @@ function imba_rubick_telekinesis_land:GetAOERadius() return self:GetSpecialValue
 function imba_rubick_telekinesis_land:OnSpellStart()
 	local buff = self:GetCaster():FindModifierByName("modifier_imba_telekinesis_range")
 	local max_distance = buff:GetStackCount() == 1 and self:GetSpecialValueFor("ally_land_distance") or self:GetSpecialValueFor("enemy_land_distance")
+	local talent = self:GetCaster():FindAbilityByName("special_bonus_unique_rubick")
+	if talent then
+		max_distance = max_distance + talent:GetSpecialValueFor("value")
+	end
 	local target_buff = self:GetCaster():FindAbilityByName("imba_rubick_telekinesis").buff
 	local pos
 	if (self:GetCursorPosition() - target_buff:GetParent():GetAbsOrigin()):Length2D() > max_distance then
@@ -269,7 +273,7 @@ function modifier_imba_spell_steal_buff:OnAbilityFullyCast(keys)
 		end
 		for i=0, 23 do
 			local talent = target:GetAbilityByIndex(i)
-			if talent and string.find(talent:GetAbilityName(), "special_bonus_") and talent:GetLevel() > 0 then
+			if talent and string.find(talent:GetAbilityName(), "special_bonus_imba") and talent:GetLevel() > 0 then
 				local ability = rubick:AddAbility(talent:GetAbilityName())
 				ability:SetLevel(1)
 				table.insert(self.talents, ability)

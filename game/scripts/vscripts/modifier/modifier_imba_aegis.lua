@@ -71,6 +71,7 @@ function modifier_imba_roshan_upgrade:IsDebuff()			return false end
 function modifier_imba_roshan_upgrade:IsHidden() 			return true end
 function modifier_imba_roshan_upgrade:IsPurgable() 			return false end
 function modifier_imba_roshan_upgrade:IsPurgeException() 	return false end
+function modifier_imba_roshan_upgrade:RemoveOnDeath() return true end
 function modifier_imba_roshan_upgrade:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE} end
 function modifier_imba_roshan_upgrade:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * 50) end
 function modifier_imba_roshan_upgrade:GetModifierPreAttack_BonusDamage() return (self:GetStackCount() * 80) end
@@ -102,7 +103,7 @@ function modifier_imba_roshan_upgrade:OnCreated()
 end
 
 function modifier_imba_roshan_upgrade:OnIntervalThink()
-	if not self:GetParent():IsAlive() then
+	if self:IsNull() or self:GetParent():IsNull() or not self:GetParent():IsAlive() then
 		self:Destroy()
 		return
 	end

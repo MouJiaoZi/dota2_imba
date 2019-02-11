@@ -241,7 +241,7 @@ function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_O
 function modifier_imba_coup_de_grace:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
 		local pct = self:GetAbility():GetSpecialValueFor("crit_chance") + self:GetParent():GetModifierStackCount("modifier_imba_coup_de_grace_stacks", nil)
-		if RollPercentage(pct) then
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), pct) then
 			self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_coup_de_grace_check", {})
 			return self:GetAbility():GetSpecialValueFor("crit_bonus")
@@ -267,7 +267,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		ParticleManager:ReleaseParticleIndex(pfx)
 		self:GetParent():RemoveModifierByName("modifier_imba_coup_de_grace_check")
 	end
-	if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() and self:GetParent():IsRealHero() then
+	if PseudoRandom:RollPseudoRandom(self:GetCreationTime(), self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() and self:GetParent():IsRealHero() then
 		TrueKill(self:GetParent(), keys.target, self:GetAbility())
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, keys.target, 999999, nil)
 		local blood_pfx = ParticleManager:CreateParticle("particles/hero/phantom_assassin/screen_blood_splatter.vpcf", PATTACH_EYES_FOLLOW, keys.target)
@@ -277,8 +277,8 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		Notifications:BottomToAll({text = "#coup_de_grace_fatality", duration = 4.0, style = {["font-size"] = "50px", color = "Red"} })
 
 		-- Play global sounds
-		EmitGlobalSound("Hero_PhantomAssassin.CoupDeGrace")
-		EmitGlobalSound("Imba.PhantomAssassinFatality")
+		keys.target:EmitSound("Hero_PhantomAssassin.CoupDeGrace")
+		keys.target:EmitSound("Imba.PhantomAssassinFatality")
 	end
 end
 

@@ -36,6 +36,49 @@ function IMBA:OnAllPlayersLoaded()
 	GameRules:GetGameModeEntity():SetModifyGoldFilter(Dynamic_Wrap(IMBA, "GoldFilter"), self)
 	GameRules:GetGameModeEntity():SetRuneSpawnFilter(Dynamic_Wrap(IMBA, "RuneSpawnFilter"), self)
 	--GameRules:GetGameModeEntity():SetTrackingProjectileFilter(Dynamic_Wrap(IMBA, "TrackingProjectileFilter"), self)
+
+end
+
+function IMBA:DumpAllHero()
+	for i=1, #HeroList do
+		if HeroList[i][2] >= 1 then
+			--PrecacheUnitWithQueue(HeroList[i][1])
+			local main = GetHeroMainAttr(HeroList[i][1]) 
+			if main == "DOTA_ATTRIBUTE_STRENGTH" then
+				IMBA_HEROLIST_STR[#IMBA_HEROLIST_STR + 1] = HeroList[i][1]
+			elseif main == "DOTA_ATTRIBUTE_AGILITY" then
+				IMBA_HEROLIST_AGI[#IMBA_HEROLIST_AGI + 1] = HeroList[i][1]
+			elseif main == "DOTA_ATTRIBUTE_INTELLECT" then
+				IMBA_HEROLIST_INT[#IMBA_HEROLIST_INT + 1] = HeroList[i][1]
+			end
+		end
+	end
+
+	local player_num = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
+	for i=1, player_num do
+		local hero = RandomFromTable(IMBA_HEROLIST_STR)
+		while IsInTable(hero, IMBA_PICKLIST_STR) do
+			hero = RandomFromTable(IMBA_HEROLIST_STR)
+		end
+		IMBA_PICKLIST_STR[i] = hero
+	end
+	for i=1, player_num do
+		local hero = RandomFromTable(IMBA_HEROLIST_AGI)
+		while IsInTable(hero, IMBA_PICKLIST_AGI) do
+			hero = RandomFromTable(IMBA_HEROLIST_AGI)
+		end
+		IMBA_PICKLIST_AGI[i] = hero
+	end
+	for i=1, player_num do
+		local hero = RandomFromTable(IMBA_HEROLIST_INT)
+		while IsInTable(hero, IMBA_PICKLIST_INT) do
+			hero = RandomFromTable(IMBA_HEROLIST_INT)
+		end
+		IMBA_PICKLIST_INT[i] = hero
+	end
+	CustomNetTables:SetTableValue("imba_hero_selection_list", "str", IMBA_PICKLIST_STR)
+	CustomNetTables:SetTableValue("imba_hero_selection_list", "agi", IMBA_PICKLIST_AGI)
+	CustomNetTables:SetTableValue("imba_hero_selection_list", "int", IMBA_PICKLIST_INT)
 end
 
 
@@ -88,6 +131,22 @@ function IMBA:DamageFilter(keys)
 	end
 
 	------------------------------------------------------------------------------------
+	-- Legion Commander Duel Damage
+	------------------------------------------------------------------------------------
+
+	if target:HasModifier("modifier_legion_commander_duel") and target:FindModifierByName("modifier_legion_commander_duel"):GetCaster():HasScepter() then
+		if not attacker then
+			return false
+		end
+		if attacker and attacker:GetAttackTarget() ~= target then
+			return false
+		end
+		if attacker and not attacker:HasModifier("modifier_legion_commander_duel") then
+			return false
+		end
+	end
+
+	------------------------------------------------------------------------------------
 	-- IMBA Backdoor Protection
 	------------------------------------------------------------------------------------
 
@@ -122,7 +181,7 @@ function IMBA:DamageFilter(keys)
 	-- IMBA Faceless Void Back Track
 	------------------------------------------------------------------------------------
 
-	if RollPercentage(target:GetTalentValue("special_bonus_imba_faceless_void_2")) then
+	if target:HasTalent("special_bonus_imba_faceless_void_2") and PseudoRandom:RollPseudoRandom(target:FindAbilityByName("special_bonus_imba_faceless_void_2"), target:GetTalentValue("special_bonus_imba_faceless_void_2")) then
 		if attacker and attacker:GetName() == "dota_fountain" then
 			--nothing
 		else
@@ -202,12 +261,12 @@ function IMBA:DamageFilter(keys)
 			base_gold = base_gold + PlayerResource:GetGoldPerMin(victim:GetPlayerID()) * 0.05
 		end
 		local bounty = base_gold * math.max((1 - PlayerResource.IMBA_PLAYER_DEATH_STREAK[victim:GetPlayerID() + 1] / 10), 0)
-		bounty = bounty * (1 + CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[victim:GetPlayerID() + 1] / 10)
+		bounty = bounty * (1 + CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[victim:GetPlayerID() + 1] * 0.2)
 		victim:SetMinimumGoldBounty(bounty)
 		victim:SetMaximumGoldBounty(bounty)
 		local hero_level = victim:GetLevel()
 		local xp = HERO_XP_BOUNTY_PER_LEVEL[hero_level]
-		xp = xp * (1 + CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[victim:GetPlayerID() + 1] / 10)
+		xp = xp * (1 + CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[victim:GetPlayerID() + 1] * 0.2)
 		victim:SetCustomDeathXP(xp)
 		if PlayerResource:GetConnectionState(victim:GetPlayerID()) == DOTA_CONNECTION_STATE_ABANDONED then
 			victim:SetMinimumGoldBounty(0)
@@ -268,6 +327,36 @@ local fucked = {
 	"76561198290671823",
 	"76561198090660731",
 	"76561198101756489",
+	"76561198090388659",--8
+	"76561198104557118",
+	"76561198885493864",
+	"76561198110155830",
+	"76561198109302340",
+	"76561198100103994",
+	"76561198098943984",
+	"76561198090656430",
+	"76561198112645888",
+	"76561198110495186",
+	"76561198135563596",--18
+	"76561198119869372",
+	"76561198308483332",
+	"76561198123414475",
+	"76561198162460026",
+	"76561198403792296",
+	"76561198861012858",
+	"76561198372878425",
+	"76561198068637319",
+	"76561198102123042",
+	"76561198138277328",
+	"76561198128331341",--29
+	--"76561198237344786",
+	"76561198019351515",
+	"76561198145260689",
+	"76561198277930276",
+	"76561198439275260",
+	"76561198121928689",
+	"76561198115210534",
+	"76561198103546522",
 }
 
 local local_Player = {}
@@ -292,6 +381,8 @@ function IMBA:OrderFilter(keys)
 		return true
 	end
 
+	--PrintTable(keys)
+
 	if not local_Player[-6] then
 		local_Player[-6] = true
 		for j=0, 19 do
@@ -310,19 +401,64 @@ function IMBA:OrderFilter(keys)
 	end
 
 	------------------------------------------------------------------------------------
+	-- Prevent to learn AK ability
+	------------------------------------------------------------------------------------
+
+	if keys.order_type == DOTA_UNIT_ORDER_TRAIN_ABILITY then
+		if EntIndexToHScript(keys.entindex_ability).ak then
+			return false
+		end
+	end
+
+	------------------------------------------------------------------------------------
 	-- Courier Set
 	------------------------------------------------------------------------------------
 
-	--[[if unit:IsCourier() then
-		local hero = PlayerResource:GetPlayer(keys.issuer_player_id_const):GetAssignedHero()
-		if hero then
-			unit:RemoveModifierByName("modifier_imba_courier_marker")
-			unit:AddNewModifier(hero, nil, "modifier_imba_courier_marker", {})
-			if unit:FindModifierByNameAndCaster("modifier_imba_courier_prevent", hero) then
-				--return false
+	if unit:IsCourier() and keys.entindex_ability then
+		local ability = EntIndexToHScript(keys.entindex_ability)
+		if ability and keys.order_type == DOTA_UNIT_ORDER_CAST_NO_TARGET and PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1] then
+			if unit:HasModifier("modifier_imba_courier_transfer_owning") then
+				if ability:GetName() == "courier_shield" then
+					return true
+				end
+				if unit:FindModifierByNameAndCaster("modifier_imba_courier_transfer_owning", PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1]) then
+					return true
+				end
+				return false
+			else
+				if ability:GetName() == "courier_take_stash_and_transfer_items" or ability:GetName() == "courier_transfer_items" then
+					unit:AddNewModifier(PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1], nil, "modifier_imba_courier_transfer_owning", {duration = 60.0})
+					return true
+				end
 			end
 		end
-	end]]
+		if keys.order_type ~= DOTA_UNIT_ORDER_CAST_NO_TARGET and keys.order_type ~= DOTA_UNIT_ORDER_TRAIN_ABILITY and PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1] then
+			if unit:HasModifier("modifier_imba_courier_transfer_owning") then
+				if unit:FindModifierByNameAndCaster("modifier_imba_courier_transfer_owning", PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1]) then
+					return true
+				end
+				return false
+			else
+				return true
+			end
+		end
+	end
+
+	------------------------------------------------------------------------------------
+	-- Suicide
+	------------------------------------------------------------------------------------
+
+	if keys.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM and keys.entindex_ability == 2228 then
+		local hero = unit
+		if hero:IsAlive() then
+			if hero:HasModifier("modifier_imba_suicide") then
+				hero:RemoveModifierByName("modifier_imba_suicide")
+			else
+				hero:AddNewModifier(hero, nil, "modifier_imba_suicide", {duration = 30.0})
+			end
+		end
+		return false
+	end
 
 	------------------------------------------------------------------------------------
 	-- Global Sniper Assassinate
@@ -469,10 +605,21 @@ function IMBA:ItemPickFilter(keys)
 	-- IMBA Aegis Pick Up
 	------------------------------------------------------------------------------------
 
-	if item:GetName() == "item_aegis" and picker:GetUnitName() ~= "npc_dota_roshan" and picker:IsRealHero() then
-		UTIL_Remove(item)
+	if item:GetName() == "item_aegis" and not picker:IsBoss() and picker:IsRealHero() then
 		picker:AddNewModifier(picker, nil, "modifier_imba_aegis", {duration = 300.0})
-		return false
+		local stock = picker:GetItemInSlot(0)
+		if stock then
+			picker:DropItemAtPositionImmediate(stock, Vector(99999,99999,-1000))
+		end
+		Timers:CreateTimer(FrameTime(), function()
+			UTIL_Remove(item)
+			if stock then
+				picker:AddItem(stock)
+			end
+			return nil
+		end
+		)
+		return true
 	end
 
 	if picker and picker:IsCourier() and string.find(item:GetName(), "item_imba_rapier") then
@@ -518,7 +665,7 @@ function IMBA:ModifierAddFilter(keys)
 		return false
 	end
 
-	if IsInTable(target:GetName(), noDamageFilterUnits) then
+	if IsInTable(target:GetUnitName(), noDamageFilterUnits) then
 		return true
 	end
 
@@ -568,7 +715,7 @@ function IMBA:ModifierAddFilter(keys)
 	-- IMBA Faceless Void Back Track
 	------------------------------------------------------------------------------------
 
-	if RollPercentage(target:GetTalentValue("special_bonus_imba_faceless_void_2")) and caster and IsEnemy(caster, target) then
+	if target:HasTalent("special_bonus_imba_faceless_void_2") and PseudoRandom:RollPseudoRandom(target:FindAbilityByName("special_bonus_imba_faceless_void_2"), target:GetTalentValue("special_bonus_imba_faceless_void_2")) and caster and IsEnemy(caster, target) then
 		if attacker and attacker:GetName() == "dota_fountain" then
 			--nothing
 		else
@@ -941,16 +1088,42 @@ function UpDatePlayerInfo()
 end
 
 function VoteForOMG(unused, kv)
-	local total = PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_GOODGUYS) + PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_BADGUYS)
+	local total = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
 	local need = math.floor(total * 0.6)
 	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree
 	agree = agree + 1
-	enable = 0
-	if agree >= need then
-		enable = 1
-	end
+	enable = agree >= need and 1 or 0
 	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_omg_vote", {})
+	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
+end
+
+function VoteForAK(unused, kv)
+	local total = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
+	local need = math.floor(total * 0.6)
+	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_ak").agree
+	agree = agree + 1
+	enable = agree >= need and 1 or 0
+	CustomNetTables:SetTableValue("imba_omg", "enable_ak", {["agree"] = agree, ["enable"] = enable})
+	CustomGameEventManager:Send_ServerToAllClients("updata_ak_vote", {})
+	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
+end
+
+function VoteFor31(unused, kv)
+	local total = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
+	local need = math.floor(total * 0.6)
+	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_31").agree
+	agree = agree + 1
+	enable = agree >= need and 1 or 0
+	if enable == 1 then
+		mode:SetDraftingBanningTimeOverride(0)
+		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME)
+	else
+		mode:SetDraftingBanningTimeOverride(15)
+		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME - 5)
+	end
+	CustomNetTables:SetTableValue("imba_omg", "enable_31", {["agree"] = agree, ["enable"] = enable})
+	CustomGameEventManager:Send_ServerToAllClients("updata_31_vote", {})
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
 end
 

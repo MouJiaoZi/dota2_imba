@@ -81,11 +81,7 @@ function imba_abaddon_aphotic_shield:IsNetherWardStealable()	return true end
 function imba_abaddon_aphotic_shield:GetCooldown(i) return self:GetSpecialValueFor("charge_cooldown") end
 
 function imba_abaddon_aphotic_shield:OnUpgrade()
-	if not AbilityChargeController:IsChargeTypeAbility(self) then
-		AbilityChargeController:AbilityChargeInitialize(self, self:GetSpecialValueFor("charge_cooldown"), self:GetSpecialValueFor("max_charges"), 1, true, true)
-	else
-		AbilityChargeController:ChangeChargeAbilityConfig(self, self:GetSpecialValueFor("charge_cooldown"), self:GetSpecialValueFor("max_charges"), 1, true, true)
-	end
+	AbilityChargeController:AbilityChargeInitialize(self, self:GetSpecialValueFor("charge_cooldown"), self:GetSpecialValueFor("max_charges"), 1, true, true)
 end
 
 function imba_abaddon_aphotic_shield:OnSpellStart()
@@ -371,7 +367,6 @@ function modifier_borrowed_time:GetModifierIncomingDamage_Percentage(keys)
 			ParticleManager:ReleaseParticleIndex(pfx)
 			self:GetCaster():Heal(math.max(0, dmg), self:GetCaster())
 		else
-			local i = 0
 			local allies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),
 											self:GetCaster():GetAbsOrigin(),
 											nil,
@@ -381,16 +376,14 @@ function modifier_borrowed_time:GetModifierIncomingDamage_Percentage(keys)
 											DOTA_UNIT_TARGET_FLAG_NONE,
 											FIND_ANY_ORDER,
 											false)
-			for _, ally in pairs(allies) do
-				i = i + 1
-			end
-			local heal_num = math.max(0, dmg) / i
+			local heal_num = math.max(0, dmg) / #allies
+			local caster = self:GetCaster()
 			for _, ally in pairs(allies) do
 				local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_abaddon/abaddon_borrowed_time_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, ally)
 				ParticleManager:SetParticleControl(pfx, 0, ally:GetAbsOrigin())
 				ParticleManager:SetParticleControl(pfx, 1, ally:GetAbsOrigin())
 				ParticleManager:ReleaseParticleIndex(pfx)
-				ally:Heal(heal_num, self:GetCaster())
+				ally:Heal(heal_num, caster)
 			end
 		end
 		return -10000
@@ -418,7 +411,15 @@ function modifier_borrowed_time_allies:OnTakeDamage(keys)
 	end
 	if IsServer() then
 		local dmg_to_abadon = keys.damage * (self:GetAbility():GetSpecialValueFor("redirect") / 100)
-		self:GetParent():SetHealth(self:GetParent():GetHealth() + dmg_to_abadon)
+		local parent = self:GetParent()
+		local caster = self:GetCaster()
+		Timers:CreateTimer(FrameTime(), function()
+				if parent:IsAlive() then
+					parent:SetHealth(parent:GetHealth() + dmg_to_abadon)
+				end
+				return nil
+			end
+		)
 		local damageTable = {
 							victim = self:GetCaster(),
 							attacker = self:GetParent(),

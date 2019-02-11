@@ -316,7 +316,7 @@ function modifier_imba_blade_dance_passive:DeclareFunctions() return {MODIFIER_E
 
 function modifier_imba_blade_dance_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
-		if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance")) then
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("crit_chance")) then
 			self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_check", {})
 			return self:GetAbility():GetSpecialValueFor("crit_damage")
@@ -397,7 +397,7 @@ function modifier_imba_omni_slash_caster:IsPurgable() 			return false end
 function modifier_imba_omni_slash_caster:IsPurgeException() 	return false end
 function modifier_imba_omni_slash_caster:GetStatusEffectName()  return "particles/status_fx/status_effect_omnislash.vpcf" end
 function modifier_imba_omni_slash_caster:StatusEffectPriority() return 16 end
-function modifier_imba_omni_slash_caster:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
+function modifier_imba_omni_slash_caster:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_TETHERED] = true} end
 function modifier_imba_omni_slash_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_EVENT_ON_ATTACK_LANDED} end
 function modifier_imba_omni_slash_caster:GetModifierBaseAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_omni_slash_caster:GetModifierMoveSpeed_Absolute() return 1 end

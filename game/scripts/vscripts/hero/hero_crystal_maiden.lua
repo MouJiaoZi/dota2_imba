@@ -226,14 +226,14 @@ function modifier_imba_frostbite_passive:OnTakeDamage(keys)
 	if keys.unit ~= self:GetParent() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_frostbite_passive_cooldown") or self:GetParent():IsIllusion() or keys.attacker:IsMagicImmune() or keys.attacker:IsBuilding() or keys.attacker:IsOther() then
+	if self:GetParent():HasModifier("modifier_imba_frostbite_passive_cooldown") or self:GetParent():IsIllusion() or keys.attacker:IsMagicImmune() or keys.attacker:IsBuilding() or keys.attacker:IsOther() or self:GetParent():PassivesDisabled() then
 		return
 	end
 	if keys.attacker:IsHero() then
 		keys.attacker:Interrupt()
 		keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_frostbite_root", {duration = self:GetAbility():GetSpecialValueFor("duration")})
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_frostbite_passive_cooldown", {duration = self:GetAbility():GetSpecialValueFor("hero_cooldown")})
-	elseif RollPercentage(self:GetAbility():GetSpecialValueFor("creep_chance")) then
+	elseif PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("creep_chance")) then
 		keys.attacker:Interrupt()
 		if not keys.attacker:IsAncient() then
 			keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_frostbite_root", {duration = self:GetAbility():GetSpecialValueFor("creep_duration")})

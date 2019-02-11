@@ -10,7 +10,7 @@ function modifier_imba_diffusal_slow:IsHidden() 		return true end
 function modifier_imba_diffusal_slow:IsPurgable() 		return true end
 function modifier_imba_diffusal_slow:IsPurgeException() return true end
 function modifier_imba_diffusal_slow:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
-function modifier_imba_diffusal_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - 100 * self:GetRemainingTime() / self:GetDuration()) end
+function modifier_imba_diffusal_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - 200 * self:GetRemainingTime() / self:GetDuration()) end
 function modifier_imba_diffusal_slow:GetEffectName() return "particles/items_fx/diffusal_slow.vpcf" end
 function modifier_imba_diffusal_slow:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 
@@ -177,7 +177,7 @@ function modifier_imba_diffusal_2_unique:OnAttackLanded(keys)
 	local mana_burn = (keys.target:GetMana() >= mana_burn) and mana_burn or keys.target:GetMana()
 	keys.target:SetMana(keys.target:GetMana() - mana_burn)
 	ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage_type = DAMAGE_TYPE_PHYSICAL, damage = mana_burn})
-	if RollPercentage(self:GetAbility():GetSpecialValueFor("proc_chance")) and not self:GetParent():IsIllusion() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) and not self:GetParent():IsIllusion() then
 		self:GetParent():SetCursorCastTarget(keys.target)
 		self.ability:OnSpellStart()
 	end
@@ -260,7 +260,7 @@ function modifier_imba_diffusal_3_unique:OnAttackLanded(keys)
 	local mana_burn = (keys.target:GetMana() >= mana_burn) and mana_burn or keys.target:GetMana()
 	keys.target:SetMana(keys.target:GetMana() - mana_burn)
 	ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage_type = DAMAGE_TYPE_PHYSICAL, damage = mana_burn})
-	if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) and not self:GetParent():IsIllusion() then
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) and not self:GetParent():IsIllusion() then
 		self:GetParent():SetCursorCastTarget(keys.target)
 		self.ability:OnSpellStart()
 	end

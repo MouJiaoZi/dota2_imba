@@ -75,31 +75,23 @@ function modifier_imba_bloodthorn_passive:IsHidden() 			return true end
 function modifier_imba_bloodthorn_passive:IsPurgable() 			return false end
 function modifier_imba_bloodthorn_passive:IsPurgeException() 	return false end
 function modifier_imba_bloodthorn_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_bloodthorn_passive:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_MANA_REGEN_CONSTANT, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_EVENT_ON_ATTACK_START} end
+function modifier_imba_bloodthorn_passive:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_MANA_REGEN_CONSTANT, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
 function modifier_imba_bloodthorn_passive:GetModifierBonusStats_Intellect() return self:GetAbility():GetSpecialValueFor("bonus_intellect") end
 function modifier_imba_bloodthorn_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_attack_speed") end
 function modifier_imba_bloodthorn_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_bloodthorn_passive:GetModifierConstantManaRegen() return self:GetAbility():GetSpecialValueFor("bonus_mana_regen") end
 function modifier_imba_bloodthorn_passive:GetModifierSpellAmplify_Percentage() return self:GetAbility():GetSpecialValueFor("spell_power") end
-function modifier_imba_bloodthorn_passive:GetIMBAPhysicalCirtChance() return self.cirt end
-function modifier_imba_bloodthorn_passive:GetIMBAPhysicalCirtBonus() return self:GetAbility():GetSpecialValueFor("crit_damage") end
 
-function modifier_imba_bloodthorn_passive:OnAttackStart(keys)
-	if not IsServer() then
-		return
-	end
-	if keys.attacker == self:GetParent() and not self:GetParent():IsRangedAttacker() then
-		if RollPercentage(self:GetAbility():GetSpecialValueFor("crit_chance")) then
-			self.cirt = 100
-			self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
+function modifier_imba_bloodthorn_passive:GetModifierPreAttack_CriticalStrike(keys)
+	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() then
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("crit_chance")) then
+			return self:GetAbility():GetSpecialValueFor("crit_damage")
 		else
-			self.cirt = 0
+			return 0
 		end
 	end
-	if keys.attacker == self:GetParent() and self:GetParent():IsRangedAttacker() then
-		self.cirt = self:GetAbility():GetSpecialValueFor("crit_chance")
-	end
 end
+
 
 modifier_item_imba_bloodthorn_debuff = class({})
 

@@ -89,7 +89,7 @@ function modifier_imba_starfury_unique:OnAttackLanded(keys)
 				self.ability:ProcProjectile(enemy, keys.target)
 			end
 		end
-		if RollPercentage(self.ability:GetSpecialValueFor("proc_chance")) then
+		if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
 			self:GetParent():AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_starfury_buff_dummy", {duration = self.ability:GetSpecialValueFor("proc_duration")})
 		end
 	end

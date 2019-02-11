@@ -70,7 +70,7 @@ function modifier_imba_skadi_passive:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.unit:IsBuilding() or keys.unit:IsOther() then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or keys.unit:IsBuilding() or keys.unit:IsOther() or not IsEnemy(keys.unit, self:GetParent()) then
 		return
 	end
 	local duration = self:GetAbility():GetSpecialValueFor("max_duration") - self:GetAbility():GetSpecialValueFor("min_duration")

@@ -91,6 +91,7 @@ end
 ]]
 function GameMode:OnFirstPlayerLoaded()
 	DebugPrint("[BAREBONES] First Player has loaded")
+	IMBA:DumpAllHero()
 end
 
 --[[
@@ -155,13 +156,16 @@ function GameMode:InitGameMode()
 
 	local heroes = LoadKeyValues("scripts/npc/herolist.txt")
 	
-	HeroList = {}
 	for k, v in pairs(heroes) do
 		HeroList[#HeroList + 1] = {k, v}
 	end
 
 	--HeroList[n][1] hero name
 	--HeroList[n][2] hero enable
+
+	Random_Abilities_Normal = LoadKeyValues("scripts/npc/kv/random_abilities.kv")
+	Rnadom_Abilities_Ultimate = LoadKeyValues("scripts/npc/kv/random_abilities_ult.kv")
+
 	--IMBA:StartGameAPI()
 	
 end
@@ -169,7 +173,7 @@ end
 -- This is an example console command
 function GameMode:ExampleConsoleCommand()
 	print( '******* Example Console Command ***************' )
-	local cmdPlayer = Convars:GetCommandClient()
+	--[[local cmdPlayer = Convars:GetCommandClient()
 	if cmdPlayer then
 		local playerID = cmdPlayer:GetPlayerID()
 		if playerID ~= nil and playerID ~= -1 then
@@ -178,5 +182,5 @@ function GameMode:ExampleConsoleCommand()
 		end
 	end
 
-	print( '*********************************************' )
+	print( '*********************************************' )]]
 end

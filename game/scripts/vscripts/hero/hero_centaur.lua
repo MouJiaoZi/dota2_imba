@@ -233,7 +233,7 @@ function modifier_imba_centaur_return:OnTakeDamage(keys)
 						attacker = self:GetCaster(),
 						damage = dmg,
 						damage_type = self:GetAbility():GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_REFLECTION, --Optional.
 						ability = self:GetAbility(), --Optional.
 						}
 	ApplyDamage(damageTable)

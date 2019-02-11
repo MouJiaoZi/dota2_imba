@@ -190,7 +190,7 @@ function modifier_imba_overload_passive:OnAttackLanded(keys)
 	end
 	local caster = self:GetParent()
 	local ability = self:GetAbility()
-	if caster:HasModifier("modifier_imba_overload_effect") or RollPercentage(ability:GetSpecialValueFor("passive_chance")) then
+	if caster:HasModifier("modifier_imba_overload_effect") or PseudoRandom:RollPseudoRandom(self:GetAbility(), ability:GetSpecialValueFor("passive_chance")) then
 		local stacks = caster:GetModifierStackCount("modifier_imba_overload_effect", nil)
 		if stacks == 0 then
 			stacks = 1

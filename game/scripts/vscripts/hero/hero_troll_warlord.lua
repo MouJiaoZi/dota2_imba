@@ -225,7 +225,7 @@ function modifier_imba_berserkers_rage_passive:DeclareFunctions() return {MODIFI
 
 function modifier_imba_berserkers_rage_passive:OnAttackLanded(keys)
 	if IsServer() and self:GetParent() == keys.attacker and self:GetParent().splitattack and keys.target:IsAlive() then
-		if RollPercentage(self:GetAbility():GetSpecialValueFor("bash_chance")) and (keys.target:IsHero() or keys.target:IsCreep()) and self:GetParent():IsRealHero() then
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("bash_chance")) and (keys.target:IsHero() or keys.target:IsCreep()) and self:GetParent():IsRealHero() then
 			keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("bash_duration")})
 			keys.target:EmitSound("Hero_TrollWarlord.BerserkersRage.Stun")
 			ApplyDamage({victim = keys.target, attacker = keys.attacker, damage = self:GetAbility():GetSpecialValueFor("bash_damage"), damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})

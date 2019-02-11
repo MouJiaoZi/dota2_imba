@@ -12,7 +12,7 @@ function modifier_imba_berserkers_blood_passive:IsDebuff()			return false end
 function modifier_imba_berserkers_blood_passive:IsHidden() 			return true end
 function modifier_imba_berserkers_blood_passive:IsPurgable() 		return false end
 function modifier_imba_berserkers_blood_passive:IsPurgeException() 	return false end
-function modifier_imba_berserkers_blood_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
+function modifier_imba_berserkers_blood_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS, MODIFIER_EVENT_ON_TAKEDAMAGE} end
 function modifier_imba_berserkers_blood_passive:GetModifierAttackSpeedBonus_Constant() return (self:GetParent():PassivesDisabled() and 0 or (self:GetAbility():GetSpecialValueFor("maximum_attack_speed") * (self:GetStackCount() / 100))) end
 function modifier_imba_berserkers_blood_passive:GetModifierMagicalResistanceBonus() return (self:GetParent():PassivesDisabled() and 0 or (self:GetAbility():GetSpecialValueFor("maximum_resistance") * (self:GetStackCount() / 100))) end
 function modifier_imba_berserkers_blood_passive:GetModifierHPRegenAmplify_Percentage() return ((self:GetParent():PassivesDisabled() or self:GetParent():IsBoss()) and 0 or (self:GetAbility():GetSpecialValueFor("maximum_health_regen") * (self:GetStackCount() / 100))) end
@@ -42,5 +42,14 @@ function modifier_imba_berserkers_blood_passive:OnDestroy()
 		ParticleManager:DestroyParticle(self.pfx, true)
 		ParticleManager:ReleaseParticleIndex(self.pfx)
 		self.pfx = nil
+	end
+end
+
+function modifier_imba_berserkers_blood_passive:OnTakeDamage(keys)
+	if not IsServer() then
+		return
+	end
+	if self:GetParent():IsBoss() and keys.unit == self:GetParent() then
+		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_gem_of_true_sight", {duration = 5.0})
 	end
 end

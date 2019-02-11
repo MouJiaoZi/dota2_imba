@@ -8,28 +8,56 @@ function imba_dazzle_poison_touch:IsHiddenWhenStolen() 		return false end
 function imba_dazzle_poison_touch:IsRefreshable() 			return true  end
 function imba_dazzle_poison_touch:IsStealable() 			return true  end
 function imba_dazzle_poison_touch:IsNetherWardStealable()	return true end
+function imba_dazzle_poison_touch:GetAOERadius() return (self:GetCaster():HasTalent("special_bonus_imba_dazzle_2") and self:GetCaster():GetTalentValue("special_bonus_imba_dazzle_2") or 0) end
+function imba_dazzle_poison_touch:GetBehavior() return (self:GetCaster():HasTalent("special_bonus_imba_dazzle_2") and DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_AOE or DOTA_ABILITY_BEHAVIOR_UNIT_TARGET) end
 
 function imba_dazzle_poison_touch:OnSpellStart()
 	local caster = self:GetCaster()
-	local target = self:GetCursorTarget()
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Dazzle.Poison_Cast", caster)
-	local info = 
-	{
-		Target = target,
-		Source = caster,
-		Ability = self,	
-		EffectName = "particles/units/heroes/hero_dazzle/dazzle_poison_touch.vpcf",
-		iMoveSpeed = self:GetSpecialValueFor("projectile_speed"),
-		vSourceLoc= caster:GetAbsOrigin(),
-		bDrawsOnMinimap = false,
-		bDodgeable = true,
-		bIsAttack = false,
-		bVisibleToEnemies = true,
-		bReplaceExisting = false,
-		flExpireTime = GameRules:GetGameTime() + 10,
-		bProvidesVision = false,	
-	}
-	ProjectileManager:CreateTrackingProjectile(info)
+	if not caster:HasTalent("special_bonus_imba_dazzle_2") then
+		caster:EmitSound("Hero_Dazzle.Poison_Cast")
+		local target = self:GetCursorTarget()
+		local info = 
+		{
+			Target = target,
+			Source = caster,
+			Ability = self,	
+			EffectName = "particles/units/heroes/hero_dazzle/dazzle_poison_touch.vpcf",
+			iMoveSpeed = self:GetSpecialValueFor("projectile_speed"),
+			vSourceLoc= caster:GetAbsOrigin(),
+			bDrawsOnMinimap = false,
+			bDodgeable = true,
+			bIsAttack = false,
+			bVisibleToEnemies = true,
+			bReplaceExisting = false,
+			flExpireTime = GameRules:GetGameTime() + 10,
+			bProvidesVision = false,	
+		}
+		ProjectileManager:CreateTrackingProjectile(info)
+	else
+		local enemy = FindUnitsInRadius(caster:GetTeamNumber(), self:GetCursorPosition(), nil, caster:GetTalentValue("special_bonus_imba_dazzle_2"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+		if #enemy > 0 then
+			caster:EmitSound("Hero_Dazzle.Poison_Cast")
+		end
+		for i=1, #enemy do
+			local info = 
+			{
+				Target = enemy[i],
+				Source = caster,
+				Ability = self,	
+				EffectName = "particles/units/heroes/hero_dazzle/dazzle_poison_touch.vpcf",
+				iMoveSpeed = self:GetSpecialValueFor("projectile_speed"),
+				vSourceLoc= caster:GetAbsOrigin(),
+				bDrawsOnMinimap = false,
+				bDodgeable = true,
+				bIsAttack = false,
+				bVisibleToEnemies = true,
+				bReplaceExisting = false,
+				flExpireTime = GameRules:GetGameTime() + 10,
+				bProvidesVision = false,	
+			}
+			ProjectileManager:CreateTrackingProjectile(info)
+		end
+	end
 end
 
 function imba_dazzle_poison_touch:OnProjectileHit(target, pos)
@@ -41,7 +69,7 @@ function imba_dazzle_poison_touch:OnProjectileHit(target, pos)
 		return
 	end
 	target:AddNewModifier(caster, self, "modifier_imba_poison_touch_slow", {duration = self:GetSpecialValueFor("slow_duration")})
-	EmitSoundOnLocationWithCaster(target:GetAbsOrigin(), "Hero_Dazzle.Poison_Touch", target)
+	target:EmitSound("Hero_Dazzle.Poison_Touch")
 end
 
 modifier_imba_poison_touch_slow = class({})
@@ -319,7 +347,7 @@ function imba_dazzle_weave:GetAOERadius() return self:GetSpecialValueFor("radius
 function imba_dazzle_weave:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
-	local radius = self:GetSpecialValueFor("radius") + caster:GetTalentValue("special_bonus_imba_dazzle_2")
+	local radius = self:GetSpecialValueFor("radius")
 	local units = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, radius, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + ((caster:HasScepter() and DOTA_UNIT_TARGET_BUILDING or 0)), DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, unit in pairs(units) do
 		unit:AddNewModifier(caster, self, "modifier_imba_weave", {duration = self:GetSpecialValueFor("duration")})
@@ -329,7 +357,8 @@ function imba_dazzle_weave:OnSpellStart()
 	ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius")))
 	ParticleManager:ReleaseParticleIndex(pfx)
 	AddFOWViewer(caster:GetTeamNumber(), pos, self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("vision_duration"), false)
-	EmitSoundOnLocationWithCaster(pos, "Hero_Dazzle.Weave", caster)
+	local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 1.0}, pos, caster:GetTeamNumber(), false)
+	sound:EmitSound("Imba.Hero_Dazzle.Weave")
 end
 
 modifier_imba_weave = class({})

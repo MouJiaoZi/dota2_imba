@@ -8,7 +8,14 @@
 //-------------------
 // Dummy stuff
 //-------------------
-  
+  	"imba_dummy_ability"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_HIDDEN"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"			"rubick_empty1"
+		"MaxLevel"						"1"
+	}
+
 	"dummy_unit_state"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_HIDDEN"
@@ -3520,6 +3527,7 @@
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCooldown"				"100 85 70"	
+		"AbilityChannelTime"			"4.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -3919,7 +3927,7 @@
 			"05"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"quill_release_threshold"		"100 134 167 200"
+				"quill_release_threshold"		"100 150 200 250"
 			}
 			"06"
 			{
@@ -3935,6 +3943,115 @@
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
 	}
 
+	//=================================================================================================================
+	// Broodmother: Insatiable Hunger
+	//=================================================================================================================
+	"imba_broodmother_insatiable_hunger"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"broodmother_insatiable_hunger"
+		"MaxLevel" 						"3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"FightRecapLevel"				"2"
+		"ScriptFile"					"hero/hero_broodmother.lua"
+
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.0"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+
+		"AbilityCooldown"				"45.0"
+		"AbilityManaCost"				"100"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_damage"			"100 150 200"
+				"LinkedSpecialBonus"	"special_bonus_imba_broodmother_1"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"lifesteal_pct"			"100 150 200"
+				"LinkedSpecialBonus"	"special_bonus_imba_broodmother_1"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"14.0"
+				"LinkedSpecialBonus"	"special_bonus_imba_broodmother_2"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"1200"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"creeep_pct"			"15"
+			}
+		}
+	}
+	
+	"special_bonus_imba_broodmother_1" // + 60 Insatiable Hunger Life Steal / Damage
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_broodmother_insatiable_hunger"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"60"
+			}
+		}
+	}
+	
+	"special_bonus_imba_broodmother_2" // + 10 Insatiable Hunger Duration
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_broodmother_insatiable_hunger"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"value"						"10.0"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Centaur's Hoof Stomp
 	//=================================================================================================================
@@ -4264,7 +4381,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"max"						"333"
+				"max"						"555"
 			}
 			"02"
 			{
@@ -4970,7 +5087,7 @@
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"										"ability_lua"
-		"AbilityBehavior"								"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+		"AbilityBehavior"								"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_AOE"
 		"AbilityUnitTargetTeam"							"DOTA_UNIT_TARGET_TEAM_ENEMY"
 		"AbilityUnitTargetType"							"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"AbilityUnitDamageType"							"DAMAGE_TYPE_PHYSICAL"	
@@ -5077,6 +5194,31 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"value"						"1"
+			}
+		}
+	}
+	
+	"special_bonus_imba_dazzle_2" // AOE Poison Touch
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_dazzle_poison_touch"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"700"
 			}
 		}
 	}
@@ -5277,7 +5419,6 @@
 			{
 				"var_type"								"FIELD_INTEGER"
 				"radius"								"575 675 775"
-				"LinkedSpecialBonus"					"special_bonus_imba_dazzle_2"
 			}
 			"02"
 			{	
@@ -5317,31 +5458,6 @@
 		}
 	}
 
-	"special_bonus_imba_dazzle_2" // Global Weave
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"						"special_bonus_undefined"
-		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-
-		"LinkedAbility"
-		{
-			"01" 						"imba_dazzle_weave"
-		}
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"value"						"99225"
-			}
-		}
-	}
-	
 	//=================================================================================================================
 	// Doom Bringer: Doom
 	//=================================================================================================================
@@ -6254,6 +6370,7 @@
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_5"
+		"AbilityCastRange"				"1000"
 		
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -6480,7 +6597,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_damage"				"30 60 90 120"
+				"bonus_damage"				"20 40 60 80"
 				"CalculateSpellDamageTooltip"	"0"
 			}
 			"03"
@@ -6628,6 +6745,7 @@
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
 		"AbilitySound"					"Hero_EmberSpirit.FireRemnant.Cast"
+		"FightRecapLevel"				"2"
 		"ScriptFile"					"hero/hero_ember_spirit"
 
 		// Casting
@@ -6698,11 +6816,11 @@
 		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"ember_spirit_activate_fire_remnant"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES | DOTA_ABILITY_BEHAVIOR_SHOW_IN_GUIDES"
-		"AbilityType"					"DOTA_ABILITY_TYPE_BASIC"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
 		"MaxLevel"						"3"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
-		"FightRecapLevel"				"1"
+		"FightRecapLevel"				"2"
 		"ScriptFile"					"hero/hero_ember_spirit"
 		
 		// Casting
@@ -7612,7 +7730,7 @@
 
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1000"
+		"AbilityCastRange"				"50000"
 		"AbilityCastPoint"				"0.5 0.5 0.5 0.5"
 		"AbilityCooldown"				"37 37 37 37"
 		"AbilityManaCost"				"130 140 150 160"
@@ -7676,6 +7794,11 @@
 			{
 				"var_type"						"FIELD_INTEGER"
 				"hp_threshold_max"				"15"
+			}
+			"05"
+			{
+				"var_type"						"FIELD_INTEGER"
+				"radius"						"800"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -8565,7 +8688,7 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"agi_per_jump"			"35"
+				"agi_per_jump"			"20"
 			}
 			"06"
 			{
@@ -9194,7 +9317,7 @@
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_BASIC"
 		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO | DOTA_UNIT_TARGET_FLAG_NOT_ANCIENTS"
-		"AbilityTextureName"			"lich_dark_ritual"
+		"AbilityTextureName"			"lich_sinister_gaze"
 		"ScriptFile"					"hero/hero_lich.lua"
 		
 		// Casting
@@ -9394,6 +9517,31 @@
 			{
 				"var_type"					"FIELD_FLOAT"
 				"value"						"1.0"
+			}
+		}
+	}
+	
+	"special_bonus_imba_lich_3" // Chain Frost Sinister Gaze
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_lich_chain_frost"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"value"						"0.05"
 			}
 		}
 	}
@@ -12507,11 +12655,13 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"bonus_damage"			"250 400 550"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"damage_storage"		"300 500 700"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 		}
 	}
@@ -14035,6 +14185,11 @@
 				"var_type"					"FIELD_INTEGER"
 				"slow_tooltip"				"10"
 			}
+			"10"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"building_pct"				"50"
+			}
 		}
 	}
 
@@ -14048,9 +14203,9 @@
 		"BaseClass"						"ability_lua"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
-		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_OTHER"
 		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_CHECK_DISABLE_HELP"
-		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
 		"AbilityTextureName"			"pugna_decrepify"
@@ -14145,7 +14300,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"30.0"
+		"AbilityCooldown"				"60.0 50.0 40.0 30.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -14686,6 +14841,111 @@
 		}
 	}
 
+	//=================================================================================================================
+	// Riki: Tricks of the Trade
+	//=================================================================================================================
+	"imba_riki_tricks_of_the_trade"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"riki_tricks_of_the_trade"
+		"MaxLevel" 						"3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
+		"HasScepterUpgrade"				"1"
+		"AbilitySound"					"Hero_Riki.TricksOfTheTrade.Cast"
+		"ScriptFile"					"hero/hero_riki.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"1000"
+		"AbilityCastPoint"				"0.3"
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_4"
+		"AbilityChannelAnimation"		"ACT_DOTA_CHANNEL_ABILITY_4"
+
+		// Ability Data
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"50 45 40"
+		"AbilityManaCost"				"75"
+
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"range"						"600"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"attack_rate"				"0.6 0.55 0.5"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"6"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"bonus_scepter"				"6"
+			}
+		}
+	}
+	
+	//=================================================================================================================
+	// Riki: Tricks of the Trade
+	//=================================================================================================================
+	"imba_riki_tott_true"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"riki_tricks_of_the_trade"
+		"MaxLevel" 						"1"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT | DOTA_ABILITY_BEHAVIOR_CHANNELLED | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
+		"HasScepterUpgrade"				"0"
+		"AbilitySound"					"Hero_Riki.TricksOfTheTrade.Cast"
+		"ScriptFile"					"hero/hero_riki.lua"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"range"						"600"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"attack_rate"				"0.6 0.55 0.5"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"6"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"bonus_scepter"				"6"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Rubick's Telekinesis
 	//=================================================================================================================
@@ -15608,6 +15868,350 @@
 	}
 	
 	//=================================================================================================================
+	// Terrorblade: Reflection
+	//=================================================================================================================
+	"imba_terrorblade_reflection"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"terrorblade_reflection"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_Terrorblade.Reflection"
+		"ScriptFile"					"hero/hero_terrorblade.lua"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"22 20 18 16"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.3"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"50"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"illusion_duration"			"2.5 3.5 4.5 5.5"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"illusion_outgoing"			"40 60 80 100"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"move_slow"					"20"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"range"						"900"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t1_power"					"30"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t2_power"					"60"
+			}
+			"07"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t3_power"					"90"
+			}
+			"08"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"power_cost"				"20"
+			}
+			"09"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t1_slow_stack"				"5"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
+	}
+
+	"special_bonus_imba_terrorblade_1" // -8 Reflection cd
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_terrorblade_reflection"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"-8"
+			}
+		}
+	}
+	
+	//=================================================================================================================
+	// Terrorblade: Conjure Image
+	//=================================================================================================================
+	"imba_terrorblade_conjure_image"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"terrorblade_conjure_image"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilitySound"					"Hero_Terrorblade.ConjureImage"
+		"ScriptFile"					"hero/hero_terrorblade.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.15"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"10"
+	
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"80"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"							"FIELD_FLOAT"
+				"illusion_duration"					"34.0"
+			}
+			"02"
+			{
+				"var_type"							"FIELD_FLOAT"
+				"illusion_outgoing"					"40 50 60 70"
+			}
+			"03"
+			{
+				"var_type"							"FIELD_FLOAT"
+				"illusion_incoming"					"300.0"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t1_power"					"40"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t2_power"					"60"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t3_power"					"90"
+			}
+			"07"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"power_cost"				"30"
+			}
+			"08"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t1_duration_denominator"	"3"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
+	}
+
+	//=================================================================================================================
+	// Terrorblade: Metamorphosis
+	//=================================================================================================================
+	"imba_terrorblade_metamorphosis"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"terrorblade_metamorphosis"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"AbilitySound"					"Hero_Terrorblade.Metamorphosis"
+		"ScriptFile"					"hero/hero_terrorblade.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0.0"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"80"
+
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"transformation_time"	"0.35"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"base_attack_time"		"1.4"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_range"			"400"
+				"LinkedSpecialBonus"	"special_bonus_imba_terrorblade_2"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_damage"			"25 50 75 100"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"speed_loss"				"30"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"metamorph_aura_radius"		"1200"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"power_gain"			"20"
+			}
+			"08"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"t1_power"				"30"
+			}
+			"09"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"t2_power"				"60"
+			}
+			"09"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"t1_damage"				"50"
+			}
+			"10"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"t1_radius"				"200"
+			}
+			"11"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"t3_multi"				"4"
+			}
+			"12"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"power_cost"			"5"
+			}
+			"13"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"creep_power_gain"		"1"
+			}
+			"14"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"cast_power_need"		"10"
+				"LinkedSpecialBonus"	"special_bonus_imba_terrorblade_3"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+
+	"special_bonus_imba_terrorblade_2" // +300 Metamorphosis Attack Range
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_terrorblade_metamorphosis"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"300"
+			}
+		}
+	}
+	
+	"special_bonus_imba_terrorblade_3" // -10 Metamorphosis Power Require
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_terrorblade_metamorphosis"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"-10"
+			}
+		}
+	}
+	
+	//=================================================================================================================
 	// Terror Blade: Demonic Power
 	//=================================================================================================================
 	"imba_terrorblade_demonic_power"
@@ -15639,7 +16243,7 @@
 			"03"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"idle_time"						"2.5"
+				"idle_time"						"10.0"
 			}
 			"04"
 			{
@@ -15654,6 +16258,82 @@
 		}
 	}
 	
+	//=================================================================================================================
+	// Terrorblade: Sunder
+	//=================================================================================================================
+	"imba_terrorblade_sunder"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"terrorblade_sunder"
+		"MaxLevel" 						"3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"FightRecapLevel"				"2"
+		"AbilitySound"					"Hero_Terrorblade.Sunder.Target"
+		"ScriptFile"					"hero/hero_terrorblade.lua"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"120.0 80.0 40.0"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"475"
+		"AbilityCastPoint"				"0.35"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"100 50 0"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"hit_point_minimum"			"200 100 1"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t1_power"					"40"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t2_power"					"60"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t3_power"					"90"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"power_cost"				"30"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"t3_duration"				"3.5"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"t3_pct"					"50"
+			}
+		}
+	}
+
 	//=================================================================================================================
 	// Templar Assassin: Psionic Trap
 	//=================================================================================================================
@@ -17075,7 +17755,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"sven_warcry"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE | DOTA_ABILITY_BEHAVIOR_UNRESTRICTED"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
