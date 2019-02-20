@@ -41,7 +41,7 @@ var IMBAHeroes =
 ["npc_dota_hero_lina", 1],
 ["npc_dota_hero_lion", 1],
 ["npc_dota_hero_mirana", 1],
-["npc_dota_hero_morphling", 0],
+["npc_dota_hero_morphling", 2],
 ["npc_dota_hero_necrolyte", 2],
 ["npc_dota_hero_nevermore", 1],
 ["npc_dota_hero_night_stalker", 1],

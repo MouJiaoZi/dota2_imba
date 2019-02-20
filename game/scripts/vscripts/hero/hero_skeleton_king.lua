@@ -475,7 +475,7 @@ function modifier_imba_reincarnation_scepter_wraith:OnTakeDamage(keys)
 		return
 	end
 	if keys.unit == self:GetParent() then
-		self:SetStackCount(math.max(0, self:GetStackCount() - math.floor(keys.damage)))
+		self:SetStackCount(math.max(0, self:GetStackCount() - math.floor(keys.original_damage)))
 		if self:GetStackCount() == 0 then
 			self:Destroy()
 		end

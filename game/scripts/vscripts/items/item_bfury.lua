@@ -71,8 +71,8 @@ function modifier_imba_bfury_passive:OnTakeDamage(keys)
 							victim = keys.unit,
 							attacker = self:GetParent(),
 							damage = keys.damage * (self:GetAbility():GetSpecialValueFor("quelling_bonus") / 100),
-							damage_type = DAMAGE_TYPE_PURE,
-							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL, --Optional.
+							damage_type = DAMAGE_TYPE_PHYSICAL,
+							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL + DOTA_DAMAGE_FLAG_BYPASSES_BLOCK + DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR, --Optional.
 							ability = self:GetAbility(), --Optional.
 							}
 		ApplyDamage(damageTable)

@@ -4975,6 +4975,7 @@
 		"AbilityCastRange"				"900"
 		"AbilityCastPoint"				"0.25"
  		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+ 		"AbilityManaCost"				"0"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -4988,7 +4989,7 @@
 			"02"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"damage_min"					"1.0"
+				"damage_min"					"1.5 2.0 2.5 3.0"
 			}
 			"03"
 			{
@@ -5008,7 +5009,7 @@
 			"07"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"shared_cooldown"					"0"
+				"shared_cooldown"					"2.0"
 			}
 		}
 	}
@@ -5023,6 +5024,7 @@
 		"AbilityCastRange"				"900"
 		"AbilityCastPoint"				"0.25"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_3"
+		"AbilityManaCost"				"0"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -5031,12 +5033,12 @@
 			"01"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"stun_min"						"1.5"
+				"stun_min"						"1.5 2.0 2.5 3.0"
 			}
 			"02"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"stun_max"						"2.0 2.5 3.0 3.5"
+				"stun_max"						"1.5 2.0 2.5 3.0"
 			}
 			"03"
 			{
@@ -5061,7 +5063,7 @@
 			"07"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"shared_cooldown"					"0"
+				"shared_cooldown"					"2.0"
 			}
 		}
 	}
@@ -6514,12 +6516,12 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_damage"				"20 40 60"
+				"bonus_damage"				"50 100 150"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"attack_speed_reduction"	"50 100 150"
+				"attack_speed_reduction"	"20 40 60"
 			}
 		}
 	}
@@ -10172,6 +10174,11 @@
 				"tooltip_attack"			"1"
 				"LinkedSpecialBonus"	"special_bonus_unique_weaver_5"
 			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_damage"			"10 20 30 40"
+			}
 		}		
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
 	}
@@ -13113,7 +13120,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"120.0"
+		"AbilityCooldown"				"30.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------

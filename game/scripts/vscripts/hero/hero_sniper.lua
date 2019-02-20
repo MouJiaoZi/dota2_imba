@@ -243,8 +243,12 @@ function modifier_imba_take_aim_range:GetModifierAttackRangeBonus() return (0 - 
 
 function modifier_imba_take_aim_range:OnCreated()
 	if IsServer() then
-		self:SetStackCount(self:GetParent():Script_GetAttackRange() - self:GetAbility():GetSpecialValueFor("range"))
+		self:StartIntervalThink(0.1)
 	end
+end
+
+function modifier_imba_take_aim_range:OnIntervalThink()
+	self:SetStackCount(self:GetParent():Script_GetAttackRange() + self:GetStackCount() - self:GetAbility():GetSpecialValueFor("range"))
 end
 
 imba_sniper_take_aim_far = class({})

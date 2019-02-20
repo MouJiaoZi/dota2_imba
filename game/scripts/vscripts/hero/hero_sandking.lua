@@ -405,6 +405,7 @@ function modifier_imba_epicenter:IsDebuff()			return false end
 function modifier_imba_epicenter:IsHidden() 		return false end
 function modifier_imba_epicenter:IsPurgable() 		return false end
 function modifier_imba_epicenter:IsPurgeException() return false end
+function modifier_imba_epicenter:RemoveOnDeath() 	return false end
 function modifier_imba_epicenter:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
 function modifier_imba_epicenter:OnIntervalThink()

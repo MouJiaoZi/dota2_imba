@@ -189,8 +189,8 @@ function modifier_imba_empower:OnAttackLanded(keys)
 								victim = enemy,
 								attacker = self:GetParent(),
 								damage = dmg,
-								damage_type = DAMAGE_TYPE_PURE,
-								damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL, --Optional.
+								damage_type = DAMAGE_TYPE_PHYSICAL,
+								damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL + DOTA_DAMAGE_FLAG_BYPASSES_BLOCK + DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR, --Optional.
 								ability = nil, --Optional.
 								}
 			ApplyDamage(damageTable)

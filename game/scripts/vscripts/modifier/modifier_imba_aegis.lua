@@ -72,11 +72,12 @@ function modifier_imba_roshan_upgrade:IsHidden() 			return true end
 function modifier_imba_roshan_upgrade:IsPurgable() 			return false end
 function modifier_imba_roshan_upgrade:IsPurgeException() 	return false end
 function modifier_imba_roshan_upgrade:RemoveOnDeath() return true end
-function modifier_imba_roshan_upgrade:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE} end
+function modifier_imba_roshan_upgrade:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
 function modifier_imba_roshan_upgrade:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * 50) end
 function modifier_imba_roshan_upgrade:GetModifierPreAttack_BonusDamage() return (self:GetStackCount() * 80) end
 function modifier_imba_roshan_upgrade:GetModifierPhysicalArmorBonus() return (self:GetStackCount() * 2) end
-function modifier_imba_roshan_upgrade:GetPriority() return MODIFIER_PRIORITY_HIGH end
+function modifier_imba_roshan_upgrade:GetModifierSpellAmplify_Percentage() return (self:GetStackCount() * 30) end
+function modifier_imba_roshan_upgrade:GetPriority() return (self:GetStackCount() < 8 and MODIFIER_PRIORITY_HIGH or 100) end
 function modifier_imba_roshan_upgrade:CheckState()
 	if self:GetStackCount() < 8 then
 		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_UNSLOWABLE] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = false}
@@ -118,4 +119,56 @@ function modifier_imba_roshan_upgrade:OnIntervalThink()
 		FindClearSpaceForUnit(self:GetParent(), roshan_pos, true)
 		self:GetParent():Stop()
 	end
+	----ability
+	if self:GetParent():HasAbility("imba_roshan_slam") then
+		local ability = self:GetParent():FindAbilityByName("imba_roshan_slam")
+		if ability:IsCooldownReady() and self:GetParent():GetAttackTarget() then
+			self:GetParent():CastAbilityNoTarget(ability, -1)
+		end
+	end
 end
+
+
+imba_roshan_slam = class({})
+
+LinkLuaModifier("modifier_imba_roshan_slam_slow", "modifier/modifier_imba_aegis", LUA_MODIFIER_MOTION_NONE)
+
+function imba_roshan_slam:IsHiddenWhenStolen() 		return false end
+function imba_roshan_slam:IsRefreshable() 			return false end
+function imba_roshan_slam:IsStealable() 			return false end
+function imba_roshan_slam:IsNetherWardStealable()	return false end
+
+function imba_roshan_slam:OnSpellStart()
+	local caster = self:GetCaster()
+	caster:EmitSound("Roshan.Slam")
+	local pfx = ParticleManager:CreateParticle("particles/neutral_fx/roshan_slam.vpcf", PATTACH_CUSTOMORIGIN, caster)
+	ParticleManager:SetParticleControl(pfx, 0, caster:GetAbsOrigin())
+	ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetSpecialValueFor("radius"), 0, 0))
+	ParticleManager:ReleaseParticleIndex(pfx)
+	local enemy = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local cd = self:GetCooldown(-1)
+	cd = math.max(0.1, (cd - #enemy) * self:GetSpecialValueFor("cdr_per_hit"))
+	self:EndCooldown()
+	self:StartCooldown(cd)
+	for i=1, #enemy do
+		ApplyDamage({victim = enemy[i], attacker = caster, damage = self:GetSpecialValueFor("damage"), ability = self, damage_type = self:GetAbilityDamageType()})
+		enemy[i]:AddNewModifier(caster, self, "modifier_imba_roshan_slam_slow", {duration = self:GetSpecialValueFor("slow_duration")})
+		local buff = enemy[i]:FindModifierByName("modifier_wisp_tether_haste")
+		if buff then
+			local ca = buff:GetCaster()
+			ca:RemoveModifierByName("modifier_wisp_tether")
+			buff:GetAbility():EndCooldown()
+			buff:GetAbility():StartCooldown(cd * 2)
+			enemy[i]:RemoveModifierByName("modifier_wisp_tether_haste")
+		end
+	end
+end
+
+modifier_imba_roshan_slam_slow = class({})
+
+function modifier_imba_roshan_slam_slow:IsDebuff()			return true end
+function modifier_imba_roshan_slam_slow:IsHidden() 			return false end
+function modifier_imba_roshan_slam_slow:IsPurgable() 		return false end
+function modifier_imba_roshan_slam_slow:IsPurgeException() 	return false end
+function modifier_imba_roshan_slam_slow:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
+function modifier_imba_roshan_slam_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("slow_amount")) end

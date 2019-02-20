@@ -6,6 +6,7 @@ var $img =
 "file://{images}/spellicons/beastmaster_inner_beast.png",
 "file://{images}/spellicons/pangolier_heartpiercer.png",
 "file://{images}/spellicons/centaur_return.png",
+"file://{images}/spellicons/bristleback_bristleback.png",
 ];
 
 var $tip = 
@@ -15,6 +16,7 @@ var $tip =
 "#IMBA_LOADING_TIPS_3",
 "#IMBA_LOADING_TIPS_4",
 "#IMBA_LOADING_TIPS_5",
+"#IMBA_LOADING_TIPS_6",
 ];
 
 function FindDotaHudElement(sElement)
@@ -25,7 +27,7 @@ function FindDotaHudElement(sElement)
 
 var tipContextPanel = FindDotaHudElement("LoDLoadingTip");
 
-function setHint(img, txt) 
+function setHint(img, txt)
 {
 	if (tipContextPanel == null)
 		return;
@@ -38,8 +40,13 @@ function setHint(img, txt)
 	}
 
 	var tipText = tipContextPanel.FindChildTraverse('LoDLoadingTipText');
-	if(tipText != null) {
-		text_label = $.CreatePanel('Label', tipText, '');
+	var text_label = tipContextPanel.FindChildTraverse('LoDLoadingTipMain');
+	if(tipText != null)
+	{
+		if(text_label == null)
+		{
+			text_label = $.CreatePanel('Label', tipText, 'LoDLoadingTipMain');
+		}
 		text_label.html = true;
 		text_label.text = $.Localize(txt);
 		text_label.hittest = false;
@@ -47,12 +54,19 @@ function setHint(img, txt)
 	}
 }
 
-var tips_n = Math.floor(Math.random()*$img.length);
+function NewTips()
+{	var tips_n = Math.floor(Math.random()*$img.length);
 
-var $img_s = $img[tips_n];
-var $tio_s = $tip[tips_n];
+	var $img_s = $img[tips_n];
+	var $tio_s = $tip[tips_n];
 
-setHint($img_s, $tio_s);
+	setHint($img_s, $tio_s);
+}
+
+for(var i = 0; i<=20; i++)
+{
+	$.Schedule((i * 10.0), NewTips);
+}
 
 function SetVoteUI()
 {
@@ -69,6 +83,7 @@ function SetVoteUI()
 		FindDotaHudElement("AKVotePanel").style.opacity = 0;
 		FindDotaHudElement("31VotePanel").visible = 0;
 		FindDotaHudElement("31VotePanel").style.opacity = 0;
+		UpdataOMGVote();
 	}
 	else
 	{
@@ -78,6 +93,8 @@ function SetVoteUI()
 		FindDotaHudElement("AKVotePanel").style.opacity = 1;
 		FindDotaHudElement("31VotePanel").visible = 1;
 		FindDotaHudElement("31VotePanel").style.opacity = 1;
+		UpdataAKVote();
+		Updata31Vote();
 	}
 	
 }

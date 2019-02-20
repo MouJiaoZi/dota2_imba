@@ -132,7 +132,8 @@ function modifier_imba_great_cleave_passive:OnAttackLanded(keys)
 	end
 	if not keys.attacker:HasModifier("modifier_imba_great_cleave_active") then
 		local dmg = keys.damage * (self:GetAbility():GetSpecialValueFor("cleave_pct") / 100)
-		DoCleaveAttack(self:GetParent(), keys.target, self:GetAbility(), dmg, self:GetAbility():GetSpecialValueFor("cleave_starting_width"), self:GetAbility():GetSpecialValueFor("cleave_ending_width"), self:GetAbility():GetSpecialValueFor("cleave_distance"), "particles/units/heroes/hero_sven/sven_spell_great_cleave.vpcf")
+		local pfx = self:GetParent():HasModifier("modifier_imba_god_strength") and "particles/econ/items/sven/sven_ti7_sword/sven_ti7_sword_spell_great_cleave_gods_strength.vpcf" or "particles/econ/items/sven/sven_ti7_sword/sven_ti7_sword_spell_great_cleave.vpcf"
+		DoIMBACleaveAttack(self:GetParent(), keys.target, self:GetAbility(), dmg, self:GetAbility():GetSpecialValueFor("cleave_starting_width"), self:GetAbility():GetSpecialValueFor("cleave_ending_width"), self:GetAbility():GetSpecialValueFor("cleave_distance"), pfx)
 	else
 		local buff = keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_great_cleave_stack", {duration = self:GetAbility():GetSpecialValueFor("stack_duration")})
 		buff:SetStackCount(buff:GetStackCount() + 1)
@@ -238,8 +239,14 @@ function modifier_imba_god_strength:IsPurgable() 		return false end
 function modifier_imba_god_strength:IsPurgeException() 	return false end
 function modifier_imba_god_strength:GetStatusEffectName() return "particles/status_fx/status_effect_gods_strength.vpcf" end
 function modifier_imba_god_strength:StatusEffectPriority() return 16 end
-function modifier_imba_god_strength:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE} end
+function modifier_imba_god_strength:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_god_strength:GetModifierBaseDamageOutgoing_Percentage() return self:GetAbility():GetSpecialValueFor("self_damage_bonus") end
+
+function modifier_imba_god_strength:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
+	end
+end
 
 function modifier_imba_god_strength:IsAura() return true end
 function modifier_imba_god_strength:GetAuraDuration() return 0.1 end

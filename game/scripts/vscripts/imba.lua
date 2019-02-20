@@ -351,12 +351,20 @@ local fucked = {
 	"76561198128331341",--29
 	--"76561198237344786",
 	"76561198019351515",
-	"76561198145260689",
+	--"76561198145260689",
 	"76561198277930276",
 	"76561198439275260",
 	"76561198121928689",
 	"76561198115210534",
-	"76561198103546522",
+	"76561198103546522",--37
+	"76561198090135833",
+	"76561198243735308",
+	"76561198163170237",
+	"76561198365529617",
+	"76561198447924152",
+	"76561198298726239",
+	"76561198905412191",
+	"76561198044668907",
 }
 
 local local_Player = {}
@@ -605,7 +613,7 @@ function IMBA:ItemPickFilter(keys)
 	-- IMBA Aegis Pick Up
 	------------------------------------------------------------------------------------
 
-	if item:GetName() == "item_aegis" and not picker:IsBoss() and picker:IsRealHero() then
+	if item:GetAbilityName() == "item_aegis" and not picker:IsBoss() and picker:IsRealHero() then
 		picker:AddNewModifier(picker, nil, "modifier_imba_aegis", {duration = 300.0})
 		local stock = picker:GetItemInSlot(0)
 		if stock then
@@ -622,7 +630,11 @@ function IMBA:ItemPickFilter(keys)
 		return true
 	end
 
-	if picker and picker:IsCourier() and string.find(item:GetName(), "item_imba_rapier") then
+	------------------------------------------------------------------------------------
+	-- IMBA Rapier Pick Up
+	------------------------------------------------------------------------------------
+
+	if picker and picker:IsCourier() and string.find(item:GetAbilityName(), "item_imba_rapier") then
 		local abs = item:GetAbsOrigin()
 		Timers:CreateTimer(FrameTime(), function()
 			picker:DropItemAtPositionImmediate(item, abs)
@@ -864,6 +876,8 @@ function IMBA:SpawnRoshan()
 	SetCreatureHealth(unit, 12000 + (roshan_kill - 1) * 2000, true)
 	local ability1 = unit:AddAbility("imba_huskar_berserkers_blood")
 	ability1:SetLevel(4)
+	local ability2 = unit:AddAbility("imba_roshan_slam")
+	ability2:SetLevel(1)
 	local buff1 = unit:AddNewModifier(unit, nil, "modifier_imba_roshan_upgrade", {})
 	buff1:SetStackCount(roshan_kill - 1)
 	local buff2 = unit:AddNewModifier(unit, nil, "modifier_roshan_devotion", {})
@@ -1007,29 +1021,6 @@ function IMBA:EndGameAPI()
 	end
 end
 
-function IMBA:ChangeUnitProjectile(hNPC, hModifier)
-	if hModifier and hModifier.GetIMBAProjectileName and type(hModifier:GetIMBAProjectileName()) == "string" then
-		hNPC:SetRangedProjectileName(hModifier:GetIMBAProjectileName())
-	end
-	if not hModifier then
-		local buffs = hNPC:FindAllModifiers()
-		for _, buff in pairs(buffs) do
-			if buff.GetIMBAProjectileName and type(buff:GetIMBAProjectileName()) == "string" then
-				hNPC:SetRangedProjectileName(buff:GetIMBAProjectileName())
-				return
-			end
-		end
-		local pfx = ""
-		if hNPC:IsHero() then
-			pfx = HeroKV[hNPC:GetUnitName()]['ProjectileModel'] or HeroKVBase[hNPC:GetUnitName()]['ProjectileModel']
-		else
-			pfx = UnitKV[hNPC:GetUnitName()]['ProjectileModel'] or UnitKVBase[hNPC:GetUnitName()]['ProjectileModel']
-		end
-		hNPC:SetRangedProjectileName(pfx)
-	end
-end
-
-
  -- bitmask; 1 shares heroes, 2 shares units, 4 disables help 
 function FlipUnitShareMaskBit(targetPlayerID, otherPlayerID, bitVal)
 	local currentUnitShareMask = PlayerResource:GetUnitShareMaskForPlayer(targetPlayerID, otherPlayerID)
@@ -1093,6 +1084,7 @@ function VoteForOMG(unused, kv)
 	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree
 	agree = agree + 1
 	enable = agree >= need and 1 or 0
+	IMBA_OMG_ENABLE = enable
 	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_omg_vote", {})
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
@@ -1106,6 +1098,7 @@ function VoteForAK(unused, kv)
 	enable = agree >= need and 1 or 0
 	CustomNetTables:SetTableValue("imba_omg", "enable_ak", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_ak_vote", {})
+	IMBA_AK_ENABLE = enable
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
 end
 
@@ -1122,6 +1115,7 @@ function VoteFor31(unused, kv)
 		mode:SetDraftingBanningTimeOverride(15)
 		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME - 5)
 	end
+	IMBA_31_ENABLE = enable
 	CustomNetTables:SetTableValue("imba_omg", "enable_31", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_31_vote", {})
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)

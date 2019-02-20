@@ -34,6 +34,31 @@ function modifier_imba_unlimited_powerup_ak:IsPurgeException() 	return false end
 function modifier_imba_unlimited_powerup_ak:GetTexture() return "custom/unlimited_level_powerup" end
 function modifier_imba_unlimited_powerup_ak:RemoveOnDeath() return self:GetParent():IsIllusion() end
 
+modifier_imba_ak_ability_adder = class({})
+
+function modifier_imba_ak_ability_adder:IsDebuff()			return false end
+function modifier_imba_ak_ability_adder:IsHidden() 			return false end
+function modifier_imba_ak_ability_adder:IsPurgable() 		return false end
+function modifier_imba_ak_ability_adder:IsPurgeException() 	return false end
+function modifier_imba_ak_ability_adder:AllowIllusionDuplicate() return false end
+function modifier_imba_ak_ability_adder:GetTexture() return "wisp/wisp_overcharge_alt" end
+function modifier_imba_ak_ability_adder:RemoveOnDeath() return self:GetParent():IsIllusion() end
+
+function modifier_imba_ak_ability_adder:OnCreated(keys)
+	if IsServer() then
+		self.ability_name = keys.ability_name
+	end
+end
+
+function modifier_imba_ak_ability_adder:OnDestroy()
+	if IsServer() then
+		local ability = self:GetParent():AddAbility(self.ability_name)
+		self:GetParent():SwapAbilities(self.ability_name, "generic_hidden", true, false)
+		self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_ak_ability_controller", {ability_name = self.ability_name})
+		self.ability_name = nil
+	end
+end
+
 modifier_imba_ak_ability_controller = class({})
 
 function modifier_imba_ak_ability_controller:IsDebuff()			return false end
@@ -42,14 +67,18 @@ function modifier_imba_ak_ability_controller:IsPurgable() 		return false end
 function modifier_imba_ak_ability_controller:IsPurgeException() return false end
 function modifier_imba_ak_ability_controller:RemoveOnDeath() return self:GetParent():IsIllusion() end
 
-function modifier_imba_ak_ability_controller:OnCreated()
+function modifier_imba_ak_ability_controller:OnCreated(keys)
 	if IsServer() and self:GetParent():IsRealHero() then
+		self.ability_name = keys.ability_name
 		self:StartIntervalThink(1.0)
 	end
 end
 
 function modifier_imba_ak_ability_controller:OnIntervalThink()
-	local ability = self:GetAbility()
+	local ability = self:GetParent():FindAbilityByName("self.ability_name")
+	if not ability then
+		return
+	end
 	local level = self:GetParent():GetLevel()
 	if ability:GetAbilityType() == 1 then
 		local level_to_set = math.min(math.floor(level / 6), ability:GetMaxLevel())
@@ -61,5 +90,11 @@ function modifier_imba_ak_ability_controller:OnIntervalThink()
 		if ability:GetLevel() ~= level_to_set then
 			ability:SetLevel(level_to_set)
 		end
+	end
+end
+
+function modifier_imba_ak_ability_controller:OnDestroy()
+	if IsServer() then
+		self.ability_name = nil
 	end
 end

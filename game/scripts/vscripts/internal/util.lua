@@ -341,26 +341,29 @@ function IsHardDisabled( unit )
 end
 
 -- Precaches an unit, or, if something else is being precached, enters it into the precache queue
-function PrecacheUnitWithQueue( unit_name )
-	
-	Timers:CreateTimer(0, function()
+function PrecacheUnitWithQueue(unit_name)
+	if not IsInTable(unit_name, PRECACHED_UNIT) then
+		table.insert(PRECACHED_UNIT, unit_name)
+		Timers:CreateTimer({
+			useGameTime = false,
+			endTime = FrameTime(), -- when this timer should first execute, you can omit this if you want it to run first on the next frame
+			callback = function()
+				-- If something else is being precached, wait two seconds
+				if UNIT_BEING_PRECACHED then
+					return 0.5
 
-		-- If something else is being precached, wait two seconds
-		if UNIT_BEING_PRECACHED then
-			return 0.5
-
-		-- Otherwise, start precaching and block other calls from doing so
-		else
-			UNIT_BEING_PRECACHED = true
-			PrecacheUnitByNameAsync(unit_name, function(...) end)
-			print("Unit "..unit_name.." precaching...")
-
-			-- Release the queue after one second
-			Timers:CreateTimer(0.5, function()
-				UNIT_BEING_PRECACHED = false
-			end)
-		end
-	end)
+				-- Otherwise, start precaching and block other calls from doing so
+				else
+					UNIT_BEING_PRECACHED = true
+					print("Unit "..unit_name.." precaching...")
+					PrecacheUnitByNameAsync(unit_name, function()
+						UNIT_BEING_PRECACHED = false
+					end)
+					return nil
+				end
+			end
+		})
+	end
 end
 
 -- Simulates attack speed cap removal to a single unit through BAT manipulation
@@ -664,7 +667,7 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 	local motion_controller_priority
 	local found_modifier_handler
 
-	if parent:HasModifier("modifier_batrider_flaming_lasso") then
+	if parent:HasModifier("modifier_batrider_flaming_lasso") or parent:HasModifier("modifier_eul_cyclone") then
 		self:Destroy()
 		return false
 	end
@@ -790,8 +793,9 @@ end
 
 -- Cleave-like cone search - returns the units in front of the caster in a cone.
 function FindUnitsInCone(teamNumber, vDirection, vPosition, startRadius, endRadius, flLength, hCacheUnit, targetTeam, targetUnit, targetFlags, findOrder, bCache)
+	local circle_r = math.sqrt(math.pow(endRadius / 2, 2) + math.pow(flLength, 2))
 	local vDirectionCone = Vector( vDirection.y, -vDirection.x, 0.0 )
-	local enemies = FindUnitsInRadius(teamNumber, vPosition, hCacheUnit, endRadius + flLength, targetTeam, targetUnit, targetFlags, findOrder, bCache )
+	local enemies = FindUnitsInRadius(teamNumber, vPosition, hCacheUnit, circle_r, targetTeam, targetUnit, targetFlags, findOrder, bCache )
 	local unitTable = {}
 	if #enemies > 0 then
 		for _,enemy in pairs(enemies) do
@@ -813,11 +817,63 @@ function FindUnitsInCone(teamNumber, vDirection, vPosition, startRadius, endRadi
 				
 				if ( flSideAmount < startRadius + radius_increase_from_distance ) and ( enemy_distance_from_caster > 0.0 ) and ( enemy_distance_from_caster < flLength ) then
 					table.insert(unitTable, enemy)
+					--DebugDrawCircle(enemy:GetAbsOrigin(), Vector(255,0,0), 255, 30, false, 10)
 				end
 			end
 		end
 	end
 	return unitTable
+end
+
+function FindUnitsInTrapezoid(teamNumber, vDirection, vPosition, startRadius, endRadius, flLength, hCacheUnit, targetTeam, targetUnit, targetFlags, findOrder, bCache)
+	local circle_r = math.sqrt(math.pow(endRadius / 2, 2) + math.pow(flLength, 2))
+	local enemy = FindUnitsInRadius(teamNumber, vPosition, hCacheUnit, circle_r, targetTeam, targetUnit, targetFlags, findOrder, bCache)
+	local ta = {}
+	local vStartPoint = {RotatePosition(vPosition, QAngle(0,90,0), vPosition + vDirection * (startRadius / 2)), RotatePosition(vPosition, QAngle(0,-90,0), vPosition + vDirection * (startRadius / 2))}
+	local vEndPoint = {RotatePosition(vPosition + vDirection * flLength, QAngle(0,90,0), (vPosition + vDirection * flLength) + vDirection * (endRadius / 2)), RotatePosition(vPosition + vDirection * flLength, QAngle(0,-90,0), (vPosition + vDirection * flLength) + vDirection * (endRadius / 2))}
+	local A = vStartPoint[1]
+	local B = vEndPoint[1]
+	local C = vEndPoint[2]
+	local D = vStartPoint[2]
+	if GameRules:IsCheatMode() then
+		DebugDrawLine(A, B, 255, 0, 0, true, 5)
+		DebugDrawLine(B, C, 255, 0, 0, true, 5)
+		DebugDrawLine(C, D, 255, 0, 0, true, 5)
+		DebugDrawLine(D, A, 255, 0, 0, true, 5)
+	end
+	for i=1, #enemy do
+		local pos = enemy[i]:GetAbsOrigin()
+		local a = (B.x - A.x) * (pos.y - A.y) - (B.y - A.y) * (pos.x - A.x)
+		local b = (C.x - B.x) * (pos.y - B.y) - (C.y - B.y) * (pos.x - B.x)
+		local c = (D.x - C.x) * (pos.y - C.y) - (D.y - C.y) * (pos.x - C.x)
+		local d = (A.x - D.x) * (pos.y - D.y) - (A.y - D.y) * (pos.x - D.x)
+		if (a >= 0 and b >= 0 and c >= 0 and d >= 0) or (a <= 0 and b <= 0 and c <= 0 and d <= 0) then
+			table.insert(ta, enemy[i])
+		end
+	end
+	return ta
+end
+
+function DoIMBACleaveAttack(hAttacker, hTarget, hAbility, fDamage, fStartRadius, fEndRadius, fDistance, sHitEffect)
+	local target = hAttacker:IsRangedAttacker() and hTarget or hAttacker
+	local enemy = FindUnitsInTrapezoid(hAttacker:GetTeamNumber(), (hTarget:GetAbsOrigin() - hAttacker:GetAbsOrigin()):Normalized(), target:GetAbsOrigin(), fStartRadius, fEndRadius, fDistance, nil, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
+	local pfx = nil
+	if sHitEffect then
+		pfx = ParticleManager:CreateParticle(sHitEffect, PATTACH_CUSTOMORIGIN, hAttacker)
+		ParticleManager:SetParticleControl(pfx, 0, hAttacker:IsRangedAttacker() and hTarget:GetAbsOrigin() or hAttacker:GetAbsOrigin())
+		ParticleManager:SetParticleControlForward(pfx, 0, (hTarget:GetAbsOrigin() - hAttacker:GetAbsOrigin()):Normalized())
+	end
+	for i=1, #enemy do
+		if enemy[i] ~= hTarget then
+			ApplyDamage({attacker = hAttacker, victim = enemy[i], ability = hAbility, damage = fDamage, damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL + DOTA_DAMAGE_FLAG_BYPASSES_BLOCK + DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR})
+			if pfx then
+				ParticleManager:SetParticleControlEnt(pfx, i + 16, enemy[i], PATTACH_POINT, "attach_hitloc", enemy[i]:GetAbsOrigin(), true)
+			end
+		end
+	end
+	if pfx then
+		ParticleManager:ReleaseParticleIndex(pfx)
+	end
 end
 
 function CDOTABaseAbility:HasFireSoulActive()
@@ -1112,7 +1168,7 @@ function CDOTA_BaseNPC:GetMoveSpeedIncrease()
 	local ms = 0
 	local has = self:HasModifier("modifier_bloodseeker_thirst")
 	if has then
-		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed()) - self:GetBaseMoveSpeed()
+		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed(), false) - self:GetBaseMoveSpeed()
 	else
 		local ability = nil
 		for i=0, 23 do
@@ -1133,7 +1189,7 @@ function CDOTA_BaseNPC:GetMoveSpeedIncrease()
 			stack = ms_buff:GetStackCount()
 			ms_buff:SetStackCount(0)
 		end
-		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed()) - self:GetBaseMoveSpeed()
+		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed(), false) - self:GetBaseMoveSpeed()
 		if ms_buff then
 			ms_buff:SetStackCount(stack)
 		end
@@ -1150,6 +1206,7 @@ end
 
 function GetRandomAvailableHero()
 	local hero = RandomFromTable(HeroList)
+	print(hero[1])
 	while hero[2] == 0 do
 		hero = RandomFromTable(HeroList)
 	end
@@ -1184,4 +1241,62 @@ end
 
 function GetRandomAKAbility()
 	return (RollPercentage(20) and GetRandomAbilityUltimate() or GetRandomAbilityNormal())
+end
+
+function CheckRandomAbilityKV()
+	print("Normal Ability KV Check Start ...........")
+	for k,v in pairs(Random_Abilities_Normal) do
+		local hero = k
+		local ability_count = Random_Abilities_Normal[k]['ability_count']
+		if not ability_count then
+			print("[ERROR] "..hero.." has no ability_count!")
+		else
+			for i=1, ability_count do
+				local ability_name = Random_Abilities_Normal[k]['Ability'..i]
+				if not ability_name then
+					print("[ERROR] "..hero.." has no ability "..i.."!")
+				end
+			end
+		end
+	end
+	print("Ultimate Ability KV Check Start ...........")
+	for k,v in pairs(Rnadom_Abilities_Ultimate) do
+		local hero = k
+		local ability_count = Rnadom_Abilities_Ultimate[k]['ability_count']
+		if not ability_count then
+			print("[ERROR] "..hero.." has no ability_count!")
+		else
+			for i=1, ability_count do
+				local ability_name = Rnadom_Abilities_Ultimate[k]['Ability'..i]
+				if not ability_name then
+					print("[ERROR] "..hero.." has no ability "..i.."!")
+				end
+			end
+		end
+	end
+	print("Ability KV Check End ...........")
+end
+
+function CDOTA_BaseNPC:RemoveAllModifiers()
+	local buff = self:FindAllModifiers()
+	local no_move_buff_name = {"modifier_imba_talent_modifier_adder",
+								"modifier_imba_movespeed_controller",
+								"modifier_imba_reapers_scythe_permanent",
+								"modifier_imba_ability_layout_contoroller",}
+	for i=1, #buff do
+		if not IsInTable(buff[i]:GetName(), no_move_buff_name) then
+			buff[i]:Destroy()
+		end
+	end
+end
+
+function CDOTA_BaseNPC:GetTP()
+	local tp = Entities:FindAllByName("item_tpscroll")
+	local tps = {}
+	for i=1, #tp do
+		if tp[i]:GetPurchaser() == self then
+			table.insert(tps, tp[i])
+		end
+	end
+	return tps
 end

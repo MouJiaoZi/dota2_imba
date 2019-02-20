@@ -308,6 +308,7 @@ function modifier_imba_nether_ward:IsHidden() 			return false end
 function modifier_imba_nether_ward:IsPurgable() 		return false end
 function modifier_imba_nether_ward:IsPurgeException() 	return false end
 function modifier_imba_nether_ward:IsAura() 			return true end
+function modifier_imba_nether_ward:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_nether_ward:GetAuraDuration() return 0.5 end
 function modifier_imba_nether_ward:GetModifierAura() return "modifier_imba_nether_ward_debuff" end
 function modifier_imba_nether_ward:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("radius") end
@@ -340,7 +341,7 @@ function modifier_imba_nether_ward:OnSpentMana(keys)
 	if not IsServer() then
 		return
 	end
-	if not IsEnemy(keys.unit, self:GetCaster()) or (keys.unit:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius") or keys.cost == 0 then
+	if not IsEnemy(keys.unit, self:GetCaster()) or (keys.unit:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius") or keys.cost == 0 or not key.unit:IsHero() then
 		return
 	end
 	if not self:GetParent():IsAlive() then

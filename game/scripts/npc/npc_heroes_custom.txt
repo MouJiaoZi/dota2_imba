@@ -256,6 +256,10 @@
 	{
 
 		//"Ability1"					"morphling_waveform"
+		"Ability2"							"imba_morphling_morphling"
+		"Ability3"							"generic_hidden"
+		"Ability4"							"morphling_adaptive_strike_agi"
+		"Ability5"							"morphling_adaptive_strike_str"
 		//"Ability2"					"morphling_adaptive_strike_agi"
 		//"Ability3"					"morphling_adaptive_strike_str"
 		//"Ability4"					"morphling_morph_agi"
@@ -269,7 +273,7 @@
 		"Ability17"					"special_bonus_attack_speed_20"
 		"Ability18"					"special_bonus_cooldown_reduction_12"
 		"Ability19"					"special_bonus_unique_morphling_3"
-		"Ability20"					"special_bonus_attack_damage_40"
+		"Ability20"					"special_bonus_attack_damage_90"
 		"Ability21"					"special_bonus_all_stats_14"
 		"Ability22"					"special_bonus_unique_morphling_2"
 
@@ -659,7 +663,7 @@
 		"Ability13"		"special_bonus_unique_riki_2"
 		"Ability14"		"special_bonus_unique_riki_1"
 		"Ability15"		"special_bonus_unique_riki_3"
-		"Ability16"		"special_bonus_agility_14"
+		"Ability16"		"special_bonus_imba_riki_1"
 		"Ability17"		"special_bonus_unique_riki_5"
 	
 	}

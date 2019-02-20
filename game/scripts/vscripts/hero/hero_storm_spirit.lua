@@ -291,7 +291,7 @@ function modifier_imba_ball_lightning_travel:OnIntervalThink()
 	AddFOWViewer(self:GetParent():GetTeamNumber(), self.current_pos, self.ability:GetSpecialValueFor("ball_lightning_vision_radius"), 0.1, false)
 	self:SetStackCount((self.current_pos - self.start_pos):Length2D())
 	local direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
-	local distance = (self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed()) * ((self.ability:GetSpecialValueFor("ball_lightning_move_speed") + self:GetParent():GetTalentValue("special_bonus_imba_storm_spirit_3")) / 100)) / (1.0 / FrameTime())
+	local distance = (self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed(), false) * ((self.ability:GetSpecialValueFor("ball_lightning_move_speed") + self:GetParent():GetTalentValue("special_bonus_imba_storm_spirit_3")) / 100)) / (1.0 / FrameTime())
 	if distance > (self.current_pos - self.pos):Length2D() then
 		distance = (self.current_pos - self.pos):Length2D()
 	end

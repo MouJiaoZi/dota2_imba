@@ -45,7 +45,7 @@ end
 
 function modifier_imba_strafe_active:OnIntervalThink()
 	local caster = self:GetCaster()
-	if caster:IsInvisible() or caster:IsStunned() or caster:IsDisarmed() then
+	if caster:IsInvisible() or caster:IsStunned() or caster:IsDisarmed() or caster:IsHexed() then
 		return
 	end
 	local target = caster:GetAttackTarget()
@@ -88,16 +88,13 @@ function modifier_imba_searing_arrows_passive:IsDebuff()			return false end
 function modifier_imba_searing_arrows_passive:IsHidden() 			return true end
 function modifier_imba_searing_arrows_passive:IsPurgable() 			return false end
 function modifier_imba_searing_arrows_passive:IsPurgeException() 	return false end
-
-function modifier_imba_searing_arrows_passive:OnCreated()
-	if IsServer() then
-		self:GetCaster():SetRangedProjectileName("particles/units/heroes/hero_clinkz/clinkz_searing_arrow.vpcf")
-	end
-end
+function modifier_imba_searing_arrows_passive:GetPriority() 		return MODIFIER_PRIORITY_LOW end
 
 function modifier_imba_searing_arrows_passive:DeclareFunctions()
-	return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_START}
+	return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_START, MODIFIER_PROPERTY_PROJECTILE_NAME}
 end
+
+function modifier_imba_searing_arrows_passive:GetModifierProjectileName() return "particles/units/heroes/hero_clinkz/clinkz_searing_arrow.vpcf" end
 
 function modifier_imba_searing_arrows_passive:OnAttackStart(keys)
 	if not IsServer() then

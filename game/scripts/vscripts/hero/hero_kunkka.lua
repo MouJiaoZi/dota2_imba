@@ -249,7 +249,7 @@ function modifier_imba_tidebringer:OnAttackLanded(keys)
 	local pfx_name = "particles/units/heroes/hero_kunkka/kunkka_spell_tidebringer.vpcf"
 	local target = keys.target
 	local attacker = self:GetParent()
-	DoCleaveAttack(attacker, target, self:GetAbility(), keys.damage, self:GetAbility():GetSpecialValueFor("cleave_starting_width"), self:GetAbility():GetSpecialValueFor("cleave_ending_width"), self:GetAbility():GetSpecialValueFor("cleave_distance"), pfx_name)
+	DoIMBACleaveAttack(attacker, target, self:GetAbility(), keys.damage, self:GetAbility():GetSpecialValueFor("cleave_starting_width"), self:GetAbility():GetSpecialValueFor("cleave_ending_width"), self:GetAbility():GetSpecialValueFor("cleave_distance"), "particles/econ/items/kunkka/divine_anchor/hero_kunkka_dafx_weapon/kunkka_spell_tidebringer_fxset.vpcf")
 	local tide = GetTideEffect(attacker, true)
 	if bit.band(tide, KUNKKA_TIDEBRINGER_WAVE_BREAK) == KUNKKA_TIDEBRINGER_WAVE_BREAK then
 		--do nothing

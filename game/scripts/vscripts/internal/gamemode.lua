@@ -171,6 +171,12 @@ function GameMode:_CaptureGameMode()
 		mode = GameRules:GetGameModeEntity()
 		mode:SetDraftingBanningTimeOverride(10)
 		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME)
+		if IsInToolsMode() then
+			mode:SetDraftingBanningTimeOverride(0)
+			if IMBA_DEBUG_AK then
+				mode:SetDraftingHeroPickSelectTimeOverride(1)
+			end
+		end
 		mode:SetRecommendedItemsDisabled( RECOMMENDED_BUILDS_DISABLED )
 		mode:SetCameraDistanceOverride( CAMERA_DISTANCE_OVERRIDE )
 		mode:SetCustomBuybackCostEnabled( CUSTOM_BUYBACK_COST_ENABLED )

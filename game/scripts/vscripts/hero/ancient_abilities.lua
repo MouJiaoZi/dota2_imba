@@ -518,6 +518,16 @@ function modifier_imba_courier_buff:OnOrder(keys)
 				self.pid = keys.issuer_player_index
 				self:SetStackCount(keys.issuer_player_index + 1)
 			end
+		elseif keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET then
+			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
+			self.pid = keys.issuer_player_index
+			self:SetStackCount(keys.issuer_player_index + 1)
+			Timers:CreateTimer(0.1, function()
+					self:GetParent():FindAbilityByName("courier_return_to_base"):OnSpellStart()
+					return nil
+				end
+			)
 		end
 	end
 end

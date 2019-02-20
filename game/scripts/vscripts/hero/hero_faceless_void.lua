@@ -464,7 +464,7 @@ function modifier_imba_faceless_void_chronosphere_debuff:OnCreated()
 	else
 		self.buff_type = Chronosphere_Enemy
 	end
-	self.ms = self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed()) * (1 - (self:GetAbility():GetSpecialValueFor("slow_scepter") / 100))
+	self.ms = self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed(), false) * (1 - (self:GetAbility():GetSpecialValueFor("slow_scepter") / 100))
 	if IsServer() then
 		local a = self:IsMotionController() and self:StartIntervalThink(0.03) or 1
 	end

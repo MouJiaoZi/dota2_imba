@@ -61,7 +61,7 @@ function imba_skywrath_mage_arcane_bolt:OnProjectileHit(target, location)
 	if not target then
 		return
 	end
-	if target:IsMagicImmune() or target:TriggerStandardTargetSpell(self) then
+	if target:IsMagicImmune() or target:TriggerStandardTargetSpell(self) or not target:IsAlive() then
 		return
 	end
 	target:EmitSound("Hero_SkywrathMage.ArcaneBolt.Impact")

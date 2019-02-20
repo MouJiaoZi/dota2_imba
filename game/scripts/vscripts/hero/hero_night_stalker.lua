@@ -328,13 +328,13 @@ function modifier_imba_darkness_scepter:IsPurgeException()	return false end
 
 function modifier_imba_darkness_scepter:OnCreated()
 	if IsServer() then
-		self:StartIntervalThink(FrameTime())
+		self:StartIntervalThink(0.1)
 	end
 end
 
 function modifier_imba_darkness_scepter:OnIntervalThink()
-	if self:GetParent():HasScepter() and self:GetParent():IsAlive() then
-		AddFOWViewer(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self:GetParent():GetCurrentVisionRange(), FrameTime() * 2, false)
+	if self:GetParent():HasScepter() and self:GetParent():IsAlive() and not GameRules:IsDaytime() then
+		AddFOWViewer(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self:GetParent():GetCurrentVisionRange(), 0.12, false)
 	end
 end
 

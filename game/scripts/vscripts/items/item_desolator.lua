@@ -122,18 +122,12 @@ function modifier_imba_desolator_unique:IsPurgable() 		return false end
 function modifier_imba_desolator_unique:IsPurgeException() 	return false end
 function modifier_imba_desolator_unique:OnCreated()
 	self.ability = self:GetAbility()
-	if IsServer() then
-		IMBA:ChangeUnitProjectile(self:GetParent(), self)
-	end
 end
 function modifier_imba_desolator_unique:OnDestroy()
 	self.ability = nil 
-	if IsServer() then
-		IMBA:ChangeUnitProjectile(self:GetParent(), nil)
-	end
 end
-function modifier_imba_desolator_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
-function modifier_imba_desolator_unique:GetIMBAProjectileName() return "particles/items_fx/desolator_projectile.vpcf" end
+function modifier_imba_desolator_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PROJECTILE_NAME} end
+function modifier_imba_desolator_unique:GetModifierProjectileName() return "particles/items_fx/desolator_projectile.vpcf" end
 
 function modifier_imba_desolator_unique:OnAttackLanded(keys)
 	if not IsServer() or keys.attacker ~= self:GetParent() or self:GetParent():HasModifier("modifier_imba_desolator2_unique")  or not self:GetParent().splitattack or not keys.target:IsAlive() then
@@ -252,18 +246,12 @@ function modifier_imba_desolator2_unique:IsPurgable() 		return false end
 function modifier_imba_desolator2_unique:IsPurgeException() 	return false end
 function modifier_imba_desolator2_unique:OnCreated()
 	self.ability = self:GetAbility()
-	if IsServer() then
-		IMBA:ChangeUnitProjectile(self:GetParent(), self)
-	end
 end
 function modifier_imba_desolator2_unique:OnDestroy()
 	self.ability = nil 
-	if IsServer() then
-		IMBA:ChangeUnitProjectile(self:GetParent(), nil)
-	end
 end
-function modifier_imba_desolator2_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
-function modifier_imba_desolator2_unique:GetIMBAProjectileName() return "particles/items_fx/desolator_projectile.vpcf" end
+function modifier_imba_desolator2_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PROJECTILE_NAME} end
+function modifier_imba_desolator2_unique:GetModifierProjectileName() return "particles/items_fx/desolator_projectile.vpcf" end
 
 function modifier_imba_desolator2_unique:OnAttackLanded(keys)
 	if not IsServer() or keys.attacker ~= self:GetParent()  or not self:GetParent().splitattack or not keys.target:IsAlive() then

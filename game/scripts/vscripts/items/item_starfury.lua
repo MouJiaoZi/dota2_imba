@@ -31,7 +31,7 @@ function item_imba_starfury:ProcProjectile(target, source)
 end
 
 function item_imba_starfury:OnProjectileHit(target, location)
-	if not target then
+	if not target or target:IsAttackImmune() then
 		return
 	end
 	self:GetParent():AddNewModifier(self:GetParent(), self, "modifier_multicast_attack_range", {})

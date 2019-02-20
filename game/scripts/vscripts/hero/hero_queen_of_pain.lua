@@ -15,16 +15,17 @@ function imba_queenofpain_shadow_strike:IsStealable() 				return true end
 function imba_queenofpain_shadow_strike:IsNetherWardStealable()		return true end
 function imba_queenofpain_shadow_strike:GetIntrinsicModifierName() return "modifier_imba_shadow_strike_passive" end
 
-function imba_queenofpain_shadow_strike:OnSpellStart()
+function imba_queenofpain_shadow_strike:OnSpellStart(bAttack)
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
+	local speed = bAttack and 10000 or self:GetSpecialValueFor("projectile_speed")
 	local info = 
 	{
 		Target = target,
 		Source = caster,
 		Ability = self,	
 		EffectName = "particles/units/heroes/hero_queenofpain/queen_shadow_strike.vpcf",
-		iMoveSpeed = self:GetSpecialValueFor("projectile_speed"),
+		iMoveSpeed = speed,
 		vSourceLoc = caster:GetAbsOrigin(),
 		bDrawsOnMinimap = false,
 		bDodgeable = true,
@@ -57,13 +58,15 @@ function modifier_imba_shadow_strike_base_slow:IsDebuff()			return true end
 function modifier_imba_shadow_strike_base_slow:IsHidden() 			return false end
 function modifier_imba_shadow_strike_base_slow:IsPurgable() 		return true end
 function modifier_imba_shadow_strike_base_slow:IsPurgeException() 	return true end
-function modifier_imba_shadow_strike_base_slow:GetEffectName() return "particles/units/heroes/hero_queenofpain/queen_shadow_strike_debuff.vpcf" end
 function modifier_imba_shadow_strike_base_slow:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_shadow_strike_base_slow:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
 function modifier_imba_shadow_strike_base_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("movement_slow")) end
 
 function modifier_imba_shadow_strike_base_slow:OnCreated()
 	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_queenofpain/queen_shadow_strike_debuff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+		self:AddParticle(pfx, false, false, 15, false, false)
 		local damageTable = {
 							victim = self:GetParent(),
 							attacker = self:GetCaster(),
@@ -74,7 +77,7 @@ function modifier_imba_shadow_strike_base_slow:OnCreated()
 							}
 		ApplyDamage(damageTable)
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_POISON_DAMAGE, self:GetParent(), self:GetAbility():GetSpecialValueFor("strike_damage"), nil)
-		self:StartIntervalThink(3.0)
+		self:StartIntervalThink(1.5)
 	end
 end
 
@@ -109,7 +112,7 @@ function modifier_imba_shadow_strike_passive:OnAttackLanded(keys)
 	end
 	if not keys.target:HasModifier("modifier_imba_shadow_strike_base_slow") then
 		self:GetParent():SetCursorCastTarget(keys.target)
-		self:GetAbility():OnSpellStart()
+		self:GetAbility():OnSpellStart(true)
 	end
 end
 

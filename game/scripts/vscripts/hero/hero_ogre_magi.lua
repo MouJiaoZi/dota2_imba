@@ -49,19 +49,21 @@ function modifier_imba_multicast_passive:OnAttackLanded(keys)
 	end
 	local target = keys.target
 	local ability = self:GetAbility()
-	ability:UseResources(true, true, true)
 	local multicast = 0
-	if math.random(1,100) <= ability:GetSpecialValueFor("multicast_4") then
+	if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("multicast_4")) then
 		multicast = 4
-	elseif math.random(1,100) <= ability:GetSpecialValueFor("multicast_3") then
+	elseif PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("multicast_3")) then
 		multicast = 3
-	elseif math.random(1,100) <= ability:GetSpecialValueFor("multicast_2") then
+	elseif PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("multicast_2")) then
 		multicast = 2
 	end
-	self:DoMultiAttack(self:GetParent(), target, multicast)
+	if multicast > 0 then
+		self:DoMultiAttack(self:GetParent(), target, multicast)
+	end
 end
 
 function modifier_imba_multicast_passive:DoMultiAttack(caster, target, times)
+	self:GetAbility():UseResources(true, true, true)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			caster:StartGesture(ACT_DOTA_ATTACK)
@@ -116,6 +118,8 @@ local NoMultiCastItems = {
 "item_travel_boots",
 "item_power_treads",
 "item_imba_power_treads_2",
+"imba_antimage_blink",
+"imba_queenofpain_blink",
 }
 
 function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
@@ -125,20 +129,19 @@ function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
 	if self.nocast or keys.unit ~= self:GetParent() or not self:GetAbility():IsCooldownReady() then
 		return
 	end
-	if IsInTable(keys.ability:GetName(), NoMultiCastItems) then
+	if IsInTable(keys.ability:GetName(), NoMultiCastItems) or bit.band(keys.ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_CHANNELLED) == DOTA_ABILITY_BEHAVIOR_CHANNELLED then
 		return
 	end
 	local caster = self:GetParent()
 	local ability = keys.ability
-	self:GetAbility():UseResources(true, true, true)
 	local target = ability:GetCursorTarget()
 	local pos = ability:GetCursorPosition()
 	local multicast = 0
-	if math.random(1,100) <= self:GetAbility():GetSpecialValueFor("multicast_4") then
+	if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("multicast_4")) then
 		multicast = 4
-	elseif math.random(1,100) <= self:GetAbility():GetSpecialValueFor("multicast_3") then
+	elseif PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("multicast_3")) then
 		multicast = 3
-	elseif math.random(1,100) <= self:GetAbility():GetSpecialValueFor("multicast_2") then
+	elseif PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("multicast_2")) then
 		multicast = 2
 	end
 	if target then
@@ -154,14 +157,17 @@ function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
 		end
 		return
 	end
-	if pos then
-		self:DoMultiPositionAbility(caster, pos, ability, multicast)
-		return
+	if multicast > 0 then
+		if pos then
+			self:DoMultiPositionAbility(caster, pos, ability, multicast)
+			return
+		end
+		self:DoMultiNoTargetAbility(caster, ability, multicast)
 	end
-	self:DoMultiNoTargetAbility(caster, ability, multicast)
 end
 
 function modifier_imba_multicast_passive:DoMultiTargetAbility(caster, target, ability, times)
+	self:GetAbility():UseResources(true, true, true)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			self.nocast = true

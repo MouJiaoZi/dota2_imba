@@ -194,8 +194,15 @@ end
 function modifier_imba_fervor_passive:OnIntervalThink()
 	if self:GetParent():PassivesDisabled() then
 		self:GetParent():RemoveModifierByName("modifier_imba_fervor_dummy")
+		RevertAttackSpeedCap(self:GetParent())
 	end
 	IncreaseAttackSpeedCap(self:GetParent(), 10000)
+end
+
+function modifier_imba_fervor_passive:OnDestroy()
+	if IsServer() then
+		RevertAttackSpeedCap(self:GetParent())
+	end
 end
 
 modifier_imba_fervor_dummy = class({})

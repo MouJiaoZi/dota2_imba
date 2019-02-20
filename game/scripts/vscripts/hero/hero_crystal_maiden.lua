@@ -182,7 +182,7 @@ function modifier_imba_frostbite_root:GetEffectAttachType() return PATTACH_ABSOR
 
 function modifier_imba_frostbite_root:OnCreated()
 	if IsServer() then
-		EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), 	"hero_Crystal.frostbite", self:GetParent())
+		self:GetParent():EmitSound("hero_Crystal.frostbite")
 		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("damage_interval"))
 	end
 end
@@ -230,7 +230,7 @@ function modifier_imba_frostbite_passive:OnTakeDamage(keys)
 		return
 	end
 	if keys.attacker:IsHero() then
-		keys.attacker:Interrupt()
+		keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_stunned", {duration = 0.01})
 		keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_frostbite_root", {duration = self:GetAbility():GetSpecialValueFor("duration")})
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_frostbite_passive_cooldown", {duration = self:GetAbility():GetSpecialValueFor("hero_cooldown")})
 	elseif PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("creep_chance")) then
@@ -254,27 +254,15 @@ imba_crystal_maiden_brilliance_aura = class({})
 LinkLuaModifier("modifier_imba_brilliance_aura_passive", "hero/hero_crystal_maiden", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_brilliance_aura_effect", "hero/hero_crystal_maiden", LUA_MODIFIER_MOTION_NONE)
 
-function imba_crystal_maiden_brilliance_aura:GetIntrinsicModifierName()
-	if self:GetCaster():PassivesDisabled() then
-		return nil
-	else
-		return "modifier_imba_brilliance_aura_passive"
-	end
-end
+function imba_crystal_maiden_brilliance_aura:GetIntrinsicModifierName() return "modifier_imba_brilliance_aura_passive" end
 
 modifier_imba_brilliance_aura_passive = class({})
 
 function modifier_imba_brilliance_aura_passive:IsHidden() return true end
-function modifier_imba_brilliance_aura_passive:IsAura()
-	if self:GetParent():PassivesDisabled() or self:GetParent():IsIllusion() then
-		return false
-	else
-		return true
-	end
-end
+function modifier_imba_brilliance_aura_passive:IsAura() return true end
 function modifier_imba_brilliance_aura_passive:GetAuraDuration() return 0.1 end
 function modifier_imba_brilliance_aura_passive:GetModifierAura() return "modifier_imba_brilliance_aura_effect" end
-function modifier_imba_brilliance_aura_passive:GetAuraRadius() return 999999 end
+function modifier_imba_brilliance_aura_passive:GetAuraRadius() return 50000 end
 function modifier_imba_brilliance_aura_passive:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_NONE end
 function modifier_imba_brilliance_aura_passive:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_FRIENDLY end
 function modifier_imba_brilliance_aura_passive:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
@@ -291,7 +279,7 @@ function modifier_imba_brilliance_aura_effect:DeclareFunctions()
 end
 
 function modifier_imba_brilliance_aura_effect:GetModifierMoveSpeedBonus_Percentage()
-	if self:GetParent() == self:GetCaster() and self:GetCaster():GetMana() == self:GetCaster():GetMaxMana() then
+	if self:GetParent() == self:GetCaster() and self:GetCaster():GetMana() == self:GetCaster():GetMaxMana() and not self:GetCaster():PassivesDisabled() then
 		return self:GetAbility():GetSpecialValueFor("movespeed_bonus")
 	else
 		return 0
@@ -299,6 +287,9 @@ function modifier_imba_brilliance_aura_effect:GetModifierMoveSpeedBonus_Percenta
 end
 
 function modifier_imba_brilliance_aura_effect:GetModifierBonusStats_Intellect()
+	if self:GetCaster():PassivesDisabled() then
+		return 0
+	end
 	if self:GetParent() == self:GetCaster() then
 		return (2 * self:GetAbility():GetSpecialValueFor("bonus_int"))
 	else
@@ -307,6 +298,9 @@ function modifier_imba_brilliance_aura_effect:GetModifierBonusStats_Intellect()
 end
 
 function modifier_imba_brilliance_aura_effect:GetModifierTotalPercentageManaRegen()
+	if self:GetCaster():PassivesDisabled() then
+		return 0
+	end
 	if self:GetParent() == self:GetCaster() then
 		return (2 * self:GetAbility():GetSpecialValueFor("mana_regen"))
 	else

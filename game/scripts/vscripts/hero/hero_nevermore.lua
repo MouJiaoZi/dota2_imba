@@ -13,7 +13,7 @@ function imba_nevermore_shadowraze:IsRefreshable() 			return true end
 function imba_nevermore_shadowraze:IsStealable() 			return true end
 function imba_nevermore_shadowraze:IsNetherWardStealable()	return true end
 function imba_nevermore_shadowraze:GetCooldown(i) return self:GetSpecialValueFor("charge_time") end
-function imba_nevermore_shadowraze:GetCastRange() return self:GetSpecialValueFor("length") - self:GetCaster():GetCastRangeBonus() end
+function imba_nevermore_shadowraze:GetCastRange() return self:GetSpecialValueFor("length") end
 function imba_nevermore_shadowraze:OnUpgrade()
 	if not AbilityChargeController:IsChargeTypeAbility(self) then
 		AbilityChargeController:AbilityChargeInitialize(self, self:GetSpecialValueFor("charge_time"), self:GetSpecialValueFor("max_charges"), 1, true, true)
@@ -25,7 +25,7 @@ end
 function imba_nevermore_shadowraze:OnSpellStart()
 	local caster = self:GetCaster()
 	local direction = caster:GetForwardVector():Normalized()
-	local length = self:GetSpecialValueFor("length")
+	local length = self:GetSpecialValueFor("length") + caster:GetCastRangeBonus()
 	local pfx_number = math.floor(length / self:GetSpecialValueFor("radius")) + 1
 	for i=1, pfx_number do
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_shadowraze.vpcf", PATTACH_CUSTOMORIGIN, nil)

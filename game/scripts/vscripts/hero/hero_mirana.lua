@@ -390,13 +390,11 @@ function modifier_imba_moonlight_shadow:OnAbilityExecuted(keys)
 	if keys.unit ~= self:GetParent() then
 		return
 	end
-	if self:GetAbility():GetLevel() < 2 or keys.ability:IsItem() then
-		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_moonlight_shadow_fade", {duration = self:GetAbility():GetSpecialValueFor("fade_delay")})
-	end
+	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_moonlight_shadow_fade", {duration = self:GetAbility():GetSpecialValueFor("fade_delay")})
 end
 
 function modifier_imba_moonlight_shadow:OnCreated()
-	self.ms = self:GetCaster():HasScepter() and self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed()) or nil
+	self.ms = self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed(), false)
 	if IsServer() then
 		self:StartIntervalThink(0.1)
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_moonlight_shadow_fade", {duration = self:GetAbility():GetSpecialValueFor("fade_delay")})

@@ -10,7 +10,7 @@ function imba_riki_tricks_of_the_trade:IsRefreshable() 			return true end
 function imba_riki_tricks_of_the_trade:IsStealable() 			return true end
 function imba_riki_tricks_of_the_trade:IsNetherWardStealable()	return false end
 function imba_riki_tricks_of_the_trade:GetAssociatedSecondaryAbilities() return "imba_riki_tott_true" end
-function imba_riki_tricks_of_the_trade:GetAOERadius() return self:GetSpecialValueFor("range") end
+function imba_riki_tricks_of_the_trade:GetAOERadius() return self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1") end
 
 function imba_riki_tricks_of_the_trade:GetBehavior()
 	if self:GetCaster():HasScepter() then
@@ -24,7 +24,7 @@ function imba_riki_tricks_of_the_trade:GetCastRange()
 	if self:GetCaster():HasScepter() then
 		return self.BaseClass.GetCastRange(self, self:GetCaster():GetAbsOrigin(), self:GetCaster())
 	else
-		return (self:GetSpecialValueFor("range") - self:GetCaster():GetCastRangeBonus())
+		return (self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1") - self:GetCaster():GetCastRangeBonus())
 	end
 end
 
@@ -86,7 +86,7 @@ modifier_imba_tricks_of_the_trade_thinker = class({})
 function modifier_imba_tricks_of_the_trade_thinker:OnCreated()
 	if IsServer() then
 		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_tricks_of_the_trade_caster", {})
-		local radius = self:GetAbility():GetSpecialValueFor("range")
+		local radius = self:GetAbility():GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1")
 		local duration = self:GetAbility():GetChannelTime()
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_riki/riki_tricks.vpcf", PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
@@ -104,7 +104,7 @@ function modifier_imba_tricks_of_the_trade_thinker:OnIntervalThink()
 		return
 	end
 	local abs = self:GetParent():GetAbsOrigin()
-	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
+	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
 		self:GetCaster():SetAbsOrigin(enemy[i]:GetAbsOrigin() + enemy[i]:GetForwardVector() * -120)
 		self:GetCaster():PerformAttack(enemy[i], false, true, true, false, true, false, false)

@@ -288,7 +288,7 @@ function modifier_imba_march_of_the_machines_thinker:OnIntervalThink()
 	local caster = self:GetCaster()
 	local parent = self:GetParent()
 	local ability = self:GetAbility()
-	if caster:IsNull() or ability:IsNull() or not caster:HasAbility("imba_tinker_march_of_the_machines") then
+	if not ability or caster:IsNull() or ability:IsNull() or not caster:HasAbility("imba_tinker_march_of_the_machines") then
 		parent:ForceKill(false)
 		self:Destroy()
 		return
@@ -472,6 +472,12 @@ function imba_tinker_rearm:OnSpellStart()
 		if current_item and not IsInTable(current_item:GetName(), forbidden_items) then
 			current_item:EndCooldown()
 		end
+	end
+
+	-- Refresh TP
+	local tp = caster:GetTP()
+	for i=1, #tp do
+		tp[i]:EndCooldown()
 	end
 
 	local buff = caster:AddNewModifier(caster, self, "modifier_imba_rearm_stack", {duration = self:GetSpecialValueFor("stack_duration")})

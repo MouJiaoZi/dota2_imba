@@ -45,22 +45,15 @@ function modifier_imba_skadi_passive:IsHidden() 		return true end
 function modifier_imba_skadi_passive:IsPurgable() 		return false end
 function modifier_imba_skadi_passive:IsPurgeException() return false end
 function modifier_imba_skadi_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_skadi_passive:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE} end
+function modifier_imba_skadi_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PROJECTILE_NAME, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE} end
 function modifier_imba_skadi_passive:GetModifierBonusStats_Intellect() return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
 function modifier_imba_skadi_passive:GetModifierBonusStats_Agility() return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
 function modifier_imba_skadi_passive:GetModifierBonusStats_Strength() return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
-function modifier_imba_skadi_passive:GetIMBAProjectileName() return "particles/items2_fx/skadi_projectile.vpcf" end
+function modifier_imba_skadi_passive:GetModifierProjectileName() return "particles/items2_fx/skadi_projectile.vpcf" end
 
 function modifier_imba_skadi_passive:OnCreated()
 	if IsServer() then
-		IMBA:ChangeUnitProjectile(self:GetParent(), self)
 		self:StartIntervalThink(0.2)
-	end
-end
-
-function modifier_imba_skadi_passive:OnDestroy()
-	if IsServer() then
-		IMBA:ChangeUnitProjectile(self:GetParent(), nil)
 	end
 end
 

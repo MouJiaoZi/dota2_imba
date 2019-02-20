@@ -173,6 +173,67 @@
 		"FightRecapLevel"					"0"
 	}
 
+	//=================================================================================================================
+	// Roshan: Slam
+	//=================================================================================================================
+	"imba_roshan_slam"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"roshan_slam"
+		"MaxLevel" 						"1"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"FightRecapLevel"				"0"
+		"ScriptFile"					"modifier/modifier_imba_aegis.lua"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"10.0"
+		"AbilityCastPoint"				"0.47 0.47 0.47 0.47"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"radius"			"350"
+			}
+			"02"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"slow_duration"		"4.0"
+			}
+			"03"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"slow_amount"		"80"
+			}
+			"04"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"damage"			"200"
+			}
+			"05"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"cdr_per_hit"		"1"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	//	[TOWR]		TOWER ABILITIES
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -6634,7 +6695,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"value"						"3"
+				"value"						"2"
 			}
 		}
 	}
@@ -8848,7 +8909,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"proc_chance"				"50"
+				"proc_chance"				"35"
 			}
 			"03"
 			{
@@ -11160,7 +11221,6 @@
 		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
 		"FightRecapLevel"				"2"
 		"AbilityTextureName"			"mirana_invis"
-		"HasScepterUpgrade"				"1"
 		"ScriptFile"					"hero/hero_mirana.lua"
 
 
@@ -11235,6 +11295,39 @@
 	}
 	
 	//=================================================================================================================
+	// Morphling's Morphling
+	//=================================================================================================================
+	"imba_morphling_morphling"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"ability_lua"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"AbilityTextureName"			"custom/morphling_morphling"
+		"ScriptFile"					"hero/hero_morphling.lua"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"conver_pct"			"10 15 20 25"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_attributes"		"4 8 12 16"
+			}
+		}
+	}
+
+	//=================================================================================================================
 	// Necrolyte's Death Pulse
 	//=================================================================================================================
 	"imba_necrolyte_death_pulse"
@@ -11247,7 +11340,6 @@
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
-		"FightRecapLevel"				"1"
 		"AbilityTextureName"			"necrolyte_death_pulse"
 		"ScriptFile"					"hero/hero_necrolyte.lua"
 
@@ -11618,7 +11710,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"length"					"500 600 700 800"
+				"length"					"800"
 			}
 			"07"
 			{
@@ -14540,7 +14632,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration_damage"		"15 25 35 45"
+				"duration_damage"		"8 13 18 23"
 			}
 			"03"
 			{
@@ -14881,6 +14973,7 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"range"						"600"
+				"LinkedSpecialBonus"		"special_bonus_imba_riki_1"
 			}
 			"02"
 			{
@@ -14927,6 +15020,7 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"range"						"600"
+				"LinkedSpecialBonus"		"special_bonus_imba_riki_1"
 			}
 			"02"
 			{
@@ -14942,6 +15036,32 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"bonus_scepter"				"6"
+			}
+		}
+	}
+	
+	"special_bonus_imba_riki_1" // +600 TotT Radius
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_riki_tricks_of_the_trade"
+			"02"						"imba_riki_tott_true"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"300"
 			}
 		}
 	}
@@ -16738,7 +16858,7 @@
 			"13"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"wraith_health_pct_scepter"	"100"
+				"wraith_health_pct_scepter"	"400"
 			}
 		}
 	}

@@ -129,6 +129,7 @@ function IllusionManager:CreateIllusion(hBaseUnit, vSpawnAbs, vSpawnForward, iOu
 	end
 
 	local forward = vSpawnForward or owner:GetForwardVector()
+	illusion:MakeIllusion()
 	illusion:Stop()
 	illusion:SetForwardVector(forward)
 	illusion:SetControllableByPlayer(owner:GetPlayerID(), false)
@@ -140,7 +141,6 @@ function IllusionManager:CreateIllusion(hBaseUnit, vSpawnAbs, vSpawnForward, iOu
 	end
 	)
 	IllusionManager:SetUpIllusion(illusion, owner, hBaseUnit, iOutgoingDMG, iIncomingDMG, iIllsuionType, fDuration)
-	illusion:MakeIllusion()
 	return illusion
 end
 

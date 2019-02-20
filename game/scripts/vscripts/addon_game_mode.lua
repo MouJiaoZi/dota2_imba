@@ -29,6 +29,8 @@ function Precache( context )
 
 	DebugPrint("[BAREBONES] Performing pre-load precache")
 
+	_G.IMBA_PRECACHE_CONTEXT = context
+
 	-- Entire heroes (sound effects/voice/models/particles) can be precached with PrecacheUnitByNameSync
 	-- Custom units from npc_units_custom.txt can also have all of their abilities and precache{} blocks precached in this way
 	--[[PrecacheUnitByNameSync("npc_dota_hero_ancient_apparition", context)
@@ -41,7 +43,9 @@ function Precache( context )
 	LinkLuaModifier("modifier_confuse", "modifier/modifier_confuse.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_unlimited_level_powerup", "modifier/modifier_imba_unlimited_level_powerup.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_unlimited_powerup_ak", "modifier/modifier_imba_unlimited_level_powerup.lua", LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier("modifier_imba_ak_ability_adder", "modifier/modifier_imba_unlimited_level_powerup.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_ak_ability_controller", "modifier/modifier_imba_unlimited_level_powerup.lua", LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier("modifier_imba_ability_layout_contoroller", "modifier/modifier_imba_ability_layout_contoroller.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_dummy_thinker", "modifier/modifier_dummy_thinker.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_base_protect", "modifier/modifier_dummy_thinker.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_stunned", "modifier/modifier_imba_stunned.lua", LUA_MODIFIER_MOTION_NONE )
@@ -53,6 +57,7 @@ function Precache( context )
 	LinkLuaModifier("modifier_imba_movespeed_controller", "modifier/modifier_imba_movespeed_controller.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_t2_tower_vision", "modifier/modifier_dummy_thinker.lua", LUA_MODIFIER_MOTION_NONE )
 	LinkLuaModifier("modifier_imba_suicide", "modifier/modifier_imba_suicide.lua", LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier("modifier_imba_reapers_scythe_permanent", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
 
 	-- Items
 	PrecacheResource("particle", "particles/econ/items/effigies/status_fx_effigies/gold_effigy_ambient_dire_lvl2.vpcf", context)

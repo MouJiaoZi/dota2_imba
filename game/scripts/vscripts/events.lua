@@ -124,7 +124,7 @@ local selectedHero = {}
 local tick = 0
 local waitTick = 10
 if GameRules:IsCheatMode() then
-	waitTick = 3
+	waitTick = 10
 end
 
 -- The overall game state has changed
@@ -161,6 +161,9 @@ function GameMode:OnGameRulesStateChange(keys)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_STRATEGY_TIME then
+		if IsInToolsMode() and IMBA_DEBUG_AK then
+			SendToConsole("say -bot")
+		end
 		for i=0, 19 do -- force that noob random
 			if PlayerResource:IsValidPlayer(i) and not PlayerResource:HasSelectedHero(i) and PlayerResource:GetConnectionState(i) == DOTA_CONNECTION_STATE_CONNECTED then
 				PlayerResource:GetPlayer(i):MakeRandomHeroSelection()
@@ -202,7 +205,7 @@ function GameMode:OnGameRulesStateChange(keys)
 			end
 		end
 		local announce = false
-		Timers:CreateTimer({useGameTime = false,
+		Timers:CreateTimer({useGameTime = false, endTime = IMBA_LOADING_DELAY, 
 			callback = function()
 				if tick == 0 then
 					if GameRules:IsCheatMode() then
@@ -306,6 +309,17 @@ function GameMode:OnGameRulesStateChange(keys)
 					return 0.1
 				else
 					PauseGame(false)
+					if IMBA_DEBUG_AK then
+						Timers:CreateTimer(10, function()
+								print(" ")
+								print(" ")
+								print(" ")
+								print(" ")
+								SendToServerConsole("dota_launch_custom_game dota_imba_redux dbii_10v10")
+								return nil
+							end
+						)
+					end
 					--GameMode:ResetCameraForAll()
 					return nil
 				end
@@ -373,7 +387,7 @@ function GameMode:OnNPCSpawned(keys)
 
 	--Game Start Hero Set
 	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerID() and npc:GetPlayerID() and npc:GetPlayerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
-		Timers:CreateTimer({useGameTime = false, endTime = 1.0,
+		Timers:CreateTimer({useGameTime = false, endTime = 1.5,
 			callback = function()
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
@@ -384,17 +398,9 @@ function GameMode:OnNPCSpawned(keys)
 					end
 				end
 
-				--[[local abilityName = RandomFromTable(IMBA_RANDOM_ABILITIES)
-				if npc:GetName() ~= "npc_dota_hero_invoker" then
-					local ability = npc:AddAbility(abilityName)
-					if ability then
-						ability:SetLevel(1)
-						ability:SetAbilityIndex(3)
-					end
-				end]]
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
-				if GetMapName() ~= "dbii_death_match" and CustomNetTables:GetTableValue("imba_omg", "enable_ak").enable == 1 then
+				if IMBA_AK_ENABLE or IsInToolsMode() then
 					IMBAEvents:GiveAKAbility(npc)
 				end
 				return nil
@@ -403,6 +409,8 @@ function GameMode:OnNPCSpawned(keys)
 
 		npc:AddNewModifier(npc, nil, "modifier_imba_talent_modifier_adder", {})
 		npc:AddNewModifier(npc, nil, "modifier_imba_movespeed_controller", {})
+		npc:AddNewModifier(npc, nil, "modifier_imba_reapers_scythe_permanent", {})
+		npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
 
 		local chicken = npc:AddItemByName("item_courier")
 		npc:CastAbilityNoTarget(chicken, npc:GetPlayerID())
@@ -415,12 +423,12 @@ function GameMode:OnNPCSpawned(keys)
 		
 		Timers:CreateTimer(0, function()
 			-- a fresh Tp
-			for i=0, 9 do
-				local item = npc:GetItemInSlot(i)
-				if item and item:GetName() == "item_tpscroll" then
-					item:EndCooldown()
-					return nil
+			local tp = npc:GetTP()
+			if #tp > 0 then
+				for i=1, #tp do
+					tp[i]:EndCooldown()
 				end
+				return nil
 			end
 			return 0.2
 		end
@@ -791,7 +799,7 @@ function GameMode:OnEntityKilled( keys )
 	-------------------------------------------------------------------------------------------------
 
 	if killed_unit:GetName() == "npc_dota_roshan" then
-		for i=2, roshan_kill do
+		for i=3, roshan_kill do
 			local drop_cheese = CreateItem("item_imba_cheese", nil, nil)
 			if drop_cheese then
 				CreateItemOnPositionSync(killed_unit:GetAbsOrigin(), drop_cheese)
@@ -977,6 +985,12 @@ function GameMode:OnPlayerChat(keys)
 		end
 		if str == "-illcommon" then
 			IllusionManager:PrintIllusionCommon()
+		end
+		if str == "-bot" then
+			GameRules:BotPopulate()
+		end
+		if str == "-checkak" then
+			CheckRandomAbilityKV()
 		end
 	end
 
