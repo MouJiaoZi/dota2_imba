@@ -80,7 +80,7 @@ function modifier_imba_moon_shard_consume:IsDebuff()			return false end
 function modifier_imba_moon_shard_consume:IsHidden() 			return false end
 function modifier_imba_moon_shard_consume:IsPurgable() 			return false end
 function modifier_imba_moon_shard_consume:IsPurgeException() 	return false end
-function modifier_imba_moon_shard_consume:GetTexture() return "custom/imba_moon_shard" end
+function modifier_imba_moon_shard_consume:GetTexture() return "imba_moon_shard" end
 function modifier_imba_moon_shard_consume:RemoveOnDeath() return self:GetParent():IsIllusion() end
 
 CONSUME_AS_1 = 70

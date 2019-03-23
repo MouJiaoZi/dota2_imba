@@ -16,21 +16,20 @@ function InitEndBoard()
 {
 	for(var i=0; i<=19; i++)
 	{
-		var playerBaseTable = CustomNetTables.GetTableValue("imba_player_base", i.toString());
-		var playerInfoTable = CustomNetTables.GetTableValue("imba_player_info", i.toString());
+		var playerBaseTable = CustomNetTables.GetTableValue("imba_player_detail", i.toString());
 		if(playerBaseTable != undefined)
 		{
 			var playerID = i;
-			var team = playerBaseTable[4]; 
+			var team = playerBaseTable.player_team; 
 			var playerScore = $.CreatePanel("Panel", teamContainer[team], "IMBAScoreBoard_Player_" + playerID);
 			playerScore.SetAttributeInt("player_id", playerID);
 			playerScore.BLoadLayout("file://{resources}/layout/custom_game/imba_end_screen_player.xml", false, false);
 
 			playerScore.FindChild("IMBAPlayerColor").style.backgroundColor=GameUI.CustomUIConfig().player_colors[playerID]; 
-			playerScore.FindChild("IMBAPlayerAvtar").steamid=playerBaseTable[1];
-			playerScore.FindChild("IMBAPlayerHero").heroname=playerBaseTable[3];
-			playerScore.FindChildTraverse("IMBAPlayerName").text=playerBaseTable[2];
-			playerScore.FindChildTraverse("IMBAPlayerHeroName").text=$.Localize(playerBaseTable[3]);
+			playerScore.FindChild("IMBAPlayerAvtar").steamid=playerBaseTable.steamid_64;
+			playerScore.FindChild("IMBAPlayerHero").heroname=playerBaseTable.hero_name;
+			playerScore.FindChildTraverse("IMBAPlayerName").text=playerBaseTable.player_name;
+			playerScore.FindChildTraverse("IMBAPlayerHeroName").text=$.Localize(playerBaseTable.hero_name);
 		}
 	}
 }
@@ -60,6 +59,3 @@ function startEnd()
 
 
 GameEvents.SendCustomGameEventToServer("update_imba_player_info", {});
-
-
-//$.Msg(CustomNetTables.GetTableValue("imba_player_info", "11"));

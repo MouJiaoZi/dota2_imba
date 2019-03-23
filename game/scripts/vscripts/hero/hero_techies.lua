@@ -37,6 +37,7 @@ function imba_techies_land_mines:OnSpellStart()
 	local pos0 = pos
 	caster:AddModifierStacks(caster, self, "modifier_imba_land_mines_charge", {}, 1, false, true)
 	local mine = CreateUnitByName("npc_imba_techies_land_mine", pos0, true, caster, caster, caster:GetTeamNumber())
+	mine:FindAbilityByName("imba_techies_minefield_teleport"):SetLevel(1)
 	mine:EmitSound("Hero_Techies.LandMine.Plant")
 	mine:SetControllableByPlayer(self:GetCaster():GetPlayerID(), true)
 	mine:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
@@ -46,6 +47,7 @@ end
 function imba_techies_land_mines:ThrowMine(target)
 	local caster = self:GetCaster()
 	local mine = CreateUnitByName("npc_imba_techies_land_mine", caster:GetAbsOrigin(), true, caster, caster, caster:GetTeamNumber())
+	mine:FindAbilityByName("imba_techies_minefield_teleport"):SetLevel(1)
 	mine:SetControllableByPlayer(self:GetCaster():GetPlayerID(), true)
 	mine:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
 	mine:AddNewModifier(caster, self, "modifier_imba_land_mines_throw_motion", {duration = 3.0})
@@ -269,6 +271,7 @@ function imba_techies_stasis_trap:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
 	local mine = CreateUnitByName("npc_imba_techies_stasis_trap", pos, true, caster, caster, caster:GetTeamNumber())
+	mine:FindAbilityByName("imba_techies_minefield_teleport"):SetLevel(1)
 	mine:EmitSound("Hero_Techies.StasisTrap.Plant")
 	mine:SetControllableByPlayer(self:GetCaster():GetPlayerID(), true)
 	mine:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
@@ -444,7 +447,7 @@ function modifier_imba_suicide_motion:OnDestroy()
 			end
 
 			local land_mine = parent:FindAbilityByName("imba_techies_land_mines")
-			if land_mine then
+			if land_mine and land_mine:GetLevel() > 0 then
 				local pos = GetRandomPosition2D(parent:GetAbsOrigin(), ability:GetSpecialValueFor("radius"))
 				local mine = CreateUnitByName("npc_imba_techies_land_mine", pos, true, parent, parent, parent:GetTeamNumber())
 				mine:SetControllableByPlayer(parent:GetPlayerID(), true)
@@ -454,13 +457,29 @@ function modifier_imba_suicide_motion:OnDestroy()
 			end
 
 			local stasis_trap = parent:FindAbilityByName("imba_techies_stasis_trap")
-			if stasis_trap then
+			if stasis_trap and stasis_trap:GetLevel() > 0 then
 				local pos = GetRandomPosition2D(parent:GetAbsOrigin(), ability:GetSpecialValueFor("radius"))
 				local mine = CreateUnitByName("npc_imba_techies_stasis_trap", pos, true, parent, parent, parent:GetTeamNumber())
 				mine:SetControllableByPlayer(parent:GetPlayerID(), true)
 				mine:AddNewModifier(parent, stasis_trap, "modifier_kill", {duration = stasis_trap:GetSpecialValueFor("duration")})
 				mine:AddNewModifier(parent, stasis_trap, "modifier_imba_stasis_trap_active_delay", {duration = stasis_trap:GetSpecialValueFor("activation_delay")})
 				mine:AddNewModifier(parent, stasis_trap, "modifier_imba_stasis_trap", {duration = stasis_trap:GetSpecialValueFor("duration")})
+			end
+
+			local remote_mine = parent:FindAbilityByName("imba_techies_remote_mines")
+			if remote_mine and remote_mine:GetLevel() > 0 then
+				local pos = GetRandomPosition2D(parent:GetAbsOrigin(), ability:GetSpecialValueFor("radius"))
+				local mine = CreateUnitByName("npc_imba_techies_remote_mine", pos, true, parent, parent, parent:GetTeamNumber())
+				mine:EmitSound("Hero_Techies.RemoteMine.Plant")
+				mine:SetControllableByPlayer(parent:GetPlayerID(), false)
+				mine:AddNewModifier(parent, remote_mine, "modifier_kill", {duration = remote_mine:GetSpecialValueFor("duration")})
+				mine:AddNewModifier(parent, remote_mine, "modifier_imba_remote_mines", {duration = remote_mine:GetSpecialValueFor("duration")})
+				for i=0, 23 do
+					local ability = mine:GetAbilityByIndex(i)
+					if ability then
+						ability:SetLevel(1)
+					end
+				end
 			end
 		end
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
@@ -633,6 +652,12 @@ function imba_techies_remote_mines:OnSpellStart()
 	mine:SetControllableByPlayer(caster:GetPlayerID(), false)
 	mine:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
 	mine:AddNewModifier(caster, self, "modifier_imba_remote_mines", {duration = self:GetSpecialValueFor("duration")})
+	for i=0, 23 do
+		local ability = mine:GetAbilityByIndex(i)
+		if ability then
+			ability:SetLevel(1)
+		end
+	end
 end
 
 imba_techies_remote_mines_self_detonate = class({})

@@ -129,6 +129,7 @@ var IMBAHeroes =
 ["npc_dota_hero_monkey_king", 0],
 ["npc_dota_hero_pangolier", 0],
 ["npc_dota_hero_dark_willow", 0],
+["npc_dota_hero_mars", 0],
 ["npc_dota_hero_grimstroke", 0]
 ];
 
@@ -181,7 +182,8 @@ var OMGHeroes =
 "npc_dota_hero_venomancer",
 "npc_dota_hero_wisp",
 "npc_dota_hero_witch_doctor",
-"npc_dota_hero_zuus"];
+"npc_dota_hero_zuus",
+"npc_dota_hero_mars"];
 
 /*var heroArray = new Array();
 var heroType = new Array();

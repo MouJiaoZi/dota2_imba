@@ -107,6 +107,7 @@ function imba_troll_warlord_whirling_axes_ranged:OnSpellStart()
 	local caster = self:GetCaster()
 	caster:EmitSound("Hero_TrollWarlord.WhirlingAxes.Ranged")
 	local direction = (self:GetCursorPosition() - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0
 	local endpos = caster:GetAbsOrigin() + direction * (self:GetSpecialValueFor("range") + caster:GetCastRangeBonus())
 	local axes = self:GetSpecialValueFor("base_axes") + math.floor(caster:GetAgility() / self:GetSpecialValueFor("agility_per_axe"))
 	local angles = self:GetSpecialValueFor("spread_angle")
@@ -231,7 +232,7 @@ function modifier_imba_berserkers_rage_passive:IsPurgeException() 	return false 
 function modifier_imba_berserkers_rage_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
 
 function modifier_imba_berserkers_rage_passive:OnAttackLanded(keys)
-	if IsServer() and self:GetParent() == keys.attacker and self:GetParent().splitattack and keys.target:IsAlive() then
+	if IsServer() and self:GetParent() == keys.attacker and self:GetParent().splitattack and keys.target:IsAlive() and not self:GetParent():PassivesDisabled() then
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("bash_chance")) and (keys.target:IsHero() or keys.target:IsCreep()) and self:GetParent():IsRealHero() then
 			keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("bash_duration")})
 			keys.target:EmitSound("Hero_TrollWarlord.BerserkersRage.Stun")

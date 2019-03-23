@@ -34,7 +34,7 @@ function imba_ember_spirit_searing_chains:OnSpellStart()
 	local heroes = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
 	local units = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
 	for k, v in pairs(units) do
-		heroes[#heroes + 1] = k
+		heroes[#heroes + 1] = v
 	end
 	for i=1, chains do
 		if heroes[i] then
@@ -136,7 +136,7 @@ function imba_ember_spirit_sleight_of_fist:OnSpellStart()
 			local pos0 = GetRandomPosition2D(enemy:GetAbsOrigin(), 128)
 			local direction = (enemy:GetAbsOrigin() - pos0):Normalized()
 			caster:SetAbsOrigin(pos0)
-			caster:SetForwardVector(direction)
+			caster:SetForwardVector(Vector(direction[1], direction[2], 0))
 			if not caster:IsDisarmed() then
 				caster:SetAttacking(enemy)
 				caster:PerformAttack(enemy, true, true, true, false, false, false, false)
@@ -247,8 +247,9 @@ function modifier_imba_flame_guard:OnCreated()
 		self:GetParent():EmitSound("Hero_EmberSpirit.FlameGuard.Loop")
 		self.health = self:GetAbility():GetSpecialValueFor("absorb_amount")
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_flameguard.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetAbility():GetSpecialValueFor("radius"), self:GetAbility():GetSpecialValueFor("radius"), self:GetAbility():GetSpecialValueFor("radius")))
-		ParticleManager:SetParticleControl(pfx, 3, Vector(self:GetAbility():GetSpecialValueFor("radius"), self:GetAbility():GetSpecialValueFor("radius"), self:GetAbility():GetSpecialValueFor("radius")))
+		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetAbility():GetSpecialValueFor("radius"), 0, 0))
+		ParticleManager:SetParticleControl(pfx, 3, Vector(5.0, 0, 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
 		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("tick_interval"))
 	end
@@ -294,7 +295,6 @@ end
 
 imba_ember_spirit_fire_remnant = class({})
 
-LinkLuaModifier("modifier_imba_fire_remnant_motion", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fire_remnant_state", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fire_remnant_target", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fire_remnant_timer", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
@@ -321,43 +321,59 @@ function imba_ember_spirit_fire_remnant:OnSpellStart()
 	local pos = self:GetCursorPosition()
 	local distance = (caster:GetAbsOrigin() - pos):Length2D()
 	caster:EmitSound("Hero_EmberSpirit.FireRemnant.Cast")
-	local remnant = CreateModifierThinker(caster, self, "modifier_imba_fire_remnant_motion", {duration = distance / self:GetSpecialValueFor("speed"), pos_x = pos.x, pos_y = pos.y, pos_z = pos.z}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
-	remnant:EmitSound("Hero_EmberSpirit.FireRemnant.Create")
-	local buff = remnant:FindModifierByName("modifier_imba_fire_remnant_motion")
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant_trail.vpcf", PATTACH_ABSORIGIN_FOLLOW, remnant)
-	ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_CUSTOMORIGIN, "attach_hitloc", caster:GetAbsOrigin(), true)
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
-	local cp = Vector(0,0,0) + direction * self:GetSpecialValueFor("speed")
-	ParticleManager:SetParticleControl(pfx, 1, cp)
-	buff:AddParticle(pfx, false, false, 15, false, false)
-	
+	direction.z = 0.0
+	local timer = caster:AddNewModifier(caster, self, "modifier_imba_fire_remnant_timer", {duration = self:GetSpecialValueFor("duration")})
+	local dummy = CreateUnitByName("npc_dummy_unit", caster:GetAbsOrigin(), false, caster, caster, self:GetCaster():GetTeamNumber())
+	dummy:AddNewModifier(caster, nil, "modifier_rooted", {duration = self:GetSpecialValueFor("duration") + 10.0})
+	timer.target = dummy
+	dummy:AddNewModifier(self:GetCaster(), self, "modifier_imba_fire_remnant_state", {duration = self:GetSpecialValueFor("duration")})
+	dummy:AddNewModifier(self:GetCaster(), nil, "modifier_kill", {duration = self:GetSpecialValueFor("duration")})
+	local info = 
+	{
+		Ability = self,
+		EffectName = "particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant_trail.vpcf",
+		vSpawnOrigin = caster:GetAbsOrigin(),
+		fDistance = distance,
+		fStartRadius = 0,
+		fEndRadius = 0,
+		Source = caster,
+		bHasFrontalCone = false,
+		bReplaceExisting = false,
+		iUnitTargetTeam = DOTA_UNIT_TARGET_TEAM_NONE,
+		iUnitTargetFlags = DOTA_UNIT_TARGET_FLAG_NONE,
+		iUnitTargetType = DOTA_UNIT_TARGET_NONE,
+		fExpireTime = GameRules:GetGameTime() + 30.0,
+		bDeleteOnHit = true,
+		vVelocity = direction * self:GetSpecialValueFor("speed"),
+		bProvidesVision = false,
+		ExtraData = {dummy = dummy:entindex()}
+	}
+	ProjectileManager:CreateLinearProjectile(info)
 end
 
-modifier_imba_fire_remnant_motion = class({})
-
-function modifier_imba_fire_remnant_motion:OnCreated(keys)
-	if IsServer() then
-		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
+function imba_ember_spirit_fire_remnant:OnProjectileThink_ExtraData(pos, keys)
+	if keys.dummy and EntIndexToHScript(keys.dummy) then
+		EntIndexToHScript(keys.dummy):SetAbsOrigin(GetGroundPosition(pos, nil))
 	end
 end
 
-function modifier_imba_fire_remnant_motion:OnDestroy()
-	if IsServer() then
-		local timer = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_fire_remnant_timer", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-		local dummy = CreateUnitByName("npc_dummy_unit", self.pos, false, self:GetCaster(), self:GetCaster(), self:GetCaster():GetTeamNumber())
-		dummy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_fire_remnant_state", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-		dummy:AddNewModifier(self:GetCaster(), nil, "modifier_kill", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-		dummy:EmitSound("Hero_EmberSpirit.Remnant.Appear")
-		timer.target = dummy
-		self.pos = nil
+function imba_ember_spirit_fire_remnant:OnProjectileHit_ExtraData(hTarget, pos, keys)
+	if keys.dummy and EntIndexToHScript(keys.dummy) then
+		EntIndexToHScript(keys.dummy):SetAbsOrigin(GetGroundPosition(pos, nil))
+		local dummy = EntIndexToHScript(keys.dummy)
+		if dummy:FindModifierByName("modifier_imba_fire_remnant_state") then
+			dummy:FindModifierByName("modifier_imba_fire_remnant_state"):CreatePfx()
+		end
 	end
 end
 
 modifier_imba_fire_remnant_state = class({})
 
 function modifier_imba_fire_remnant_state:CheckState() return {[MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
-function modifier_imba_fire_remnant_state:OnCreated()
+function modifier_imba_fire_remnant_state:CreatePfx()
 	if IsServer() then
+		self:GetParent():EmitSound("Hero_EmberSpirit.Remnant.Appear")
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
 		local gesture = math.random(67, 69)
 		local steal_gesture = {53, 59, 65, 66, 70, 77, 88, 101, 114, 121}
@@ -368,6 +384,7 @@ function modifier_imba_fire_remnant_state:OnCreated()
 		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetCaster(), PATTACH_CUSTOMORIGIN, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 		self:AddParticle(pfx, false, false, 15, false, false)
+		self:SetStackCount(1)
 	end
 end
 
@@ -449,21 +466,20 @@ function imba_ember_spirit_activate_fire_remnant:OnSpellStart()
 	local caster = self:GetCaster()
 	local ability = caster:FindAbilityByName("imba_ember_spirit_fire_remnant") 
 	local pos = self:GetCursorPosition()
-	local remnants = {}
-	local temp = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, 999999, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_CLOSEST, false)
-	for k, v in pairs(temp) do
-		if v:GetPlayerOwnerID() == caster:GetPlayerID() and v:HasModifier("modifier_imba_fire_remnant_state") and not v:HasModifier("modifier_imba_fire_remnant_target") then
-			remnants[#remnants+1] = v
+	local buffs = caster:FindAllModifiersByName("modifier_imba_fire_remnant_timer")
+	local target = nil
+	local distance = 1000000
+	for i=1, #buffs do
+		local remnant = buffs[i].target
+		if (pos - remnant:GetAbsOrigin()):Length2D() <= distance then
+			target = remnant
 		end
 	end
-	if #remnants > 0 and ability then
-		local distance = (caster:GetAbsOrigin() - remnants[1]:GetAbsOrigin()):Length2D()
-		if distance <= 0 then
-			distance = 1
-		end
-		caster:AddNewModifier(caster, ability, "modifier_imba_fire_remnant_active_caster", {duration = distance / ability:GetSpecialValueFor("speed"), target = remnants[1]:entindex()})
+	if target then
+		caster:AddNewModifier(caster, ability, "modifier_imba_fire_remnant_active_caster", {target = target:entindex()})
 	else
 		self:RefundManaCost()
+		self:EndCooldown()
 	end
 end
 
@@ -494,14 +510,17 @@ function modifier_imba_fire_remnant_active_caster:OnCreated(keys)
 end
 
 function modifier_imba_fire_remnant_active_caster:OnIntervalThink()
-	local distance = self.speed / (1.0 / FrameTime())
+	self.pos = self.target:GetAbsOrigin()
+	local distance = (self.pos - self:GetParent():GetAbsOrigin()):Length2D() < (self.speed / (1.0 / FrameTime())) and (self.pos - self:GetParent():GetAbsOrigin()):Length2D() or (self.speed / (1.0 / FrameTime()))
 	local direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
-	self:GetParent():SetForwardVector(direction)
+	direction.z = 0.0
+	self:GetParent():SetForwardVector(Vector(direction[1], direction[2], 0))
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + direction * distance, nil)
 	self:GetParent():SetAbsOrigin(next_pos)
-	if self:GetParent():GetAbsOrigin() == self.pos then
+	if (self:GetParent():GetAbsOrigin() - self.target:GetAbsOrigin()):Length2D() <= 30 then
 		self:Destroy()
 	end
+	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 200, false)
 end
 
 function modifier_imba_fire_remnant_active_caster:OnDestroy()
@@ -513,6 +532,7 @@ function modifier_imba_fire_remnant_active_caster:OnDestroy()
 			local buff = self.target:FindModifierByName("modifier_imba_fire_remnant_state")
 			buff:Explode(true)
 		end
+		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 400, false)
 		self.target = nil
 		self.pos = nil
 		self.speed = nil

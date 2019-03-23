@@ -151,7 +151,7 @@ function modifier_imba_fountain_buff:OnAttack(keys)
 	enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_knockback", fountain_bash)
 	enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_stunned", {duration = bash_duration})
 	enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_silver_edge_debuff", {duration = bash_duration})
-	enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_nullifier_mute", {duration = bash_duration})
+	enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_nullifier_debuff", {duration = bash_duration})
 end
 
 function modifier_imba_fountain_buff:OnCreated()
@@ -164,14 +164,19 @@ function modifier_imba_fountain_buff:OnCreated()
 end
 
 function modifier_imba_fountain_buff:OnIntervalThink()
+	if self:GetParent():HasModifier("modifier_imba_fountain_disabled") then
+		return
+	end
 	local pfx = ParticleManager:CreateParticle("particles/ambient/fountain_danger_circle.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 	ParticleManager:ReleaseParticleIndex(pfx)
+	AddFOWViewer(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self:GetParent():Script_GetAttackRange(), 0.5, false)
 end
 
 modifier_imba_fountain_disabled = class({})
 
-function modifier_imba_fountain_disabled:IsDebuff()			return false end
+function modifier_imba_fountain_disabled:IsDebuff()			return true end
 function modifier_imba_fountain_disabled:IsHidden() 		return false end
 function modifier_imba_fountain_disabled:IsPurgable() 		return false end
 function modifier_imba_fountain_disabled:IsPurgeException() return false end
 function modifier_imba_fountain_disabled:CheckState() return {[MODIFIER_STATE_DISARMED] = true} end
+function modifier_imba_fountain_disabled:GetTexture() return "imba_ancient_dire_spawn_behemoth" end

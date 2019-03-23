@@ -1,7 +1,16 @@
+IMBA_GAME_VERSION = 25
+IMBA_GAME_VERSION_GETTED = 0
+
+IMBA_WEB_SERVER = "https://www.bilibiliduang.cn/"
+
+IMBA_WEB_KEY = GetDedicatedServerKeyV2("imba")
+
+GAME_UPDATED_CAST = false
+
+
 -- In this file you can set up all the properties and settings for your game mode.
 
 IMBA_DEBUG_AK = false
-
 
 ENABLE_HERO_RESPAWN = true              -- Should the heroes automatically respawn on a timer or stay dead until manually respawned
 UNIVERSAL_SHOP_MODE = false             -- Should the main shop contain Secret Shop items as well as regular items
@@ -141,6 +150,7 @@ CUSTOM_TEAM_PLAYER_COUNT = {}           -- If we're not automatically setting th
 CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] = 10
 CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]  = 10
 
+HERO_STARTING_LEVEL = 1
 
 if GetMapName() == "dbii_5v5" then										-- Standard map defaults
 	CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] = 5
@@ -170,7 +180,6 @@ elseif GetMapName() == "dbii_death_match" then									-- death match map defaul
 	CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] = 8
 	CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]  = 8
 	END_GAME_ON_KILLS = true
-	KILLS_TO_END_GAME_FOR_TEAM = 200
 	CUSTOM_GOLD_BONUS = 150
 	CUSTOM_XP_BONUS = 210
 	HERO_RESPAWN_TIME_MULTIPLIER = 25
@@ -225,7 +234,6 @@ BUYBACK_COST_PER_SECOND = 0.5												-- Time-based buyback cost
 SPELL_AMP_RAPIER_1 = 0.7
 SPELL_AMP_RAPIER_3 = 2.0
 SPELL_AMP_RAPIER_SUPER = 2.0
-
 
 HeroList = {}
 
@@ -309,5 +317,11 @@ IMBA_TOWER_ABILITY_4 = {
 "imba_tower_essence_drain",
 "imba_tower_multihit",
 }
+
+IMBA_TOWER_ABILITY_SUM = {}
+IMBA_TOWER_ABILITY_SUM[1] = IMBA_TOWER_ABILITY_1
+IMBA_TOWER_ABILITY_SUM[2] = IMBA_TOWER_ABILITY_2
+IMBA_TOWER_ABILITY_SUM[3] = IMBA_TOWER_ABILITY_3
+IMBA_TOWER_ABILITY_SUM[4] = IMBA_TOWER_ABILITY_4
 
 PRECACHED_UNIT = {}

@@ -93,6 +93,18 @@
 	padding-top: 5px;
 }
 
+.IMBAItemStackNumber
+{
+	font-size:16px;
+	vertical-align: bottom;
+	horizontal-align: right;
+	margin-bottom:-5px;
+	color: #FFFFFF;
+	padding-top: 0px;
+	font-weight: bold;
+	background-color:#000000CD;
+}
+
 .IMBAKDAKills
 {
 	background-color: gradient( linear, 100% 0%, 0% 0%, from( #ffffff00 ), color-stop( 0.1, #00000033), color-stop( 0.9, #00000033), to( #ffffff00 ) );
@@ -354,7 +366,7 @@
 .IMBAEndBackground
 {
 	height: 709px;
-	width: 833px;
+	width: 928px;
 	background-image: url("s2r://panorama/images/hud/reborn/bg_scoreboard_psd.vtex");
 	background-size: cover;
 	background-color: #000000da;
@@ -414,7 +426,7 @@
 #IMBAEndDireTeamContainer
 {
 	height: 320px;
-	width: 827px;
+	width: 925px;
 
 	/*transition-property: height;
 	transition-duration: .18s;

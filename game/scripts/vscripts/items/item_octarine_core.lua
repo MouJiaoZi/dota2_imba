@@ -6,7 +6,7 @@ LinkLuaModifier("modifier_imba_octarine_core_passive", "items/item_octarine_core
 LinkLuaModifier("modifier_imba_octarine_core_unique", "items/item_octarine_core", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_octarine_core:GetIntrinsicModifierName() return "modifier_imba_octarine_core_passive" end
-function item_imba_octarine_core:GetAbilityTextureName() return self:GetCaster():GetModifierStackCount("modifier_imba_octarine_core_unique", self:GetCaster()) == 1 and "custom/imba_octarine_core_off" or "custom/imba_octarine_core" end
+function item_imba_octarine_core:GetAbilityTextureName() return self:GetCaster():GetModifierStackCount("modifier_imba_octarine_core_unique", self:GetCaster()) == 1 and "imba_octarine_core_off" or "imba_octarine_core" end
 
 function item_imba_octarine_core:GetCastRange()
 	if not IsServer() then

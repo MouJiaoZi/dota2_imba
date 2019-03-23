@@ -81,7 +81,8 @@ function imba_mirana_arrow:IsNetherWardStealable()	return true end
 function imba_mirana_arrow:OnSpellStart()
 	local caster = self:GetCaster()
 	local direction = (self:GetCursorPosition() - caster:GetAbsOrigin()):Normalized()
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Mirana.ArrowCast", caster)
+	direction.z = 0.0
+	caster:EmitSound("Hero_Mirana.ArrowCast")
 	local thinker = CreateModifierThinker(caster, self, "modifier_imba_mirana_arrow_thinker", {}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(thinker):EmitSound("Hero_Mirana.Arrow")
 	local info = 
@@ -228,7 +229,9 @@ function modifier_imba_leap_motion:OnIntervalThink()
 	local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
 	local distance = self:GetAbility():GetSpecialValueFor("min_speed") / (1.0 / FrameTime())
 	local height = self.height
-	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self.pos - self:GetParent():GetAbsOrigin()):Normalized() * distance, nil)
+	local direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
+	direction.z = 0.0
+	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + direction * distance, nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
 	self:GetParent():SetAbsOrigin(next_pos)
 	local allies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), next_pos, nil, self:GetAbility():GetSpecialValueFor("buff_radius"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)

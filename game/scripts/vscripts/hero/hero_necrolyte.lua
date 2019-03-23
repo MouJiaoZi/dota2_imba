@@ -286,14 +286,27 @@ function modifier_imba_reapers_scythe:RemoveOnDeath() return false end
 function modifier_imba_reapers_scythe:OnCreated()
 	if IsServer() then
 		self:GetParent():EmitSound("Hero_Necrolyte.ReapersScythe.Target")
-		local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_necrolyte/necrolyte_scythe.vpcf", PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControlEnt(pfx1, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(pfx1, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		ParticleManager:ReleaseParticleIndex(pfx1)
-		local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_necrolyte/necrolyte_scythe_start.vpcf", PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(pfx2, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		self:AddParticle(pfx2, false, false, 16, false, false)
+		if HeroItems:UnitHasItem(self:GetCaster(), "immortal_scythe") then
+			local pfx1 = ParticleManager:CreateParticle("particles/econ/items/necrolyte/necro_sullen_harvest/necro_ti7_immortal_scythe.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			for i=0, 3 do
+				ParticleManager:SetParticleControlEnt(pfx1, i, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			end
+			local pfx2 = ParticleManager:CreateParticle("particles/econ/items/necrolyte/necro_sullen_harvest/necro_ti7_immortal_scythe_start.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlForward(pfx2, 0, self:GetCaster():GetForwardVector())
+			ParticleManager:SetParticleControlEnt(pfx2, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx2, false, false, 16, false, false)
+		else
+			local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_necrolyte/necrolyte_scythe.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			ParticleManager:SetParticleControlEnt(pfx1, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlEnt(pfx1, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:ReleaseParticleIndex(pfx1)
+			local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_necrolyte/necrolyte_scythe_start.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlForward(pfx2, 0, self:GetCaster():GetForwardVector())
+			ParticleManager:SetParticleControlEnt(pfx2, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx2, false, false, 16, false, false)
+		end
 		local pfx3 = ParticleManager:CreateParticle("particles/units/heroes/hero_necrolyte/necrolyte_scythe_orig.vpcf", PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControlEnt(pfx3, 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
 		ParticleManager:ReleaseParticleIndex(pfx3)

@@ -30,7 +30,7 @@ end
 
 function imba_riki_tricks_of_the_trade:OnSpellStart()
 	local caster = self:GetCaster()
-	local target = self:GetCursorTarget() or caster
+	local target = caster:HasScepter() and self:GetCursorTarget() or caster
 	local ability = caster:FindAbilityByName("imba_riki_tott_true")
 	local thinker = CreateModifierThinker(caster, ability, "modifier_imba_tricks_of_the_trade_thinker", {duration = ability:GetChannelTime() + 0.1}, target:GetAbsOrigin(), caster:GetTeamNumber(), false)
 	ability.target = target
@@ -50,19 +50,15 @@ function imba_riki_tott_true:IsHiddenAbilityCastable()	return true end
 function imba_riki_tott_true:GetAssociatedPrimaryAbilities() return "imba_riki_tricks_of_the_trade" end
 function imba_riki_tott_true:GetChannelTime() return (self:GetSpecialValueFor("duration") + (self:GetCaster():HasScepter() and self:GetSpecialValueFor("bonus_scepter") or 0)) end
 
-function imba_riki_tott_true:OnSpellStart(keys)
+function imba_riki_tott_true:OnSpellStart()
 	local caster = self:GetCaster()
-	local target = self:GetCursorTarget() or caster
+	local target = self.target
 	caster:EmitSound("Hero_Riki.TricksOfTheTrade.Cast")
 	caster:AddNoDraw()
 end
 
 function imba_riki_tott_true:OnChannelThink(flInterval)
-	if self:GetCaster():HasScepter() and self:GetCursorTarget() == self:GetCaster() then
-		self.thinker:SetAbsOrigin(self.pos)
-	else
-		self.thinker:SetAbsOrigin(self.target:GetAbsOrigin())
-	end
+	self.thinker:SetAbsOrigin(self.target:GetAbsOrigin())
 	self:GetCaster():SetAbsOrigin(self.thinker:GetAbsOrigin())
 end
 
@@ -78,7 +74,7 @@ function modifier_imba_tricks_of_the_trade_caster:IsDebuff()			return false end
 function modifier_imba_tricks_of_the_trade_caster:IsHidden() 			return true end
 function modifier_imba_tricks_of_the_trade_caster:IsPurgable() 			return false end
 function modifier_imba_tricks_of_the_trade_caster:IsPurgeException() 	return false end
-function modifier_imba_tricks_of_the_trade_caster:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_UNSELECTABLE] = true, [MODIFIER_STATE_OUT_OF_GAME] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
+function modifier_imba_tricks_of_the_trade_caster:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_UNSELECTABLE] = true, [MODIFIER_STATE_OUT_OF_GAME] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_INVISIBLE] = false} end
 function modifier_imba_tricks_of_the_trade_caster:GetPriority() return (MODIFIER_PRIORITY_SUPER_ULTRA + 1) end
 
 modifier_imba_tricks_of_the_trade_thinker = class({})
@@ -93,6 +89,12 @@ function modifier_imba_tricks_of_the_trade_thinker:OnCreated()
 		ParticleManager:SetParticleControl(pfx, 1, Vector(radius, duration, duration))
 		ParticleManager:SetParticleControl(pfx, 2, Vector(duration, 0, 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
+		local pfx_range = ParticleManager:CreateParticle("particles/basic_ambient/generic_range_display.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:SetParticleControl(pfx_range, 1, Vector(radius, 0, 0))
+		ParticleManager:SetParticleControl(pfx_range, 2, Vector(10,0,0))
+		ParticleManager:SetParticleControl(pfx_range, 3, Vector(100,0,0))
+		ParticleManager:SetParticleControl(pfx_range, 15, Vector(197, 25, 255))
+		self:AddParticle(pfx_range, false, false, 15, false, false)
 		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("attack_rate"))
 		self:OnIntervalThink()
 	end
@@ -104,7 +106,7 @@ function modifier_imba_tricks_of_the_trade_thinker:OnIntervalThink()
 		return
 	end
 	local abs = self:GetParent():GetAbsOrigin()
-	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE, FIND_ANY_ORDER, false)
+	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
 		self:GetCaster():SetAbsOrigin(enemy[i]:GetAbsOrigin() + enemy[i]:GetForwardVector() * -120)
 		self:GetCaster():PerformAttack(enemy[i], false, true, true, false, true, false, false)

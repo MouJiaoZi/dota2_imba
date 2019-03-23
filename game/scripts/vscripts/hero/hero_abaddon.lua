@@ -11,7 +11,6 @@ function imba_abaddon_death_coil:OnSpellStart()
 	local target = self:GetCursorTarget()
 	local caster = self:GetCaster()
 	caster:EmitSound("Hero_Abaddon.DeathCoil.Cast")
-	print(caster:GetBaseAgility(), caster:GetBaseStrength())
 	local info = 
 	{
 		Target = target,

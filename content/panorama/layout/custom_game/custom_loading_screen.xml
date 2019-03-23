@@ -5,6 +5,12 @@
 	<styles>
 		<include src="file://{resources}/styles/custom_loading_screen.css" />
 		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
 	</styles>
 	<Panel class="AddonLoadingRoot">
 		<!--Panel id="CustomBg" >
@@ -20,7 +26,7 @@
 			<Panel hittest="false" id="LoDLoadingTipText"/>
 		</Panel>
 		<!-- This is comes form LOD REDUX github.com/darklordabc/Legends-of-Dota-Redux/ !-->
-		<Panel class="IMBAPlayerBackground LeftRightFlow" style="margin-top: 150px;">
+		<Panel class="IMBAVoteBackground LeftRightFlow" style="margin-top: 150px;">
 			<Panel id="DMOMGVotePanel" class="OMGPanel TopBottomFlow" hittest="true" hittestchildren="true">
 				<Label id="DMOMGVoteTitle" class="OMGTitle" text="#IMBA_HUD_OMGVoteTitle" />
 				<Label id="DMOMGVoteNum" class="OMGNum" text="0" />

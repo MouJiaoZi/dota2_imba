@@ -47,7 +47,7 @@ function modifier_item_imba_vladmir_aura:IsDebuff()			return false end
 function modifier_item_imba_vladmir_aura:IsHidden() 		return false end
 function modifier_item_imba_vladmir_aura:IsPurgable() 		return false end
 function modifier_item_imba_vladmir_aura:IsPurgeException() return false end
-function modifier_item_imba_vladmir_aura:GetTexture() return "custom/imba_vladmir" end
+function modifier_item_imba_vladmir_aura:GetTexture() return "imba_vladmir" end
 function modifier_item_imba_vladmir_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_vladmir_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_vladmir_aura:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_MANA_REGEN_CONSTANT, MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_EVENT_ON_ATTACK_LANDED} end
@@ -109,7 +109,7 @@ function modifier_item_imba_vladmir_2_aura:IsDebuff()			return false end
 function modifier_item_imba_vladmir_2_aura:IsHidden() 			return false end
 function modifier_item_imba_vladmir_2_aura:IsPurgable() 		return false end
 function modifier_item_imba_vladmir_2_aura:IsPurgeException() 	return false end
-function modifier_item_imba_vladmir_2_aura:GetTexture() return "custom/imba_vladmir_2" end
+function modifier_item_imba_vladmir_2_aura:GetTexture() return "imba_vladmir_2" end
 function modifier_item_imba_vladmir_2_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_vladmir_2_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_vladmir_2_aura:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_MANA_REGEN_CONSTANT, MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_EVENT_ON_TAKEDAMAGE} end

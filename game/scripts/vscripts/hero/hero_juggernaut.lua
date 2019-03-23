@@ -1,5 +1,7 @@
 CreateEmptyTalents("juggernaut")
 
+--models/items/juggernaut/arcana/juggernaut_arcana_front_page.vmdl
+
 imba_juggernaut_blade_fury = class({})
 
 LinkLuaModifier("modifier_imba_juggernaut_blade_fury", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
@@ -38,6 +40,10 @@ function modifier_imba_juggernaut_blade_fury:GetOverrideAnimation() return ACT_D
 function modifier_imba_juggernaut_blade_fury:OnCreated()
 	if IsServer() then
 		self:GetCaster():Purge(false, true, false, false, false)
+		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
+			local pfx_dragon = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_blade_fury.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+			self:AddParticle(pfx_dragon, false, false, 15, false, false)
+		end
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_juggernaut/juggernaut_blade_fury.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
 		ParticleManager:SetParticleControl(pfx, 5, Vector(self:GetAbility():GetSpecialValueFor("effect_radius") + 100, 0, 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
@@ -337,6 +343,11 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	if self:GetParent():HasModifier("modifier_imba_blade_dance_check") then
 		self:GetParent():RemoveModifierByName("modifier_imba_blade_dance_check")
 		self:GetParent():AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_stacks", {duration = self:GetAbility():GetSpecialValueFor("bonus_duration")}, 1, false, true)
+		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
+			local pfx_crit = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_crit_tgt.vpcf", PATTACH_ABSORIGIN_FOLLOW, keys.target)
+			ParticleManager:SetParticleControlEnt(pfx_crit, 1, keys.target, PATTACH_ABSORIGIN_FOLLOW, "", keys.target:GetAbsOrigin(), true)
+			ParticleManager:ReleaseParticleIndex(pfx_crit)
+		end
 	end
 	local buff = self:GetParent():FindModifierByName("modifier_imba_blade_dance_stacks")
 	if buff then
@@ -387,6 +398,13 @@ function imba_juggernaut_omni_slash:OnSpellStart()
 	local attacks = self:GetSpecialValueFor("jump_amount") + math.floor(caster:GetAgility() / self:GetSpecialValueFor("agi_per_jump"))
 	local buff = caster:AddNewModifier(caster, self, "modifier_imba_omni_slash_caster", {target = target:entindex(), stack = attacks})
 	buff:SetStackCount(attacks)
+	if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
+		local pfx_dash = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_dash.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControlEnt(pfx_dash, 0, caster, PATTACH_ABSORIGIN, nil, caster:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx_dash, 1, target:GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx_dash, 2, target:GetAbsOrigin())
+		ParticleManager:ReleaseParticleIndex(pfx_dash)
+	end
 end
 
 modifier_imba_omni_slash_caster = class({})
@@ -442,12 +460,13 @@ function modifier_imba_omni_slash_caster:OnIntervalThink()
 	if self.target:IsAlive() and self.target:IsRealHero() then
 		local pos = GetRandomPosition2D(self.target:GetAbsOrigin(), 128)
 		local direction = (self.target:GetAbsOrigin() - pos):Normalized()
+		local parent = self:GetParent()
 		self:GetParent():SetAbsOrigin(pos)
 		self:GetParent():SetForwardVector(direction)
 		self:GetParent():SetAttacking(self.target)
 		self:GetParent():SetForceAttackTarget(self.target)
 		Timers:CreateTimer(0.01, function()
-			self:GetParent():SetForceAttackTarget(nil)
+			parent:SetForceAttackTarget(nil)
 		end)
 	end
 end
@@ -461,17 +480,28 @@ end
 function modifier_imba_omni_slash_caster:JumpAndSlash(target)
 	local caster = self:GetParent()
 	self.target = target
-	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt.vpcf", PATTACH_POINT_FOLLOW, target)
-	ParticleManager:SetParticleControlEnt(pfx1, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
-	ParticleManager:ReleaseParticleIndex(pfx1)
-	local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail.vpcf", PATTACH_CUSTOMORIGIN, nil)
-	ParticleManager:SetParticleControl(pfx2, 0, caster:GetAbsOrigin())
-	ParticleManager:SetParticleControl(pfx2, 1, target:GetAbsOrigin())
-	ParticleManager:ReleaseParticleIndex(pfx2)
+	if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
+		local pfx_tgt = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt.vpcf", PATTACH_WORLDORIGIN, nil)
+		ParticleManager:SetParticleControl(pfx_tgt, 0, caster:GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx_tgt, 1, target:GetAbsOrigin())
+		ParticleManager:ReleaseParticleIndex(pfx_tgt)
+		local pfx_trail = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_trail.vpcf", PATTACH_WORLDORIGIN, nil)
+		ParticleManager:SetParticleControl(pfx_trail, 0, caster:GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx_trail, 1, target:GetAbsOrigin())
+		ParticleManager:ReleaseParticleIndex(pfx_trail)
+	else
+		local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt.vpcf", PATTACH_POINT_FOLLOW, target)
+		ParticleManager:SetParticleControlEnt(pfx1, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+		ParticleManager:ReleaseParticleIndex(pfx1)
+		local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(pfx2, 0, caster:GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx2, 1, target:GetAbsOrigin())
+		ParticleManager:ReleaseParticleIndex(pfx2)
+	end
 	local target_pos = target:GetAbsOrigin() + (target:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized() * 100
 	caster:SetAbsOrigin(target_pos)
 	if not self:GetParent():IsDisarmed() then
-		if target:IsRealHero() or target:IsBoss() or target:IsAncient() then
+		if target:IsRealHero() or target:IsBoss() or target:IsAncient() or target:IsConsideredHero() then
 			caster:PerformAttack(target, true, true, true, false, true, false, true)
 		else
 			target:Kill(self:GetAbility(), caster)
@@ -491,9 +521,18 @@ function modifier_imba_omni_slash_caster:OnDestroy()
 		self.delay = nil
 		self.tick = nil
 		self:GetParent():SetForceAttackTarget(nil)
+		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
+			local pfx_end = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			for i=0, 3 do
+				ParticleManager:SetParticleControlEnt(pfx_end, i, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			end
+			ParticleManager:SetParticleControl(pfx_end, 5, Vector(1,1,1))
+			ParticleManager:ReleaseParticleIndex(pfx_end)
+		end
 		local parent = self:GetParent()
 		Timers:CreateTimer(0.1, function()
 			parent:SetForceAttackTarget(nil)
+			FindClearSpaceForUnit(parent, parent:GetAbsOrigin(), true)
 		end)
 	end
 end

@@ -18,7 +18,7 @@ function imba_queenofpain_shadow_strike:GetIntrinsicModifierName() return "modif
 function imba_queenofpain_shadow_strike:OnSpellStart(bAttack)
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
-	local speed = bAttack and 10000 or self:GetSpecialValueFor("projectile_speed")
+	local speed = bAttack and 3000 or self:GetSpecialValueFor("projectile_speed")
 	local info = 
 	{
 		Target = target,
@@ -218,8 +218,8 @@ function imba_queenofpain_scream_of_pain:OnSpellStart(maintarget, damage, durati
 end
 
 function imba_queenofpain_scream_of_pain:OnProjectileHit_ExtraData(target, location, keys)
-	if target:IsMagicImmune() then
-		return true
+	if not target or target:IsMagicImmune() then
+		return
 	end
 	local caster = self:GetCaster() 
 	local damage = keys.damage or self:GetSpecialValueFor("damage")
@@ -332,6 +332,7 @@ function imba_queenofpain_sonic_wave:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0
 	local sound = CreateModifierThinker(caster, self, "modifier_imba_delightful_torment", {duration = 5.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(sound):EmitSound("Hero_QueenOfPain.SonicWave")
 	EntIndexToHScript(sound).hitted = {}

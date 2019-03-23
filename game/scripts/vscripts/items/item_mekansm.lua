@@ -68,7 +68,7 @@ function modifier_item_imba_mekansm_aura:IsDebuff()			return false end
 function modifier_item_imba_mekansm_aura:IsHidden() 		return false end
 function modifier_item_imba_mekansm_aura:IsPurgable() 		return false end
 function modifier_item_imba_mekansm_aura:IsPurgeException() return false end
-function modifier_item_imba_mekansm_aura:GetTexture() return "custom/imba_mekansm" end
+function modifier_item_imba_mekansm_aura:GetTexture() return "imba_mekansm" end
 function modifier_item_imba_mekansm_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_mekansm_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_mekansm_aura:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT} end
@@ -80,7 +80,7 @@ function modifier_item_imba_mekansm_hot:IsDebuff()			return false end
 function modifier_item_imba_mekansm_hot:IsHidden() 			return false end
 function modifier_item_imba_mekansm_hot:IsPurgable() 		return true end
 function modifier_item_imba_mekansm_hot:IsPurgeException() 	return true end
-function modifier_item_imba_mekansm_hot:GetTexture() return "custom/imba_mekansm" end
+function modifier_item_imba_mekansm_hot:GetTexture() return "imba_mekansm" end
 function modifier_item_imba_mekansm_hot:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_mekansm_hot:OnDestroy() self.ability = nil end
 function modifier_item_imba_mekansm_hot:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE} end
@@ -92,7 +92,7 @@ function modifier_item_imba_mekansm_heal_armor:IsDebuff()			return false end
 function modifier_item_imba_mekansm_heal_armor:IsHidden() 			return false end
 function modifier_item_imba_mekansm_heal_armor:IsPurgable() 		return true end
 function modifier_item_imba_mekansm_heal_armor:IsPurgeException() 	return true end
-function modifier_item_imba_mekansm_heal_armor:GetTexture() return "custom/imba_mekansm" end
+function modifier_item_imba_mekansm_heal_armor:GetTexture() return "imba_mekansm" end
 function modifier_item_imba_mekansm_heal_armor:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_mekansm_heal_armor:OnDestroy() self.ability = nil end
 function modifier_item_imba_mekansm_heal_armor:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
@@ -162,7 +162,7 @@ function modifier_item_imba_mekansm_2_aura:IsDebuff()			return false end
 function modifier_item_imba_mekansm_2_aura:IsHidden() 			return false end
 function modifier_item_imba_mekansm_2_aura:IsPurgable() 		return false end
 function modifier_item_imba_mekansm_2_aura:IsPurgeException() 	return false end
-function modifier_item_imba_mekansm_2_aura:GetTexture() return "custom/imba_mekansm_2" end
+function modifier_item_imba_mekansm_2_aura:GetTexture() return "imba_mekansm_2" end
 function modifier_item_imba_mekansm_2_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_mekansm_2_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_mekansm_2_aura:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT} end
@@ -174,7 +174,7 @@ function modifier_item_imba_mekansm_2_hot:IsDebuff()			return false end
 function modifier_item_imba_mekansm_2_hot:IsHidden() 			return false end
 function modifier_item_imba_mekansm_2_hot:IsPurgable() 			return true end
 function modifier_item_imba_mekansm_2_hot:IsPurgeException() 	return true end
-function modifier_item_imba_mekansm_2_hot:GetTexture() return "custom/imba_mekansm_2" end
+function modifier_item_imba_mekansm_2_hot:GetTexture() return "imba_mekansm_2" end
 function modifier_item_imba_mekansm_2_hot:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_mekansm_2_hot:OnDestroy() self.ability = nil end
 function modifier_item_imba_mekansm_2_hot:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE} end
@@ -186,7 +186,7 @@ function modifier_item_imba_mekansm_2_heal_armor:IsDebuff()			return false end
 function modifier_item_imba_mekansm_2_heal_armor:IsHidden() 		return false end
 function modifier_item_imba_mekansm_2_heal_armor:IsPurgable() 		return true end
 function modifier_item_imba_mekansm_2_heal_armor:IsPurgeException() return true end
-function modifier_item_imba_mekansm_2_heal_armor:GetTexture() return "custom/imba_mekansm_2" end
+function modifier_item_imba_mekansm_2_heal_armor:GetTexture() return "imba_mekansm_2" end
 function modifier_item_imba_mekansm_2_heal_armor:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_mekansm_2_heal_armor:OnDestroy() self.ability = nil end
 function modifier_item_imba_mekansm_2_heal_armor:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end

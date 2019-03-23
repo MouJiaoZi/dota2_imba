@@ -273,7 +273,7 @@ function modifier_imba_spell_steal_buff:OnAbilityFullyCast(keys)
 		end
 		for i=0, 23 do
 			local talent = target:GetAbilityByIndex(i)
-			if talent and string.find(talent:GetAbilityName(), "special_bonus_imba") and talent:GetLevel() > 0 then
+			if talent and (string.find(talent:GetAbilityName(), "special_bonus_imba") or string.find(talent:GetAbilityName(), "special_bonus_unique_")) and talent:GetLevel() > 0 then
 				local ability = rubick:AddAbility(talent:GetAbilityName())
 				ability:SetLevel(1)
 				table.insert(self.talents, ability)

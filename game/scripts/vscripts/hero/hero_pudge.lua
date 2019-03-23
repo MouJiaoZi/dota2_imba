@@ -29,7 +29,7 @@ function modifier_imba_hook_sharp_stack:IsDebuff()			return false end
 function modifier_imba_hook_sharp_stack:IsHidden() 			return false end
 function modifier_imba_hook_sharp_stack:IsPurgable() 		return false end
 function modifier_imba_hook_sharp_stack:IsPurgeException() 	return false end
-function modifier_imba_hook_sharp_stack:GetTexture() return "custom/pudge_sharp_hook" end
+function modifier_imba_hook_sharp_stack:GetTexture() return "pudge_sharp_hook" end
 
 function modifier_imba_hook_sharp_stack:OnIntervalThink()
 	local sharp_buff = self:GetParent():FindModifierByName("modifier_imba_hook_sharp_stack")
@@ -71,7 +71,7 @@ function modifier_imba_hook_light_stack:IsDebuff()			return false end
 function modifier_imba_hook_light_stack:IsHidden() 			return false end
 function modifier_imba_hook_light_stack:IsPurgable() 		return false end
 function modifier_imba_hook_light_stack:IsPurgeException() 	return false end
-function modifier_imba_hook_light_stack:GetTexture() return "custom/pudge_light_hook" end
+function modifier_imba_hook_light_stack:GetTexture() return "pudge_light_hook" end
 
 function modifier_imba_hook_light_stack:OnIntervalThink()
 	local sharp_buff = self:GetParent():FindModifierByName("modifier_imba_hook_sharp_stack")
@@ -129,8 +129,9 @@ function imba_pudge_meat_hook:OnSpellStart()
 	local pos = self:GetCursorPosition()
 	local distance = self:GetCastRange(pos, caster) + caster:GetCastRangeBonus()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local pos_end = caster:GetAbsOrigin() + direction * distance
-	local thinker_modifier_name = "modifier_imba_hook_sharp_stack"
+	local thinker_modifier_name = "modifier_dummy_thinker"
 	local speed = self:GetSpecialValueFor("base_speed") + caster:GetModifierStackCount("modifier_imba_hook_light_stack", caster) * self:GetSpecialValueFor("stack_speed")
 	local root = caster:AddNewModifier(caster, self, "modifier_imba_meat_hook_self_root", {})
 	local hook = caster:AddNewModifier(caster, self, "modifier_imba_meat_hook_hook_check", {duration = 10.0})
@@ -147,12 +148,14 @@ function imba_pudge_meat_hook:OnSpellStart()
 		end
 	end
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_pudge/pudge_meathook.vpcf", PATTACH_CUSTOMORIGIN, nil)
-	ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_hook", caster:GetAbsOrigin(), true)
-	ParticleManager:SetParticleControlEnt(pfx, 1, thinker, PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", thinker:GetAbsOrigin(), true)
-	ParticleManager:SetParticleControl(pfx, 2, Vector(5000, distance, self:GetSpecialValueFor("hook_width")))
+	ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_weapon_chain_rt", caster:GetAbsOrigin(), true)
+	ParticleManager:SetParticleControl(pfx, 1, caster:GetAbsOrigin() + direction * distance + Vector(0,0,96))
+	--ParticleManager:SetParticleControlEnt(pfx, 1, thinker, PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", thinker:GetAbsOrigin(), true)
+	ParticleManager:SetParticleControl(pfx, 2, Vector(speed, distance, self:GetSpecialValueFor("hook_width")))
 	ParticleManager:SetParticleControl(pfx, 3, Vector(100,0,0))
 	ParticleManager:SetParticleControl(pfx, 4, Vector(1,0,0))
 	ParticleManager:SetParticleControl(pfx, 5, Vector(0,0,0))
+	ParticleManager:SetParticleControlEnt(pfx, 7, self:GetCaster(), PATTACH_CUSTOMORIGIN, nil, self:GetCaster():GetOrigin(), true)
 	thinker:FindModifierByName(thinker_modifier_name):AddParticle(pfx, true, false, 15, false, false)
 	local info = 
 	{
@@ -243,6 +246,11 @@ function imba_pudge_meat_hook:OnProjectileHit_ExtraData(target, location, keys)
 			end
 			target:EmitSound("Hero_Pudge.AttackHookImpact")
 			source_target = target
+			ParticleManager:SetParticleControlEnt(keys.pfx, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+		end
+		if not target then
+			target = self:GetCaster()
+			ParticleManager:SetParticleControlEnt(keys.pfx, 1, target, PATTACH_POINT_FOLLOW, "attach_hook", target:GetAbsOrigin(), true)
 		end
 		EntIndexToHScript(keys.thinker):EmitSound("Hero_Pudge.AttackHookRetract")
 		local info = 
@@ -580,7 +588,7 @@ function modifier_imba_dismember:IsHidden() 		return false end
 function modifier_imba_dismember:IsPurgable() 		return false end
 function modifier_imba_dismember:IsPurgeException() return false end
 function modifier_imba_dismember:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_dismember:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
+function modifier_imba_dismember:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_dismember:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_dismember:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 
@@ -588,6 +596,14 @@ function modifier_imba_dismember:OnCreated()
 	if IsServer() then
 		self:StartIntervalThink(0.5)
 		self:OnIntervalThink()
+		if HeroItems:UnitHasItem(self:GetCaster(), "pudge_arcana_back") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/pudge/pudge_arcana/pudge_arcana_dismember_"..self:GetParent():GetGibType()..".vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControl(pfx, 8, Vector(1, 1, 1))
+			local color = self:GetParent():GetHeroColor()
+			ParticleManager:SetParticleControl(pfx, 15, Vector(color[1], color[2], color[3]))
+			self:AddParticle(pfx, false, false, 15, false, false)
+		end
 	end
 end
 

@@ -65,16 +65,19 @@ function imba_antimage_blink:OnSpellStart()
 	local caster = self:GetCaster()
 	ProjectileManager:ProjectileDodge(caster)
 	local pos = self:GetCursorPosition()
+	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local max_dis = self:GetSpecialValueFor("blink_range")
 	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Antimage.Blink_out", caster)
 	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_blink_start.vpcf", PATTACH_CUSTOMORIGIN, caster)
 	ParticleManager:SetParticleControl(pfx1, 0, caster:GetAbsOrigin())
-	ParticleManager:SetParticleControlForward(pfx1, 0, (pos - caster:GetAbsOrigin()):Normalized())
+	ParticleManager:SetParticleControlEnt(pfx1, 1, caster, PATTACH_CUSTOMORIGIN, "attach_hitloc", caster:GetAbsOrigin(), true)
+	ParticleManager:SetParticleControlForward(pfx1, 0, direction)
 	local distance = (pos - caster:GetAbsOrigin()):Length2D()
 	if distance <= max_dis then
 		FindClearSpaceForUnit(caster, pos, false)
 	else
-		pos = caster:GetAbsOrigin() + (pos - caster:GetAbsOrigin()):Normalized() * max_dis
+		pos = caster:GetAbsOrigin() + direction * max_dis
 		FindClearSpaceForUnit(caster, pos, false)
 	end
 	ProjectileManager:ProjectileDodge(caster)
@@ -92,7 +95,7 @@ function modifier_imba_antimage_passive_range:IsDebuff()			return false end
 function modifier_imba_antimage_passive_range:IsHidden() 			return false end
 function modifier_imba_antimage_passive_range:IsPurgable() 			return false end
 function modifier_imba_antimage_passive_range:IsPurgeException() 	return false end
-function modifier_imba_antimage_passive_range:GetTexture() 			return "custom/imba_antimage_magehunter" end
+function modifier_imba_antimage_passive_range:GetTexture() 			return "imba_antimage_magehunter" end
 
 function modifier_special_bonus_imba_antimage_1:OnCreated()
 	if IsServer() then

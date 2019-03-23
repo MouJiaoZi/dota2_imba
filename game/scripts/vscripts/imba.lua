@@ -88,7 +88,7 @@ function IMBA:BountyRuneFilter(keys)
 	player_id_const: 0
 	xp_bounty: 0
 	]]
-	local hero = PlayerResource:GetPlayer(keys.player_id_const):GetAssignedHero()
+	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[keys.player_id_const + 1]
 	hero:AddNewModifier(hero, nil, "modifier_imba_rune_bounty", {duration = 30})
 
 	keys.gold_bounty = keys.gold_bounty * 4
@@ -195,7 +195,7 @@ function IMBA:DamageFilter(keys)
 	-- Necrolyte Reapers Scythe Logic
 	------------------------------------------------------------------------------------
 
-	if target:HasModifier("modifier_imba_reapers_scythe_stundummy") then
+	if target:HasModifier("modifier_imba_reapers_scythe_stundummy") and not target:HasModifier("modifier_winter_wyvern_winters_curse_aura") then
 		local scythe = target:FindModifierByName("modifier_imba_reapers_scythe_stundummy")
 		if scythe and scythe:GetCaster() and scythe:GetAbility() and (scythe:GetAbility() ~= ability or scythe:GetCaster() ~= attacker) then
 			local scythe_caster = scythe:GetCaster()
@@ -228,12 +228,12 @@ function IMBA:DamageFilter(keys)
 	-- Cheese Auto Cast Logic
 	------------------------------------------------------------------------------------
 
-	if target:GetHealth() <= keys.damage and target:GetName() ~= "npc_dota_roshan" and not target:IsIllusion() then
-		for i=0, 5 do
+	if target:GetHealth() <= keys.damage and target:GetName() ~= "npc_dota_roshan" and not target:IsIllusion() and not target:IsMuted() and not target:HasModifier("modifier_imba_cheese_auto_cooldown") then
+		for i=0, 8 do
 			local item = target:GetItemInSlot(i)
-			if item and not item:IsNull() and item:GetName() == "item_imba_cheese" and item:IsCooldownReady() then
+			if item and not item:IsNull() and item:GetName() == "item_imba_cheese" then
+				target:AddNewModifier(target, item, "modifier_imba_cheese_auto_cooldown", {duration = item:GetSpecialValueFor("auto_cooldown")})
 				item:OnSpellStart()
-				item:UseResources(true, true, true)
 			end
 		end
 	end
@@ -364,7 +364,15 @@ local fucked = {
 	"76561198447924152",
 	"76561198298726239",
 	"76561198905412191",
-	"76561198044668907",
+	"76561198044668907",--45
+	"76561198200429987",
+	"76561198154182289",
+	"76561198258483831",
+	"76561198101185206",
+	"76561198370259797",
+	"76561198114449566",
+	"76561198256648576",
+	--"76561198866505549",--52
 }
 
 local local_Player = {}
@@ -417,6 +425,45 @@ function IMBA:OrderFilter(keys)
 			return false
 		end
 	end
+
+	------------------------------------------------------------------------------------
+	-- Dota 2 Anti Script Cheating
+	------------------------------------------------------------------------------------
+
+	--[[if keys.issuer_player_id_const >= 0 and (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION or keys.order_type == DOTA_UNIT_ORDER_ATTACK_TARGET or keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET or keys.order_type == DOTA_UNIT_ORDER_DROP_ITEM) then
+		local parm = {}
+		local target = EntIndexToHScript(keys.entindex_target)
+		if (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_ATTACK_TARGET or keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET) and target then
+			local hit_loc = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_loc"))
+			parm = {["lua_x"] = hit_loc[1], ["lua_y"] = hit_loc[2], ["lua_z"] = hit_loc[3], ["player_id"] = keys.issuer_player_id_const}
+		else
+			parm = {["lua_x"] = keys.position_x, ["lua_y"] = keys.position_y, ["lua_z"] = keys.position_z, ["player_id"] = keys.issuer_player_id_const}
+		end
+		parm.order_type = keys.order_type
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.issuer_player_id_const), "imba_compare_cursor_pos_client", parm)
+	end
+
+	if keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET and unit:HasModifier("modifier_imba_rearm_fuck") then
+		local buff = unit:FindModifierByName("modifier_imba_rearm_fuck")
+		local ability = EntIndexToHScript(keys.entindex_ability)
+		if ability and (ability:GetName() == "item_imba_sheepstick" or string.find(ability:GetName(), "dagon") or ability:GetName() == "item_ethereal_blade" or ability:GetName() == "item_imba_bloodthorn" or ability:GetName() == "item_imba_orchid") then
+			if buff:GetParent():IsAlive() then
+				if (GameRules:GetGameTime() - buff.time) <= 0.03 then
+					buff:SetStackCount(buff:GetStackCount() + 1)
+					buff.id = PlayerResource:GetSteamID(keys.issuer_player_id_const)
+					unit.order = unit.order + 1
+				else
+					buff:SetStackCount(math.max(buff:GetStackCount() - 1, 0))
+				end
+			end
+			buff.time = GameRules:GetGameTime()
+			if buff:GetStackCount() >= 20 and buff:GetParent():IsAlive() then
+				buff:SetStackCount(18)
+				buff:GetParent():ForceKill(true)
+				IMBA:SendHTTPRequest("imba_suicide_record.php", {["match_id"] = GameRules:GetMatchID(), ["map_name"] = GetMapName(), ["steamid_64"] = buff.id, ["hero_name"] = buff:GetParent():GetUnitName()})
+			end
+		end
+	end]]
 
 	------------------------------------------------------------------------------------
 	-- Courier Set
@@ -817,6 +864,8 @@ function IMBA:GoldFilter(keys)
 	reliable: 0
 	]]
 
+	--PrintTable(keys)
+
 	keys.gold = keys.gold * ((100 + CUSTOM_GOLD_BONUS) / 100)
 
 	local hero = PlayerResource.IMBA_PLAYER_HERO[keys.player_id_const + 1]
@@ -875,7 +924,7 @@ function IMBA:SpawnRoshan()
 	--- IMBA Roshan Set
 	SetCreatureHealth(unit, 12000 + (roshan_kill - 1) * 2000, true)
 	local ability1 = unit:AddAbility("imba_huskar_berserkers_blood")
-	ability1:SetLevel(4)
+	ability1:SetLevel(5)
 	local ability2 = unit:AddAbility("imba_roshan_slam")
 	ability2:SetLevel(1)
 	local buff1 = unit:AddNewModifier(unit, nil, "modifier_imba_roshan_upgrade", {})
@@ -924,103 +973,6 @@ function IMBA:PlayerPickUpIllusionRune(player)
 	end
 end
 
-function IMBA:StartGameAPI()
-	IMBA_GAME_ID = GameRules:GetMatchID()
-	if tostring(IMBA_GAME_ID) == "0" then
-		IMBA_GAME_ID = RandomInt(0,100000)..RandomInt(0,100000).."000000"
-	end
-	local json = {}
-	json["game_id"] = tostring(IMBA_GAME_ID)
-	json["game_map"] = GetMapName()
-	json["start_time"] = tostring(GetSystemDate().." "..GetSystemTime())
-	local js = luaJson.table2json(json)
-	local request = CreateHTTPRequestScriptVM("GET", "http://181.215.128.41/game_reg.php")
-	request:SetHTTPRequestGetOrPostParameter("game_reg", js)
-	request:Send(function(result)
-		print(result.Body)
-	end )
-
-end
-
-function IMBA:EndGameAPI()
-	local endjson = {}
-	endjson["game_id"] = tostring(IMBA_GAME_ID)
-	endjson["game_duration"] = tostring(GameRules:GetDOTATime(true, true))
-	endjson["end_time"] = tostring(GetSystemDate().." "..GetSystemTime())
-	local endjs = luaJson.table2json(endjson)
-	local request = CreateHTTPRequestScriptVM("GET", "http://181.215.128.41/game_end_time.php")
-	request:SetHTTPRequestGetOrPostParameter("game_reg", endjs)
-	request:Send(function(result)
-		print("end", result.Body)
-	end )
-
-	for i=0, 19 do
-		if PlayerResource:IsValidPlayerID(i) and PlayerResource.IMBA_PLAYER_HERO[i + 1] then
-			local hero = PlayerResource.IMBA_PLAYER_HERO[i + 1]
-			local json_basic = {}
-			json_basic["game_id"] = tostring(IMBA_GAME_ID)
-			json_basic["steam_id"] = tostring(PlayerResource:GetSteamID(i))
-			json_basic["hero"] = hero:GetName()
-			json_basic["team"] = tostring(hero:GetTeamNumber())
-			json_basic["win"] = (hero:GetTeamNumber() == GAME_WINNER_TEAM and "1" or "0") -- win or lose
-			json_basic["gpm"] = tostring(PlayerResource:GetGoldPerMin(i)) -- GPM
-			json_basic["damage"] = tostring(PlayerResource:GetRawPlayerDamage(i)) -- DMG 
-			json_basic["kills"] = tostring(PlayerResource:GetKills(i))
-			json_basic["deaths"] = tostring(PlayerResource:GetDeaths(i))
-			json_basic["assists"] = tostring(PlayerResource:GetAssists(i))
-
-			local json_talent = {}
-			json_talent["game_id"] = tostring(IMBA_GAME_ID)
-			json_talent["steam_id"] = tostring(PlayerResource:GetSteamID(i))
-			local talent = 1 -- get talent learnt
-			for j=0, 23 do
-				local ability = hero:GetAbilityByIndex(j)
-				if ability and string.find(ability:GetAbilityName(), "special_bonus_") and ability:GetLevel() > 0 then
-					json_talent["talent_"..talent] = ability:GetAbilityName()
-					talent = talent + 1
-				end
-			end
-			for j=1,8 do
-				if not json_talent["talent_"..j] then
-					json_talent["talent_"..j] = "no_talent"
-				end
-			end
-
-			local json_item = {}
-			json_item["game_id"] = tostring(IMBA_GAME_ID)
-			json_item["steam_id"] = tostring(PlayerResource:GetSteamID(i))
-			for j=0, 8 do
-				local item = hero:GetItemInSlot(j)
-				if item then
-					json_item["item_"..(j+1)] = item:GetName()
-				else
-					json_item["item_"..(j+1)] = "no_item"
-				end
-			end
-
-			local js = luaJson.table2json(json_basic)
-			local js2 = luaJson.table2json(json_talent)
-			local js3 = luaJson.table2json(json_item)
-
-			local req = CreateHTTPRequestScriptVM("GET", "http://181.215.128.41/game_end_player_basic.php")
-			req:SetHTTPRequestGetOrPostParameter("game_reg", js)
-			req:Send(function(result)
-				print(result.Body)
-			end )
-			local req2 = CreateHTTPRequestScriptVM("GET", "http://181.215.128.41/game_end_player_talents.php")
-			req2:SetHTTPRequestGetOrPostParameter("game_reg", js2)
-			req2:Send(function(result)
-				print(result.Body)
-			end )
-			local req3 = CreateHTTPRequestScriptVM("GET", "http://181.215.128.41/game_end_player_items.php")
-			req3:SetHTTPRequestGetOrPostParameter("game_reg", js3)
-			req3:Send(function(result)
-				print(result.Body)
-			end )
-		end
-	end
-end
-
  -- bitmask; 1 shares heroes, 2 shares units, 4 disables help 
 function FlipUnitShareMaskBit(targetPlayerID, otherPlayerID, bitVal)
 	local currentUnitShareMask = PlayerResource:GetUnitShareMaskForPlayer(targetPlayerID, otherPlayerID)
@@ -1043,68 +995,68 @@ function ToggleDisablePlayerHelp(unused, kv)
 	FlipUnitShareMaskBit(kv.PlayerID, kv.otherPlayerID, 4)
 end
 
-function SetPlayerInfo()
-	for i=0, 19 do
-		if PlayerResource:IsValidPlayerID(i) and CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1] then
-			local team = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetTeamNumber()
-			local playerTable = {PlayerResource:GetSteamID(i), PlayerResource:GetPlayerName(i), CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetName(), team}
-			CustomNetTables:SetTableValue("imba_player_base", tostring(i), playerTable)
-		end
-	end
-end
-
 local endover = false
 
 function UpDatePlayerInfo()
 	if endover then
 		return
 	end
-	--SetPlayerInfo()
 	endover = true
 	for i=0, 19 do
 		if PlayerResource:IsValidPlayerID(i) and CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1] then
-			local team = PlayerResource:GetPlayer(i):GetAssignedHero():GetTeamNumber()
-			local playerTable = {PlayerResource:GetGold(i),}
+			local playerTable = {["player_gold"] = PlayerResource:GetGold(i), ["hero_level"] = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetLevel()}
 			for j=0, 8 do
 				local item = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetItemInSlot(j)
 				if item then
-					playerTable[#playerTable + 1] = item:GetName()
+					playerTable["item_"..j] = item:GetName()
+					playerTable["item_charges_"..j] = item:GetCurrentCharges()
 				else
-					playerTable[#playerTable + 1] = "item_imba_dummy"
+					playerTable["item_"..j] = "item_imba_dummy"
+					playerTable["item_charges_"..j] = 0
 				end
 			end
-			CustomNetTables:SetTableValue("imba_player_info", tostring(i), playerTable)
+			if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:HasModifier("modifier_item_ultimate_scepter_consumed") then
+				playerTable["scepter_consumed"] = 1
+			else
+				playerTable["scepter_consumed"] = 0
+			end
+			playerTable["moon_consumed"] = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetModifierStackCount("modifier_imba_moon_shard_consume", nil)
+			CustomNetTables:SetTableValue("imba_hero_end_info", tostring(i), playerTable)
 		end
 	end
 end
 
 function VoteForOMG(unused, kv)
-	local total = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
-	local need = math.floor(total * 0.6)
+	local total = IMBA_PLAYER_COUNT
+	local need = IMBA_VOTE_NEED
 	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree
 	agree = agree + 1
 	enable = agree >= need and 1 or 0
-	IMBA_OMG_ENABLE = enable
+	if enable == 1 then
+		mode:SetDraftingBanningTimeOverride(0)
+		mode:SetDraftingHeroPickSelectTimeOverride(0)
+	end
+	IMBA_OMG_ENABLE = enable == 1 and true or false
 	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_omg_vote", {})
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
 end
 
 function VoteForAK(unused, kv)
-	local total = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
-	local need = math.floor(total * 0.6)
+	local total = IMBA_PLAYER_COUNT
+	local need = IMBA_VOTE_NEED
 	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_ak").agree
 	agree = agree + 1
 	enable = agree >= need and 1 or 0
 	CustomNetTables:SetTableValue("imba_omg", "enable_ak", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_ak_vote", {})
-	IMBA_AK_ENABLE = enable
+	IMBA_AK_ENABLE = enable == 1 and true or false
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
 end
 
 function VoteFor31(unused, kv)
-	local total = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
-	local need = math.floor(total * 0.6)
+	local total = IMBA_PLAYER_COUNT
+	local need = IMBA_VOTE_NEED
 	local agree = CustomNetTables:GetTableValue("imba_omg", "enable_31").agree
 	agree = agree + 1
 	enable = agree >= need and 1 or 0
@@ -1115,10 +1067,70 @@ function VoteFor31(unused, kv)
 		mode:SetDraftingBanningTimeOverride(15)
 		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME - 5)
 	end
-	IMBA_31_ENABLE = enable
+	IMBA_31_ENABLE = enable == 1 and true or false
 	CustomNetTables:SetTableValue("imba_omg", "enable_31", {["agree"] = agree, ["enable"] = enable})
 	CustomGameEventManager:Send_ServerToAllClients("updata_31_vote", {})
 	--print(total, need, CustomNetTables:GetTableValue("imba_omg", "enable_omg").agree, CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable)
+end
+
+function UpdateScoreBoardList()
+	if IMBA_UPDATE_SCOREBOARD_LIST_PREVENT then
+		return
+	end
+	IMBA_UPDATE_SCOREBOARD_LIST_PREVENT = true
+	Timers:CreateTimer({
+		useGameTime = false,
+		endTime = 3.0, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
+		callback = function()
+			IMBA_UPDATE_SCOREBOARD_LIST_PREVENT = false
+			return nil
+		end
+	})
+
+	for i=1, 20 do
+		if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i] ~= nil then
+			local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i]
+			local ult = hero:GetAbilityByIndex(5)
+			local ult_state = 0
+			if ult then
+				if ult:GetLevel() == 0 then
+					ult_state = 1
+				end
+				if ult:GetLevel() > 0 and ult:IsCooldownReady() and ult:IsOwnersManaEnough() then
+					ult_state = 2
+				end
+				if ult:GetLevel() > 0 and ult:IsCooldownReady() and not ult:IsOwnersManaEnough() then
+					ult_state = 3
+				end
+				if ult:GetLevel() > 0 and not ult:IsCooldownReady() and not ult:IsOwnersManaEnough() then
+					ult_state = 4
+				end
+				if ult:GetLevel() > 0 and not ult:IsCooldownReady() and ult:IsOwnersManaEnough() then
+					ult_state = 5
+				end
+			end
+			CustomNetTables:SetTableValue("imba_scoreboard_detail", tostring(i-1), {["ult_state"] = ult_state, ["level"] = hero:GetLevel(), ["gold"] = hero:GetGold()})
+		end
+	end
+end
+
+function CompareCursorPosition(unused, kv)
+	--[[
+	lua_x y z
+	pan_x y z
+	order_type
+	player_id
+	]]
+	local lua_pos = Vector(kv.lua_x, kv.lua_y, 1500)
+	local pan_pos = Vector(kv.pan_x, kv.pan_y, 1500)
+	if GetGroundHeight(lua_pos, nil) - GetGroundHeight(pan_pos, nil) < 30 then
+		lua_pos = Vector(kv.lua_x, kv.lua_y, kv.lua_z)
+		pan_pos = Vector(kv.pan_x, kv.pan_y, kv.lua_z + 80)
+		if (lua_pos - pan_pos):Length2D() > 500 and kv.order_type == DOTA_UNIT_ORDER_CAST_TARGET and CDOTA_PlayerResource.IMBA_PLAYER_HERO[kv.player_id + 1] then
+			CDOTA_PlayerResource.IMBA_PLAYER_HERO[kv.player_id + 1].order = CDOTA_PlayerResource.IMBA_PLAYER_HERO[kv.player_id + 1].order + 1
+		end
+	end
+	--PrintTable(kv)
 end
 
 function IMBA:StartGoldShare(nPlayerID)
@@ -1149,4 +1161,56 @@ function IMBA:StartGoldShare(nPlayerID)
 			return 60.0
 		end
 	)
+end
+
+function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry)
+	local retry = iRetry or 0
+	local http_string = sWeb and IMBA_WEB_SERVER..sWeb or IMBA_WEB_SERVER
+	http_string = http_string.."?key="..IMBA_WEB_KEY.."&"
+	if uHEAD then
+		for k, v in pairs(uHEAD) do
+			http_string = http_string..tostring(k).."="..tostring(v).."&"
+		end
+	end
+	local req = CreateHTTPRequestScriptVM("GET", http_string)
+	req:Send(function(res)
+		if res.StatusCode ~= 200 and retry <= 10 then
+			retry = retry + 1
+			print("HTTP ERROR CODE:", res.StatusCode)
+			print("Retry..."..retry)
+			IMBA:SendHTTPRequest(sWeb, uHEAD, retry)
+		else
+			print(res.Body)
+		end
+	end)
+end
+
+function IMBA:EndGameAPI(iWinnerTeam)
+	IMBA:SendHTTPRequest("imba_end_match.php", {["match_id"] = GameRules:GetMatchID(), ["map_name"] = GetMapName()})
+	for i=0, 19 do
+		if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1] and not PlayerResource:IsFakeClient(i) then
+			local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1]
+			local team = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1]:GetTeamNumber()
+			local win = team == iWinnerTeam and 1 or 0
+			local moons = hero:GetModifierStackCount("modifier_imba_moon_shard_consume", nil)
+			local scepter = hero:HasScepter() and 1 or 0
+			local order = hero.order or 0
+			local infoTable = {["map_name"] = GetMapName(), ["match_id"] = GameRules:GetMatchID(), ["win"] = win, ["steamid_64"] = PlayerResource:GetSteamID(i), ["player_name"] = PlayerResource:GetPlayerName(i), ["player_hero"] = hero:GetUnitName(), ["kills"] = PlayerResource:GetKills(i), ["deaths"] = PlayerResource:GetDeaths(i), ["assists"] = PlayerResource:GetAssists(i), ["gpm"] = PlayerResource:GetGoldPerMin(i), ["order"] = order, ["damage"] = PlayerResource:GetRawPlayerDamage(i), ["moon_shard"] = moons, ["scepter"] = scepter, ["game_version"] = IMBA_GAME_VERSION}
+			for i=0, 8 do
+				local item = hero:GetItemInSlot(i)
+				if item then
+					infoTable["item_"..i+1] = item:GetName()
+				end
+			end
+			local index = 1
+			for i=0, 23 do
+				local ability = hero:GetAbilityByIndex(i)
+				if ability and string.find(ability:GetAbilityName(), "special_bonus_") and ability:GetLevel() > 0 then
+					infoTable["talent_"..index] = ability:GetAbilityName()
+					index = index + 1
+				end
+			end
+			IMBA:SendHTTPRequest("imba_end_game_player.php", infoTable)
+		end
+	end
 end

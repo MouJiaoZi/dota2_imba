@@ -98,8 +98,17 @@ end
 
 function modifier_imba_frost_nova_aura:OnIntervalThink()
 	self:IncrementStackCount()
-	if math.random(1,100) <= self:GetAbility():GetSpecialValueFor("proc_chance") then
-		Lich_Frost_Nova_Blast(self:GetCaster(), self:GetParent(), self:GetAbility(), false)
+	if not self:GetParent():IsAlive() then
+		return
+	end
+	if self:GetParent():IsHero() then
+		if math.random(1,100) <= self:GetAbility():GetSpecialValueFor("proc_chance") then
+			Lich_Frost_Nova_Blast(self:GetCaster(), self:GetParent(), self:GetAbility(), false)
+		end
+	else
+		if math.random(1,100) <= self:GetAbility():GetSpecialValueFor("proc_chance_creep") then
+			Lich_Frost_Nova_Blast(self:GetCaster(), self:GetParent(), self:GetAbility(), false)
+		end
 	end
 end
 

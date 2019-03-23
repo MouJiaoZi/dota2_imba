@@ -23,7 +23,7 @@ function modifier_imba_doom_caster:IsDebuff()			return false end
 function modifier_imba_doom_caster:IsHidden() 			return false end
 function modifier_imba_doom_caster:IsPurgable() 		return false end
 function modifier_imba_doom_caster:IsPurgeException() 	return false end
-function modifier_imba_doom_caster:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
+function modifier_imba_doom_caster:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_doom_caster:GetModifierPhysicalArmorBonus() return self:GetAbility():GetSpecialValueFor("bonus_armor") end
 
 function modifier_imba_doom_caster:OnCreated()
@@ -45,6 +45,12 @@ end
 function modifier_imba_doom_caster:OnDestroy()
 	if IsServer() then
 		self:GetParent():StopSound("Hero_DoomBringer.Doom")
+	end
+end
+
+function modifier_imba_doom_caster:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
 	end
 end
 

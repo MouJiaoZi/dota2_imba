@@ -4,17 +4,29 @@ function GameMode:_InitGameMode()
 	if GameMode._reentrantCheck then
 		return
 	end
+
+	IMBA_PLAYER_COUNT = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
+	IMBA_VOTE_NEED = math.floor((IMBA_PLAYER_COUNT) * 0.6)
+	IMBA_KILL_GOAL = IMBA_PLAYER_COUNT * 15
+
+	CustomNetTables:SetTableValue("imba_omg", "death_match", {["kill_goal"] = IMBA_KILL_GOAL})
+	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = 0, ["enable"] = 0})
+	CustomNetTables:SetTableValue("imba_omg", "enable_ak", {["agree"] = 0, ["enable"] = 0})
+	CustomNetTables:SetTableValue("imba_omg", "enable_31", {["agree"] = 0, ["enable"] = 0})
+	CustomNetTables:SetTableValue("imba_vote", "imba_vote", {["player_count"] = PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_GOODGUYS) + PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_BADGUYS), ["vote_need"] = math.floor((PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_GOODGUYS) + PlayerResource:GetPlayerCountForTeam(DOTA_TEAM_BADGUYS)) * 0.6)})
+
 	CustomGameEventManager:RegisterListener("toggle_share_unit", ToggleDisableShareUnit)
 	CustomGameEventManager:RegisterListener("toggle_share_hero", ToggleDisableShareHero)
 	CustomGameEventManager:RegisterListener("toggle_disable_player_help", ToggleDisablePlayerHelp)
 	CustomGameEventManager:RegisterListener("update_imba_player_info", UpDatePlayerInfo)
+	CustomGameEventManager:RegisterListener("update_scoreboard_hero", UpdateScoreBoardList)
 
 	CustomGameEventManager:RegisterListener("vote_for_omg", VoteForOMG)
 	CustomGameEventManager:RegisterListener("vote_for_ak", VoteForAK)
 	CustomGameEventManager:RegisterListener("vote_for_31", VoteFor31)
-	CustomNetTables:SetTableValue("imba_omg", "enable_omg", {["agree"] = 0, ["enable"] = 0})
-	CustomNetTables:SetTableValue("imba_omg", "enable_ak", {["agree"] = 0, ["enable"] = 0})
-	CustomNetTables:SetTableValue("imba_omg", "enable_31", {["agree"] = 0, ["enable"] = 0})
+
+	-- Anti-Cheat
+	CustomGameEventManager:RegisterListener("imba_compare_cursor_pos", CompareCursorPosition)
 
 	-- IMBA
 	GameRules:SetUseBaseGoldBountyOnHeroes(USE_STANDARD_HERO_GOLD_BOUNTY)

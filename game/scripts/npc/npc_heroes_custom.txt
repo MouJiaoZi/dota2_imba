@@ -310,7 +310,7 @@
 		"Ability13"					"special_bonus_movement_speed_20"
 		"Ability14"					"special_bonus_spell_amplify_6"
 		"Ability15"					"special_bonus_unique_puck_2"
-		"Ability16"					"special_bonus_gold_income_50"
+		"Ability16"					"special_bonus_gold_income_70"
 		"Ability17"					"special_bonus_unique_puck"
 
 	}
@@ -338,7 +338,7 @@
 		"Ability12"					"special_bonus_attack_speed_35"
 		"Ability13"					"special_bonus_movement_speed_20"
 		"Ability14"					"special_bonus_armor_6"
-		"Ability15"					"special_bonus_reincarnation_100"
+		"Ability15"					"special_bonus_intelligence_35"
 		"Ability16"					"special_bonus_imba_pudge_2"
 		"Ability17"					"special_bonus_imba_pudge_1"
 
@@ -564,7 +564,7 @@
 		"Ability12"					"special_bonus_cast_range_100"
 		"Ability13"					"special_bonus_attack_speed_45"
 		"Ability14"					"special_bonus_attack_damage_150"
-		"Ability15"					"special_bonus_spell_amplify_8"
+		"Ability15"					"special_bonus_attack_range_175"
 		"Ability16"					"special_bonus_imba_lich_3"
 		"Ability17"					"special_bonus_imba_lich_2"
 	}
@@ -685,8 +685,8 @@
 		"Ability11"					"special_bonus_magic_resistance_10"
 		"Ability12"					"special_bonus_respawn_reduction_35"
 		"Ability13"					"special_bonus_gold_income_40"
-		"Ability14"					"special_bonus_cast_range_150"
-		"Ability15"					"special_bonus_cooldown_reduction_12"
+		"Ability14"					"special_bonus_cast_range_100"
+		"Ability15"					"special_bonus_spell_amplify_5"
 		"Ability16"					"special_bonus_imba_enigma_1"
 		"Ability17"					"special_bonus_imba_enigma_2"
 	}
@@ -951,7 +951,7 @@
 		"Ability14"					"special_bonus_unique_templar_assassin_4"
 		"Ability15"					"special_bonus_unique_templar_assassin_2"
 		"Ability16"					"special_bonus_unique_templar_assassin_5"
-		"Ability17"					"special_bonus_unique_templar_assassin"
+		"Ability17"					"special_bonus_unique_templar_assassin_7"
 	
 	}
 	"npc_dota_hero_viper"
@@ -995,7 +995,7 @@
 		"Ability11"					"special_bonus_mp_regen_2"
 		"Ability12"					"special_bonus_gold_income_25"
 		"Ability13"					"special_bonus_movement_speed_35"
-		"Ability14"					"special_bonus_attack_speed_50"
+		"Ability14"					"special_bonus_attack_speed_80"
 		"Ability15"					"special_bonus_unique_dragon_knight"
 		"Ability16"					"special_bonus_all_stats_15"
 		"Ability17"					"special_bonus_unique_dragon_knight_2"
@@ -1092,17 +1092,22 @@
 		"ArmorPhysical"				"6"
 
 		"AttributeBaseIntelligence"	"28"
+		
+		"Ability1"		"dark_seer_vacuum"
+		"Ability2"		"dark_seer_ion_shell"
+		"Ability3"		"dark_seer_surge"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"imba_dark_seer_wall_of_replica"
 
 		"Ability10"					"special_bonus_exp_boost_15"
 		"Ability11"					"special_bonus_attack_damage_90"
-		"Ability12"					"special_bonus_unique_dark_seer_4"
+		"Ability12"					"special_bonus_imba_dark_seer_1"
 		"Ability13"					"special_bonus_unique_dark_seer_2"
 		"Ability14"					"special_bonus_cooldown_reduction_15"
 		"Ability15"					"special_bonus_unique_dark_seer_3"
-		"Ability16"					"special_bonus_imba_dark_seer_1"
+		"Ability16"					"special_bonus_cast_range_150"
 		"Ability17"					"special_bonus_unique_dark_seer"
-		"Ability18"					"imba_force_load"
-		
 	}
 	"npc_dota_hero_clinkz"
 	{
@@ -1227,7 +1232,7 @@
 		"AbilityLayout"				"5"
 
 		"Ability1"					"imba_bounty_hunter_shuriken_toss"
-		//"Ability2"					"bounty_hunter_jinada"
+		"Ability2"					"imba_bounty_hunter_jinada"
 		"Ability3"					"imba_bounty_hunter_wind_walk"
 		"Ability4"					"imba_bounty_hunter_shadow_jaunt"
 		"Ability5"					"generic_hidden"
@@ -1308,8 +1313,8 @@
 		"MovementSpeed"				"335"
 		"Ability1"		"chen_penitence"
 		"Ability2"		"chen_divine_favor"
-		"Ability3"		"chen_holy_persuasion"
-		"Ability4"		"chen_test_of_faith"
+		"Ability3"		"chen_test_of_faith"
+		"Ability4"		"chen_holy_persuasion"
 		"Ability5"		"generic_hidden"
 		"Ability6"		"chen_hand_of_god"
 		
@@ -1345,7 +1350,7 @@
 	}
 	"npc_dota_hero_doom_bringer"
 	{
-		"ModelScale" 				"1.05"
+		"ModelScale" 				"0.86"
 
 		"AttackRange"				"266"
 
@@ -1360,7 +1365,7 @@
 		"Ability11"					"special_bonus_unique_doom_6"
 		"Ability12"					"special_bonus_evasion_20"
 		"Ability13"					"special_bonus_unique_doom_3"
-		"Ability14"					"special_bonus_attack_speed_100"
+		"Ability14"					"special_bonus_attack_speed_45"
 		"Ability15"					"special_bonus_unique_doom_2"
 		"Ability16"					"special_bonus_unique_doom_1"
 		"Ability17"					"special_bonus_cleave_100"
@@ -1765,7 +1770,7 @@
 		"Ability7"					"imba_rubick_telekinesis_land"
 		"Ability8"					"rubick_hidden1"
 		"Ability9"					"rubick_hidden2"
-		"Ability10"					"rubick_hidden3"
+		"Ability10"				"rubick_hidden3"
 
 		"Ability11"					"special_bonus_hp_200"
 		"Ability12"					"special_bonus_attack_damage_60"
@@ -1986,7 +1991,7 @@
 	}
 	"npc_dota_hero_centaur"
 	{
-		"ModelScale" 				".92"
+		"ModelScale" 				"0.74"
 
 		"Ability1"					"imba_centaur_hoof_stomp"
 		"Ability2"					"imba_centaur_double_edge"
@@ -2467,5 +2472,23 @@
 
 	}
 
+	"npc_dota_hero_mars"
+	{
+		"Ability1"		"mars_spear"
+		"Ability2"		"mars_gods_rebuke"
+		"Ability3"		"mars_bulwark"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"mars_arena_of_blood"
+		
+		"Ability10"		"special_bonus_strength_8"
+		"Ability11"		"special_bonus_movement_speed_20"
+		"Ability12"		"special_bonus_attack_damage_35"
+		"Ability13"		"special_bonus_armor_8"
+		"Ability14"		"special_bonus_unique_mars_spear_bonus_damage"
+		"Ability15"		"special_bonus_unique_mars_spear_stun_duration"
+		"Ability16"		"special_bonus_unique_mars_gods_rebuke_extra_crit"
+		"Ability17"		"special_bonus_unique_mars_arena_of_blood_hp_regen"
+	}
 }
 

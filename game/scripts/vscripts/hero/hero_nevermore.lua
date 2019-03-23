@@ -74,7 +74,7 @@ function imba_nevermore_necromastery:CreateSoulPfx(caster, target)
 		Ability = self,	
 		EffectName = "particles/hero/nevermore/nevermore_soul_projectile.vpcf",
 		iMoveSpeed = self:GetSpecialValueFor("soul_projectile_speed"),
-		--vSourceLoc = target:GetAbsOrigin(),
+		vSourceLoc = target:GetAbsOrigin(),
 		bDrawsOnMinimap = false,
 		bDodgeable = false,
 		bIsAttack = false,
@@ -108,7 +108,7 @@ function modifier_imba_necromastery_counter:OnAttackLanded(keys)
 	for i=1, self:GetAbility():GetSpecialValueFor("hero_attack_souls") + math.floor(self:GetParent():GetLevel() / self:GetAbility():GetSpecialValueFor("harvest_levels_per_soul")) do
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_necromastery_temp", {duration = self:GetAbility():GetSpecialValueFor("temp_soul_duration")})
 	end
-	local dummy = CreateModifierThinker(self:GetParent(), nil, "modifier_dummy_thinker", {duration = 0.1}, keys.target:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
+	local dummy = CreateModifierThinker(self:GetParent(), nil, "modifier_dummy_thinker", {duration = 3.0}, keys.target:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
 	self:GetAbility():CreateSoulPfx(self:GetParent(), dummy)
 end
 
@@ -122,7 +122,7 @@ function modifier_imba_necromastery_counter:OnTakeDamage(keys)
 	for i=1, self:GetAbility():GetSpecialValueFor("hero_attack_souls") + math.floor(self:GetParent():GetLevel() / self:GetAbility():GetSpecialValueFor("harvest_levels_per_soul")) do
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_necromastery_temp", {duration = self:GetAbility():GetSpecialValueFor("temp_soul_duration")})
 	end
-	local dummy = CreateModifierThinker(self:GetParent(), nil, "modifier_dummy_thinker", {duration = 0.1}, keys.unit:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
+	local dummy = CreateModifierThinker(self:GetParent(), nil, "modifier_dummy_thinker", {duration = 3.0}, keys.unit:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
 	self:GetAbility():CreateSoulPfx(self:GetParent(), dummy)
 end
 
@@ -167,7 +167,7 @@ function modifier_imba_necromastery_counter:OnDeath(keys)
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_necromastery_temp", {duration = self:GetAbility():GetSpecialValueFor("temp_soul_duration")})
 		end
 	end
-	local dummy = CreateModifierThinker(self:GetParent(), nil, "modifier_dummy_thinker", {duration = 0.1}, keys.unit:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
+	local dummy = CreateModifierThinker(self:GetParent(), nil, "modifier_dummy_thinker", {duration = 3.0}, keys.unit:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
 	self:GetAbility():CreateSoulPfx(self:GetParent(), dummy)
 end
 

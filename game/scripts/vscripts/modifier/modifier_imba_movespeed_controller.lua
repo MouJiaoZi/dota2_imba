@@ -17,6 +17,10 @@ end
 
 function modifier_imba_movespeed_controller:OnIntervalThink()
 	local caster = self:GetParent()
+	if caster:HasModifier("modifier_death_prophet_exorcism") and caster:HasTalent("special_bonus_unique_death_prophet_4") then
+		self:SetStackCount(550)
+		return
+	end
 	if caster:IsHexed() then
 		self:SetStackCount(100)
 		return

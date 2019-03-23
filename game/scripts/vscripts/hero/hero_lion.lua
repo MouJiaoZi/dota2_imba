@@ -14,7 +14,9 @@ function imba_lion_earth_spike:OnSpellStart()
 	local target = self:GetCursorTarget()
 	local pos = target and target:GetAbsOrigin() or self:GetCursorPosition()
 	local start_pos = caster:GetAbsOrigin()
-	local end_pos = start_pos + (pos - start_pos):Normalized() * (self:GetCastRange(pos, caster) + caster:GetCastRangeBonus() + caster:GetTalentValue("special_bonus_imba_lion_1"))
+	local direction = (pos - start_pos):Normalized()
+	direction.z = 0.0
+	local end_pos = start_pos + direction * (self:GetCastRange(pos, caster) + caster:GetCastRangeBonus() + caster:GetTalentValue("special_bonus_imba_lion_1"))
 	local marker = CreateModifierThinker(caster, self, "modifier_earth_spike_motion", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
 	local sound = CreateModifierThinker(caster, self, "modifier_earth_spike_motion", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(sound):EmitSound("Hero_Lion.Impale")
@@ -34,7 +36,7 @@ function imba_lion_earth_spike:OnSpellStart()
 		iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
 		fExpireTime = GameRules:GetGameTime() + 10.0,
 		bDeleteOnHit = true,
-		vVelocity = (end_pos - start_pos):Normalized() * self:GetSpecialValueFor("spike_speed"),
+		vVelocity = direction * self:GetSpecialValueFor("spike_speed"),
 		bProvidesVision = false,
 		ExtraData = {marker = marker, sound = sound}
 	}
@@ -92,7 +94,9 @@ function imba_lion_earth_spike:OnProjectileHit_ExtraData(target, location, keys)
 				if not hitted and spike then
 					spike = false
 					local start_pos = target:GetAbsOrigin()
-					local end_pos = start_pos + (enemy:GetAbsOrigin() - start_pos):Normalized() * (self:GetCastRange(location, caster) + caster:GetCastRangeBonus() + caster:GetTalentValue("special_bonus_imba_lion_1"))
+					local direction = (enemy:GetAbsOrigin() - start_pos):Normalized()
+					direction.z = 0.0
+					local end_pos = start_pos + direction * (self:GetCastRange(location, caster) + caster:GetCastRangeBonus() + caster:GetTalentValue("special_bonus_imba_lion_1"))
 					local info = 
 					{
 						Ability = self,
@@ -386,17 +390,34 @@ function imba_lion_finger_of_death:OnSpellStart()
 							ability = self, --Optional.
 							}
 		local direction = (enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized()
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_lion/lion_spell_finger_of_death.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		local pfx_name = "particles/units/heroes/hero_lion/lion_spell_finger_of_death.vpcf"
+		if HeroItems:UnitHasItem(caster, "lion_ti8") then
+			pfx_name = "particles/econ/items/lion/lion_ti8/lion_spell_finger_ti8.vpcf"
+		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack2", caster:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 2, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControl(pfx, 3, caster:GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 4, enemy:GetAbsOrigin())
 		ParticleManager:SetParticleControlForward(pfx, 3, direction)
+		if HeroItems:UnitHasItem(caster, "lion_ti8") then
+			local center = caster:GetAbsOrigin() + direction * ((enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() / 2)
+			ParticleManager:SetParticleControl(pfx, 6, GetRandomPosition2D(center, ((enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() / 2)))
+			ParticleManager:SetParticleControl(pfx, 10, GetRandomPosition2D(center, ((enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() / 2)))
+			enemy:EmitSound("Hero_Lion.FingerOfDeath.TI8")
+		else
+			enemy:EmitSound("Hero_Lion.FingerOfDeathImpact")
+		end
 		ParticleManager:ReleaseParticleIndex(pfx)
-		enemy:EmitSound("Hero_Lion.FingerOfDeathImpact")
 		Timers:CreateTimer(self:GetSpecialValueFor("damage_delay"), function()
 			local damage_done = ApplyDamage(damageTable)
+			if HeroItems:UnitHasItem(caster, "lion_ti8") then
+				local pfx_head = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_of_death_overhead_ti8.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
+				local hp_pct = 1 - (enemy:GetHealthPercent() / 100)
+				ParticleManager:SetParticleControl(pfx_head, 1, Vector(hp_pct, 0, 0))
+				ParticleManager:ReleaseParticleIndex(pfx_head)
+			end
 			return nil
 		end
 		)

@@ -10,32 +10,26 @@ function IMBAEvents:DeathMatchRandomOMG(npc)
 		end
 	end
 	for i=1, #abilityName do
-		print(abilityName[i])
+		npc:RemoveAllModifiers()
 		npc:RemoveAbility(abilityName[i])
 	end
 	npc:RemoveAllModifiers()
 	npc:SetAbilityPoints(npc:GetLevel())
-	local normalAbility = math.min(4, npc:GetLevel())
-	local ultiAbility = math.min(2, math.floor(npc:GetLevel() / 6))
-	for i=1, normalAbility do
-		while true do
-			local abilityNameRandom = RandomFromTable(IMBA_RANDOM_ABILITIES)
-			if not npc:HasAbility(abilityNameRandom) then
-				print(npc:GetName(), abilityNameRandom, GameRules:GetDOTATime(true, true))
-				npc:AddAbility(abilityNameRandom)
-				break
-			end
+	for i=1, 4 do
+		local ability_table = GetRandomAbilityNormal()
+		while npc:HasAbility(ability_table[2]) do
+			ability_table = GetRandomAbilityNormal()
 		end
+		PrecacheUnitWithQueue(ability_table[1])
+		npc:AddAbility(ability_table[2])
 	end
-	for i=1, ultiAbility do
-		while true do
-			local abilityNameRandom = RandomFromTable(IMBA_RANDOM_ABILITIES_ULTI)
-			if not npc:HasAbility(abilityNameRandom) then
-				print(npc:GetName(), abilityNameRandom, GameRules:GetDOTATime(true, true))
-				npc:AddAbility(abilityNameRandom)
-				break
-			end
+	for i=1, 2 do
+		local ability_table = GetRandomAbilityUltimate()
+		while npc:HasAbility(ability_table[2]) do
+			ability_table = GetRandomAbilityUltimate()
 		end
+		PrecacheUnitWithQueue(ability_table[1])
+		npc:AddAbility(ability_table[2])
 	end
 	npc:RemoveAllModifiers()
 end
@@ -48,6 +42,7 @@ function IMBAEvents:GiveAKAbility(npc)
 		while npc:HasAbility(ak_name[2]) do
 			ak_name = GetRandomAKAbility()
 		end
+		npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_loading", {})
 		PrecacheUnitByNameAsync(ak_name[1], function() npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_adder", {duration = RandomFloat(0.2, 6.0), ability_owner = ak_name[1], ability_name = ak_name[2]}) end, npc:GetPlayerOwnerID())
 	else
 		local buff = npc:AddNewModifier(npc, nil, "modifier_imba_unlimited_powerup_ak", {})

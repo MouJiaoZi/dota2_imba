@@ -12,7 +12,7 @@ end
 
 modifier_item_imba_soul_of_truth = class({})
 
-function modifier_item_imba_soul_of_truth:GetTexture() return "custom/imba_soul_of_truth" end
+function modifier_item_imba_soul_of_truth:GetTexture() return "imba_soul_of_truth" end
 function modifier_item_imba_soul_of_truth:IsDebuff()			return false end
 function modifier_item_imba_soul_of_truth:IsHidden() 			return false end
 function modifier_item_imba_soul_of_truth:IsPurgable() 			return false end

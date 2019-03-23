@@ -21,7 +21,9 @@ function imba_nyx_assassin_impale:OnSpellStart()
 	local target = self:GetCursorTarget()
 	local pos = target and target:GetAbsOrigin() or self:GetCursorPosition()
 	local start_pos = caster:GetAbsOrigin()
-	local end_pos = start_pos + (pos - start_pos):Normalized() * (self:GetCastRange(pos, caster) + caster:GetCastRangeBonus())
+	local direction = (pos - start_pos):Normalized()
+	direction.z = 0.0
+	local end_pos = start_pos + direction * (self:GetCastRange(pos, caster) + caster:GetCastRangeBonus())
 	local marker = CreateModifierThinker(caster, self, "modifier_impale_motion", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(marker).hitted = {}
 	caster:EmitSound("Hero_NyxAssassin.Impale")
@@ -41,7 +43,7 @@ function imba_nyx_assassin_impale:OnSpellStart()
 		iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
 		fExpireTime = GameRules:GetGameTime() + 10.0,
 		bDeleteOnHit = true,
-		vVelocity = (end_pos - start_pos):Normalized() * self:GetSpecialValueFor("speed"),
+		vVelocity = direction * self:GetSpecialValueFor("speed"),
 		bProvidesVision = false,
 		ExtraData = {marker = marker}
 	}
@@ -80,7 +82,7 @@ function imba_nyx_assassin_impale:OnProjectileHit_ExtraData(target, location, ke
 							attacker = self:GetCaster(),
 							damage = dmg,
 							damage_type = self:GetAbilityDamageType(),
-							damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
 							ability = self, --Optional.
 							}
 		local dmg_done =  ApplyDamage(damageTable2)
@@ -199,7 +201,7 @@ function imba_nyx_assassin_mana_burn:OnSpellStart()
 						attacker = self:GetCaster(),
 						damage = mana_toburn,
 						damage_type = self:GetAbilityDamageType(),
-						damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+						damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
 						ability = self, --Optional.
 						}
 	ApplyDamage(damageTable)

@@ -127,6 +127,63 @@ function modifier_imba_shuriken_toss_chain:OnDestroy()
 	self.dummy = nil
 end
 
+imba_bounty_hunter_jinada = class({})
+
+LinkLuaModifier("modifier_imba_jinada_passive", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_jinada_slow", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
+
+function imba_bounty_hunter_jinada:GetIntrinsicModifierName() return "modifier_imba_jinada_passive" end
+
+modifier_imba_jinada_passive = class({})
+
+function modifier_imba_jinada_passive:IsHidden()			return true end
+function modifier_imba_jinada_passive:IsDebuff()			return false end
+function modifier_imba_jinada_passive:IsPurgable() 			return false end
+function modifier_imba_jinada_passive:IsPurgeException() 	return false end
+function modifier_imba_jinada_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
+
+function modifier_imba_jinada_passive:GetModifierPreAttack_CriticalStrike(keys)
+	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() then
+		if self:GetAbility():IsCooldownReady() then
+			return self:GetAbility():GetSpecialValueFor("crit_damage")
+		end
+	end
+end
+
+function modifier_imba_jinada_passive:OnAttackLanded(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() or self:GetParent():IsIllusion() then
+		return
+	end
+	if self:GetAbility():IsCooldownReady() then
+		self:GetAbility():UseResources(true, true, true)
+		keys.target:EmitSound("Hero_BountyHunter.Jinada")
+		keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_jinada_slow", {duration = self:GetAbility():GetSpecialValueFor("slow_duration")})
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_bounty_hunter/bounty_hunter_jinda_slow.vpcf", PATTACH_CUSTOMORIGIN, keys.target)
+		ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+		ParticleManager:ReleaseParticleIndex(pfx)
+	end
+	if keys.target:IsRealHero() then
+		PlayerResource:ModifyGold(keys.target:GetPlayerOwnerID(), (0 - self:GetAbility():GetSpecialValueFor("gold_steal")), false, DOTA_ModifyGold_Unspecified)
+		PopupNumbers(keys.target, "gold", Vector(255, 200, 33), 1.0, self:GetAbility():GetSpecialValueFor("gold_steal"), 1)
+		PlayerResource:ModifyGold(self:GetParent():GetPlayerOwnerID(), self:GetAbility():GetSpecialValueFor("gold_steal"), true, DOTA_ModifyGold_Unspecified)
+		PopupNumbers(self:GetParent(), "gold", Vector(255, 200, 33), 1.0, self:GetAbility():GetSpecialValueFor("gold_steal"), 0)
+	end
+end
+
+modifier_imba_jinada_slow = class({})
+
+function modifier_imba_jinada_slow:IsHidden()			return false end
+function modifier_imba_jinada_slow:IsDebuff()			return true end
+function modifier_imba_jinada_slow:IsPurgable() 		return true end
+function modifier_imba_jinada_slow:IsPurgeException() 	return true end
+function modifier_imba_jinada_slow:DeclareFunctions()	return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
+function modifier_imba_jinada_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("ms_slow")) end
+function modifier_imba_jinada_slow:GetStatusEffectName() return "particles/units/heroes/hero_bounty_hunter/status_effect_bounty_hunter_jinda_slow.vpcf" end
+function modifier_imba_jinada_slow:StatusEffectPriority() return 15 end
+
 imba_bounty_hunter_wind_walk = class({})
 
 LinkLuaModifier("modifier_imba_wind_walk_fade", "hero/hero_bounty_hunter", LUA_MODIFIER_MOTION_NONE)
@@ -249,6 +306,7 @@ function imba_bounty_hunter_shadow_jaunt:OnSpellStart()
 	local caster_pos = caster:GetAbsOrigin()
 	local target_pos = target:GetAbsOrigin()
 	local blink_direction = (target_pos - caster_pos):Normalized()
+	blink_direction.z = 0.0
 	target_pos = target_pos + blink_direction * 100
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_bounty_hunter/bounty_hunter_windwalk.vpcf", PATTACH_ABSORIGIN, self:GetCaster())
 	ParticleManager:ReleaseParticleIndex(pfx)
@@ -269,12 +327,11 @@ function imba_bounty_hunter_shadow_jaunt:OnSpellStart()
 
 	-- If the target is tracked, refresh all abilities
 	if target:HasModifier("modifier_imba_track") then
-
 		-- Refresh all abilities
 		local current_ability
-		for i = 0, 15 do
+		for i = 0, 23 do
 			current_ability = caster:GetAbilityByIndex(i)
-			if current_ability and self ~= current_ability then
+			if current_ability and self ~= current_ability and not IsRefreshableByAbility(current_ability:GetName()) then
 				current_ability:EndCooldown()
 			end
 		end
@@ -322,7 +379,12 @@ function imba_bounty_hunter_track:OnSpellStart()
 	local pfx = ParticleManager:CreateParticle("particles/hero/bounty_hunter/bounty_hunter_track_cast.vpcf", PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT, "attach_attack2", caster:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlEnt(pfx, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
-	ParticleManager:ReleaseParticleIndex(pfx)
+	Timers:CreateTimer(3, function()
+			ParticleManager:DestroyParticle(pfx, true)
+			ParticleManager:ReleaseParticleIndex(pfx)
+			return nil
+		end
+	)
 	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_BountyHunter.Target", caster)
 	local buff = target:AddNewModifier(caster, self, "modifier_imba_track", {duration = self:GetSpecialValueFor("duration")})
 	target:AddNewModifier(caster, self, "modifier_imba_track_aura", {duration = self:GetSpecialValueFor("duration")})

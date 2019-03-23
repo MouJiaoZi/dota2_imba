@@ -10,13 +10,14 @@ function imba_lina_dragon_slave:IsStealable() 				return true  end
 function imba_lina_dragon_slave:IsNetherWardStealable()		return true end
 function imba_lina_dragon_slave:GetManaCost(a) return self:HasFireSoulActive() and self:GetSpecialValueFor("mana_super") or self:GetSpecialValueFor("mana_normal") end
 function imba_lina_dragon_slave:GetCooldown(a) return self:HasFireSoulActive() and self:GetSpecialValueFor("cd_super") or self:GetSpecialValueFor("cd_normal") end
-function imba_lina_dragon_slave:GetAbilityTextureName() return self:HasFireSoulActive() and "custom/lina_dragon_slave_fiery" or "lina_dragon_slave" end
+function imba_lina_dragon_slave:GetAbilityTextureName() return self:HasFireSoulActive() and "lina_dragon_slave_fiery" or "lina_dragon_slave" end
 
 function imba_lina_dragon_slave:OnSpellStart()
 	local caster = self:GetCaster()
 	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Lina.DragonSlave.Cast", caster)
 	local pos = self:GetCursorPosition()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local super_state = self:HasFireSoulActive() and 1 or 0
 	local primary_length = self:GetCastRange(pos, caster)
 	local primary_speed = self:HasFireSoulActive() and self:GetSpecialValueFor("primary_speed_super") or self:GetSpecialValueFor("primary_speed")
@@ -272,7 +273,7 @@ function imba_lina_light_strike_array:IsNetherWardStealable()	return true end
 function imba_lina_light_strike_array:GetAOERadius() return self:GetSpecialValueFor("aoe_radius") end
 function imba_lina_light_strike_array:GetManaCost(a) return self:HasFireSoulActive() and self:GetSpecialValueFor("mana_super") or self:GetSpecialValueFor("mana_normal") end
 function imba_lina_light_strike_array:GetCooldown(a) return self:HasFireSoulActive() and self:GetSpecialValueFor("cd_super") or self:GetSpecialValueFor("cd_normal") end
-function imba_lina_light_strike_array:GetAbilityTextureName() return self:HasFireSoulActive() and "custom/lina_light_strike_array_fiery" or "lina_light_strike_array" end
+function imba_lina_light_strike_array:GetAbilityTextureName() return self:HasFireSoulActive() and "lina_light_strike_array_fiery" or "lina_light_strike_array" end
 
 function imba_lina_light_strike_array:OnSpellStart()
 	local caster = self:GetCaster()
@@ -288,6 +289,7 @@ function modifier_imba_lina_light_strike_array_thinker_mom:OnCreated(keys)
 	if IsServer() then
 		local endpos = Vector(keys.endpos_x, keys.endpos_y, keys.endpos_z)
 		local direction = (endpos - self:GetParent():GetAbsOrigin()):Normalized()
+		direction.z = 0.0
 		local delay = keys.super == 1 and self:GetAbility():GetSpecialValueFor("secondary_delay_super") or self:GetAbility():GetSpecialValueFor("secondary_delay")
 		local array_amount = math.ceil((endpos - self:GetParent():GetAbsOrigin()):Length2D() / self:GetAbility():GetSpecialValueFor("aoe_radius"))
 		local distance
@@ -312,7 +314,11 @@ function modifier_imba_lina_light_strike_array_thinker_son:CheckState() return {
 function modifier_imba_lina_light_strike_array_thinker_son:OnCreated()
 	if IsServer() then
 		self:GetParent():EmitSound("Ability.PreLightStrikeArray")
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_lina/lina_spell_light_strike_array_ray_team.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+		local pfx_name = "particles/units/heroes/hero_lina/lina_spell_light_strike_array_ray_team.vpcf"
+		if self:GetAbility():HasFireSoulActive() then
+			pfx_name = "particles/econ/items/lina/lina_ti7/light_strike_array_pre_ti7.vpcf"
+		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, self:GetParent())
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor("aoe_radius"), self:GetAbility():GetSpecialValueFor("aoe_radius"), self:GetAbility():GetSpecialValueFor("aoe_radius")))
 		ParticleManager:ReleaseParticleIndex(pfx)
@@ -334,7 +340,11 @@ function modifier_imba_lina_light_strike_array_thinker_son:OnDestroy()
 			ApplyDamage(damageTable)
 			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
 		end
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_lina/lina_spell_light_strike_array.vpcf", PATTACH_WORLDORIGIN, nil)
+		local pfx_name = "particles/units/heroes/hero_lina/lina_spell_light_strike_array.vpcf"
+		if self:GetAbility():HasFireSoulActive() then
+			pfx_name = "particles/econ/items/lina/lina_ti7/lina_spell_light_strike_array_ti7.vpcf"
+		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor("aoe_radius"), 0, 0))
 		ParticleManager:ReleaseParticleIndex(pfx)
@@ -353,7 +363,7 @@ function imba_lina_fiery_soul:IsRefreshable() 			return false end
 function imba_lina_fiery_soul:IsStealable() 			return false end
 function imba_lina_fiery_soul:IsNetherWardStealable()	return false end
 function imba_lina_fiery_soul:GetIntrinsicModifierName() return "modifier_imba_fiery_soul_passive" end
-function imba_lina_fiery_soul:GetAbilityTextureName() return self:HasFireSoulActive() and "custom/lina_fiery_soul_fiery" or "lina_fiery_soul" end
+function imba_lina_fiery_soul:GetAbilityTextureName() return self:HasFireSoulActive() and "lina_fiery_soul_fiery" or "lina_fiery_soul" end
 
 function imba_lina_fiery_soul:CastFilterResult()
 	if self:GetCaster():HasModifier("modifier_imba_fiery_soul_active") or self:GetCaster():GetModifierStackCount("modifier_imba_fiery_soul_stacks", self:GetCaster()) < self:GetSpecialValueFor("active_stacks") then
@@ -417,7 +427,7 @@ end
 
 modifier_imba_fiery_soul_active = class({})
 
-function modifier_imba_fiery_soul_active:GetTexture()	return "custom/lina_fiery_soul_fiery" end
+function modifier_imba_fiery_soul_active:GetTexture()	return "lina_fiery_soul_fiery" end
 function modifier_imba_fiery_soul_active:IsDebuff()			return false end
 function modifier_imba_fiery_soul_active:IsHidden() 		return false end
 function modifier_imba_fiery_soul_active:IsPurgable() 		return false end
@@ -464,7 +474,7 @@ function imba_lina_laguna_blade:IsStealable() 			return true end
 function imba_lina_laguna_blade:IsNetherWardStealable()	return true end
 function imba_lina_laguna_blade:GetManaCost(a) return self:HasFireSoulActive() and self:GetSpecialValueFor("mana_super") or self:GetSpecialValueFor("mana_normal") end
 function imba_lina_laguna_blade:GetCooldown(a) return self:HasFireSoulActive() and self:GetSpecialValueFor("cd_super") or self:GetSpecialValueFor("cd_normal") end
-function imba_lina_laguna_blade:GetAbilityTextureName() return self:HasFireSoulActive() and "custom/lina_laguna_blade_fiery" or "lina_laguna_blade" end
+function imba_lina_laguna_blade:GetAbilityTextureName() return self:HasFireSoulActive() and "lina_laguna_blade_fiery" or "lina_laguna_blade" end
 
 function imba_lina_laguna_blade:OnSpellStart()
 	local caster = self:GetCaster()

@@ -151,6 +151,7 @@ local forbidden_buff = {
 	"modifier_morphling_replicate_manager",
 	"modifier_imba_burrow",
 	"modifier_doom_bringer_devour",
+	"modifier_dark_willow_bedlam",
 	}
 
 function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDMG, iIncomingDMG, iIllsuionType, fDuration)
@@ -215,6 +216,7 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 			hIllusion:RemoveItem(item)
 		end
 	end
+	hIllusion:RemoveAllModifiers()
 	-----------------
 	local buffTable = hBaseUnit:FindAllModifiers()
 	for _, buff in pairs(buffTable) do

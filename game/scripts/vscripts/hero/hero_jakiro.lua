@@ -24,7 +24,9 @@ function imba_jakiro_fire_breath:OnSpellStart()
 	EmitSoundOn("Hero_Jakiro.DualBreath.Cast", caster)
 	local pos = self:GetCursorPosition()
 	local distance = (pos - caster:GetAbsOrigin()):Length2D()
-	local target_point = caster:GetAbsOrigin() + (pos - caster:GetAbsOrigin()):Normalized() * distance
+	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
+	local target_point = caster:GetAbsOrigin() + direction * distance
 	local duration = distance / self:GetSpecialValueFor("speed")
 	if distance > self:GetSpecialValueFor("range") + self:GetCaster():GetCastRangeBonus() then
 		target_point = caster:GetAbsOrigin() + (pos - caster:GetAbsOrigin()):Normalized() * (self:GetSpecialValueFor("range") + self:GetCaster():GetCastRangeBonus())
@@ -47,6 +49,7 @@ function modifier_imba_jakiro_fire_breath_motion:OnCreated(keys)
 		self:CheckMotionControllers()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
+		self.direction.z = 0
 		self.current_pos = self:GetParent():GetAbsOrigin()
 		self.pfx_tick = 10
 		self:StartIntervalThink(FrameTime())
@@ -159,7 +162,9 @@ function imba_jakiro_ice_breath:OnSpellStart()
 	EmitSoundOn("Hero_Jakiro.DualBreath.Cast", caster)
 	local pos = self:GetCursorPosition()
 	local distance = (pos - caster:GetAbsOrigin()):Length2D()
-	local target_point = caster:GetAbsOrigin() + (pos - caster:GetAbsOrigin()):Normalized() * distance
+	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
+	local target_point = caster:GetAbsOrigin() + direction * distance
 	local duration = distance / self:GetSpecialValueFor("speed")
 	if distance > self:GetSpecialValueFor("range") + self:GetCaster():GetCastRangeBonus() then
 		target_point = caster:GetAbsOrigin() + (pos - caster:GetAbsOrigin()):Normalized() * (self:GetSpecialValueFor("range") + self:GetCaster():GetCastRangeBonus())
@@ -182,6 +187,7 @@ function modifier_imba_jakiro_ice_breath_motion:OnCreated(keys)
 		self:CheckMotionControllers()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
+		self.direction.z = 0.0
 		self.current_pos = self:GetParent():GetAbsOrigin()
 		self.pfx_tick = 10
 		self:StartIntervalThink(FrameTime())
@@ -307,6 +313,9 @@ function imba_jakiro_liquid_fire:OnSpellStart()
 end
 
 function imba_jakiro_liquid_fire:OnProjectileHit(target, location)
+	if not target then
+		return
+	end
 	local caster = self:GetCaster()
 	local enemies =  FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
@@ -445,6 +454,7 @@ function imba_jakiro_macropyre:OnSpellStart()
 	local trail_amount = self:GetSpecialValueFor("trail_amount")
 	local path_length = self:GetSpecialValueFor("range") + self:GetCaster():GetCastRangeBonus()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0
 	local start_pos = caster:GetAbsOrigin() + direction * self:GetSpecialValueFor("path_radius")
 	local end_pos = start_pos
 	local trail_start = ( -1 ) * ( trail_amount - 1 ) / 2
@@ -499,7 +509,7 @@ function modifier_imba_jakiro_macropyre_thinker:GetAuraSearchType() return DOTA_
 
 function modifier_imba_jakiro_macropyre_thinker:OnCreated()
 	if IsServer() then
-		self:StartIntervalThink(0.1)
+		self:StartIntervalThink(1.0)
 	end
 end
 

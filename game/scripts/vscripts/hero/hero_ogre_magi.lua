@@ -15,7 +15,7 @@ function modifier_multicast_attack_range:DeclareFunctions() return {MODIFIER_PRO
 function modifier_multicast_attack_range:GetModifierAttackRangeBonus() return 10000 end
 
 function imba_ogre_magi_multicast:GetIntrinsicModifierName() return "modifier_imba_multicast_passive" end
-function imba_ogre_magi_multicast:GetAbilityTextureName() return "custom/ogre_magi_multicast_"..self:GetCaster():GetModifierStackCount("modifier_imba_multicast_passive", nil) end
+function imba_ogre_magi_multicast:GetAbilityTextureName() return "ogre_magi_multicast_"..self:GetCaster():GetModifierStackCount("modifier_imba_multicast_passive", nil) end
 function imba_ogre_magi_multicast:ResetToggleOnRespawn() return false end
 
 function imba_ogre_magi_multicast:OnToggle()
@@ -68,7 +68,7 @@ function modifier_imba_multicast_passive:DoMultiAttack(caster, target, times)
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			caster:StartGesture(ACT_DOTA_ATTACK)
 			caster.splitattack = false
-			caster:PerformAttack(target, true, true, true, true, true, false, false)
+			caster:PerformAttack(target, true, true, true, true, false, false, false)
 			caster.splitattack = true
 			caster:EmitSound("Hero_OgreMagi.Fireblast.x"..i+1)
 			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ogre_magi/ogre_magi_multicast.vpcf", PATTACH_OVERHEAD_FOLLOW, caster)
@@ -120,6 +120,8 @@ local NoMultiCastItems = {
 "item_imba_power_treads_2",
 "imba_antimage_blink",
 "imba_queenofpain_blink",
+"imba_riki_tricks_of_the_trade",
+"imba_riki_tott_true",
 }
 
 function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)

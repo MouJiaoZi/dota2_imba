@@ -398,58 +398,17 @@ end
 
 imba_tinker_rearm = class({})
 
-LinkLuaModifier("modifier_imba_rearm_fuck", "hero/hero_tinker", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rearm_stack", "hero/hero_tinker", LUA_MODIFIER_MOTION_NONE)
 
 function imba_tinker_rearm:IsHiddenWhenStolen() 	return false end
 function imba_tinker_rearm:IsRefreshable() 			return true end
 function imba_tinker_rearm:IsStealable() 			return true end
 function imba_tinker_rearm:IsNetherWardStealable()	return false end
-function imba_tinker_rearm:GetIntrinsicModifierName() return "modifier_imba_rearm_fuck" end
 
 function imba_tinker_rearm:OnSpellStart()
 	local caster = self:GetCaster()
 	self:EndCooldown()
 	self:StartCooldown(self:GetSpecialValueFor("cooldown_tooltip"))
-	-- List of unrefreshable abilities (for Random OMG/LOD modes)
-	local forbidden_abilities = {
-		"imba_tinker_rearm",
-		"ancient_apparition_ice_blast",
-		"zuus_thundergods_wrath",
-		"furion_wrath_of_nature",
-		"imba_magnus_reverse_polarity",
-		"imba_omniknight_guardian_angel",
-		"imba_mirana_arrow",
-		"imba_dazzle_shallow_grave",
-		"imba_wraith_king_reincarnation",
-		"imba_abaddon_borrowed_time",
-		"furion_force_of_nature",
-		"imba_nyx_assassin_spiked_carapace",
-		"elder_titan_earth_splitter",
-		"imba_centaur_stampede",
-		"silencer_global_silence"
-	}
-
-	-- List of unrefreshable items
-	local forbidden_items = {
-		"item_imba_bloodstone",
-		"item_imba_arcane_boots",
-		"item_imba_mekansm",
-		"item_imba_mekansm_2",
-		"item_imba_guardian_greaves",
-		"item_imba_hand_of_midas",
-		"item_imba_white_queen_cape",
-		"item_imba_black_king_bar",
-		"item_imba_refresher",
-		"item_imba_necronomicon",
-		"item_imba_necronomicon_2",
-		"item_imba_necronomicon_3",
-		"item_imba_necronomicon_4",
-		"item_imba_necronomicon_5",
-		"item_imba_skadi",
-		"item_imba_sphere",
-		"item_aeon_disk"
-	}
 	if self:GetLevel() == 1 then
 		StartAnimation(caster, {duration = 3.0, activity = ACT_DOTA_TINKER_REARM1, rate = 1.0})
 	elseif self:GetLevel() == 2 then
@@ -461,7 +420,7 @@ function imba_tinker_rearm:OnSpellStart()
 	-- Refresh abilities
 	for i = 0, 23 do
 		local current_ability = caster:GetAbilityByIndex(i)
-		if current_ability and not IsInTable(current_ability:GetName(), forbidden_abilities) then
+		if current_ability and not IsRefreshableByAbility(current_ability:GetName()) then
 			current_ability:EndCooldown()
 		end
 	end
@@ -469,15 +428,15 @@ function imba_tinker_rearm:OnSpellStart()
 	-- Refresh items
 	for i = 0, 8 do
 		local current_item = caster:GetItemInSlot(i)
-		if current_item and not IsInTable(current_item:GetName(), forbidden_items) then
+		if current_item and not IsRefreshableByAbility(current_item:GetName()) then
 			current_item:EndCooldown()
 		end
 	end
 
 	-- Refresh TP
 	local tp = caster:GetTP()
-	for i=1, #tp do
-		tp[i]:EndCooldown()
+	if tp then
+		tp:EndCooldown()
 	end
 
 	local buff = caster:AddNewModifier(caster, self, "modifier_imba_rearm_stack", {duration = self:GetSpecialValueFor("stack_duration")})
@@ -503,7 +462,8 @@ function modifier_imba_rearm_fuck:IsDebuff()			return false end
 function modifier_imba_rearm_fuck:IsHidden() 			return true end
 function modifier_imba_rearm_fuck:IsPurgable() 			return false end
 function modifier_imba_rearm_fuck:IsPurgeException() 	return false end
-function modifier_imba_rearm_fuck:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_EXECUTED} end
+function modifier_imba_rearm_fuck:RemoveOnDeath() 		return self:GetParent():IsIllusion() end
+function modifier_imba_rearm_fuck:DeclareFunctions() return {MODIFIER_EVENT_ON_ORDER} end
 
 function modifier_imba_rearm_fuck:OnCreated()
 	if IsServer() then
@@ -511,34 +471,6 @@ function modifier_imba_rearm_fuck:OnCreated()
 			return
 		end
 		self.time = -10000
-		self:StartIntervalThink(FrameTime())
-	end
-end
-
-function modifier_imba_rearm_fuck:OnIntervalThink()
-	if not self:GetParent():IsAlive() then
-		return
-	end
-	local range = 1000 + self:GetParent():GetCastRangeBonus()
-	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_ANY_ORDER, false)
-	if #enemies > 0 and self.time == -10000 then
-		self.time = GameRules:GetGameTime()
-	elseif #enemies == 0 then
-		self.time = -10000
-	end
-end
-
-function modifier_imba_rearm_fuck:OnAbilityExecuted(keys)
-	if not IsServer() then
-		return
-	end
-	if (keys.ability:GetName() == "item_imba_sheepstick" or string.find(keys.ability:GetName(), "dagon") or keys.ability:GetName() == "item_ethereal_blade") and keys.unit == self:GetParent() then
-		if (GameRules:GetGameTime() - self.time) <= 0.1 then
-			--Notifications:BottomToAll({text="检测到修补匠从发现敌方英雄到使用邪恶镰刀/大根/虚灵刀的时间间隔小于0.1秒！！", duration = 5})
-			self:SetStackCount(self:GetStackCount() + 1)
-			if self:GetStackCount() >= 23 then
-				self:GetParent():ForceKill(false)
-			end
-		end
+		self.id = 0
 	end
 end

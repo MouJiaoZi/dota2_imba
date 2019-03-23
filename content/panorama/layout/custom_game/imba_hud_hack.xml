@@ -1,4 +1,13 @@
 <root> 
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
+	</styles> 
 	<scripts>
 		<include src="file://{resources}/scripts/imba_hud_hack.js" />
 	</scripts>

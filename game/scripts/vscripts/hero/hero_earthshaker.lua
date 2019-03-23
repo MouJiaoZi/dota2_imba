@@ -26,6 +26,7 @@ function imba_earthshaker_fissure:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local length = self:GetSpecialValueFor("fissure_range") + caster:GetCastRangeBonus()
 	local pos0 = caster:GetAbsOrigin() + direction * 128
 	local pos1 = caster:GetAbsOrigin() + direction * length

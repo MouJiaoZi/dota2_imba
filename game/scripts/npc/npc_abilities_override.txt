@@ -6,9 +6,8 @@
 	// Default item removal 
 	// -----------------------------------------------------------
 
-	//"item_imba_manta"			"REMOVE"
-	"item_imba_ancient_crown"	"REMOVE"
-
+	"item_kaya_and_sange"	"REMOVE"
+	"item_yasha_and_kaya"	"REMOVE"
 	"item_crown"					"REMOVE"
 	"item_recipe_hand_of_midas"			"REMOVE"
 	//"item_mithril_hammer"			"REMOVE"
@@ -290,6 +289,23 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	//=================================================================================================================
 
+
+	//=================================================================================================================
+	// Ability: Special Bonus
+	//=================================================================================================================
+	"special_bonus_unique_puck_3"
+	{
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"value"				"0.3"
+			}
+		}
+	}
 
 	//=================================================================================================================
 	// Ability: Special Bonus
@@ -3034,6 +3050,18 @@
 		}
 	}
 
+	"special_bonus_gold_income_70"
+	{
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"				"90"
+			}
+		}
+	}
+
 	//=================================================================================================================
 	// Talent: bonus evasion
 	//=================================================================================================================
@@ -3639,7 +3667,7 @@
 	//=================================================================================================================
 	"item_infused_raindrop"
 	{
-		"ItemInitialStockTime"			"30.0"
+		"ItemInitialStockTime"			"0.0"
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -3880,7 +3908,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_movement_speed"	"6"
+				"bonus_movement_speed"	"30"
 			}
 			"03"
 			{
@@ -4533,6 +4561,66 @@
 	}
 
 	//=================================================================================================================
+	// Nullifier
+	//=================================================================================================================
+	"item_nullifier"
+	{
+		"AbilityCooldown"				"13.0"
+		"AbilityCastRange"				"600"
+		"AbilityManaCost"				"75"
+		
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"4700"
+		"ItemQuality"					"epic"
+		"ItemAliases"					"nlf;nullifier"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_IN_SPEECH | DECLARE_PURCHASES_TO_SPECTATORS"
+		"ShouldBeSuggested"				"1"
+		"AbilitySharedCooldown"			"nullifier"
+		
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_damage"			"65"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_armor"			"5"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_regen"			"6"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"mute_duration"			"6.0"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"projectile_speed"		"1200"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"slow_pct"				"100"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"slow_interval_duration"	"0.4"
+			}
+		}
+	}
+
+	//=================================================================================================================
 	// Ability: Bloodseeker's Bloodrage
 	//=================================================================================================================
 	"bloodseeker_bloodrage"
@@ -4789,7 +4877,7 @@
 	"earthshaker_enchant_totem"
 	{
 		"AbilityCastRange"				"0"
-		"AbilityCastPoint"				"0.4"
+		"AbilityCastPoint"				"0.25"
 		"FightRecapLevel"				"1"
 
 		// Time		
@@ -4880,7 +4968,7 @@
 	{
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"100.0"
+		"AbilityCooldown"				"110.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -4893,7 +4981,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"echo_slam_damage_range"	"600"
+				"echo_slam_damage_range"	"800"
 			}
 			"02"
 			{
@@ -4908,17 +4996,16 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"echo_slam_echo_damage"		"90 100 110"
+				"echo_slam_echo_damage"		"90 150 210"
 				"LinkedSpecialBonus"		"special_bonus_unique_earthshaker_2"
 			}
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"echo_slam_initial_damage"		"100 125 150"
+				"echo_slam_initial_damage"		"100 150 200"
 			}
 		}
 	}
-	
 
 	//=================================================================================================================
 	// Morphling: Waveform
@@ -5468,7 +5555,7 @@
 	{
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.1 0.1 0.1 0.1"
+		"AbilityCastPoint"				"0.0"
 		"AbilityCastRange"				"3000"
 
 		// Time		
@@ -5525,7 +5612,7 @@
 	{
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.1 0.1 0.1 0.1"
+		"AbilityCastPoint"				"0.0"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -5635,7 +5722,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"coil_radius"				"375"
+				"coil_radius"				"600"
 			}			
 			"07"
 			{
@@ -5823,7 +5910,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"scepter_range"			"800"
+				"scepter_range"			"400"
 			}
 			"05"
 			{
@@ -8194,7 +8281,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"50000"
+				"radius"					"1200"
 			}
 			"02"
 			{
@@ -8262,7 +8349,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"675 675 675"
+				"radius"					"1500"
 			}	
 			"07"
 			{
@@ -10584,7 +10671,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"heal_amp"				"25"
+				"heal_amp"				"25 35 45 55"
 			}
 			"02"
 			{
@@ -10610,18 +10697,19 @@
 	//=================================================================================================================
 	"chen_holy_persuasion"
 	{
+		"MaxLevel"						"2"
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+		"AbilityCastPoint"				"0.1"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1000"
+		"AbilityCastRange"				"1500"
 		"AbilityCooldown"				"15"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"100"
+		"AbilityManaCost"				"50"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -10630,7 +10718,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"max_units"				"2 4 6 8"
+				"max_units"				"8"
 				"LinkedSpecialBonus"	"special_bonus_unique_chen_1"
 			}
 			"02"
@@ -10641,13 +10729,13 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"health_min"			"1000 1500 2000 2500"
+				"health_min"			"1000 2000"
 				"LinkedSpecialBonus"	"special_bonus_unique_chen_4"
 			}
 			"04"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"teleport_delay"		"6.0 5.0 4.0 3.0"
+				"teleport_delay"		"3.0"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -14196,7 +14284,7 @@
 		"AbilityCastAnimation"			"ACT_DOTA_OVERRIDE_ABILITY_2"
 		"AbilityCastGestureSlot"		"DEFAULT"
 		"AbilityCastRange"				"475 550 625 700"
-		"AbilityCastPoint"				"0.3"
+		"AbilityCastPoint"				"0.1"
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
@@ -14276,23 +14364,16 @@
 	//=================================================================================================================
 	"chaos_knight_phantasm"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"							"5429"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
-		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
-		"FightRecapLevel"				"2"
-		
-		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
 		"AbilityCastRange"				"1200"
-		"HasScepterUpgrade"			"1"
+		"HasScepterUpgrade"				"1"
 		"AbilitySound"					"Hero_ChaosKnight.Phantasm"
 		
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.4 0.4 0.4"
+		"AbilityCastPoint"				"0.2"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
 
 		// Time		
@@ -14350,7 +14431,7 @@
 			"09"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"cooldown_scepter"		"90"
+				"cooldown_scepter"		"60"
 			}		
 		}
 	}
@@ -15164,7 +15245,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"340 400 460 520"
+				"radius"					"375 400 425 450"
 			}
 			"02"
 			{
@@ -16072,7 +16153,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"13.0"
+		"AbilityCooldown"				"17.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -16604,7 +16685,7 @@
 	{
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+		"AbilityCastPoint"				"0.0"
 		"AbilityCastRange"				"1000 1500 2000 2500"
 		
 		// Time		
@@ -16697,7 +16778,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"8.0 8.0 8.0"
+		"AbilityCooldown"				"1.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -16726,7 +16807,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"damage_per_second"		"50 75 100"
+				"damage_per_second"		"75 150 225"
 			}
 			"05"
 			{
@@ -16769,7 +16850,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"8.0 8.0 8.0"
+		"AbilityCooldown"				"1.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -16783,7 +16864,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"speed"					"1300.0 1600.0 1900.0"
+				"speed"					"10000"
 			}
 			"02"
 			{
@@ -16798,7 +16879,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"damage_per_second"		"30 60 90"
+				"damage_per_second"		"100 200 300"
 			}
 			"05"
 			{
@@ -19614,6 +19695,8 @@
 	//=================================================================================================================
 	"pangolier_heartpiercer"
 	{
+		"MaxLevel"				"1"
+
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -19626,17 +19709,17 @@
 			"02"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"duration"				"2 3 4 5"
+				"duration"				"4"
 			}
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"slow_pct"			"0"
+				"slow_pct"				"0"
 			}
 			"04"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"debuff_delay"			"2.0 1.5 1.0 0.5"
+				"debuff_delay"			"2.0"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -20737,11 +20820,145 @@
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
 	}
-		
+	
 	//=================================================================================================================
-	// Ability: Necrolyte's Reaper's Scythe
+	// Ability: Spear of Mars
 	//=================================================================================================================
-	"necrolyte_reapers_scythe"
+	"mars_spear"
+	{
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.2"
+ 		"AbilityCastRange"				"1000 1100 1200 1300"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"14.0"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"100"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage"				"170 225 275 325"
+				"LinkedSpecialBonus"	"special_bonus_unique_mars_spear_bonus_damage"
+			}
+			"02"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"spear_speed"		"1400 1500 1600 1700"
+			}
+			"03"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spear_width"		"125"
+			}
+			"04"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spear_vision"		"500"
+			}
+			"05"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spear_range"		"1000 1100 1200 1300"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"activity_duration"		"1.7"
+			}
+			"07"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"stun_duration"		"1.6 2.0 2.4 2.8"
+			}
+			"08"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"knockback_duration"	"0.25"
+			}			
+			"09"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"knockback_distance"	"75"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_5"
+	}
+
+	//=================================================================================================================
+	// Mars: God's Rebuke
+	//=================================================================================================================
+	"mars_gods_rebuke"
+	{
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+		"AbilityCastRange"				"500"
+		"AbilityCastPoint"				"0.0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"10"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"55 60 65 70"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"crit_mult"					"160 200 240 280"
+				"LinkedSpecialBonus"		"special_bonus_unique_mars_gods_rebuke_extra_crit"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"angle"						"140"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"radius"					"500"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"knockback_duration"		"0.3"
+			}			
+			"07"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"knockback_distance"		"150"
+			}
+			"08"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"activity_duration"			"2"
+			}
+			"09"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"bonus_damage_vs_heroes"	"25 35 45 55"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Ability: Mars Bulwark
+	//=================================================================================================================
+	"mars_bulwark"
 	{
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -20749,26 +20966,122 @@
 		{
 			"01"
 			{
-				"var_type"					"FIELD_FLOAT"
-				"damage_per_health"			"0.9 1.1 1.3"
+				"var_type"						"FIELD_INTEGER"
+				"physical_damage_reduction"		"25 40 55 70"
 			}
 			"02"
 			{
-				"var_type"					"FIELD_FLOAT"
-				"stun_duration"				"1.5 1.5 1.5"
+				"var_type"						"FIELD_INTEGER"
+				"forward_angle"					"140"
 			}
 			"03"
 			{
-				"var_type"					"FIELD_FLOAT"
-				"cooldown_scepter"			"20"
+				"var_type"						"FIELD_INTEGER"
+				"physical_damage_reduction_side"	"12 20 27 35"
 			}
 			"04"
 			{
-				"var_type"				"FIELD_INTEGER"
-				"respawn_constant"		"0"
+				"var_type"						"FIELD_INTEGER"
+				"side_angle"					"240"
 			}
 		}
 	}
 	
+	//=================================================================================================================
+	// Ability: Mars Arena of Blood
+	//=================================================================================================================
+	"mars_arena_of_blood"
+	{
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"400 600 800"
+		"AbilityCastPoint"				"0.1"
+ 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"60"
+		
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"200"
+		
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"5 7 9"
+			}
+			"02"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"radius"			"550"
+			}
+			"03"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"width"				"100"
+			}
+			"04"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spear_damage"		"200 300 400"
+			}
+			"05"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"formation_time"	"0.6"
+			}
+			"06"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"spear_distance_from_wall"	"160"
+			}
+			"07"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"spear_attack_interval"	"1.0 0.8 0.6"
+			}
+			"08"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"warrior_count"		"24"
+			}
+			"09"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"first_warrior_angle"	"0.0"
+			}
+			"10"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"warrior_fade_min_dist"	"9000.0"
+			}
+			"11"
+			{
+				"var_type"			"FIELD_FLOAT"
+				"warrior_fade_max_dist"	"10000.0"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Ability: Special Bonus
+	//=================================================================================================================
+  	"special_bonus_unique_mars_spear_bonus_damage"
+	{
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"						"FIELD_FLOAT"
+				"value"				"200"
+			}
+		}
+	}
+
 
 }

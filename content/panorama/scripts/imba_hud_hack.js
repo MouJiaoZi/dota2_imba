@@ -83,3 +83,77 @@ function SetupTopPlayerColor()
 SetupTopBar();
 $.Schedule(1.0, SetupTopPlayerColor);
 
+function GetLocalPlayerCursorPos(keys)
+{
+	var parm = keys;
+	var pos = GameUI.GetScreenWorldPosition(GameUI.GetCursorPosition());
+	if(!pos)
+	{
+		return;
+	}
+	parm.pan_x = pos[0];
+	parm.pan_y = pos[1];
+	parm.pan_z = pos[2];
+	GameEvents.SendCustomGameEventToServer("imba_compare_cursor_pos", parm);
+}
+
+FindDotaHudElement("TopBarRadiantScore").style.textShadow = "0px 0px 6px 1.0 #9BE40C8F";
+FindDotaHudElement("TopBarDireScore").style.textShadow = "0px 0px 6px 1.0 #E74D088F";
+
+GameEvents.Subscribe("imba_compare_cursor_pos_client", GetLocalPlayerCursorPos);
+
+function SetDeathMatchKillGoal()
+{
+	var DoN = FindDotaHudElement("TimeOfDay");
+	var NSN_ICON = FindDotaHudElement("NightstalkerNight");
+	NSN_ICON.SetParent(FindDotaHudElement("DayNightCycle"));
+	//FindDotaHudElement("GameTime").MoveChildAfter(DoN, FindDotaHudElement("IMBA_DN_ICON"));
+	//FindDotaHudElement("NightstalkerNight").style.width = "0px";
+	//FindDotaHudElement("NightstalkerNight").style.height = "0px";
+
+	DoN.AddClass("TopBottomFlow");
+	DoN.style.height = "" + (DoN.actuallayoutheight * 2) + "px";
+	FindDotaHudElement("GameTime").style.verticalAlign = "top";
+	var goal = $.CreatePanel('Label', DoN, 'DM_KILL_GOAL');
+	goal.text = "???";
+	if(Game.GetMapInfo().map_display_name == "dbii_death_match")
+	{
+		$.Schedule(1.0, SetDeathMatchKillGoalNum);
+	}
+	goal.hittest = false;
+	goal.style.width = "100%";
+	goal.style.fontSize = "22px";
+	goal.style.fontWeight = "bold";
+	goal.style.textAlign = "center";
+	goal.style.color = "white";
+	goal.style.textShadow = "0px 0px 6px 1.0 #FFD8008F";
+}
+
+function SetDeathMatchKillGoalNum()
+{
+	var table = CustomNetTables.GetTableValue("imba_omg", "death_match");
+	var goal = FindDotaHudElement("DM_KILL_GOAL")
+	if(table == null)
+	{
+		$.Schedule(1.0, SetDeathMatchKillGoalNum);
+	}
+	else
+	{
+		goal.hittest = true;
+		goal.text = table.kill_goal;
+		goal.SetPanelEvent("onmouseover", 
+		function()
+		{
+			$.DispatchEvent("DOTAShowTextTooltip", goal, "#IMBA_HUD_DMKillGoalTip");
+		}
+		)
+		goal.SetPanelEvent("onmouseout", 
+			function()
+			{
+				$.DispatchEvent("DOTAHideTextTooltip", goal);
+			}
+		)
+	}
+}
+
+$.Schedule(1.0, SetDeathMatchKillGoal);

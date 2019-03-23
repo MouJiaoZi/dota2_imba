@@ -49,7 +49,7 @@ function modifier_item_imba_veil_of_discord_aura_debuff:IsDebuff()			return true
 function modifier_item_imba_veil_of_discord_aura_debuff:IsHidden() 			return false end
 function modifier_item_imba_veil_of_discord_aura_debuff:IsPurgable() 		return false end
 function modifier_item_imba_veil_of_discord_aura_debuff:IsPurgeException() 	return false end
-function modifier_item_imba_veil_of_discord_aura_debuff:GetTexture() return "custom/imba_veil_of_discord" end
+function modifier_item_imba_veil_of_discord_aura_debuff:GetTexture() return "imba_veil_of_discord" end
 function modifier_item_imba_veil_of_discord_aura_debuff:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_veil_of_discord_aura_debuff:OnDestroy() self.ability = nil end
 function modifier_item_imba_veil_of_discord_aura_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS} end
@@ -119,7 +119,7 @@ function modifier_item_imba_shivas_aura_debuff:IsDebuff()			return true end
 function modifier_item_imba_shivas_aura_debuff:IsHidden() 			return false end
 function modifier_item_imba_shivas_aura_debuff:IsPurgable() 		return false end
 function modifier_item_imba_shivas_aura_debuff:IsPurgeException() 	return false end
-function modifier_item_imba_shivas_aura_debuff:GetTexture() return "custom/imba_shivas_guard" end
+function modifier_item_imba_shivas_aura_debuff:GetTexture() return "imba_shivas_guard" end
 function modifier_item_imba_shivas_aura_debuff:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_shivas_aura_debuff:OnDestroy() self.ability = nil end
 function modifier_item_imba_shivas_aura_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
@@ -178,7 +178,7 @@ function modifier_item_imba_shivas_active_debuff:IsDebuff()			return true end
 function modifier_item_imba_shivas_active_debuff:IsHidden() 		return false end
 function modifier_item_imba_shivas_active_debuff:IsPurgable() 		return true end
 function modifier_item_imba_shivas_active_debuff:IsPurgeException() return true end
-function modifier_item_imba_shivas_active_debuff:GetTexture() return "custom/imba_shivas_guard" end
+function modifier_item_imba_shivas_active_debuff:GetTexture() return "imba_shivas_guard" end
 function modifier_item_imba_shivas_active_debuff:OnDestroy() self.ability = nil end
 function modifier_item_imba_shivas_active_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_item_imba_shivas_active_debuff:GetModifierMoveSpeedBonus_Percentage() return (0 - self.ability:GetSpecialValueFor("initial_slow_tooltip")) end
@@ -242,7 +242,7 @@ function modifier_item_imba_shivas_2_aura_debuff:IsDebuff()			return true end
 function modifier_item_imba_shivas_2_aura_debuff:IsHidden() 		return false end
 function modifier_item_imba_shivas_2_aura_debuff:IsPurgable() 		return false end
 function modifier_item_imba_shivas_2_aura_debuff:IsPurgeException() return false end
-function modifier_item_imba_shivas_2_aura_debuff:GetTexture() return "custom/imba_shiva_2" end
+function modifier_item_imba_shivas_2_aura_debuff:GetTexture() return "imba_shiva_2" end
 function modifier_item_imba_shivas_2_aura_debuff:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_shivas_2_aura_debuff:OnDestroy() self.ability = nil end
 function modifier_item_imba_shivas_2_aura_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS} end
@@ -308,7 +308,7 @@ function modifier_item_imba_shivas_2_active_debuff:IsDebuff()			return true end
 function modifier_item_imba_shivas_2_active_debuff:IsHidden() 		return false end
 function modifier_item_imba_shivas_2_active_debuff:IsPurgable() 		return true end
 function modifier_item_imba_shivas_2_active_debuff:IsPurgeException() return true end
-function modifier_item_imba_shivas_2_active_debuff:GetTexture() return "custom/imba_shiva_2" end
+function modifier_item_imba_shivas_2_active_debuff:GetTexture() return "imba_shiva_2" end
 function modifier_item_imba_shivas_2_active_debuff:OnDestroy() self.ability = nil end
 function modifier_item_imba_shivas_2_active_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_item_imba_shivas_2_active_debuff:GetModifierMoveSpeedBonus_Percentage() return (0 - self.ability:GetSpecialValueFor("initial_slow_tooltip")) end

@@ -160,11 +160,6 @@ end
 function imba_earth_spirit_boulder_smash:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe")) or self:GetCursorTarget()
-	--[[if not target then
-		self:EndCooldown()
-		self:RefundManaCost()
-		return
-	end]]
 	local pos0 = target:GetAbsOrigin()
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
 		pos0 = self:GetCursorPosition()
@@ -172,6 +167,7 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 	caster:EmitSound("Hero_EarthSpirit.BoulderSmash.Cast")
 	target:EmitSound("Hero_EarthSpirit.BoulderSmash.Target")
 	local direction = (pos0 - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local pos = caster:GetAbsOrigin() + direction * 100
 	pos = GetGroundPosition(pos, nil)
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
@@ -349,6 +345,7 @@ function imba_earth_spirit_rolling_boulder:OnSpellStart()
 	local pos = self:GetCursorPosition()
 	local delay = self:GetSpecialValueFor("delay")
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local speed = self:GetSpecialValueFor("speed")
 	local distance = self:GetSpecialValueFor("distance") + caster:GetCastRangeBonus()
 	local speed_rock = self:GetSpecialValueFor("rock_speed") + caster:GetCastRangeBonus()
@@ -573,6 +570,7 @@ function imba_earth_spirit_geomagnetic_grip:OnSpellStart()
 	caster:EmitSound("Hero_EarthSpirit.GeomagneticGrip.Cast")
 	target:EmitSound("Hero_EarthSpirit.GeomagneticGrip.Target")
 	local direction = (caster:GetAbsOrigin() - target:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	target:RemoveModifierByName("modifier_imba_boulder_smash_motion")
 	local re_apply = false
 	local buff_dura
@@ -671,7 +669,7 @@ function imba_earth_spirit_petrify:IsStealable() 			return false end
 function imba_earth_spirit_petrify:IsNetherWardStealable()	return false end
 function imba_earth_spirit_petrify:IsTalentAbility() return true end
 function imba_earth_spirit_petrify:GetIntrinsicModifierName() return "modifier_imba_petrify_controller" end
-function imba_earth_spirit_petrify:GetAbilityTextureName() return "custom/earth_spirit_petrify_"..self:GetCaster():GetModifierStackCount("modifier_imba_petrify_controller", nil) end
+function imba_earth_spirit_petrify:GetAbilityTextureName() return "earth_spirit_petrify_"..self:GetCaster():GetModifierStackCount("modifier_imba_petrify_controller", nil) end
 function imba_earth_spirit_petrify:GetCooldown()
 	if IsServer() then
 		return (self:GetCaster():HasScepter() and (self:GetCaster() ~= self:GetCursorTarget() and self:GetSpecialValueFor("hero_cooldown_scepter") or 0) or 0)

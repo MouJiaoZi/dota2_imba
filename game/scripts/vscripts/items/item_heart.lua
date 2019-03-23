@@ -89,7 +89,7 @@ function modifier_item_heart_aura_effect:IsDebuff()			return false end
 function modifier_item_heart_aura_effect:IsHidden() 		return false end
 function modifier_item_heart_aura_effect:IsPurgable() 		return false end
 function modifier_item_heart_aura_effect:IsPurgeException() return false end
-function modifier_item_heart_aura_effect:GetTexture() return "custom/imba_heart" end
+function modifier_item_heart_aura_effect:GetTexture() return "imba_heart" end
 function modifier_item_heart_aura_effect:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_heart_aura_effect:OnDestroy() self.ability = nil end
 function modifier_item_heart_aura_effect:DeclareFunctions() return  {MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE} end

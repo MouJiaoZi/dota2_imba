@@ -120,7 +120,7 @@ LinkLuaModifier("modifier_item_greatwyrm_plate_active", "items/item_vanguard", L
 LinkLuaModifier("modifier_item_greatwyrm_plate_out_dmg_reduce", "items/item_vanguard", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_greatwyrm_plate:GetIntrinsicModifierName() return "modifier_imba_greatwyrm_plate_passive" end
-function item_imba_greatwyrm_plate:GetAbilityTextureName() return "custom/greatwyrm_plate_"..self:GetCaster():GetModifierStackCount("modifier_imba_greatwyrm_plate_passive", nil) end
+function item_imba_greatwyrm_plate:GetAbilityTextureName() return "greatwyrm_plate_"..self:GetCaster():GetModifierStackCount("modifier_imba_greatwyrm_plate_passive", nil) end
 
 function item_imba_greatwyrm_plate:GetCastRange()
 	if not IsServer() then
@@ -160,7 +160,7 @@ end
 function modifier_imba_greatwyrm_plate_passive:GetModifierHealthBonus() return self:GetAbility():GetSpecialValueFor("health") end
 function modifier_imba_greatwyrm_plate_passive:GetModifierConstantHealthRegen() return self:GetAbility():GetSpecialValueFor("health_regen") end
 function modifier_imba_greatwyrm_plate_passive:GetModifierIncomingDamage_Percentage()
-	if not self:GetParent():HasModifier("modifier_imba_rapier_super_unique") and not self:GetParent():HasModifier("modifier_imba_burrow") and not self:GetParent():IsStunned() and not self:GetParent():IsHexed() then
+	if (not self:GetParent():HasModifier("modifier_imba_rapier_super_unique") and not self:GetParent():HasModifier("modifier_imba_burrow") and not self:GetParent():IsStunned() and not self:GetParent():IsHexed()) or self:GetParent():IsMuted() then
 		return (0 - self:GetAbility():GetSpecialValueFor("dmg_reduce"))
 	end
 	if (self:GetParent():IsHexed() or self:GetParent():IsStunned()) and not self:GetParent():HasModifier("modifier_imba_rapier_super_unique") and not self:GetParent():HasModifier("modifier_imba_burrow") then

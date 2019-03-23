@@ -98,6 +98,8 @@ function imba_drow_ranger_gust:GetCastRange(vLocation, hTarget) return self:GetS
 function imba_drow_ranger_gust:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
+	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
 	local buff = CreateModifierThinker(caster, self, "modifier_imba_drow_ranger_gust_cast", {duration = 10.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
 	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_DrowRanger.Silence", caster)
 	local info = {Ability = self,
@@ -115,7 +117,7 @@ function imba_drow_ranger_gust:OnSpellStart()
 					iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
 					fExpireTime = GameRules:GetGameTime() + 10.0,
 					bDeleteOnHit = true,
-					vVelocity = (pos - caster:GetAbsOrigin()):Normalized() * self:GetSpecialValueFor("wave_speed"),
+					vVelocity = direction * self:GetSpecialValueFor("wave_speed"),
 					bProvidesVision = false,
 					ExtraData = {buffid = buff},
 				}

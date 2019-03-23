@@ -304,7 +304,7 @@ function imba_night_stalker_darkness:GetIntrinsicModifierName() return "modifier
 
 function imba_night_stalker_darkness:OnSpellStart()
 	local caster = self:GetCaster()
-	EmitSoundOn("Hero_Nightstalker.Darkness.Team", caster)
+	caster:EmitSound("Hero_Nightstalker.Darkness.Team")
 	local heroes = FindUnitsInRadius(caster:GetTeam(), caster:GetAbsOrigin(), nil, 100000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_ANY_ORDER, false)
 	for _, hero in pairs(heroes) do
 		hero:AddNewModifier(caster, self, "modifier_imba_darkness_enemy_vision", {duration = self:GetSpecialValueFor("enemy_vision_duration")})
@@ -355,7 +355,7 @@ function modifier_imba_darkness_caster:IsPurgable() 		return false end
 function modifier_imba_darkness_caster:IsPurgeException()	return false end
 function modifier_imba_darkness_caster:RemoveOnDeath()		return false end
 function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT} end
-function modifier_imba_darkness_caster:GetBonusNightVision() return self:GetAbility():GetSpecialValueFor("bonus_vision") end
+function modifier_imba_darkness_caster:GetModifierMoveSpeedBonus_Percentage() return 10000 end
 function modifier_imba_darkness_caster:GetModifierIgnoreMovespeedLimit() return 1 end
 function modifier_imba_darkness_caster:GetIMBAMaxMovespeed() return 10000 end
 

@@ -6,6 +6,20 @@ function modifier_dummy_thinker:IsPurgable() 		return false end
 function modifier_dummy_thinker:IsPurgeException() 	return false end
 function modifier_dummy_thinker:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
 
+function modifier_dummy_thinker:OnCreated()
+	if IsServer() and IsInToolsMode() and self:GetParent():GetName() == "npc_dota_thinker" then
+		--self:StartIntervalThink(FrameTime())
+		--self:OnIntervalThink()
+	end
+end
+
+function modifier_dummy_thinker:OnIntervalThink()
+	DebugDrawCircle(self:GetParent():GetAbsOrigin(), Vector(255,0,0), 100, 50, true, 0.3)
+	if self:GetAbility() then
+		DebugDrawText(self:GetParent():GetAbsOrigin(), self:GetAbility():GetAbilityName(), false, FrameTime())
+	end
+end
+
 -- DO NO THING
 
 modifier_imba_base_protect = class({})

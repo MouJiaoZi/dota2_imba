@@ -210,7 +210,7 @@ function imba_omniknight_guardian_angel:OnSpellStart()
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_omniknight/omniknight_guardian_angel_ally.vpcf", PATTACH_ABSORIGIN_FOLLOW, unit)
 		ParticleManager:SetParticleControlEnt(pfx, 5, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true)
 		buff:AddParticle(pfx, false, false, 15, false, false)
-		if ability then
+		if ability and ability:GetLevel() > 0 then
 			unit:AddNewModifier(caster, ability, "modifier_imba_repel", {duration = self:GetSpecialValueFor("repel_duration")})
 		end
 	end

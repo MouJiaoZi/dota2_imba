@@ -350,7 +350,7 @@ function PrecacheUnitWithQueue(unit_name)
 			callback = function()
 				-- If something else is being precached, wait two seconds
 				if UNIT_BEING_PRECACHED then
-					return 0.5
+					return 2.0
 
 				-- Otherwise, start precaching and block other calls from doing so
 				else
@@ -440,7 +440,7 @@ function ShowWearables( event )
   local hero = event.caster
 
   for i,v in pairs(hero.hiddenWearables) do
-    v:RemoveEffects(EF_NODRAW)
+	v:RemoveEffects(EF_NODRAW)
   end
 end
 
@@ -1072,6 +1072,16 @@ function CDOTA_BaseNPC:GetDefaultBAT()
 	return BAT
 end
 
+function CDOTA_BaseNPC:GetGibType()
+	local BAT = 0
+	if self:IsHero() then
+		BAT = HeroKV[self:GetName()]['GibType'] or HeroKVBase[self:GetName()]['GibType']
+	else
+		BAT = UnitKV[self:GetName()]['GibType'] or UnitKVBase[self:GetName()]['GibType']
+	end
+	return BAT
+end
+
 function SplitString(szFullString, szSeparator)  
 	local nFindStartIndex = 1  
 	local nSplitIndex = 1  
@@ -1129,7 +1139,14 @@ function CDOTA_BaseNPC_Hero:GetHeroColor()
 	local str = HeroKV[self:GetName()]['HeroGlowColor'] or HeroKVBase[self:GetName()]['HeroGlowColor'] or HeroKV[self:GetName()]['GibTintColor'] or HeroKVBase[self:GetName()]['GibTintColor']
 	--print(str)
 	if not str then
-		return {0,0,0}
+		local r = self:GetStrength()
+		local g = self:GetAgility()
+		local b = self:GetIntellect()
+		local highest = math.max(r, math.max(g,b))
+		r = math.max(255 - (highest - r) * 20, 0)
+		g = math.max(255 - (highest - g) * 20, 0)
+		b = math.max(255 - (highest - b) * 20, 0)
+		return Vector(r,g,b)
 	end
 	local color = SplitString(str, " ")
 	return {color[1], color[2], color[3]}
@@ -1173,7 +1190,7 @@ function CDOTA_BaseNPC:GetMoveSpeedIncrease()
 		local ability = nil
 		for i=0, 23 do
 			local ab = self:GetAbilityByIndex(i)
-			if string.find(ab:GetAbilityName(), "special_bonus") then
+			if ab and string.find(ab:GetAbilityName(), "special_bonus") then
 				ability = ab
 				break
 			end
@@ -1206,7 +1223,6 @@ end
 
 function GetRandomAvailableHero()
 	local hero = RandomFromTable(HeroList)
-	print(hero[1])
 	while hero[2] == 0 do
 		hero = RandomFromTable(HeroList)
 	end
@@ -1282,7 +1298,11 @@ function CDOTA_BaseNPC:RemoveAllModifiers()
 	local no_move_buff_name = {"modifier_imba_talent_modifier_adder",
 								"modifier_imba_movespeed_controller",
 								"modifier_imba_reapers_scythe_permanent",
-								"modifier_imba_ability_layout_contoroller",}
+								"modifier_imba_ability_layout_contoroller",
+								"modifier_imba_rearm_fuck",
+								"modifier_imba_illusion_hidden",
+								"modifier_imba_illusion",
+								"modifier_illusion",}
 	for i=1, #buff do
 		if not IsInTable(buff[i]:GetName(), no_move_buff_name) then
 			buff[i]:Destroy()
@@ -1291,12 +1311,117 @@ function CDOTA_BaseNPC:RemoveAllModifiers()
 end
 
 function CDOTA_BaseNPC:GetTP()
-	local tp = Entities:FindAllByName("item_tpscroll")
-	local tps = {}
-	for i=1, #tp do
-		if tp[i]:GetPurchaser() == self then
-			table.insert(tps, tp[i])
+	return self:GetItemInSlot(15)
+end
+
+function PopupNumbers(target, pfx, color, lifetime, number, presymbol, postsymbol)
+	--[[
+	POPUP_SYMBOL_PRE_PLUS = 0
+	POPUP_SYMBOL_PRE_MINUS = 1
+	POPUP_SYMBOL_PRE_SADFACE = 2
+	POPUP_SYMBOL_PRE_BROKENARROW = 3
+	POPUP_SYMBOL_PRE_SHADES = 4
+	POPUP_SYMBOL_PRE_MISS = 5
+	POPUP_SYMBOL_PRE_EVADE = 6
+	POPUP_SYMBOL_PRE_DENY = 7
+	POPUP_SYMBOL_PRE_ARROW = 8
+
+	POPUP_SYMBOL_POST_EXCLAMATION = 0
+	POPUP_SYMBOL_POST_POINTZERO = 1
+	POPUP_SYMBOL_POST_MEDAL = 2
+	POPUP_SYMBOL_POST_DROP = 3
+	POPUP_SYMBOL_POST_LIGHTNING = 4
+	POPUP_SYMBOL_POST_SKULL = 5
+	POPUP_SYMBOL_POST_EYE = 6
+	POPUP_SYMBOL_POST_SHIELD = 7
+	POPUP_SYMBOL_POST_POINTFIVE = 8
+	]]
+	local pfxPath = string.format("particles/msg_fx/msg_%s.vpcf", pfx)
+	local pidx = ParticleManager:CreateParticle(pfxPath, PATTACH_ABSORIGIN, target) -- target:GetOwner()
+
+	local digits = 0
+	if number ~= nil then
+		digits = #tostring(number)
+	end
+	if presymbol ~= nil then
+		digits = digits + 1
+	end
+	if postsymbol ~= nil then
+		digits = digits + 1
+	end
+	local a = postsymbol or 0
+	ParticleManager:SetParticleControl(pidx, 1, Vector(tonumber(presymbol), tonumber(number), a))
+	ParticleManager:SetParticleControl(pidx, 2, Vector(lifetime, digits, 0))
+	ParticleManager:SetParticleControl(pidx, 3, color)
+	ParticleManager:ReleaseParticleIndex(pidx)
+end
+
+function UpgradeTower(nTeamnumber)
+	for i=1, 4 do
+		for j=1, #CDOTAGamerules.IMBA_TOWER[nTeamnumber][i] do
+			local tower = CDOTAGamerules.IMBA_TOWER[nTeamnumber][i][j]
+			if tower and not tower:IsNull() and tower:IsAlive() then
+				local ability_count = 0
+				local upgrade = false
+				for k=0, 23 do
+					local ability = tower:GetAbilityByIndex(k)
+					if ability and string.find(ability:GetAbilityName(), "imba_tower_") then
+						ability_count = ability_count + 1
+						if not upgrade and ability:GetLevel() < ability:GetMaxLevel() then
+							ability:SetLevel(ability:GetLevel() + 1)
+							upgrade = true
+						end
+					end
+				end
+				if ability_count < 3 then
+					local new_ability_name = RandomFromTable(IMBA_TOWER_ABILITY_SUM[i])
+					while tower:HasAbility(new_ability_name) and ability_count < #IMBA_TOWER_ABILITY_SUM[i] do
+						new_ability_name = RandomFromTable(IMBA_TOWER_ABILITY_SUM[i])
+					end
+					local new_ability = tower:AddAbility(new_ability_name)
+					new_ability:SetLevel(1)
+				else
+					tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 0.5)
+				end
+			end
 		end
 	end
-	return tps
+end
+
+function IsRefreshableByAbility(str)
+	local NO_REFRESH = {
+		"imba_tinker_rearm",
+		"ancient_apparition_ice_blast",
+		"zuus_thundergods_wrath",
+		"furion_wrath_of_nature",
+		"imba_magnus_reverse_polarity",
+		"imba_omniknight_guardian_angel",
+		"imba_mirana_arrow",
+		"imba_dazzle_shallow_grave",
+		"imba_wraith_king_reincarnation",
+		"imba_abaddon_borrowed_time",
+		"imba_nyx_assassin_spiked_carapace",
+		"elder_titan_earth_splitter",
+		"imba_centaur_stampede",
+		"silencer_global_silence",
+		"imba_dark_seer_wall_of_replica",
+		"item_imba_bloodstone",
+		"item_imba_arcane_boots",
+		"item_imba_mekansm",
+		"item_imba_mekansm_2",
+		"item_imba_guardian_greaves",
+		"item_imba_hand_of_midas",
+		"item_imba_white_queen_cape",
+		"item_imba_black_king_bar",
+		"item_imba_refresher",
+		"item_imba_necronomicon",
+		"item_imba_necronomicon_2",
+		"item_imba_necronomicon_3",
+		"item_imba_necronomicon_4",
+		"item_imba_necronomicon_5",
+		"item_imba_skadi",
+		"item_imba_sphere",
+		"item_aeon_disk",
+	}
+	return IsInTable(str, NO_REFRESH)
 end

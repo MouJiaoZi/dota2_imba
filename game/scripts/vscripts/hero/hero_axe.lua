@@ -247,13 +247,15 @@ function imba_axe_culling_blade:OnSpellStart()
 	end
 	if target:GetHealth() <= kill_threshold then
 		TrueKill(caster, target, self)
-		EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Axe.Culling_Blade_Success", caster)
+		target:EmitSound("Hero_Axe.Culling_Blade_Success")
 		local culling_kill_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf", PATTACH_CUSTOMORIGIN, caster)
 		ParticleManager:SetParticleControlEnt(culling_kill_particle, 0, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(culling_kill_particle, 1, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(culling_kill_particle, 2, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(culling_kill_particle, 3, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(culling_kill_particle, 4, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(culling_kill_particle, 8, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlOrientation(culling_kill_particle, 4, caster:GetForwardVector(), Vector(0,0,0), caster:GetUpVector())
+		ParticleManager:SetParticleControl(culling_kill_particle, 8, Vector(1,0,0))
 		ParticleManager:ReleaseParticleIndex(culling_kill_particle)
 		local allies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("speed_aoe"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_DAMAGE_FLAG_NONE, FIND_ANY_ORDER, false)
 		for _, ally in pairs(allies) do

@@ -6,9 +6,10 @@ function modifier_imba_aegis:IsDebuff()			return false end
 function modifier_imba_aegis:IsHidden() 		return false end
 function modifier_imba_aegis:IsPurgable() 		return false end
 function modifier_imba_aegis:IsPurgeException() return false end
+function modifier_imba_aegis:RemoveOnDeath() 	return false end
 function modifier_imba_aegis:AllowIllusionDuplicate() return false end
 function modifier_imba_aegis:GetPriority() return MODIFIER_PRIORITY_SUPER_ULTRA end
-function modifier_imba_aegis:GetTexture() return "custom/imba_aegis" end
+function modifier_imba_aegis:GetTexture() return "imba_aegis" end
 function modifier_imba_aegis:DeclareFunctions() return {MODIFIER_PROPERTY_REINCARNATION, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_aegis:ReincarnateTime() return 3.0 end
 

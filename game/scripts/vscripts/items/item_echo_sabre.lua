@@ -16,6 +16,7 @@ function modifier_imba_echo_sabre_passive:IsHidden() 			return true end
 function modifier_imba_echo_sabre_passive:IsPurgable() 			return false end
 function modifier_imba_echo_sabre_passive:IsPurgeException() 	return false end
 function modifier_imba_echo_sabre_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_echo_sabre_passive:GetPriority()	return MODIFIER_PRIORITY_LOW end
 function modifier_imba_echo_sabre_passive:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MANA_REGEN_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT, MODIFIER_EVENT_ON_ATTACK} end
 function modifier_imba_echo_sabre_passive:GetModifierBonusStats_Intellect() return self:GetAbility():GetSpecialValueFor("bonus_intellect") end
 function modifier_imba_echo_sabre_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
@@ -32,7 +33,7 @@ function modifier_imba_echo_sabre_passive:GetModifierBaseAttackTimeConstant()
 	if IsServer() and self:GetStackCount() > 0 then
 		return (1.0)
 	else
-		return 0
+		return nil
 	end
 end
 

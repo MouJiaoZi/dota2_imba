@@ -51,7 +51,7 @@ function modifier_item_imba_pipe_aura:IsDebuff()			return false end
 function modifier_item_imba_pipe_aura:IsHidden() 			return false end
 function modifier_item_imba_pipe_aura:IsPurgable() 			return false end
 function modifier_item_imba_pipe_aura:IsPurgeException() 	return false end
-function modifier_item_imba_pipe_aura:GetTexture() return "custom/imba_pipe" end
+function modifier_item_imba_pipe_aura:GetTexture() return "imba_pipe" end
 function modifier_item_imba_pipe_aura:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS} end
 function modifier_item_imba_pipe_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_pipe_aura:OnDestroy() self.ability = nil end
@@ -64,7 +64,7 @@ function modifier_item_imba_pipe_block:IsDebuff()			return false end
 function modifier_item_imba_pipe_block:IsHidden() 			return false end
 function modifier_item_imba_pipe_block:IsPurgable() 		return true end
 function modifier_item_imba_pipe_block:IsPurgeException() 	return true end
-function modifier_item_imba_pipe_block:GetTexture() return "custom/imba_pipe" end
+function modifier_item_imba_pipe_block:GetTexture() return "imba_pipe" end
 function modifier_item_imba_pipe_block:DeclareFunctions() return {MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS} end
 function modifier_item_imba_pipe_block:GetModifierMagicalResistanceBonus() return self.ability:GetSpecialValueFor("barrier_resist") end
 

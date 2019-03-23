@@ -57,7 +57,7 @@ function modifier_imba_sheepstick_debuff:IsPurgeException() 	return false end
 function modifier_imba_sheepstick_debuff:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE, MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end
 function modifier_imba_sheepstick_debuff:CheckState() return {[MODIFIER_STATE_HEXED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_MUTED] = true, [MODIFIER_STATE_EVADE_DISABLED]= true, [MODIFIER_STATE_BLOCK_DISABLED] = true, [MODIFIER_STATE_DISARMED] = true} end
 function modifier_imba_sheepstick_debuff:GetModifierModelChange() return "models/props_gameplay/pig.vmdl" end
-function modifier_imba_sheepstick_debuff:GetModifierMoveSpeedBonus_Constant() return -50000 end
+function modifier_imba_sheepstick_debuff:GetModifierMoveSpeedBonus_Constant() return -3000 end
 function modifier_imba_sheepstick_debuff:GetModifierMagicalResistanceBonus() return self.mr end
 function modifier_imba_sheepstick_debuff:GetModifierPhysicalArmorBonus() return self.ar end
 
@@ -78,4 +78,4 @@ function modifier_item_imba_sheepstick_prevent:IsDebuff()			return true end
 function modifier_item_imba_sheepstick_prevent:IsHidden() 			return false end
 function modifier_item_imba_sheepstick_prevent:IsPurgable() 		return false end
 function modifier_item_imba_sheepstick_prevent:IsPurgeException() 	return false end
-function modifier_item_imba_sheepstick_prevent:GetTexture() return "custom/imba_sheepstick_recast" end
+function modifier_item_imba_sheepstick_prevent:GetTexture() return "imba_sheepstick_recast" end

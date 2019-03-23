@@ -273,15 +273,15 @@ modifier_imba_tidebringer_wave_break = class({})
 modifier_imba_tidebringer_tsunami = class({})
 function modifier_imba_tidebringer_high_tide:IsDebuff() return false end
 function modifier_imba_tidebringer_high_tide:RemoveOnDeath() return false end
-function modifier_imba_tidebringer_high_tide:GetTexture() return "custom/kunkka_tidebringer_high_tide" end
+function modifier_imba_tidebringer_high_tide:GetTexture() return "kunkka_tidebringer_high_tide" end
 function modifier_imba_tidebringer_high_tide:IsPurgable() return false end
 function modifier_imba_tidebringer_wave_break:IsDebuff() return false end
 function modifier_imba_tidebringer_wave_break:RemoveOnDeath() return false end
-function modifier_imba_tidebringer_wave_break:GetTexture() return "custom/kunkka_tidebringer_wave_break" end
+function modifier_imba_tidebringer_wave_break:GetTexture() return "kunkka_tidebringer_wave_break" end
 function modifier_imba_tidebringer_wave_break:IsPurgable() return false end
 function modifier_imba_tidebringer_tsunami:IsDebuff() return false end
 function modifier_imba_tidebringer_tsunami:RemoveOnDeath() return false end
-function modifier_imba_tidebringer_tsunami:GetTexture() return "custom/kunkka_tidebringer_tsunami" end
+function modifier_imba_tidebringer_tsunami:GetTexture() return "kunkka_tidebringer_tsunami" end
 function modifier_imba_tidebringer_tsunami:IsPurgable() return false end
 
 
@@ -316,16 +316,10 @@ end
 
 modifier_imba_kunkka_x_marks_the_spot_target = class({})
 
-function modifier_imba_kunkka_x_marks_the_spot_target:IsDebuff()
-	if self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber() then
-		return false
-	else
-		return true
-	end
-end
+function modifier_imba_kunkka_x_marks_the_spot_target:IsDebuff() return (self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber()) end
 function modifier_imba_kunkka_x_marks_the_spot_target:IsHidden() 			return false end
-function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgable() 			return false end
-function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgeException() 	return false end
+function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgable() 			return (self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber()) end
+function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgeException() 	return (self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber()) end
 function modifier_imba_kunkka_x_marks_the_spot_target:GetEffectName() return "particles/units/heroes/hero_kunkka/kunkka_spell_x_spot.vpcf" end
 function modifier_imba_kunkka_x_marks_the_spot_target:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 
@@ -403,6 +397,7 @@ function imba_kunkka_ghostship:OnSpellStart()
 	local distance = caster:HasScepter() and self:GetSpecialValueFor("spawn_distance_scepter") or self:GetSpecialValueFor("spawn_distance")
 	local spawn_pos = pos + (caster:GetAbsOrigin() - pos):Normalized() * distance
 	local dircetion = (pos - spawn_pos):Normalized()
+	dircetion.z = 0.0
 	local speed = caster:HasScepter() and self:GetSpecialValueFor("ghostship_speed_scepter") or self:GetSpecialValueFor("ghostship_speed")
 	local mark = CreateModifierThinker(caster, self, "modifier_imba_ghostship_mark", {}, pos, caster:GetTeamNumber(), false):entindex()
 	local ship = CreateModifierThinker(caster, self, "modifier_imba_ghostship_ship", {mark = mark, speed = speed}, spawn_pos, caster:GetTeamNumber(), false)

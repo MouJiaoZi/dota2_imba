@@ -154,7 +154,7 @@ function imba_phantom_assassin_phantom_strike:OnSpellStart()
 			end
 		end
 	end
-	EmitSoundOnLocationWithCaster(endpos, "Hero_PhantomAssassin.Strike.End", caster)
+	caster:EmitSound("Hero_PhantomAssassin.Strike.End")
 end
 
 modifier_imba_phantom_strike = class({})

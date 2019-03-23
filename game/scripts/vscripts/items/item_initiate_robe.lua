@@ -36,7 +36,7 @@ function modifier_item_imba_initiate_robe_stacks:IsDebuff()			return false end
 function modifier_item_imba_initiate_robe_stacks:IsHidden() 		return false end
 function modifier_item_imba_initiate_robe_stacks:IsPurgable() 		return false end
 function modifier_item_imba_initiate_robe_stacks:IsPurgeException() return false end
-function modifier_item_imba_initiate_robe_stacks:GetTexture() return "custom/imba_initiate_robe" end
+function modifier_item_imba_initiate_robe_stacks:GetTexture() return "imba_initiate_robe" end
 function modifier_item_imba_initiate_robe_stacks:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_initiate_robe_stacks:OnDestroy() self.ability = nil end
 function modifier_item_imba_initiate_robe_stacks:DeclareFunctions() return {MODIFIER_EVENT_ON_SPENT_MANA, MODIFIER_PROPERTY_TOTAL_CONSTANT_BLOCK} end

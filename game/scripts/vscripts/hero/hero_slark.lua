@@ -8,6 +8,7 @@ LinkLuaModifier("modifier_imba_shadow_dance_passive", "hero/hero_slark", LUA_MOD
 LinkLuaModifier("modifier_imba_shadow_dance_active", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_shadow_dance_effect", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_shadow_dance_dummy", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_shadow_dance_detect", "hero/hero_slark", LUA_MODIFIER_MOTION_NONE)
 
 function imba_slark_shadow_dance:IsHiddenWhenStolen() 		return false end
 function imba_slark_shadow_dance:IsRefreshable() 			return true end
@@ -54,31 +55,9 @@ end
 
 function modifier_imba_shadow_dance_passive:OnCreated()
 	if IsServer() then
-		self:StartIntervalThink(0.1)
-	end
-end
-
-function modifier_imba_shadow_dance_passive:OnIntervalThink()
-	-- FOW + NIGHT = 1, NO FOW + NIGHT = 2, FOW + DAY = 4, NO FOW + DAY = 8
-	local team = self:GetParent():GetTeamNumber() == 2 and 3 or 2
-	local units = FindUnitsInRadius(team, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_ANY_ORDER, false)
-	local can_be_seen = true
-	local day = GameRules:IsDaytime()
-	if not IsInTable(self:GetParent(), units) then
-		can_be_seen = false
-	end
-	if day and can_be_seen then
-		self:SetStackCount(8)
-		self:GetParent():RemoveModifierByName("modifier_imba_shadow_dance_dummy")
-	elseif day and not can_be_seen then
-		self:SetStackCount(4)
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_shadow_dance_dummy", {})
-	elseif not day and can_be_seen then
-		self:SetStackCount(2)
-		self:GetParent():RemoveModifierByName("modifier_imba_shadow_dance_dummy")
-	elseif not day and not can_be_seen then
-		self:SetStackCount(1)
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_shadow_dance_dummy", {})
+		local dummy = CreateUnitByName("npc_dota_slark_visual", Vector(0,0,0), false, self:GetParent(), self:GetParent(), self:GetParent():GetTeamNumber() == DOTA_TEAM_GOODGUYS and DOTA_TEAM_BADGUYS or DOTA_TEAM_GOODGUYS)
+		dummy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_shadow_dance_detect", {})
+		--self:StartIntervalThink(0.1)
 	end
 end
 
@@ -185,3 +164,44 @@ function modifier_imba_shadow_dance_dummy:IsDebuff()			return false end
 function modifier_imba_shadow_dance_dummy:IsHidden() 			return false end
 function modifier_imba_shadow_dance_dummy:IsPurgable() 			return false end
 function modifier_imba_shadow_dance_dummy:IsPurgeException() 	return false end
+
+modifier_imba_shadow_dance_detect = class({})
+
+function modifier_imba_shadow_dance_detect:IsDebuff()			return false end
+function modifier_imba_shadow_dance_detect:IsHidden() 			return false end
+function modifier_imba_shadow_dance_detect:IsPurgable() 		return false end
+function modifier_imba_shadow_dance_detect:IsPurgeException() 	return false end
+function modifier_imba_shadow_dance_detect:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NOT_ON_MINIMAP] = true, [MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_OUT_OF_GAME] = true, [MODIFIER_STATE_UNSELECTABLE] = true} end
+
+function modifier_imba_shadow_dance_detect:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(0.1)
+	end
+end
+
+function modifier_imba_shadow_dance_detect:OnIntervalThink()
+	if not self:GetCaster() or self:GetCaster():IsNull() or not self:GetAbility() or self:GetAbility():IsNull() then
+		self:GetParent():ForceKill(false)
+		return
+	end
+	-- FOW + NIGHT = 1, NO FOW + NIGHT = 2, FOW + DAY = 4, NO FOW + DAY = 8
+	local can_be_seen = self:GetParent():CanEntityBeSeenByMyTeam(self:GetCaster())
+	local day = GameRules:IsDaytime()
+	local buff = self:GetCaster():FindModifierByName("modifier_imba_shadow_dance_passive")
+	if not buff then
+		return
+	end
+	if day and can_be_seen then
+		buff:SetStackCount(8)
+		buff:GetParent():RemoveModifierByName("modifier_imba_shadow_dance_dummy")
+	elseif day and not can_be_seen then
+		buff:SetStackCount(4)
+		buff:GetParent():AddNewModifier(buff:GetParent(), buff:GetAbility(), "modifier_imba_shadow_dance_dummy", {})
+	elseif not day and can_be_seen then
+		buff:SetStackCount(2)
+		buff:GetParent():RemoveModifierByName("modifier_imba_shadow_dance_dummy")
+	elseif not day and not can_be_seen then
+		buff:SetStackCount(1)
+		buff:GetParent():AddNewModifier(buff:GetParent(), buff:GetAbility(), "modifier_imba_shadow_dance_dummy", {})
+	end
+end

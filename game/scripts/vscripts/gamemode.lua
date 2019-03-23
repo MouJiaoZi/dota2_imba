@@ -57,6 +57,8 @@ require('libraries/projectiles_track')
 
 require('libraries/illusionmanager')
 
+require('libraries/dota_hero_items')
+
 --require('libraries/mld')
 
 --require("examples/worldpanelsExample")
@@ -165,8 +167,6 @@ function GameMode:InitGameMode()
 
 	Random_Abilities_Normal = LoadKeyValues("scripts/npc/kv/random_abilities.kv")
 	Rnadom_Abilities_Ultimate = LoadKeyValues("scripts/npc/kv/random_abilities_ult.kv")
-
-	--IMBA:StartGameAPI()
 	
 end
 

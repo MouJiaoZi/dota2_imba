@@ -9,6 +9,9 @@ function imba_magnus_shockwave:IsNetherWardStealable()	return true end
 
 function imba_magnus_shockwave:OnSpellStart()
 	local caster = self:GetCaster()
+	local pos = self:GetCursorPosition()
+	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0
 	local distance = self:GetSpecialValueFor("shock_distance") + caster:GetCastRangeBonus()
 	local thinker = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(thinker):EmitSound("Hero_Magnataur.ShockWave.Particle")
@@ -31,7 +34,7 @@ function imba_magnus_shockwave:OnSpellStart()
 		iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
 		fExpireTime = GameRules:GetGameTime() + 10.0,
 		bDeleteOnHit = true,
-		vVelocity = (self:GetCursorPosition() - caster:GetAbsOrigin()):Normalized() * self:GetSpecialValueFor("shock_speed"),
+		vVelocity = direction * self:GetSpecialValueFor("shock_speed"),
 		bProvidesVision = false,
 		ExtraData = {primary = 1, thinker = thinker}
 	}
@@ -73,6 +76,7 @@ function imba_magnus_shockwave:OnProjectileHit_ExtraData(target, location, keys)
 				if i ~= 0 then
 					local new_pos = RotatePosition(target_pos, QAngle(0, secondary_angle * i, 0), target_pos + direction * 100)
 					local new_direction = (new_pos - target_pos):Normalized()
+					new_direction.z = 0
 					local thinker = CreateModifierThinker(self:GetCaster(), self, "modifier_dummy_thinker", {}, self:GetCaster():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false):entindex()
 					EntIndexToHScript(thinker):EmitSound("Hero_Magnataur.ShockWave.Particle")
 					EntIndexToHScript(thinker).hit = {}
@@ -214,7 +218,7 @@ function modifier_imba_supercharged:GetModifierMoveSpeedBonus_Percentage() retur
 function modifier_imba_supercharged:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("supercharge_as") end
 function modifier_imba_supercharged:GetEffectName() return "particles/hero/magnus/magnus_empower_red.vpcf" end
 function modifier_imba_supercharged:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_supercharged:GetTexture() return "custom/magnus_supercharge" end
+function modifier_imba_supercharged:GetTexture() return "magnus_supercharge" end
 
 imba_magnus_skewer = class({})
 
@@ -229,7 +233,9 @@ function imba_magnus_skewer:IsNetherWardStealable()	return true end
 
 function imba_magnus_skewer:OnSpellStart()
 	local caster = self:GetCaster()
-	local pos = (self:GetCursorPosition() - caster:GetAbsOrigin()):Length2D() <= (self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_magnus_1")) and self:GetCursorPosition() or caster:GetAbsOrigin() + (self:GetCursorPosition() - caster:GetAbsOrigin()):Normalized() * (self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_magnus_1"))
+	local direction = (self:GetCursorPosition() - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
+	local pos = (self:GetCursorPosition() - caster:GetAbsOrigin()):Length2D() <= (self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_magnus_1")) and self:GetCursorPosition() or caster:GetAbsOrigin() + direction * (self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_magnus_1"))
 	local duration = (caster:GetAbsOrigin() - pos):Length2D() / (self:GetSpecialValueFor("skewer_speed") + self:GetCaster():GetTalentValue("special_bonus_imba_magnus_1"))
 	caster:AddNewModifier(caster, self, "modifier_imba_skewer_caster_motion", {duration = duration, pos_x = pos.x, pos_y = pos.y, pos_z = pos.z})
 	caster:EmitSound("Hero_Magnataur.Skewer.Cast")
@@ -266,7 +272,9 @@ end
 function modifier_imba_skewer_caster_motion:OnIntervalThink()
 	local current_pos = self:GetParent():GetAbsOrigin()
 	local distacne = self.speed / (1.0 / FrameTime())
-	local next_pos = GetGroundPosition((current_pos + (self.pos - current_pos):Normalized() * distacne), nil)
+	local direction = (self.pos - current_pos):Normalized()
+	direction.z = 0
+	local next_pos = GetGroundPosition((current_pos + direction * distacne), nil)
 	self:GetParent():SetForwardVector((self.pos - current_pos):Normalized())
 	self:GetParent():SetAbsOrigin(next_pos)
 	local horn_pos = self:GetParent():GetAttachmentOrigin(self:GetParent():ScriptLookupAttachment("attach_horn"))
@@ -309,6 +317,9 @@ function modifier_imba_skewer_caster_motion:OnDestroy()
 			end
 		end
 		self.hitted = nil
+		self.pos = nil
+		self.speed = nil
+		self:GetParent():SetForwardVector(Vector(self:GetParent():GetForwardVector()[1], self:GetParent():GetForwardVector()[2], 0))
 	end
 end
 
@@ -486,6 +497,7 @@ function modifier_imba_reverse_polarity_slow:OnCreated()
 	if IsServer() then
 		self:CheckMotionControllers()
 		local direction = (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
+		direction.z = 0.0
 		local distance = self:GetParent():HasModifier("modifier_imba_magnus_magnetize_debuff") and self:GetAbility():GetSpecialValueFor("magnetize_pull") or self:GetAbility():GetSpecialValueFor("normal_pull")
 		local length = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D()
 		distance =  length <= distance and length or distance

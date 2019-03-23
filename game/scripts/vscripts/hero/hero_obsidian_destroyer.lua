@@ -61,7 +61,7 @@ end
 
 modifier_imba_obsidian_destroyer_int_gain = class({})
 
-function modifier_imba_obsidian_destroyer_int_gain:GetTexture() return "custom/obsidian_destroyer_int_gain" end
+function modifier_imba_obsidian_destroyer_int_gain:GetTexture() return "obsidian_destroyer_int_gain" end
 function modifier_imba_obsidian_destroyer_int_gain:IsDebuff()			return false end
 function modifier_imba_obsidian_destroyer_int_gain:IsHidden() 			return false end
 function modifier_imba_obsidian_destroyer_int_gain:IsPurgable() 		return false end
@@ -85,7 +85,7 @@ end
 
 modifier_imba_obsidian_destroyer_int_lose = class({})
 
-function modifier_imba_obsidian_destroyer_int_lose:GetTexture() return "custom/obsidian_destroyer_int_steal" end
+function modifier_imba_obsidian_destroyer_int_lose:GetTexture() return "obsidian_destroyer_int_steal" end
 function modifier_imba_obsidian_destroyer_int_lose:IsDebuff()			return true end
 function modifier_imba_obsidian_destroyer_int_lose:IsHidden() 			return false end
 function modifier_imba_obsidian_destroyer_int_lose:IsPurgable() 		return false end
@@ -135,6 +135,9 @@ function imba_obsidian_destroyer_astral_imprisonment:OnSpellStart()
 	local target = self:GetCursorTarget()
 	if target:TriggerStandardTargetSpell(self) then
 		return
+	end
+	if not IsEnemy(caster, target) and PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), caster:GetPlayerOwnerID()) then
+		target = caster
 	end
 	caster:EmitSound("Hero_ObsidianDestroyer.AstralImprisonment.Cast")
 	if self:GetCaster():HasAbility("imba_obsidian_destroyer_arcane_orb") and target:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() and (target:IsRealHero() or target:IsTempestDouble()) and not target:IsClone() then

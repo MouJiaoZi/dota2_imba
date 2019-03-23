@@ -15,6 +15,15 @@ end
 if CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK == nil then
 	CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK = {}
 end
+if CDOTAGamerules.IMBA_TOWER == nil then
+	CDOTAGamerules.IMBA_TOWER = {}
+	CDOTAGamerules.IMBA_TOWER[DOTA_TEAM_GOODGUYS] = {}
+	CDOTAGamerules.IMBA_TOWER[DOTA_TEAM_BADGUYS] = {}
+	for i=1, 4 do
+		CDOTAGamerules.IMBA_TOWER[DOTA_TEAM_GOODGUYS][i] = {}
+		CDOTAGamerules.IMBA_TOWER[DOTA_TEAM_BADGUYS][i] = {}
+	end
+end
 
 -- Cleanup a player when they leave
 function GameMode:OnDisconnect(keys)
@@ -124,7 +133,7 @@ local selectedHero = {}
 local tick = 0
 local waitTick = 10
 if GameRules:IsCheatMode() then
-	waitTick = 10
+	waitTick = 3
 end
 
 -- The overall game state has changed
@@ -145,9 +154,50 @@ function GameMode:OnGameRulesStateChange(keys)
 			return 1.0
 		end
 		)
+
+		Timers:CreateTimer({
+			useGameTime = false,
+			endTime = 0.01, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
+			callback = function()
+				if not IMBA_UPDATE_NOTICED then
+					local req = CreateHTTPRequestScriptVM("GET", IMBA_WEB_SERVER.."imba_request_version.php?game=imba")
+					req:Send(function(res)
+						if res.StatusCode == 200 then
+							IMBA_GAME_VERSION_GETTED = tonumber(res.Body)
+						end
+					end)
+					return 60.0
+				else
+					return nil
+				end
+			end
+		})
+		Timers:CreateTimer({
+			useGameTime = false,
+			endTime = 20.0, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
+			callback = function()
+				if not IMBA_UPDATE_NOTICED and IMBA_GAME_VERSION_GETTED > IMBA_GAME_VERSION then
+					IMBA_UPDATE_NOTICED = true
+					print("game updated")
+					EmitGlobalSound("Loot_Drop_Stinger_Immortal")
+					Notifications:TopToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
+					Notifications:TopToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
+					Notifications:TopToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
+					Notifications:BottomToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
+					Notifications:BottomToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
+					Notifications:BottomToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
+					return nil
+				else
+					return 20.0
+				end
+			end
+		})
 	end
 
 	if newState == DOTA_GAMERULES_STATE_HERO_SELECTION then
+		--if not IsInToolsMode() then
+			IMBA:SendHTTPRequest("imba_new_match.php", {["match_id"] = GameRules:IsCheatMode() and tostring(RandomInt(0, 1000000))..tostring(RandomInt(200, 9000)).."0000000" or GameRules:GetMatchID(), ["map_name"] = GetMapName(), ["player_number"] = (PlayerResource:GetPlayerCountForTeam(2) + PlayerResource:GetPlayerCountForTeam(3)), ["game_version"] = IMBA_GAME_VERSION,})
+		--end
 		if GameRules:IsCheatMode() then
 			GameRules:SetSafeToLeave(true)
 		end
@@ -171,25 +221,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			end
 			CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[i + 1] = 0
 			CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[i + 1] = 0
-			--[[if PlayerResource:IsValidPlayer(i) then
-				Timers:CreateTimer({useGameTime = false,
-									endTime = 1.0,
-									callback = function()
-										if PlayerResource:GetSelectedHeroEntity(i) then
-											print(i, PlayerResource:GetSelectedHeroName(i), "entity index: "..PlayerResource:GetSelectedHeroEntity(i):entindex())
-											local herotable = {
-																["hero_name"] = PlayerResource:GetSelectedHeroName(i),
-																["teamnumber"] = PlayerResource:GetTeam(i),
-																["heroindex"] = PlayerResource:GetSelectedHeroEntity(i):entindex(),
-																["player_name"] = PlayerResource:GetPlayerName(i),
-															}
-											CustomNetTables:SetTableValue("imba_hero_detail", tostring(i), herotable)
-											return nil
-										end
-										return 1.0
-									end
-				})
-			end]]
 		end
 	end
 
@@ -198,7 +229,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			GameRules:SetSafeToLeave(true)
 			GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
 		end
-		IMBA:StartGameAPI()
 		if USE_CUSTOM_TEAM_COLORS_FOR_PLAYERS then
 			for i=0, 23 do
 				PlayerResource:SetCustomPlayerColor(i, PLAYER_COLORS[i][1], PLAYER_COLORS[i][2], PLAYER_COLORS[i][3])
@@ -220,6 +250,7 @@ function GameMode:OnGameRulesStateChange(keys)
 							if (string.find(tower:GetName(), "_top") or string.find(tower:GetName(), "_bot")) and GetMapName() == "dbii_death_match" then
 								tower:AddNewModifier(tower, nil, "modifier_dummy_thinker", {})
 							end
+							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][1], tower)
 						end
 						if string.find(tower:GetUnitName(), "_tower2_") then --T2 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 800, true)
@@ -240,6 +271,7 @@ function GameMode:OnGameRulesStateChange(keys)
 							if not string.find(tower:GetUnitName(), "mid") then
 								tower:AddNewModifier(tower, nil, "modifier_imba_t2_tower_vision", {})
 							end
+							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][2], tower)
 						end
 						if string.find(tower:GetUnitName(), "_tower3_") then --T3 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 1300, true)
@@ -258,6 +290,7 @@ function GameMode:OnGameRulesStateChange(keys)
 							end
 							local abi = tower:AddAbility("imba_tower_healer_protect")
 							abi:SetLevel(1)
+							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][3], tower)
 						end
 						if string.find(tower:GetUnitName(), "_tower4") then --T4 Tower set
 							SetCreatureHealth(tower, tower:GetHealth() + 2200, true)
@@ -276,6 +309,7 @@ function GameMode:OnGameRulesStateChange(keys)
 							end
 							local abi = tower:AddAbility("imba_tower_the_last_line")
 							abi:SetLevel(1)
+							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][4], tower)
 						end
 						if string.find(tower:GetUnitName(), "_melee_rax_") then
 							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
@@ -342,14 +376,10 @@ function GameMode:OnGameRulesStateChange(keys)
 		end
 		)
 		Timers:CreateTimer(14, function()
-			Notifications:BottomToAll({text="#imba_introduction_line_04", duration = 3, style={["font-size"] = "24px"}})
+			Notifications:BottomToAll({text="#imba_introduction_line_04", duration = 10, style={["font-size"] = "30px"}})
 			return nil
 		end
 		)
-	end
-
-	if newState == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then -- IMBA Tower Ability set
-		SetPlayerInfo()
 	end
 end
 
@@ -387,10 +417,12 @@ function GameMode:OnNPCSpawned(keys)
 
 	--Game Start Hero Set
 	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerID() and npc:GetPlayerID() and npc:GetPlayerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
+		
 		Timers:CreateTimer({useGameTime = false, endTime = 1.5,
 			callback = function()
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
+					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1].order = 0
 					if npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
 						GOOD_PLAYERS = GOOD_PLAYERS + 1
 					else
@@ -398,10 +430,23 @@ function GameMode:OnNPCSpawned(keys)
 					end
 				end
 
+				-- Set Talent Ability
+				for i = 0, 23 do
+					local ability = npc:GetAbilityByIndex(i)
+					if ability and ability.IsTalentAbility and ability:IsTalentAbility() then
+						ability:SetLevel(1)
+					end
+				end
+
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
-				if IMBA_AK_ENABLE or IsInToolsMode() then
+				for i=0, 10 do
+					AddFOWViewer(i, npc:GetAbsOrigin(), 200, FrameTime(), false)
+				end
+				if GetMapName() ~= "dbii_death_match" and (IMBA_AK_ENABLE or GameRules:IsCheatMode()) then
 					IMBAEvents:GiveAKAbility(npc)
+				elseif GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
+					IMBAEvents:DeathMatchRandomOMG(npc)
 				end
 				return nil
 			end
@@ -424,22 +469,21 @@ function GameMode:OnNPCSpawned(keys)
 		Timers:CreateTimer(0, function()
 			-- a fresh Tp
 			local tp = npc:GetTP()
-			if #tp > 0 then
-				for i=1, #tp do
-					tp[i]:EndCooldown()
-				end
+			if tp then
+				tp:EndCooldown()
 				return nil
 			end
 			return 0.2
 		end
 		)
 
-		if GetMapName() == "dbii_death_match" and CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable == 1 then
-			IMBAEvents:DeathMatchRandomOMG(npc)
-		end
+		-- Set up Player infomation
+		local pID = npc:GetPlayerOwnerID()
+		local player_table = {["player_id"] = pID, ["player_name"] = PlayerResource:GetPlayerName(pID), ["player_team"] = npc:GetTeamNumber(), ["steamid_64"] = PlayerResource:GetSteamID(pID), ["hero_index"] = npc:entindex(), ["hero_name"] = npc:GetUnitName()}
+		CustomNetTables:SetTableValue("imba_player_detail", tostring(pID), player_table)
 	end
 
-	if npc:IsRealHero() and IsInTable(npc, CDOTA_PlayerResource.IMBA_PLAYER_HERO) and GetMapName() == "dbii_death_match" and CustomNetTables:GetTableValue("imba_omg", "enable_omg").enable == 1 then
+	if npc:IsRealHero() and npc.firstSpawn and GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
 		IMBAEvents:DeathMatchRandomOMG(npc)
 	end
 
@@ -472,16 +516,6 @@ function GameMode:OnNPCSpawned(keys)
 		npc:AddNewModifier(npc, nil, "modifier_imba_unlimited_level_powerup", {})
 	end
 
-	-- Set Talent Ability
-	if not npc.firstSpawn then
-		for i = 0, 23 do
-			local ability = npc:GetAbilityByIndex(i)
-			if ability and ability.IsTalentAbility and ability:IsTalentAbility() then
-				ability:SetLevel(1)
-			end
-		end
-	end
-
 	if not npc.firstSpawn then
 		npc.firstSpawn = true
 		npc.splitattack = true
@@ -500,8 +534,8 @@ function GameMode:OnNPCSpawned(keys)
 
 	if npc:IsNeutralUnitType() then
 		npc:SetDeathXP(npc:GetDeathXP() * 2)
-		npc:SetMinimumGoldBounty(npc:GetMinimumGoldBounty() * 2)
-		npc:SetMaximumGoldBounty(npc:GetMaximumGoldBounty() * 2)
+		npc:SetMinimumGoldBounty(npc:GetMinimumGoldBounty() * 1.3)
+		npc:SetMaximumGoldBounty(npc:GetMaximumGoldBounty() * 1.3)
 	end
 end
 
@@ -568,7 +602,6 @@ function GameMode:OnItemPurchased( keys )
 	
 	-- The cost of the item purchased
 	local itemcost = keys.itemcost
-	
 end
 
 -- An ability was used by a player
@@ -792,6 +825,22 @@ function GameMode:OnEntityKilled( keys )
 				end
 			end
 		end
+
+		if END_GAME_ON_KILLS then
+			if GetTeamHeroKills(DOTA_TEAM_GOODGUYS) >= IMBA_KILL_GOAL then
+				GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
+				GameRules:MakeTeamLose(DOTA_TEAM_BADGUYS)
+				GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
+				UpDatePlayerInfo()
+				IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
+			elseif GetTeamHeroKills(DOTA_TEAM_BADGUYS) >= IMBA_KILL_GOAL then
+				GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
+				GameRules:MakeTeamLose(DOTA_TEAM_GOODGUYS)
+				GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
+				UpDatePlayerInfo()
+				IMBA:EndGameAPI(DOTA_TEAM_BADGUYS)
+			end
+		end
 	end
 
 	-------------------------------------------------------------------------------------------------
@@ -826,6 +875,12 @@ function GameMode:OnEntityKilled( keys )
 
 	if ability and ability:GetName() == "imba_lion_finger_of_death" and ability.KillCredit then
 		ability:KillCredit(killed_unit)
+		if ability:GetCaster() and HeroItems:UnitHasItem(ability:GetCaster(), "lion_ti8") then
+			local pfx_target = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_death_arcana.vpcf", PATTACH_ABSORIGIN, killed_unit)
+			ParticleManager:SetParticleControlEnt(pfx_target, 0, killed_unit, PATTACH_ABSORIGIN, nil, killed_unit:GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlEnt(pfx_target, 1, killed_unit, PATTACH_ABSORIGIN, nil, killed_unit:GetAbsOrigin(), true)
+			ParticleManager:ReleaseParticleIndex(pfx_target)
+		end
 	end
 
 	-------------------------------------------------------------------------------------------------
@@ -862,14 +917,14 @@ function GameMode:OnEntityKilled( keys )
 		GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
 		GameRules:MakeTeamLose(DOTA_TEAM_BADGUYS)
 		GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
-		IMBA:EndGameAPI()
 		UpDatePlayerInfo()
+		IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
 	elseif killed_unit:GetUnitName() == "npc_dota_goodguys_fort" then
 		GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
 		GameRules:MakeTeamLose(DOTA_TEAM_GOODGUYS)
 		GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
-		IMBA:EndGameAPI()
 		UpDatePlayerInfo()
+		IMBA:EndGameAPI(DOTA_TEAM_BADGUYS)
 	end
 
 end
@@ -937,7 +992,17 @@ function GameMode:OnTowerKill(keys)
 
 	local gold = keys.gold
 	local killerPlayer = PlayerResource:GetPlayer(keys.killer_userid)
-	local team = keys.teamnumber
+	local tower_team = keys.teamnumber
+
+	-- Display upgrade message and play ominous sound
+	if tower_team == DOTA_TEAM_GOODGUYS then
+		Notifications:BottomToAll({text = "#tower_abilities_radiant_upgrade", duration = 7, style = {color = "DodgerBlue"}})
+		EmitGlobalSound("powerup_01")
+	else
+		Notifications:BottomToAll({text = "#tower_abilities_dire_upgrade", duration = 7, style = {color = "DodgerBlue"}})
+		EmitGlobalSound("powerup_02")
+	end
+	UpgradeTower(tower_team)
 end
 
 -- This function is called whenever a player changes there custom team selection during Game Setup 
@@ -972,25 +1037,23 @@ function GameMode:OnPlayerChat(keys)
 		return nil
 	end
 
-	if not GameRules:IsCheatMode() then
-		return nil
-	end
-
 	for str in string.gmatch(text, "%S+") do
-		if str == "-json" then
-			IMBA:EndGameAPI()
-		end
-		if str == "-illunique" then
-			IllusionManager:PrintIllusionUnique()
-		end
-		if str == "-illcommon" then
-			IllusionManager:PrintIllusionCommon()
-		end
-		if str == "-bot" then
-			GameRules:BotPopulate()
-		end
-		if str == "-checkak" then
-			CheckRandomAbilityKV()
+		if IsInToolsMode() then
+			if str == "-illunique" then
+				IllusionManager:PrintIllusionUnique()
+			end
+			if str == "-illcommon" then
+				IllusionManager:PrintIllusionCommon()
+			end
+			if str == "-bot" then
+				GameRules:BotPopulate()
+			end
+			if str == "-checkak" then
+				CheckRandomAbilityKV()
+			end
+			if str == "-api" then
+				IMBA:SendHTTPRequest()
+			end
 		end
 	end
 

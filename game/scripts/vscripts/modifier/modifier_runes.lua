@@ -76,7 +76,6 @@ function modifier_imba_rune_haste_ally:GetTexture() return "rune_haste" end
 function modifier_imba_rune_haste_ally:GetEffectName() return "particles/generic_gameplay/rune_haste_owner.vpcf" end
 function modifier_imba_rune_haste_ally:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_rune_haste_ally:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
-function modifier_imba_rune_haste_ally:GetIMBAMaxMovespeed() return 10000 end
 function modifier_imba_rune_haste_ally:GetModifierMoveSpeedBonus_Percentage() return 50 end
 function modifier_imba_rune_haste_ally:GetModifierAttackSpeedBonus_Constant() return 50 end
 
@@ -216,7 +215,7 @@ function modifier_imba_rune_bounty:IsDebuff()			return false end
 function modifier_imba_rune_bounty:IsHidden() 			return false end
 function modifier_imba_rune_bounty:IsPurgable() 		return false end
 function modifier_imba_rune_bounty:IsPurgeException() 	return false end
-function modifier_imba_rune_bounty:GetTexture() return "custom/imba_rune_bounty" end
+function modifier_imba_rune_bounty:GetTexture() return "imba_rune_bounty" end
 function modifier_imba_rune_bounty:GetIMBAGoldPercentage() return 30 end
 function modifier_imba_rune_bounty:GetEffectName() return "particles/generic_gameplay/rune_bounty_prespawn.vpcf" end
 function modifier_imba_rune_bounty:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end

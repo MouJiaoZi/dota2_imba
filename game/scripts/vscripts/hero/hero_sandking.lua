@@ -239,10 +239,12 @@ function modifier_sand_storm_motion:OnCreated()
 end
 
 function modifier_sand_storm_motion:OnIntervalThink()
-	local distance = self:GetAbility():GetSpecialValueFor("wind_force_tooltip")
-	distance = distance / (self:GetDuration() / FrameTime())
-	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
-	self:GetParent():SetAbsOrigin(next_pos)
+	if self:CheckMotionControllers() then
+		local distance = self:GetAbility():GetSpecialValueFor("wind_force_tooltip")
+		distance = distance / (self:GetDuration() / FrameTime())
+		local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
+		self:GetParent():SetAbsOrigin(next_pos)
+	end
 end
 
 function modifier_sand_storm_motion:OnDestroy()
@@ -272,7 +274,7 @@ function modifier_imba_caustic_finale_passive:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if not self:GetParent():IsIllusion() and not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and not keys.unit:IsCourier() and not keys.unit:HasModifier("modifier_imba_caustic_finale") and not keys.unit:IsMagicImmune() then
+	if not self:GetParent():IsIllusion() and not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and not keys.unit:IsCourier() and not keys.unit:HasModifier("modifier_imba_caustic_finale") and not keys.unit:IsMagicImmune() and IsEnemy(keys.attacker, keys.unit) then
 		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "item_imba_nether_wand" or keys.inflictor:GetName() == "item_imba_elder_staff") then
 			return
 		end
@@ -477,10 +479,12 @@ function modifier_imba_epicenter_motion:OnCreated()
 end
 
 function modifier_imba_epicenter_motion:OnIntervalThink()
-	local distance = self:GetAbility():GetSpecialValueFor("pull_strength")
-	distance = distance / (self:GetDuration() / FrameTime())
-	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
-	self:GetParent():SetAbsOrigin(next_pos)
+	if self:CheckMotionControllers() then
+		local distance = self:GetAbility():GetSpecialValueFor("pull_strength")
+		distance = distance / (self:GetDuration() / FrameTime())
+		local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
+		self:GetParent():SetAbsOrigin(next_pos)
+	end
 end
 
 function modifier_imba_epicenter_motion:OnDestroy()

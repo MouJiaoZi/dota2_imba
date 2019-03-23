@@ -7,25 +7,43 @@ var i
 
 function updataPlayerInfo()
 {
-	var playerInfo = Game.GetPlayerInfo(i);
-	//playerPanel.FindChild("IMBAPlayerHero").heroname=playerInfo.player_selected_hero;
-	//playerPanel.FindChildTraverse("IMBAPlayerName").text=playerInfo.player_name;
-	//playerPanel.FindChildTraverse("IMBAPlayerHeroName").text=$.Localize(playerInfo.player_selected_hero);
-	//playerPanel.FindChildTraverse("IMBAPlayerLevel").text=playerInfo.player_level;
-	playerPanel.FindChildTraverse("IMBAPlayerKills").text=playerInfo.player_kills;
-	playerPanel.FindChildTraverse("IMBAPlayerDeaths").text=playerInfo.player_deaths;
-	playerPanel.FindChildTraverse("IMBAPlayerAssists").text=playerInfo.player_assists;
-	
-	var playerInfoTable = CustomNetTables.GetTableValue("imba_player_info", i.toString());
+	var playerInfoTable = CustomNetTables.GetTableValue("imba_hero_end_info", i.toString());
+	playerPanel.FindChildTraverse("IMBAPlayerKills").text=Players.GetKills(i);
+	playerPanel.FindChildTraverse("IMBAPlayerDeaths").text=Players.GetDeaths(i);
+	playerPanel.FindChildTraverse("IMBAPlayerAssists").text=Players.GetAssists(i);
 
 	if(playerInfoTable != null)
 	{
-		playerPanel.FindChildTraverse("IMBAPlayerGold").text = playerInfoTable[1];
+		playerPanel.FindChildTraverse("IMBAPlayerGold").text = playerInfoTable.player_gold;
+		playerPanel.FindChildTraverse("IMBAPlayerLevel").text=playerInfoTable.hero_level;
 		for(var j=0;j<=8;j++)
 		{
-			var item = playerInfoTable[j+2];
-			playerPanel.FindChildTraverse("IMBAItem_"+j).itemname = item;
+			var item = playerInfoTable["item_"+j];
+			var stack = playerInfoTable["item_charges_"+j];
+			var itemPanel = playerPanel.FindChildTraverse("IMBAItem_"+j); 
+			itemPanel.itemname = item;
+			if(stack > 1 && item != "item_imba_dummy")
+			{
+				itemPanel.FindChildTraverse("IMBAItemStackText").text = stack;
+			}
+			else
+			{
+				itemPanel.FindChildTraverse("IMBAItemStackText").style.opacity="0";
+			}
 		}
+		var scepter = playerInfoTable.scepter_consumed; 
+		var moon = playerInfoTable.moon_consumed;
+		if(scepter == 0)
+		{
+			playerPanel.FindChildTraverse("IMBAItem_Scepter").style.washColor="#000000EE";
+			playerPanel.FindChildTraverse("IMBAItem_Scepter").FindChildTraverse("IMBAItemStackText").text="×";
+		}
+		else
+		{
+			playerPanel.FindChildTraverse("IMBAItem_Scepter").style.washColor="#00000000";
+			playerPanel.FindChildTraverse("IMBAItem_Scepter").FindChildTraverse("IMBAItemStackText").text="√";
+		}
+		playerPanel.FindChildTraverse("IMBAItem_Moon").FindChildTraverse("IMBAItemStackText").text=moon;
 	}
 	else
 	{

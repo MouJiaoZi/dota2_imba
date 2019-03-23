@@ -341,7 +341,7 @@ function modifier_imba_nether_ward:OnSpentMana(keys)
 	if not IsServer() then
 		return
 	end
-	if not IsEnemy(keys.unit, self:GetCaster()) or (keys.unit:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius") or keys.cost == 0 or not key.unit:IsHero() then
+	if not IsEnemy(keys.unit, self:GetCaster()) or (keys.unit:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius") or keys.cost == 0 or not keys.unit:IsHero() then
 		return
 	end
 	if not self:GetParent():IsAlive() then
@@ -481,6 +481,8 @@ function modifier_imba_nether_ward:OnSpentMana(keys)
 		"zuus_cloud",
 		"imba_terrorblade_reflection",
 		"imba_terrorblade_conjure_image",
+		"mars_spear",
+		"mars_arena_of_blood",
 	}
 	if IsInTable(keys.ability:GetName(), forbidden_abilities) or (keys.ability.IsNetherWardStealable and not keys.ability:IsNetherWardStealable()) or keys.ability:IsItem() or keys.ability:GetCaster():IsMagicImmune() then
 		return

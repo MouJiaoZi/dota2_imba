@@ -88,6 +88,7 @@ function imba_vengeful_wave_of_terror:GetCastRange() return self:GetSpecialValue
 function imba_vengeful_wave_of_terror:OnSpellStart()
 	local caster = self:GetCaster()
 	local direction = (self:GetCursorPosition() - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0
 	local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 3.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(sound):EmitSound("Hero_VengefulSpirit.WaveOfTerror")
 	local info = 

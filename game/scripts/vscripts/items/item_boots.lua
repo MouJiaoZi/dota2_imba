@@ -87,7 +87,7 @@ function modifier_item_imba_tranquil_boots_2_stacks:IsDebuff()			return false en
 function modifier_item_imba_tranquil_boots_2_stacks:IsHidden() 			return false end
 function modifier_item_imba_tranquil_boots_2_stacks:IsPurgable() 		return false end
 function modifier_item_imba_tranquil_boots_2_stacks:IsPurgeException() 	return false end
-function modifier_item_imba_tranquil_boots_2_stacks:GetTexture() return "custom/imba_tranquil_boots_2" end
+function modifier_item_imba_tranquil_boots_2_stacks:GetTexture() return "imba_tranquil_boots_2" end
 function modifier_item_imba_tranquil_boots_2_stacks:OnDestroy() self.ability = nil end
 function modifier_item_imba_tranquil_boots_2_stacks:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end
 function modifier_item_imba_tranquil_boots_2_stacks:GetModifierConstantHealthRegen() return (self:GetStackCount() * self.ability:GetSpecialValueFor("health_regen_per_sec")) end

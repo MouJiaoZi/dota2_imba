@@ -4,7 +4,7 @@ function modifier_imba_unlimited_level_powerup:IsDebuff()			return false end
 function modifier_imba_unlimited_level_powerup:IsHidden() 			return (not (self:GetStackCount() > 0)) end
 function modifier_imba_unlimited_level_powerup:IsPurgable() 		return false end
 function modifier_imba_unlimited_level_powerup:IsPurgeException() 	return false end
-function modifier_imba_unlimited_level_powerup:GetTexture() return "custom/unlimited_level_powerup" end
+function modifier_imba_unlimited_level_powerup:GetTexture() return "unlimited_level_powerup" end
 function modifier_imba_unlimited_level_powerup:RemoveOnDeath() return self:GetParent():IsIllusion() end
 
 function modifier_imba_unlimited_level_powerup:OnCreated() self:StartIntervalThink(1.0) end
@@ -31,8 +31,18 @@ function modifier_imba_unlimited_powerup_ak:IsDebuff()			return false end
 function modifier_imba_unlimited_powerup_ak:IsHidden() 			return true end
 function modifier_imba_unlimited_powerup_ak:IsPurgable() 		return false end
 function modifier_imba_unlimited_powerup_ak:IsPurgeException() 	return false end
-function modifier_imba_unlimited_powerup_ak:GetTexture() return "custom/unlimited_level_powerup" end
+function modifier_imba_unlimited_powerup_ak:GetTexture() return "unlimited_level_powerup" end
 function modifier_imba_unlimited_powerup_ak:RemoveOnDeath() return self:GetParent():IsIllusion() end
+
+modifier_imba_ak_ability_loading = class({})
+
+function modifier_imba_ak_ability_loading:IsDebuff()			return false end
+function modifier_imba_ak_ability_loading:IsHidden() 			return false end
+function modifier_imba_ak_ability_loading:IsPurgable() 			return false end
+function modifier_imba_ak_ability_loading:IsPurgeException() 	return false end
+function modifier_imba_ak_ability_loading:AllowIllusionDuplicate() return false end
+function modifier_imba_ak_ability_loading:GetTexture() return "wisp_overcharge" end
+function modifier_imba_ak_ability_loading:RemoveOnDeath() return self:GetParent():IsIllusion() end
 
 modifier_imba_ak_ability_adder = class({})
 
@@ -47,6 +57,7 @@ function modifier_imba_ak_ability_adder:RemoveOnDeath() return self:GetParent():
 function modifier_imba_ak_ability_adder:OnCreated(keys)
 	if IsServer() then
 		self.ability_name = keys.ability_name
+		self:GetParent():RemoveModifierByName("modifier_imba_ak_ability_loading")
 	end
 end
 
@@ -54,7 +65,8 @@ function modifier_imba_ak_ability_adder:OnDestroy()
 	if IsServer() then
 		local ability = self:GetParent():AddAbility(self.ability_name)
 		self:GetParent():SwapAbilities(self.ability_name, "generic_hidden", true, false)
-		self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_ak_ability_controller", {ability_name = self.ability_name})
+		self:GetParent():AddNewModifier(self:GetParent(), ability, "modifier_imba_ak_ability_controller", {})
+		ability.ak = true
 		self.ability_name = nil
 	end
 end
@@ -69,16 +81,12 @@ function modifier_imba_ak_ability_controller:RemoveOnDeath() return self:GetPare
 
 function modifier_imba_ak_ability_controller:OnCreated(keys)
 	if IsServer() and self:GetParent():IsRealHero() then
-		self.ability_name = keys.ability_name
 		self:StartIntervalThink(1.0)
 	end
 end
 
 function modifier_imba_ak_ability_controller:OnIntervalThink()
-	local ability = self:GetParent():FindAbilityByName("self.ability_name")
-	if not ability then
-		return
-	end
+	local ability = self:GetAbility()
 	local level = self:GetParent():GetLevel()
 	if ability:GetAbilityType() == 1 then
 		local level_to_set = math.min(math.floor(level / 6), ability:GetMaxLevel())
@@ -90,11 +98,5 @@ function modifier_imba_ak_ability_controller:OnIntervalThink()
 		if ability:GetLevel() ~= level_to_set then
 			ability:SetLevel(level_to_set)
 		end
-	end
-end
-
-function modifier_imba_ak_ability_controller:OnDestroy()
-	if IsServer() then
-		self.ability_name = nil
 	end
 end

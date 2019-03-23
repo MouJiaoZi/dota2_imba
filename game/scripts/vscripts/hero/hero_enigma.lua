@@ -65,7 +65,7 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 							ability = self:GetAbility(), --Optional.
 							}
 		ApplyDamage(damageTable)
-		EmitSoundOnLocationWithCaster(enemy:GetAbsOrigin(), "Hero_Enigma.MaleficeTick", enemy)
+		enemy:EmitSound("Hero_Enigma.MaleficeTick")
 
 		local target_pos
 		local black_hole = self:GetCaster():FindAbilityByName("imba_enigma_black_hole")
@@ -76,7 +76,9 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 		else
 			target_pos = self:GetCaster():GetAbsOrigin()
 		end
-		target_pos = enemy:GetAbsOrigin() + (target_pos - enemy:GetAbsOrigin()):Normalized() * self:GetAbility():GetSpecialValueFor("glitch_pull")
+		local direction = (target_pos - enemy:GetAbsOrigin()):Normalized()
+		direction.z = 0
+		target_pos = enemy:GetAbsOrigin() + direction * self:GetAbility():GetSpecialValueFor("glitch_pull")
 		
 		-- Draw startpoint particle
 		local start_pfx = ParticleManager:CreateParticle(particle_start, PATTACH_CUSTOMORIGIN, nil)
@@ -106,7 +108,9 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 		Timers:CreateTimer(pull_delay, function()
 			ParticleManager:DestroyParticle(end_pfx, false)
 			ParticleManager:ReleaseParticleIndex(end_pfx)
-			FindClearSpaceForUnit(enemy, target_pos, true)
+			if not enemy:HasModifier("modifier_batrider_flaming_lasso") then
+				FindClearSpaceForUnit(enemy, target_pos, true)
+			end
 		end)
 	end
 end
@@ -234,8 +238,10 @@ function modifier_imba_enigma_midnight_pulse_thinker:OnIntervalThink()
 								ability = self:GetAbility(), --Optional.
 								}
 			ApplyDamage(damageTable)
-			if not enemy:HasModifier("modifier_imba_enigma_black_hole_aura") and not enemy:HasModifier("modifier_imba_enigma_black_hole_out_pull") then
-				new_pos = enemy:GetAbsOrigin() + (self:GetParent():GetAbsOrigin() - enemy:GetAbsOrigin()):Normalized() * self:GetAbility():GetSpecialValueFor("pull_distance")
+			if not enemy:HasModifier("modifier_imba_enigma_black_hole_aura") and not enemy:HasModifier("modifier_imba_enigma_black_hole_out_pull") and not enemy:HasModifier("modifier_batrider_flaming_lasso") then
+				local direction = (self:GetParent():GetAbsOrigin() - enemy:GetAbsOrigin()):Normalized()
+				direction.z = 0.0
+				local new_pos = enemy:GetAbsOrigin() + direction * self:GetAbility():GetSpecialValueFor("pull_distance")
 				FindClearSpaceForUnit(enemy, new_pos, true)
 			end
 		end
@@ -435,13 +441,15 @@ function modifier_imba_enigma_black_hole_aura:OnIntervalThink()
 	local in_pull = 250
 	local new_pos = GetGroundPosition(RotatePosition(ability.pos, QAngle(0,1.5,0), self:GetParent():GetAbsOrigin()), self:GetParent())
 	if distance > 20 then
-		new_pos = new_pos + (ability.pos - new_pos):Normalized() * in_pull / (1.0 / FrameTime())
+		local direction = (ability.pos - new_pos):Normalized()
+		direction.z = 0.0
+		new_pos = new_pos + direction * in_pull / (1.0 / FrameTime())
 	end
 	self:GetParent():SetAbsOrigin(new_pos)
 end
 
 function modifier_imba_enigma_black_hole_aura:CheckState()
-	return {[MODIFIER_STATE_MUTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_INVISIBLE] = false}
+	return {[MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_INVISIBLE] = false}
 end
 
 function modifier_imba_enigma_black_hole_aura:DeclareFunctions()
@@ -488,7 +496,9 @@ function modifier_imba_enigma_black_hole_out_pull:OnIntervalThink()
 	if self:GetCaster():HasScepter() then
 		out_pull = out_pull + self:GetAbility():GetSpecialValueFor("pull_speed_scepter")
 	end
-	local new_pos = self:GetParent():GetAbsOrigin() + (ability.pos - self:GetParent():GetAbsOrigin()):Normalized() * (out_pull / (1.0 / FrameTime()))
+	local direction = (ability.pos - self:GetParent():GetAbsOrigin()):Normalized()
+	direction.z = 0.0
+	local new_pos = self:GetParent():GetAbsOrigin() + direction * (out_pull / (1.0 / FrameTime()))
 	self:GetParent():SetAbsOrigin(new_pos)
 end
 

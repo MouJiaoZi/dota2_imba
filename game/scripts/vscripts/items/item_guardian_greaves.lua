@@ -59,7 +59,7 @@ function modifier_imga_guardian_greaves_passive:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit == self:GetParent() and self:GetAbility():IsCooldownReady() and self:GetParent():GetHealth() <= self:GetAbility():GetSpecialValueFor("heal_threshold") and self:GetAbility():IsOwnersManaEnough() and not self:GetParent():IsIllusion() then
+	if keys.unit == self:GetParent() and self:GetAbility():IsCooldownReady() and (self:GetParent():GetHealth() <= self:GetParent():GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("heal_threshold_pct") / 100)) and self:GetAbility():IsOwnersManaEnough() and not self:GetParent():IsIllusion() then
 		self:GetAbility():OnSpellStart()
 		self:GetAbility():UseResources(true, true, true)
 		self:GetParent():Purge(false, true, false, true, true)
@@ -72,7 +72,7 @@ function modifier_item_imba_guardian_greaves_aura:IsDebuff()		return false end
 function modifier_item_imba_guardian_greaves_aura:IsHidden() 		return false end
 function modifier_item_imba_guardian_greaves_aura:IsPurgable() 		return false end
 function modifier_item_imba_guardian_greaves_aura:IsPurgeException() return false end
-function modifier_item_imba_guardian_greaves_aura:GetTexture() return "custom/imba_guardian_greaves" end
+function modifier_item_imba_guardian_greaves_aura:GetTexture() return "imba_guardian_greaves" end
 function modifier_item_imba_guardian_greaves_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_guardian_greaves_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_guardian_greaves_aura:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
@@ -97,7 +97,7 @@ function modifier_item_imba_guardian_greaves_hot:IsDebuff()			return false end
 function modifier_item_imba_guardian_greaves_hot:IsHidden() 		return false end
 function modifier_item_imba_guardian_greaves_hot:IsPurgable() 		return true end
 function modifier_item_imba_guardian_greaves_hot:IsPurgeException() return true end
-function modifier_item_imba_guardian_greaves_hot:GetTexture() return "custom/imba_guardian_greaves" end
+function modifier_item_imba_guardian_greaves_hot:GetTexture() return "imba_guardian_greaves" end
 function modifier_item_imba_guardian_greaves_hot:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_guardian_greaves_hot:OnDestroy() self.ability = nil end
 function modifier_item_imba_guardian_greaves_hot:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE, MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE} end

@@ -68,7 +68,7 @@ function modifier_item_imba_drums_aura:IsDebuff()			return false end
 function modifier_item_imba_drums_aura:IsHidden() 			return false end
 function modifier_item_imba_drums_aura:IsPurgable() 		return true end
 function modifier_item_imba_drums_aura:IsPurgeException() 	return true end
-function modifier_item_imba_drums_aura:GetTexture() return "custom/imba_ancient_janggo" end
+function modifier_item_imba_drums_aura:GetTexture() return "imba_ancient_janggo" end
 function modifier_item_imba_drums_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_drums_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_drums_aura:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
@@ -184,7 +184,7 @@ function modifier_item_imba_assault_positive_aura:IsDebuff()			return false end
 function modifier_item_imba_assault_positive_aura:IsHidden() 			return false end
 function modifier_item_imba_assault_positive_aura:IsPurgable() 			return false end
 function modifier_item_imba_assault_positive_aura:IsPurgeException() 	return false end
-function modifier_item_imba_assault_positive_aura:GetTexture() return "custom/imba_assault" end
+function modifier_item_imba_assault_positive_aura:GetTexture() return "imba_assault" end
 function modifier_item_imba_assault_positive_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_assault_positive_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_assault_positive_aura:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
@@ -197,7 +197,7 @@ function modifier_item_imba_assault_negative_aura:IsDebuff()			return true end
 function modifier_item_imba_assault_negative_aura:IsHidden() 			return false end
 function modifier_item_imba_assault_negative_aura:IsPurgable() 			return false end
 function modifier_item_imba_assault_negative_aura:IsPurgeException() 	return false end
-function modifier_item_imba_assault_negative_aura:GetTexture() return "custom/imba_assault" end
+function modifier_item_imba_assault_negative_aura:GetTexture() return "imba_assault" end
 function modifier_item_imba_assault_negative_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_assault_negative_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_assault_negative_aura:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
@@ -290,7 +290,7 @@ function modifier_item_imba_siege_cuirass_positive_aura:IsDebuff()			return fals
 function modifier_item_imba_siege_cuirass_positive_aura:IsHidden() 			return false end
 function modifier_item_imba_siege_cuirass_positive_aura:IsPurgable() 		return false end
 function modifier_item_imba_siege_cuirass_positive_aura:IsPurgeException() 	return false end
-function modifier_item_imba_siege_cuirass_positive_aura:GetTexture() return "custom/imba_siege_cuirass" end
+function modifier_item_imba_siege_cuirass_positive_aura:GetTexture() return "imba_siege_cuirass" end
 function modifier_item_imba_siege_cuirass_positive_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_siege_cuirass_positive_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_siege_cuirass_positive_aura:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end
@@ -304,7 +304,7 @@ function modifier_item_imba_siege_cuirass_negative_aura:IsDebuff()			return fals
 function modifier_item_imba_siege_cuirass_negative_aura:IsHidden() 			return false end
 function modifier_item_imba_siege_cuirass_negative_aura:IsPurgable() 		return false end
 function modifier_item_imba_siege_cuirass_negative_aura:IsPurgeException() 	return false end
-function modifier_item_imba_siege_cuirass_negative_aura:GetTexture() return "custom/imba_siege_cuirass" end
+function modifier_item_imba_siege_cuirass_negative_aura:GetTexture() return "imba_siege_cuirass" end
 function modifier_item_imba_siege_cuirass_negative_aura:OnCreated() self.ability = self:GetAbility() end
 function modifier_item_imba_siege_cuirass_negative_aura:OnDestroy() self.ability = nil end
 function modifier_item_imba_siege_cuirass_negative_aura:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end

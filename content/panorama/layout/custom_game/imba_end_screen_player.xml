@@ -2,6 +2,7 @@
 	<styles>
 		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
 		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_buff.vcss_c" />
 		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
 		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
 		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
@@ -24,14 +25,38 @@
 		<Label id="IMBAPlayerKills" class="IMBAKDANumber IMBAKDAKills MonoNumbersFont" text="0"/>
 		<Label id="IMBAPlayerDeaths" class="IMBAKDANumber MonoNumbersFont" text="0"/>
 		<Label id="IMBAPlayerAssists" class="IMBAKDANumber MonoNumbersFont" text="0"/>
-		<DOTAItemImage id="IMBAItem_0" itemname="item_imba_dummy" style="margin-left:10px;"/>
-		<DOTAItemImage id="IMBAItem_1" itemname="item_imba_dummy" style="margin-left:3px;"/>
-		<DOTAItemImage id="IMBAItem_2" itemname="item_imba_dummy" style="margin-left:3px;"/>
-		<DOTAItemImage id="IMBAItem_3" itemname="item_imba_dummy" style="margin-left:3px;"/>
-		<DOTAItemImage id="IMBAItem_4" itemname="item_imba_dummy" style="margin-left:3px;"/>
-		<DOTAItemImage id="IMBAItem_5" itemname="item_imba_dummy" style="margin-left:3px;"/>
-		<DOTAItemImage id="IMBAItem_6" itemname="item_imba_dummy" style="margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;"/>
-		<DOTAItemImage id="IMBAItem_7" itemname="item_imba_dummy" style="margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;"/>
-		<DOTAItemImage id="IMBAItem_8" itemname="item_imba_dummy" style="margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;"/>
+		<DOTAItemImage id="IMBAItem_0" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:10px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_1" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_2" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_3" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_4" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_5" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_6" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_7" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_8" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_Scepter" itemname="item_imba_ultimate_scepter_synth" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#000000EE;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="√×"/>
+		</DOTAItemImage>
+		<DOTAItemImage id="IMBAItem_Moon" itemname="item_imba_moon_shard" style="height:100%;width:41.25px;margin-left:3px;">
+			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
+		</DOTAItemImage>
 	</Panel>
 </root>

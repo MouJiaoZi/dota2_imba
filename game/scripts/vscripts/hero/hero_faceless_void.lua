@@ -19,9 +19,11 @@ function imba_faceless_void_time_walk:GetIntrinsicModifierName() return "modifie
 function imba_faceless_void_time_walk:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
+	local direction = (pos - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0
 	local max_distance = self:GetSpecialValueFor("range") + caster:GetCastRangeBonus()
 	if max_distance < (pos - caster:GetAbsOrigin()):Length2D() then
-		pos = caster:GetAbsOrigin() + (pos - caster:GetAbsOrigin()):Normalized() * max_distance
+		pos = caster:GetAbsOrigin() + direction * max_distance
 	else
 		max_distance = (caster:GetAbsOrigin() - pos):Length2D()
 	end
@@ -32,7 +34,7 @@ function imba_faceless_void_time_walk:OnSpellStart()
 	for _, buff in pairs(buffs) do
 		heal = heal + buff:GetStackCount() / 10
 	end
-	EmitSoundOnLocationWithCaster(pos, "Hero_FacelessVoid.TimeWalk", caster)
+	caster:EmitSound("Hero_FacelessVoid.TimeWalk")
 	caster:Heal(heal, caster)
 end
 
@@ -63,7 +65,9 @@ end
 function modifier_imba_time_walk_motion:OnIntervalThink()
 	local caster = self:GetCaster()
 	local distance = self.distance / (self:GetDuration() / FrameTime())
-	local next_pos = GetGroundPosition(caster:GetAbsOrigin() + (self.target_point - caster:GetAbsOrigin()):Normalized() * distance, caster)
+	local direction = (self.target_point - caster:GetAbsOrigin()):Normalized()
+	direction.z = 0.0
+	local next_pos = GetGroundPosition(caster:GetAbsOrigin() + direction * distance, caster)
 	caster:SetAbsOrigin(next_pos)
 	CreateChronosphere(caster, self:GetAbility(), caster:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("chrono_radius"), self:GetAbility():GetSpecialValueFor("chrono_linger"), 6)
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("chrono_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
@@ -254,7 +258,7 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 	if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("bash_chance")) then
 		local buff = self:GetParent():GetModifierStackCount("modifier_imba_faceless_void_time_lock_reduce", self:GetParent())
 		local radius = math.max(self:GetAbility():GetSpecialValueFor("radius_min"), self:GetAbility():GetSpecialValueFor("bash_radius") - self:GetAbility():GetSpecialValueFor("radius_reduce") * buff)
-		EmitSoundOnLocationWithCaster(keys.target:GetAbsOrigin(), "Hero_FacelessVoid.TimeLockImpact", self:GetParent())
+		keys.target:EmitSound("Hero_FacelessVoid.TimeLockImpact")
 		CreateChronosphere(self:GetParent(), self:GetAbility(), keys.target:GetAbsOrigin(), radius, self:GetAbility():GetSpecialValueFor("bash_duration"), 2)
 		if not self:GetParent():HasTalent("special_bonus_imba_faceless_void_1") then
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_faceless_void_time_lock_reduce", {duration = self:GetAbility():GetSpecialValueFor("reduce_duration")})
@@ -374,7 +378,11 @@ function imba_faceless_void_chronosphere:OnSpellStart()
 									end,1.8)
 	end
 	local thinker = CreateChronosphere(caster, self, pos, radius, time, 1)
-	thinker:EmitSound("Hero_FacelessVoid.Chronosphere")
+	if HeroItems:UnitHasItem(self:GetCaster(), "mace_of_aeons") then
+		thinker:EmitSound("Hero_FacelessVoid.Chronosphere.MaceOfAeons")
+	else
+		thinker:EmitSound("Hero_FacelessVoid.Chronosphere")
+	end
 	if caster:HasTalent("special_bonus_imba_faceless_void_3") then
 		caster:GiveMana(caster:GetTalentValue("special_bonus_imba_faceless_void_3"))
 	end
@@ -414,9 +422,13 @@ function modifier_imba_faceless_void_chronosphere_thinker:OnCreated(keys)
 		AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), keys.radius, self:GetDuration(), false)
 		self.radius = keys.radius
 		self.ally_behavior = keys.ally_behavior
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_faceless_void/faceless_void_chronosphere.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		local pfx_name = "particles/units/heroes/hero_faceless_void/faceless_void_chronosphere.vpcf"
+		if HeroItems:UnitHasItem(self:GetCaster(), "mace_of_aeons") and self.radius < 3000 then
+			pfx_name = "particles/econ/items/faceless_void/faceless_void_mace_of_aeons/fv_chronosphere_aeons.vpcf"
+		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
-		ParticleManager:SetParticleControl(pfx, 1, Vector(self.radius, self.radius, 0))
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self.radius, self.radius, self.radius))
 		self:AddParticle(pfx, false, false, 16, false, false)
 	end
 end
@@ -511,7 +523,7 @@ end
 
 function modifier_imba_faceless_void_chronosphere_debuff:CheckState()
 	if self:IsMotionController() then
-		return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_MUTED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_INVISIBLE] = false, [MODIFIER_STATE_FROZEN] = true}
+		return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_INVISIBLE] = false, [MODIFIER_STATE_FROZEN] = true}
 	elseif self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Enemy_Ability then
 		return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true}
 	else

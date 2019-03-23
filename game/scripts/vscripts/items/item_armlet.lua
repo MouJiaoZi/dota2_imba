@@ -1,5 +1,5 @@
 
---"custom/imba_armlet_active"
+--"imba_armlet_active"
 
 item_imba_armlet = class({})
 
@@ -9,7 +9,7 @@ LinkLuaModifier("modifier_item_imba_armlet_stacks", "items/item_armlet", LUA_MOD
 
 function item_imba_armlet:GetIntrinsicModifierName() return "midifier_imba_armlet_passive" end
 
-function item_imba_armlet:GetAbilityTextureName() return (self:GetCaster():GetModifierStackCount("midifier_imba_armlet_active_unique", nil) > 0 and "custom/imba_armlet_active" or "custom/imba_armlet") end
+function item_imba_armlet:GetAbilityTextureName() return (self:GetCaster():GetModifierStackCount("midifier_imba_armlet_active_unique", nil) > 0 and "imba_armlet_active" or "imba_armlet") end
 
 function item_imba_armlet:OnSpellStart()
 	local caster = self:GetCaster()
