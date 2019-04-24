@@ -1054,7 +1054,7 @@ end
 
 function IsHeroDamage(attacker, damage)
 	if damage > 0 then
-		if attacker:GetName() == "npc_dota_roshan" or attacker:IsControllableByAnyPlayer() or attacker:GetName() == "npc_dota_shadowshaman_serpentward" then
+		if attacker:IsBoss() or attacker:IsControllableByAnyPlayer() or attacker:GetName() == "npc_dota_shadowshaman_serpentward" then
 			return true
 		else
 			return false
@@ -1171,14 +1171,16 @@ end
 
 function FindStoneRemnant(pos, radius)
 	local stones = Entities:FindAllInSphere(pos, radius)
-	local stone = nil
-	for _, sto in pairs(stones) do
-		if (string.find(sto:GetName(), "npc_")) and sto:HasModifier("modifier_imba_stone_remnant_status") then
-			stone = sto
-			break
+	local function CompareDistance(element1, element2)
+		return ((element1:GetAbsOrigin() - pos):Length2D() < (element2:GetAbsOrigin() - pos):Length2D())
+	end
+	table.sort(stones, CompareDistance)
+	for i=1, #stones do
+		if (string.find(stones[i]:GetName(), "npc_")) and stones[i]:HasModifier("modifier_imba_stone_remnant_status") then
+			return stones[i]
 		end
 	end
-	return stone
+	return nil
 end
 
 function CDOTA_BaseNPC:GetMoveSpeedIncrease()
@@ -1295,18 +1297,24 @@ end
 
 function CDOTA_BaseNPC:RemoveAllModifiers()
 	local buff = self:FindAllModifiers()
-	local no_move_buff_name = {"modifier_imba_talent_modifier_adder",
+	local no_move_buff_name = {	"modifier_imba_talent_modifier_adder",
 								"modifier_imba_movespeed_controller",
 								"modifier_imba_reapers_scythe_permanent",
 								"modifier_imba_ability_layout_contoroller",
 								"modifier_imba_rearm_fuck",
 								"modifier_imba_illusion_hidden",
 								"modifier_imba_illusion",
-								"modifier_illusion",}
+								"modifier_illusion",
+								"modifier_imba_ability_charge",
+								"modifier_item_ultimate_scepter_consumed",
+								"modifier_imba_moon_shard_consume",}
 	for i=1, #buff do
-		if not IsInTable(buff[i]:GetName(), no_move_buff_name) then
+		if buff[i].IsMotionController and buff[i]:IsMotionController() then
 			buff[i]:Destroy()
 		end
+		--if not IsInTable(buff[i]:GetName(), no_move_buff_name) and not string.find(buff[i]:GetName(), "charge_counter") and (not buff[i].IsMotionController or (buff[i].IsMotionController and not buff[i]:IsMotionController)) then
+		--	buff[i]:Destroy()
+		--end
 	end
 end
 
@@ -1424,4 +1432,26 @@ function IsRefreshableByAbility(str)
 		"item_aeon_disk",
 	}
 	return IsInTable(str, NO_REFRESH)
+end
+
+function CDOTA_BaseNPC:GiveVisionForBothTeam(fDuration)
+	if IMBA_TEAM_DUMMY_GOOD then
+		self:AddNewModifier(IMBA_TEAM_DUMMY_GOOD, nil, "modifier_imba_seen", {duration = (fDuration or -1)})
+	end
+	if IMBA_TEAM_DUMMY_BAD then
+		self:AddNewModifier(IMBA_TEAM_DUMMY_BAD, nil, "modifier_imba_seen", {duration = (fDuration or -1)})
+	end
+end
+
+function StringToVector(sString)
+	--Input: "123 123 123"
+	local temp = {}
+	for str in string.gmatch(sString, "%S+") do
+		if tonumber(str) then
+			temp[#temp + 1] = tonumber(str)
+		else
+			return nil
+		end
+	end
+	return Vector(temp[1], temp[2], temp[3])
 end

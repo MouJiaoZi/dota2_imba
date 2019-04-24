@@ -1,5 +1,4 @@
-IMBA_GAME_VERSION = 25
-IMBA_GAME_VERSION_GETTED = 0
+IMBA_GAME_VERSION = 49
 
 IMBA_WEB_SERVER = "https://www.bilibiliduang.cn/"
 
@@ -19,8 +18,8 @@ if GameRules:IsCheatMode() then
 end
 ALLOW_SAME_HERO_SELECTION = false        -- Should we let people select the same hero as each other
 
-HERO_SELECTION_TIME = 75.0              -- How long should we let people select their hero?
-IMBA_LOADING_DELAY = 1.0
+HERO_SELECTION_TIME = 65.0              -- How long should we let people select their hero?
+IMBA_LOADING_DELAY = 0.0
 PRE_GAME_TIME = 60.0 + IMBA_LOADING_DELAY                   	-- How long after people select their heroes should the horn blow and the game start?
 POST_GAME_TIME = 30.0                   -- How long should we let people look at the scoreboard before closing the server automatically?
 TREE_REGROW_TIME = 300.0                 -- How long should it take individual trees to respawn after being cut down/destroyed?
@@ -156,14 +155,14 @@ if GetMapName() == "dbii_5v5" then										-- Standard map defaults
 	CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] = 5
 	CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]  = 5
 	END_GAME_ON_KILLS = false
-	CUSTOM_GOLD_BONUS = 60
-	CUSTOM_XP_BONUS = 60
-	HERO_RESPAWN_TIME_MULTIPLIER = 75
+	CUSTOM_GOLD_BONUS = 110
+	CUSTOM_XP_BONUS = 110
+	HERO_RESPAWN_TIME_MULTIPLIER = 50
 	IMBA_STARTING_GOLD = 1300
 	IMBA_STARTING_GOLD_RANDOM = 1600
 	HERO_STARTING_LEVEL = 2
 	MAX_LEVEL = 35
-	HERO_LEVEL_RESPAWN_MULTIPLY = 3.0
+	HERO_LEVEL_RESPAWN_MULTIPLY = 1.5
 	CUSTOM_ROSHAN_RESPAWN = 60.0
 elseif GetMapName() == "dbii_10v10" then									-- 10v10 map defaults
 	END_GAME_ON_KILLS = false
@@ -188,7 +187,7 @@ elseif GetMapName() == "dbii_death_match" then									-- death match map defaul
 	HERO_STARTING_LEVEL = 1
 	MAX_LEVEL = 40
 	HERO_LEVEL_RESPAWN_MULTIPLY = 1.5
-	CUSTOM_ROSHAN_RESPAWN = 99999.0
+	CUSTOM_ROSHAN_RESPAWN = 10.0
 end
 
 XP_PER_LEVEL_TABLE = {}
@@ -325,3 +324,13 @@ IMBA_TOWER_ABILITY_SUM[3] = IMBA_TOWER_ABILITY_3
 IMBA_TOWER_ABILITY_SUM[4] = IMBA_TOWER_ABILITY_4
 
 PRECACHED_UNIT = {}
+
+IMBA_DISABLE_PLAYER = {}
+for i=0, 23 do
+	IMBA_DISABLE_PLAYER[i] = false
+end
+
+IMBA_COURIER_FEEDING = {}
+for i=0, 23 do
+	IMBA_COURIER_FEEDING[i] = 0
+end

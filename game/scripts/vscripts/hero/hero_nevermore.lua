@@ -27,8 +27,14 @@ function imba_nevermore_shadowraze:OnSpellStart()
 	local direction = caster:GetForwardVector():Normalized()
 	local length = self:GetSpecialValueFor("length") + caster:GetCastRangeBonus()
 	local pfx_number = math.floor(length / self:GetSpecialValueFor("radius")) + 1
+	local pfx_name = "particles/units/heroes/hero_nevermore/nevermore_shadowraze.vpcf"
+	local sound_name = "Hero_Nevermore.Shadowraze"
+	if HeroItems:UnitHasItem(caster, "shadow_fiend/head_arcana") then
+		pfx_name = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_shadowraze.vpcf"
+		sound_name = "Hero_Nevermore.Shadowraze.Arcana"
+	end
 	for i=1, pfx_number do
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_shadowraze.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 		local pos = GetGroundPosition(caster:GetAbsOrigin() + direction * ((i - 1) * self:GetSpecialValueFor("radius")), nil)
 		ParticleManager:SetParticleControl(pfx, 0, pos)
 		ParticleManager:ReleaseParticleIndex(pfx)
@@ -48,7 +54,7 @@ function imba_nevermore_shadowraze:OnSpellStart()
 							}
 		ApplyDamage(damageTable)
 	end
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Nevermore.Shadowraze", caster)
+	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), sound_name, caster)
 end
 
 modifier_imba_shadowraze_combo = class({})
@@ -303,8 +309,14 @@ function imba_nevermore_requiem:OnAbilityPhaseStart()
 		cast_pos = self:GetCursorPosition()
 	end
 	self.fx = CreateModifierThinker(self:GetCaster(), self, "modifier_imba_requiem_thinker", {duration = 10.0}, cast_pos, caster:GetTeamNumber(), false)
-	EmitSoundOn("Hero_Nevermore.RequiemOfSoulsCast", self.fx)
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_requiemofsouls.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.fx)
+	local sound_name = "Hero_Nevermore.RequiemOfSoulsCast"
+	local pfx_name_2 = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls.vpcf"
+	if HeroItems:UnitHasItem(caster, "shadow_fiend/head_arcana") then
+		pfx_name_2 = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls.vpcf"
+		sound_name = "Hero_Nevermore.ROS.Arcana.Cast"
+	end
+	self.fx:EmitSound(sound_name)
+	local pfx = ParticleManager:CreateParticle(pfx_name_2, PATTACH_ABSORIGIN_FOLLOW, self.fx)
 	ParticleManager:SetParticleControl(pfx, 1, self.fx:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(pfx)
 	return true
@@ -324,22 +336,34 @@ function imba_nevermore_requiem:OnSpellStart()
 	end
 	local buff = caster:FindModifierByName("modifier_imba_necromastery_counter")
 	local souls = buff and buff:GetStackCount() or (self:IsStolen() and 46 or 0)
-	local lines = math.floor(souls / self:GetSpecialValueFor("soul_conversion"))
+	local lines = IsInToolsMode() and 102 or math.floor(souls / self:GetSpecialValueFor("soul_conversion"))
 	local length = self:GetSpecialValueFor("radius")
 	local end_pos = cast_pos + caster:GetForwardVector():Normalized() * length
 	local speed = self:GetSpecialValueFor("line_speed")
-	local thinker_sce = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, cast_pos, caster:GetTeamNumber(), false):entindex()
+	local arcana = 0
+	local pfx_name = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf"
+	local pfx_name_2 = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls.vpcf"
+	local sound_name = "Hero_Nevermore.RequiemOfSouls"
+	if HeroItems:UnitHasItem(caster, "head_arcana") then
+		arcana = 1
+		pfx_name = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls_line.vpcf"
+		pfx_name_2 = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls.vpcf"
+		sound_name = "Hero_Nevermore.ROS.Arcana"
+	end
+	local thinker_sce = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, Vector(0, 0, -1000), caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(thinker_sce).dmg = 0
 	EntIndexToHScript(thinker_sce).steal = {}
 	for i=0, lines-1 do
 		local pos = GetGroundPosition(RotatePosition(cast_pos, QAngle(0,i * (360 / lines),0), end_pos), nil)
 		local direction = (pos - cast_pos):Normalized()
+		direction.z = 0
 		local duration = length / speed
 		local velocity = direction * speed
 		local thinker = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, cast_pos, caster:GetTeamNumber(), false):entindex()
+		EntIndexToHScript(thinker):SetModel("models/heroes/shadow_fiend/fx_shadow_fiend_arcana_hand.vmdl")
 		EntIndexToHScript(thinker).hitted = {}
 		if math.floor(i/10) == i/10 then
-			EntIndexToHScript(thinker):EmitSound("Hero_Nevermore.RequiemOfSouls")
+			EntIndexToHScript(thinker):EmitSound(sound_name)
 		end
 		local info = 
 		{
@@ -359,29 +383,31 @@ function imba_nevermore_requiem:OnSpellStart()
 			bDeleteOnHit = true,
 			vVelocity = direction * speed,
 			bProvidesVision = false,
-			ExtraData = {thinker = thinker, go = 1, pos_x = cast_pos.x, pos_y = cast_pos.y, pos_z = cast_pos.z, thinker_sce = thinker_sce, lines = i}
+			ExtraData = {thinker = thinker, go = 1, pos_x = cast_pos.x, pos_y = cast_pos.y, pos_z = cast_pos.z, thinker_sce = thinker_sce, lines = i, total = lines, pfx = arcana}
 		}
 		ProjectileManager:CreateLinearProjectile(info)
 		local particle = true
-		if i >= 30 and math.floor(i/5) ~= i/5 then
+		if lines >= 50 and math.floor(i/3) ~= i/3 then
 			particle = false
 		end
 		if particle then
-			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, EntIndexToHScript(thinker))
 			ParticleManager:SetParticleControl(pfx, 0, cast_pos)
 			ParticleManager:SetParticleControl(pfx, 1, velocity)
 			ParticleManager:SetParticleControl(pfx, 2, Vector(0,duration,0))
 			ParticleManager:ReleaseParticleIndex(pfx)
 		end
 	end
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_requiemofsouls.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.fx)
+	local pfx = ParticleManager:CreateParticle(pfx_name_2, PATTACH_ABSORIGIN_FOLLOW, self.fx)
 	ParticleManager:SetParticleControl(pfx, 1, self.fx:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(pfx)
 end
 
 function imba_nevermore_requiem:OnProjectileThink_ExtraData(location, keys)
 	if EntIndexToHScript(keys.thinker) then
-		EntIndexToHScript(keys.thinker):SetAbsOrigin(location)
+		local pos = location
+		pos.z = pos.z - 1000
+		EntIndexToHScript(keys.thinker):SetAbsOrigin(pos)
 	end
 end
 
@@ -401,17 +427,25 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 			local speed = self:GetSpecialValueFor("line_speed")
 			local direction = (cast_pos - location):Normalized()
 			local duration = length / speed
+			direction.z = 0
 			local velocity = direction * speed
 			local i = keys.lines
 			local thinker = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, cast_pos, caster:GetTeamNumber(), false):entindex()
+			EntIndexToHScript(thinker):SetModel("models/heroes/shadow_fiend/fx_shadow_fiend_arcana_hand.vmdl")
+			local pfx_name = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf"
+			local sound_name = "Hero_Nevermore.RequiemOfSouls"
+			if keys.pfx == 1 then
+				pfx_name = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls_line.vpcf"
+				sound_name = "Hero_Nevermore.ROS.Arcana"
+			end
 			EntIndexToHScript(thinker).hitted = {}
 			if math.floor(i/10) == i/10 then
-				EntIndexToHScript(thinker):EmitSound("Hero_Nevermore.RequiemOfSouls")
+				EntIndexToHScript(thinker):EmitSound(sound_name)
 			end
 			local info = 
 			{
 				Ability = self,
-				EffectName = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf",
+				EffectName = nil,
 				vSpawnOrigin = location,
 				fDistance = length,
 				fStartRadius = self:GetSpecialValueFor("line_width_end"),
@@ -430,11 +464,11 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 			}
 			ProjectileManager:CreateLinearProjectile(info)
 			local particle = true
-			if i >= 30 and math.floor(i/5) ~= i/5 then
+			if keys.total >= 50 and math.floor(i/3) ~= i/3 then
 				particle = false
 			end
 			if particle then
-				local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf", PATTACH_CUSTOMORIGIN, nil)
+				local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, EntIndexToHScript(thinker))
 				ParticleManager:SetParticleControl(pfx, 0, location)
 				ParticleManager:SetParticleControl(pfx, 1, velocity)
 				ParticleManager:SetParticleControl(pfx, 2, Vector(0,duration,0))

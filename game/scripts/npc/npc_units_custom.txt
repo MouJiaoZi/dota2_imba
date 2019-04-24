@@ -3850,17 +3850,17 @@
 		"ArmorPhysical"				"4"			// Physical protection.
 		"MagicalResistance"				"35"		// Magical protection.
 
-		"AttackDamageMin"			"60"			// Damage range min.
-		"AttackDamageMax"			"60"			// Damage range max.
+		"AttackDamageMin"			"100"			// Damage range min.
+		"AttackDamageMax"			"100"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
-		"AttackAcquisitionRange"	"250"		// Range within a target can be acquired.
-		"AttackRange"				"160"			// Range within a target can be attacked.
+		"AttackAcquisitionRange"	"400"		// Range within a target can be acquired.
+		"AttackRange"				"260"			// Range within a target can be attacked.
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"700"		// Base health.
+		"StatusHealth"				"1000"		// Base health.
 		"StatusHealthRegen"			"0.0"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0.0"		// Mana regeneration rate.
@@ -3873,17 +3873,17 @@
 		"ArmorPhysical"				"8"			// Physical protection.
 		"MagicalResistance"				"55"		// Magical protection.
 
-		"AttackDamageMin"			"120"			// Damage range min.
-		"AttackDamageMax"			"120"			// Damage range max.
+		"AttackDamageMin"			"200"			// Damage range min.
+		"AttackDamageMax"			"200"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
-		"AttackAcquisitionRange"	"250"		// Range within a target can be acquired.
-		"AttackRange"				"160"			// Range within a target can be attacked.
+		"AttackAcquisitionRange"	"400"		// Range within a target can be acquired.
+		"AttackRange"				"260"			// Range within a target can be attacked.
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"1400"		// Base health.
+		"StatusHealth"				"2000"		// Base health.
 		"StatusHealthRegen"			"0.0"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0.0"		// Mana regeneration rate.
@@ -3896,17 +3896,17 @@
 		"ArmorPhysical"				"12"			// Physical protection.
 		"MagicalResistance"				"75"		// Magical protection.
 
-		"AttackDamageMin"			"180"			// Damage range min.
-		"AttackDamageMax"			"180"			// Damage range max.
+		"AttackDamageMin"			"300"			// Damage range min.
+		"AttackDamageMax"			"300"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
-		"AttackAcquisitionRange"	"250"		// Range within a target can be acquired.
-		"AttackRange"				"160"			// Range within a target can be attacked.
+		"AttackAcquisitionRange"	"400"		// Range within a target can be acquired.
+		"AttackRange"				"260"			// Range within a target can be attacked.
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"2100"		// Base health.
+		"StatusHealth"				"3000"		// Base health.
 		"StatusHealthRegen"			"0.0"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0.0"		// Mana regeneration rate.

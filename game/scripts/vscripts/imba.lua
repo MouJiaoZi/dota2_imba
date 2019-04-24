@@ -319,63 +319,15 @@ function IMBA:DamageFilter(keys)
 	return true
 end
 
-local fucked = {
-	"76561198100431983",
-	"76561198114844292",
-	--"76561198105119956",
-	"76561198107676166",
-	"76561198290671823",
-	"76561198090660731",
-	"76561198101756489",
-	"76561198090388659",--8
-	"76561198104557118",
-	"76561198885493864",
-	"76561198110155830",
-	"76561198109302340",
-	"76561198100103994",
-	"76561198098943984",
-	"76561198090656430",
-	"76561198112645888",
-	"76561198110495186",
-	"76561198135563596",--18
-	"76561198119869372",
-	"76561198308483332",
-	"76561198123414475",
-	"76561198162460026",
-	"76561198403792296",
-	"76561198861012858",
-	"76561198372878425",
-	"76561198068637319",
-	"76561198102123042",
-	"76561198138277328",
-	"76561198128331341",--29
-	--"76561198237344786",
-	"76561198019351515",
-	--"76561198145260689",
-	"76561198277930276",
-	"76561198439275260",
-	"76561198121928689",
-	"76561198115210534",
-	"76561198103546522",--37
-	"76561198090135833",
-	"76561198243735308",
-	"76561198163170237",
-	"76561198365529617",
-	"76561198447924152",
-	"76561198298726239",
-	"76561198905412191",
-	"76561198044668907",--45
-	"76561198200429987",
-	"76561198154182289",
-	"76561198258483831",
-	"76561198101185206",
-	"76561198370259797",
-	"76561198114449566",
-	"76561198256648576",
-	--"76561198866505549",--52
-}
-
-local local_Player = {}
+--[[
+76561198115784539
+76561198101151944
+76561198032910756
+76561198124251542
+76561198845399966
+76561198054917153
+76561198103991184
+]]
 
 function IMBA:OrderFilter(keys)
 	
@@ -399,20 +351,7 @@ function IMBA:OrderFilter(keys)
 
 	--PrintTable(keys)
 
-	if not local_Player[-6] then
-		local_Player[-6] = true
-		for j=0, 19 do
-			for i=1, #fucked do
-				if PlayerResource:IsValidPlayerID(j) and tostring(PlayerResource:GetSteamID(j)) == fucked[i] then
-					local_Player[j] = true
-					Notifications:BottomToAll({text = PlayerResource:GetPlayerName(j).."(ID:"..tostring(PlayerResource:GetSteamID(j))..") ", duration = 20.0})
-					Notifications:BottomToAll({text = "#imba_player_banned_message", duration = 20.0, continue = true})
-				end
-			end
-		end
-	end
-
-	if local_Player[keys.issuer_player_id_const] == true then
+	if IMBA_DISABLE_PLAYER[keys.issuer_player_id_const] == true then
 		return false
 	end
 
@@ -503,7 +442,7 @@ function IMBA:OrderFilter(keys)
 	-- Suicide
 	------------------------------------------------------------------------------------
 
-	if keys.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM and keys.entindex_ability == 2228 then
+	if keys.entindex_ability == 2228 and keys.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM then
 		local hero = unit
 		if hero:IsAlive() then
 			if hero:HasModifier("modifier_imba_suicide") then
@@ -1021,6 +960,7 @@ function UpDatePlayerInfo()
 				playerTable["scepter_consumed"] = 0
 			end
 			playerTable["moon_consumed"] = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:GetModifierStackCount("modifier_imba_moon_shard_consume", nil)
+			playerTable["connection_state"] = PlayerResource:GetConnectionState(i)
 			CustomNetTables:SetTableValue("imba_hero_end_info", tostring(i), playerTable)
 		end
 	end
@@ -1163,7 +1103,7 @@ function IMBA:StartGoldShare(nPlayerID)
 	)
 end
 
-function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry)
+function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry, hCallback)
 	local retry = iRetry or 0
 	local http_string = sWeb and IMBA_WEB_SERVER..sWeb or IMBA_WEB_SERVER
 	http_string = http_string.."?key="..IMBA_WEB_KEY.."&"
@@ -1178,9 +1118,13 @@ function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry)
 			retry = retry + 1
 			print("HTTP ERROR CODE:", res.StatusCode)
 			print("Retry..."..retry)
-			IMBA:SendHTTPRequest(sWeb, uHEAD, retry)
+			IMBA:SendHTTPRequest(sWeb, uHEAD, retry, hCallback)
 		else
-			print(res.Body)
+			if hCallback then
+				hCallback(res)
+			else
+				print(res.Body)
+			end
 		end
 	end)
 end

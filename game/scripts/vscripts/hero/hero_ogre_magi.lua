@@ -18,6 +18,19 @@ function imba_ogre_magi_multicast:GetIntrinsicModifierName() return "modifier_im
 function imba_ogre_magi_multicast:GetAbilityTextureName() return "ogre_magi_multicast_"..self:GetCaster():GetModifierStackCount("modifier_imba_multicast_passive", nil) end
 function imba_ogre_magi_multicast:ResetToggleOnRespawn() return false end
 
+function imba_ogre_magi_multicast:OnOwnerDied()
+	self.toggle = self:GetToggleState()
+end
+
+function imba_ogre_magi_multicast:OnOwnerSpawned()
+	if self.toggle == nil then
+		self.toggle = false
+	end
+	if self.toggle ~= self:GetToggleState() then
+		self:ToggleAbility()
+	end
+end
+
 function imba_ogre_magi_multicast:OnToggle()
 	if self:GetToggleState() then
 		self:GetCaster():FindModifierByName("modifier_imba_multicast_passive"):SetStackCount(1)
@@ -25,6 +38,7 @@ function imba_ogre_magi_multicast:OnToggle()
 		self:GetCaster():FindModifierByName("modifier_imba_multicast_passive"):SetStackCount(0)
 	end
 	self:EndCooldown()
+	self.toggle = self:GetToggleState()
 end
 
 modifier_imba_multicast_passive = class({})
@@ -44,7 +58,7 @@ function modifier_imba_multicast_passive:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or not self:GetAbility():IsCooldownReady() or not keys.target:IsAlive() then
 		return
 	end
-	if not self:GetParent().splitattack then
+	if not self:GetParent().splitattack or (self:GetParent():FindAbilityByName("weaver_geminate_attack") and not self:GetParent():FindAbilityByName("weaver_geminate_attack"):IsCooldownReady()) then
 		return
 	end
 	local target = keys.target
@@ -68,7 +82,7 @@ function modifier_imba_multicast_passive:DoMultiAttack(caster, target, times)
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			caster:StartGesture(ACT_DOTA_ATTACK)
 			caster.splitattack = false
-			caster:PerformAttack(target, true, true, true, true, false, false, false)
+			caster:PerformAttack(target, false, true, true, true, false, false, false)
 			caster.splitattack = true
 			caster:EmitSound("Hero_OgreMagi.Fireblast.x"..i+1)
 			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ogre_magi/ogre_magi_multicast.vpcf", PATTACH_OVERHEAD_FOLLOW, caster)
@@ -122,6 +136,17 @@ local NoMultiCastItems = {
 "imba_queenofpain_blink",
 "imba_riki_tricks_of_the_trade",
 "imba_riki_tott_true",
+"spirit_breaker_charge_of_darkness",
+"tusk_snowball",
+"tusk_launch_snowball",
+"furion_teleportation",
+"imba_faceless_void_time_walk",
+"elder_titan_ancestral_spirit",
+"brewmaster_primal_split",
+"imba_jakiro_fire_breath",
+"imba_jakiro_ice_breath",
+"wisp_tether",
+"wisp_tether_break",
 }
 
 function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)

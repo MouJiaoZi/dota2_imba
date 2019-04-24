@@ -11,6 +11,7 @@ function imba_pudge_sharp_hook:IsHiddenWhenStolen() 	return false end
 function imba_pudge_sharp_hook:IsRefreshable() 			return true end
 function imba_pudge_sharp_hook:IsStealable() 			return false end
 function imba_pudge_sharp_hook:IsNetherWardStealable()	return false end
+function imba_pudge_sharp_hook:ProcsMagicStick()		return false end
 function imba_pudge_sharp_hook:GetIntrinsicModifierName() return "modifier_imba_hook_sharp_stack" end
 function imba_pudge_sharp_hook:OnToggle()
 	if self:GetToggleState() then
@@ -212,7 +213,7 @@ function imba_pudge_meat_hook:OnProjectileHit_ExtraData(target, location, keys)
 		return true
 	end
 	if keys.go == 1 then
-		if target and (target == self:GetCaster() or target:IsBoss()) then
+		if target and (target == self:GetCaster() or target:IsBoss() or target:IsCourier()) then
 			return false
 		end
 		EntIndexToHScript(keys.thinker).root:Destroy()

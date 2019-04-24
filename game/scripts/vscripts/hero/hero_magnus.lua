@@ -230,6 +230,7 @@ function imba_magnus_skewer:IsHiddenWhenStolen() 	return false end
 function imba_magnus_skewer:IsRefreshable() 		return true  end
 function imba_magnus_skewer:IsStealable() 			return true  end
 function imba_magnus_skewer:IsNetherWardStealable()	return true end
+function imba_magnus_skewer:GetCastRange() if IsClient() then return (self:GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_magnus_1")) end end
 
 function imba_magnus_skewer:OnSpellStart()
 	local caster = self:GetCaster()

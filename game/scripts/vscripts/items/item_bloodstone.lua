@@ -41,7 +41,7 @@ end
 function modifier_imba_bloodstone_passive:OnIntervalThink() self:SetStackCount(self:GetAbility():GetCurrentCharges()) end
 
 function modifier_imba_bloodstone_passive:OnDeath(keys)
-	if not IsServer() or self:GetParent():IsIllusion() then
+	if not IsServer() or self:GetParent():IsIllusion() or keys.reincarnate then
 		return
 	end
 	if keys.unit == self:GetParent() then

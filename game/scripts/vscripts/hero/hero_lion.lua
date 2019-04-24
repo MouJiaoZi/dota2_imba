@@ -413,7 +413,7 @@ function imba_lion_finger_of_death:OnSpellStart()
 		Timers:CreateTimer(self:GetSpecialValueFor("damage_delay"), function()
 			local damage_done = ApplyDamage(damageTable)
 			if HeroItems:UnitHasItem(caster, "lion_ti8") then
-				local pfx_head = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_of_death_overhead_ti8.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
+				local pfx_head = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_of_death_overhead_ti8.vpcf", PATTACH_ABSORIGIN, enemy)
 				local hp_pct = 1 - (enemy:GetHealthPercent() / 100)
 				ParticleManager:SetParticleControl(pfx_head, 1, Vector(hp_pct, 0, 0))
 				ParticleManager:ReleaseParticleIndex(pfx_head)

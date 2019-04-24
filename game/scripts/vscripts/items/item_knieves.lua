@@ -29,7 +29,7 @@ end
 function item_imba_yasha:OnProjectileHit(target, location)
 	if target then
 		self:GetCaster().splitattack = false
-		self:GetCaster():PerformAttack(target, true, true, true, false, false, false, false)
+		self:GetCaster():PerformAttack(target, false, true, true, false, false, false, false)
 		self:GetCaster().splitattack = true
 	end
 end
@@ -268,7 +268,7 @@ end
 function item_imba_sange_and_yasha:OnProjectileHit(target, location)
 	if target then
 		self:GetCaster().splitattack = false
-		self:GetCaster():PerformAttack(target, true, true, true, false, false, false, false)
+		self:GetCaster():PerformAttack(target, false, true, true, false, false, false, false)
 		self:GetCaster().splitattack = true
 	end
 end
@@ -433,7 +433,7 @@ end
 function item_imba_azura_and_yasha:OnProjectileHit(target, location)
 	if target then
 		self:GetCaster().splitattack = false
-		self:GetCaster():PerformAttack(target, true, true, true, false, false, false, false)
+		self:GetCaster():PerformAttack(target, false, true, true, false, false, false, false)
 		self:GetCaster().splitattack = true
 	end
 end
@@ -529,7 +529,7 @@ end
 function item_imba_sange_and_azura_and_yasha:OnProjectileHit(target, location)
 	if target then
 		self:GetCaster().splitattack = false
-		self:GetCaster():PerformAttack(target, true, true, true, false, false, false, false)
+		self:GetCaster():PerformAttack(target, false, true, true, false, false, false, false)
 		self:GetCaster().splitattack = true
 	end
 end
@@ -672,6 +672,16 @@ function modifier_imba_manta_passive:GetModifierBonusStats_Intellect() return se
 function modifier_imba_manta_passive:OnCreated()
 	if IsServer() then
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_manta_unique", {})
+		if HeroItems:UnitHasItem(self:GetParent(), "arc_of_manta") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_manta/antimage_blade_primary_manta_passive.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, true, false, 15, false, false)
+		end
+		if HeroItems:UnitHasItem(self:GetParent(), "arc_of_manta__offhand") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_manta/antimage_blade_offhand_manta_passive.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack2", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, true, false, 15, false, false)
+		end
 	end
 end
 

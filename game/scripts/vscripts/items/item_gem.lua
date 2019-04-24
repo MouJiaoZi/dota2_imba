@@ -5,8 +5,11 @@ LinkLuaModifier("modifier_item_imba_soul_of_truth", "items/item_gem", LUA_MODIFI
 function item_imba_soul_of_truth:OnSpellStart()
 	local caster = self:GetCaster()
 	caster:EmitSound("Item.DropGemWorld")
-	caster:AddNewModifier(caster, self, "modifier_item_imba_soul_of_truth", {duration = self:GetSpecialValueFor("duration")})
+	local buff = caster:AddNewModifier(caster, self, "modifier_item_imba_soul_of_truth", {duration = self:GetSpecialValueFor("duration")})
 	caster:AddNewModifier(caster, self, "modifier_item_gem_of_true_sight", {duration = self:GetSpecialValueFor("duration")})
+	buff.ability = self
+	buff.armor = buff.ability:GetSpecialValueFor("armor")
+	buff.health_regen = buff.ability:GetSpecialValueFor("health_regen")
 	self:Destroy()
 end
 
@@ -26,9 +29,6 @@ function modifier_item_imba_soul_of_truth:OnDeath(keys)
 end
 
 function modifier_item_imba_soul_of_truth:OnCreated()
-	self.ability = self:GetAbility()
-	self.armor = self.ability:GetSpecialValueFor("armor")
-	self.health_regen = self.ability:GetSpecialValueFor("health_regen")
 	if IsServer() then
 		local pfx = ParticleManager:CreateParticleForTeam("particles/basic_ambient/generic_true_sight.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent(), self:GetParent():GetTeamNumber())
 		self:AddParticle(pfx, false, false, 15, false, true)

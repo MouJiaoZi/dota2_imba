@@ -38,8 +38,13 @@ function modifier_imba_antimage_mana_break:OnAttackLanded(keys)
 	if keys.attacker:IsIllusion() then
 		dmg = dmg * self:GetAbility():GetSpecialValueFor("illusion_factor")
 	end
-	local manaburn_pfx = ParticleManager:CreateParticle("particles/generic_gameplay/generic_manaburn.vpcf", PATTACH_ABSORIGIN_FOLLOW, keys.target)
-	ParticleManager:SetParticleControl(manaburn_pfx, 0, keys.target:GetAbsOrigin())
+	local pfx_name = "particles/generic_gameplay/generic_manaburn.vpcf"
+	if HeroItems:UnitHasItem(self:GetParent(), "skullbasher.vmdl") then
+		pfx_name = "particles/econ/items/antimage/antimage_weapon_basher_ti5/am_manaburn_basher_ti_5.vpcf"
+	elseif HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold.vmdl") then
+		pfx_name = "particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/am_manaburn_basher_ti_5_gold.vpcf"
+	end
+	local manaburn_pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_ABSORIGIN_FOLLOW, keys.target)
 	ParticleManager:ReleaseParticleIndex(manaburn_pfx)
 	local damageTable = {
 						victim = keys.target,
@@ -49,7 +54,7 @@ function modifier_imba_antimage_mana_break:OnAttackLanded(keys)
 						ability = self:GetAbility(),
 						}
 	ApplyDamage(damageTable)
-	EmitSoundOnLocationWithCaster(keys.target:GetAbsOrigin(), "Hero_Antimage.ManaBreak", keys.target)
+	keys.target:EmitSound("Hero_Antimage.ManaBreak")
 end
 
 imba_antimage_blink = class({})
@@ -60,6 +65,7 @@ function imba_antimage_blink:IsHiddenWhenStolen() 		return false end
 function imba_antimage_blink:IsRefreshable() 			return true end
 function imba_antimage_blink:IsStealable() 				return true end
 function imba_antimage_blink:IsNetherWardStealable() 	return true end
+function imba_antimage_blink:GetCastRange() if IsClient() then return self:GetSpecialValueFor("blink_range") end end
 
 function imba_antimage_blink:OnSpellStart()
 	local caster = self:GetCaster()
@@ -68,8 +74,15 @@ function imba_antimage_blink:OnSpellStart()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
 	direction.z = 0.0
 	local max_dis = self:GetSpecialValueFor("blink_range")
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Antimage.Blink_out", caster)
-	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_blink_start.vpcf", PATTACH_CUSTOMORIGIN, caster)
+	local sound_start = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 2.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
+	sound_start:EmitSound("Hero_Antimage.Blink_out")
+	local pfx1_name = "particles/units/heroes/hero_antimage/antimage_blink_start.vpcf"
+	local pfx2_name = "particles/units/heroes/hero_antimage/antimage_blink_end.vpcf"
+	if HeroItems:UnitHasItem(caster, "ti7_immortal_armor.vmdl") then
+		pfx1_name = "particles/econ/items/antimage/antimage_ti7/antimage_blink_start_ti7.vpcf"
+		pfx2_name = "particles/econ/items/antimage/antimage_ti7/antimage_blink_ti7_end.vpcf"
+	end
+	local pfx1 = ParticleManager:CreateParticle(pfx1_name, PATTACH_CUSTOMORIGIN, caster)
 	ParticleManager:SetParticleControl(pfx1, 0, caster:GetAbsOrigin())
 	ParticleManager:SetParticleControlEnt(pfx1, 1, caster, PATTACH_CUSTOMORIGIN, "attach_hitloc", caster:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlForward(pfx1, 0, direction)
@@ -81,9 +94,10 @@ function imba_antimage_blink:OnSpellStart()
 		FindClearSpaceForUnit(caster, pos, false)
 	end
 	ProjectileManager:ProjectileDodge(caster)
-	local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_blink_end.vpcf", PATTACH_POINT_FOLLOW, caster)
+	local pfx2 = ParticleManager:CreateParticle(pfx2_name, PATTACH_POINT_FOLLOW, caster)
 	ParticleManager:SetParticleControlEnt(pfx2, 0, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true)
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Antimage.Blink_in", caster)
+	local sound_end = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 2.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
+	sound_end:EmitSound("Hero_Antimage.Blink_in")
 	ParticleManager:ReleaseParticleIndex(pfx1)
 	ParticleManager:ReleaseParticleIndex(pfx2)
 	caster:AddNewModifier(caster, self, "modifier_imba_antimage_passive_range", {duration = self:GetSpecialValueFor("buff_duration") + caster:GetTalentValue("special_bonus_imba_antimage_2")})
@@ -260,7 +274,7 @@ function imba_antimage_mana_void:GetAOERadius()	return self:GetSpecialValueFor("
 function imba_antimage_mana_void:GetCooldown(i) return self:GetSpecialValueFor("cd") + self:GetCaster():GetTalentValue("special_bonus_imba_antimage_3") end
 
 function imba_antimage_mana_void:OnAbilityPhaseStart()
-	EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "Hero_Antimage.ManaVoidCast", self:GetCaster())
+	self:GetCaster():EmitSound("Hero_Antimage.ManaVoidCast")
 	return true
 end
 
@@ -299,8 +313,15 @@ function imba_antimage_mana_void:OnSpellStart()
 							}
 		ApplyDamage(damageTable)
 	end
-	EmitSoundOnLocationWithCaster(target:GetAbsOrigin(), "Hero_Antimage.ManaVoid", target)
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manavoid.vpcf", PATTACH_CUSTOMORIGIN, nil)
+	target:EmitSound("Hero_Antimage.ManaVoid")
+	local pfx_name = "particles/units/heroes/hero_antimage/antimage_manavoid.vpcf"
+	if HeroItems:UnitHasItem(caster, "skullbasher.vmdl") then
+		pfx_name = "particles/econ/items/antimage/antimage_weapon_basher_ti5/antimage_manavoid_ti_5.vpcf"
+	elseif HeroItems:UnitHasItem(caster, "skullbasher_gold.vmdl") then
+		pfx_name = "particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/antimage_manavoid_ti_5_gold.vpcf"
+	end
+	local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx, 0, target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")))
 	ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetSpecialValueFor("mana_void_aoe_radius"), 0, 0))
+	ParticleManager:ReleaseParticleIndex(pfx)
 end

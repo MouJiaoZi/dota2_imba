@@ -61,6 +61,7 @@ function Precache( context )
 	LinkLuaModifier("modifier_imba_reapers_scythe_permanent", "hero/hero_necrolyte", LUA_MODIFIER_MOTION_NONE)
 	LinkLuaModifier("modifier_imba_rearm_fuck", "hero/hero_tinker", LUA_MODIFIER_MOTION_NONE)
 	LinkLuaModifier("modifier_imba_nullifier_debuff", "items/item_imba_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
+	LinkLuaModifier("modifier_imba_seen", "modifier/modifier_imba_seen.lua", LUA_MODIFIER_MOTION_NONE)
 
 	-- Items
 	PrecacheResource("particle", "particles/econ/items/effigies/status_fx_effigies/gold_effigy_ambient_dire_lvl2.vpcf", context)

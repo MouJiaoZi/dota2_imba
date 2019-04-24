@@ -52,12 +52,12 @@ function modifier_imba_strafe_active:OnIntervalThink()
 	local range = caster:Script_GetAttackRange()
 	if target and (target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() <= (range + 100) then
 		caster:StartGesture(ACT_DOTA_ATTACK)
-		caster:PerformAttack(target, true, true, true, false, true, false, false)
+		caster:PerformAttack(target, false, true, true, false, true, false, false)
 	else
 		local enemies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, range+100, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false)
 		if #enemies > 0 then
 			caster:StartGesture(ACT_DOTA_ATTACK)
-			caster:PerformAttack(enemies[1], true, true, true, false, true, false, false)
+			caster:PerformAttack(enemies[1], false, true, true, false, true, false, false)
 		end
 	end
 end
@@ -123,8 +123,10 @@ function modifier_imba_searing_arrows_passive:OnAttackLanded(keys)
 						damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE,
 						}
 	ApplyDamage(damageTable)
-	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_searing_arrows_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-	EmitSoundOnLocationWithCaster(target:GetAbsOrigin(), "Hero_Clinkz.SearingArrows.Impact", target)
+	if target:GetModifierStackCount("modifier_imba_searing_arrows_debuff", nil) < self:GetAbility():GetSpecialValueFor("max_stacks") then
+		target:AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_imba_searing_arrows_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")}, 1, false, true)
+	end
+	target:EmitSound("Hero_Clinkz.SearingArrows.Impact")
 end
 
 modifier_imba_searing_arrows_debuff = class({})
@@ -147,12 +149,6 @@ function modifier_imba_searing_arrows_debuff:DeclareFunctions()
 end
 
 function modifier_imba_searing_arrows_debuff:GetModifierPhysicalArmorBonus() return (0 - self:GetStackCount() * self:GetAbility():GetSpecialValueFor("armor_reduction")) end
-
-function modifier_imba_searing_arrows_debuff:OnRefresh()
-	if self:GetStackCount() < self:GetAbility():GetSpecialValueFor("max_stacks") then
-		self:IncrementStackCount()
-	end
-end
 
 imba_clinkz_skeleton_walk = class({})
 

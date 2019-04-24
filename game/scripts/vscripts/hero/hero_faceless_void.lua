@@ -13,6 +13,7 @@ function imba_faceless_void_time_walk:IsHiddenWhenStolen() 		return false end
 function imba_faceless_void_time_walk:IsRefreshable() 			return true  end
 function imba_faceless_void_time_walk:IsStealable() 			return true  end
 function imba_faceless_void_time_walk:IsNetherWardStealable() 	return true end
+function imba_faceless_void_time_walk:GetCastRange() if IsClient() then return self:GetSpecialValueFor("range") end end
 
 function imba_faceless_void_time_walk:GetIntrinsicModifierName() return "modifier_imba_time_walk_damage" end
 
@@ -170,8 +171,16 @@ function imba_faceless_void_time_dilation:GetCastRange(vLocation, hTarget) retur
 
 function imba_faceless_void_time_dilation:OnSpellStart()
 	local caster = self:GetCaster()
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_FacelessVoid.TimeDilation.Cast", caster)
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_faceless_void/faceless_void_timedialate.vpcf", PATTACH_CUSTOMORIGIN, nil)
+	local pfx_name = "particles/units/heroes/hero_faceless_void/faceless_void_timedialate.vpcf"
+	local pfx_debuff_name = "particles/units/heroes/hero_faceless_void/faceless_void_dialatedebuf.vpcf"
+	local sound_name = "Hero_FacelessVoid.TimeDilation.Cast"
+	if HeroItems:UnitHasItem(caster, "models/items/faceless_void/bracers_of_aeons/bracers_of_aeons.vmdl") then
+		pfx_name = "particles/econ/items/faceless_void/faceless_void_bracers_of_aeons/fv_bracers_of_aeons_timedialate.vpcf"
+		pfx_debuff_name = "particles/econ/items/faceless_void/faceless_void_bracers_of_aeons/fv_bracers_of_aeons_dialatedebuf.vpcf"
+		sound_name = "Hero_FacelessVoid.TimeDilation.Cast.ti7"
+	end
+	caster:EmitSound(sound_name)
+	local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx, 0, caster:GetAbsOrigin())
 	ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius")))
 	ParticleManager:ReleaseParticleIndex(pfx)
@@ -196,7 +205,7 @@ function imba_faceless_void_time_dilation:OnSpellStart()
 			EmitSoundOnLocationWithCaster(enemy:GetAbsOrigin(), "Hero_FacelessVoid.TimeDilation.Target", enemy)
 			local debuff = enemy:AddNewModifier(caster, self, "modifier_imba_time_dilation_slow", {duration = self:GetSpecialValueFor("cooldown_increase")})
 			debuff:SetStackCount(cooldown_ability_per)
-			local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_faceless_void/faceless_void_dialatedebuf.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
+			local pfx2 = ParticleManager:CreateParticle(pfx_debuff_name, PATTACH_ABSORIGIN_FOLLOW, enemy)
 			ParticleManager:SetParticleControl(pfx2, 1, Vector(cooldown_ability_per, 0, 0))
 			debuff:AddParticle(pfx2, false, false, 15, false, false)
 		end
@@ -281,7 +290,7 @@ function modifier_imba_faceless_void_time_lock_passive:OnAttackLanded(keys)
 				if enemies[i] then
 					self:GetAbility():UseResources(true, true, true)
 					self:GetParent().splitattack = false
-					self:GetParent():PerformAttack(enemies[i], true, true, true, true, false, false, true)
+					self:GetParent():PerformAttack(enemies[i], false, true, true, true, false, false, true)
 					self:GetParent().splitattack = true
 				end
 			end
@@ -437,7 +446,7 @@ function modifier_imba_faceless_void_chronosphere_thinker:IsAura() return true e
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraDuration() return 0.1 end
 function modifier_imba_faceless_void_chronosphere_thinker:GetModifierAura() return "modifier_imba_faceless_void_chronosphere_debuff" end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraRadius() return self.radius end
-function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES	 end
+function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_DEAD end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_BOTH end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BUILDING + DOTA_UNIT_TARGET_BASIC end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraEntityReject(unit)

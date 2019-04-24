@@ -46,10 +46,10 @@ var IMBAHeroes =
 ["npc_dota_hero_nevermore", 1],
 ["npc_dota_hero_night_stalker", 1],
 ["npc_dota_hero_omniknight", 1],
-["npc_dota_hero_puck", 0],
+["npc_dota_hero_puck", 2],
 ["npc_dota_hero_pudge", 1],
 ["npc_dota_hero_pugna", 1],
-["npc_dota_hero_rattletrap", 0],
+["npc_dota_hero_rattletrap", 1],
 ["npc_dota_hero_razor", 0],
 ["npc_dota_hero_riki", 2],
 ["npc_dota_hero_sand_king", 1],
@@ -97,13 +97,13 @@ var IMBAHeroes =
 ["npc_dota_hero_rubick", 2],
 ["npc_dota_hero_luna", 2],
 ["npc_dota_hero_wisp", 0],
-["npc_dota_hero_disruptor", 0],
+["npc_dota_hero_disruptor", 3],
 ["npc_dota_hero_undying", 0],
 ["npc_dota_hero_templar_assassin", 2],
 ["npc_dota_hero_naga_siren", 0],
 ["npc_dota_hero_nyx_assassin", 1],
 ["npc_dota_hero_keeper_of_the_light", 0],
-["npc_dota_hero_visage", 0],
+["npc_dota_hero_visage", 2],
 ["npc_dota_hero_meepo", 0],
 ["npc_dota_hero_magnataur", 1],
 ["npc_dota_hero_centaur", 1],
@@ -127,7 +127,7 @@ var IMBAHeroes =
 ["npc_dota_hero_arc_warden", 0],
 ["npc_dota_hero_abyssal_underlord", 0],
 ["npc_dota_hero_monkey_king", 0],
-["npc_dota_hero_pangolier", 0],
+["npc_dota_hero_pangolier", 2],
 ["npc_dota_hero_dark_willow", 0],
 ["npc_dota_hero_mars", 0],
 ["npc_dota_hero_grimstroke", 0]
@@ -346,3 +346,68 @@ if(!Players.IsSpectator(Players.GetLocalPlayer()))
 {
 	FillTopBarPlayer() ;
 }
+
+FindDotaHudElement("ToGameTransition").style.width = "0%";
+FindDotaHudElement("ToGameTransition").style.height = "0%";
+FindDotaHudElement("HeroRoles").style.width = "0%";
+FindDotaHudElement("HeroRoles").style.height = "0%";
+FindDotaHudElement("HeroPickTeamComposition").FindChildTraverse("RoleColumnContainer").style.width = "0%";
+FindDotaHudElement("HeroPickTeamComposition").FindChildTraverse("RoleColumnContainer").style.height = "0%";
+FindDotaHudElement("HeroPickTeamComposition").FindChildTraverse("MeleeLabel").hittest = false;
+FindDotaHudElement("HeroPickTeamComposition").FindChildTraverse("RangedLabel").hittest = false;
+FindDotaHudElement("HeroFilters").style.width = "0%";
+FindDotaHudElement("HeroFilters").style.height = "0%";
+////////
+FindDotaHudElement("StrategyTeamComposition").FindChildTraverse("RoleColumnContainer").style.width = "0%";
+FindDotaHudElement("StrategyTeamComposition").FindChildTraverse("RoleColumnContainer").style.height = "0%";
+FindDotaHudElement("StrategyTeamComposition").FindChildTraverse("MeleeLabel").hittest = false;
+FindDotaHudElement("StrategyTeamComposition").FindChildTraverse("RangedLabel").hittest = false;
+
+var allyIcon = FindDotaHudElement("AllyHeroesStrategyControl");
+allyIcon.style.marginBottom = "0px";
+allyIcon.GetChild(0).style.height = "30px"
+allyIcon.GetChild(0).GetChild(2).style.width = "80px"
+allyIcon.FindChildTraverse("AllyHeroes").style.flowChildren = "right-wrap";
+allyIcon.FindChildTraverse("AllyHeroes").style.height = "70px"
+allyIcon.FindChildTraverse("AllyHeroes").style.width = "232px"
+
+var enemyIcon = FindDotaHudElement("PredictEnemyHeroesStrategyControl");
+enemyIcon.style.marginBottom = "0px";
+enemyIcon.GetChild(0).style.height = "30px"
+enemyIcon.GetChild(0).GetChild(2).style.width = "70px"
+enemyIcon.FindChildTraverse("PredictEnemyHeroes").style.flowChildren = "right-wrap";
+enemyIcon.FindChildTraverse("PredictEnemyHeroes").style.height = "80px"
+enemyIcon.FindChildTraverse("PredictEnemyHeroes").style.width = "232px"
+
+function SetUpHeroIcon()
+{
+	for(var i=0; i<=9; i++)
+	{
+		var icon = allyIcon.FindChildTraverse("AllyHeroes").GetChild(i);
+		if(icon)
+		{
+			icon.style.width = "38px";
+			icon.style.height = "35px";
+			icon.style.marginRight = "8px";
+			icon.style.horizontalAlign = "center";
+		}
+	}
+	for(var i=0; i<=9; i++)
+	{
+		var icon = enemyIcon.FindChildTraverse("PredictEnemyHeroes").GetChild(i);
+		if(icon)
+		{
+			//
+			icon.style.width = "38px";
+			icon.style.height = "35px";
+			icon.style.marginRight = "8px";
+			icon.style.horizontalAlign = "center";
+		}
+	}
+	if(Game.GameStateIsBefore(7))
+	{
+		$.Schedule(1.0, SetUpHeroIcon);
+	}
+}
+
+$.Schedule(1.0, SetUpHeroIcon);

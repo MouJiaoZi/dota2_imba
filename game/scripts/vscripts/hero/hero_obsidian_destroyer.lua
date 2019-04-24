@@ -309,13 +309,19 @@ function imba_obsidian_destroyer_sanity_eclipse:OnSpellStart()
 	caster:EmitSound("Hero_ObsidianDestroyer.SanityEclipse.Cast")
 	local pos = self:GetCursorPosition()
 	local radius = self:GetSpecialValueFor("radius")
-	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_obsidian_destroyer/obsidian_destroyer_sanity_eclipse_area.vpcf", PATTACH_CUSTOMORIGIN, nil)
+	local pfx_name = "particles/units/heroes/hero_obsidian_destroyer/obsidian_destroyer_sanity_eclipse_area.vpcf"
+	local sound_name = "Hero_ObsidianDestroyer.SanityEclipse"
+	if HeroItems:UnitHasItem(caster, "od_ti8_immortal_wings") then
+		pfx_name = "particles/econ/items/outworld_devourer/od_ti8/od_ti8_santies_eclipse_area.vpcf"
+		sound_name = "Hero_ObsidianDestroyer.SanityEclipse.TI8"
+	end
+	local pfx1 = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx1, 0, pos)
 	ParticleManager:SetParticleControl(pfx1, 1, Vector(radius, radius, 0))
 	ParticleManager:SetParticleControl(pfx1, 2, Vector(radius, radius, radius))
 	ParticleManager:ReleaseParticleIndex(pfx1)
 	local sound = CreateModifierThinker(caster, self, "modifier_imba_obsidian_destroyer_int_gain_counter", {duration = 1.0}, pos, caster:GetTeamNumber(), false)
-	sound:EmitSound("Hero_ObsidianDestroyer.SanityEclipse")
+	sound:EmitSound(sound_name)
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		if enemy:IsIllusion() then

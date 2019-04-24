@@ -7151,7 +7151,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastRange"				"600"
 		"AbilityCastPoint"				"0.0"
-		"AbilityCooldown"				"1.0"
+		"AbilityCooldown"				"5.0"
 		"AbilitySharedCooldown"			"diffusal"
 		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_IN_SPEECH | DECLARE_PURCHASES_TO_SPECTATORS"
 

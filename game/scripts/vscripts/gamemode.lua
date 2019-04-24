@@ -10,6 +10,15 @@ if GameMode == nil then
 		_G.GameMode = class({})
 end
 
+function XpCallError(msg)
+	print("--------XpCall Error--------")
+	print(debug.traceback())
+	print("")
+	--if not IsInToolsMode() then
+		GameRules:SendCustomMessage(debug.traceback(), 0, 0)
+	--end
+end
+
 -- This library allow for easily delayed/timed actions
 require('libraries/timers')
 -- This library can be used for advancted physics/motion/collision of units.  See PhysicsReadme.txt for more information.
@@ -37,12 +46,12 @@ require('libraries/selection')
 require('internal/gamemode')
 require('internal/events')
 
+
 -- settings.lua is where you can specify many different properties for your game mode and is one of the core barebones files.
 require('settings')
 -- events.lua is where you can specify the actions to be taken when any event occurs and is one of the core barebones files.
 require('events')
 require('events/imba_events')
-
 require('imba')
 
 require('libraries/abilitychargecontroller')

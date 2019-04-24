@@ -111,7 +111,7 @@ function imba_earth_spirit_boulder_smash:CastFilterResultTarget(target)
 	if target:IsInvulnerable() then
 		return UF_FAIL_INVULNERABLE
 	end
-	if IsServer() and PlayerResource:IsDisableHelpSetForPlayerID(self:GetCaster():GetPlayerOwnerID(), target:GetPlayerOwnerID()) then
+	if IsServer() and PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), self:GetCaster():GetPlayerOwnerID()) then
 		return UF_FAIL_DISABLE_HELP
 	end
 	if target == self:GetCaster() or (not target:IsHero() and not target:IsCreep()) then
@@ -138,19 +138,19 @@ function imba_earth_spirit_boulder_smash:OnAbilityPhaseStart()
 		return true
 	end
 	if not target then
-		target = FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("rock_search_aoe"))
+		target = FindStoneRemnant(self:GetCursorPosition(), self:GetCastRange(caster:GetAbsOrigin(), caster) + caster:GetCastRangeBonus())
 		if target then
 			local moveToRock = {
 		 		UnitIndex = caster:entindex(), 
 		 		OrderType = DOTA_UNIT_ORDER_MOVE_TO_POSITION,
 		 		TargetIndex = nil, --Optional.  Only used when targeting units
 		 		AbilityIndex = nil, --Optional.  Only used when casting abilities
-		 		Position = self:GetCursorPosition(), --Optional.  Only used when targeting the ground
+		 		Position = target:GetAbsOrigin(), --Optional.  Only used when targeting the ground
 		 		Queue = 0 --Optional.  Used for queueing up abilities
 	 		}
 	 		ExecuteOrderFromTable(moveToRock)
 	 		caster:RemoveModifierByName("modifier_imba_boulder_smash_move_to_cast")
-	 		caster:AddNewModifier(caster, self, "modifier_imba_boulder_smash_move_to_cast", {rock = target:entindex()})
+	 		caster:AddNewModifier(caster, self, "modifier_imba_boulder_smash_move_to_cast", {rock = target:entindex(), pos = self:GetCursorPosition()})
  		end
  	end
  	return false
@@ -173,7 +173,9 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
 		target:SetAbsOrigin(pos)
 	end
-
+	if not target:HasModifier("modifier_imba_stone_remnant_status") and IsEnemy(caster, target) then
+		ApplyDamage({victim = target, attacker = caster, damage = self:GetSpecialValueFor("rock_damage"), ability = self, damage_type = self:GetAbilityDamageType()})
+	end
 	--Motion 
 	local speed = self:GetSpecialValueFor("speed")
 	local distance = target:HasModifier("modifier_imba_stone_remnant_status") and self:GetSpecialValueFor("rock_distance") or self:GetSpecialValueFor("unit_distance")
@@ -215,13 +217,16 @@ function modifier_imba_boulder_smash_move_to_cast:IsPurgeException() 	return fal
 function modifier_imba_boulder_smash_move_to_cast:DeclareFunctions() return {MODIFIER_EVENT_ON_ORDER} end
 
 function modifier_imba_boulder_smash_move_to_cast:OnOrder(keys)
-	if IsServer() and keys.unit == self:GetParent() then
-		self:Destroy()
+	if IsServer() and keys.unit == self:GetParent() and keys.order_type ~= DOTA_UNIT_ORDER_CAST_TOGGLE and keys.order_type ~= DOTA_UNIT_ORDER_TRAIN_ABILITY and keys.order_type ~= DOTA_UNIT_ORDER_SELL_ITEM and keys.order_type ~= DOTA_UNIT_ORDER_DISASSEMBLE_ITEM and keys.order_type ~= DOTA_UNIT_ORDER_MOVE_ITEM and keys.order_type ~= DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO and keys.order_type ~= DOTA_UNIT_ORDER_GLYPH then
+		if self:GetElapsedTime() > FrameTime() then
+			self:Destroy()
+		end
 	end
 end
 
 function modifier_imba_boulder_smash_move_to_cast:OnCreated(keys)
 	if IsServer() then
+		self.pos = StringToVector(keys.pos)
 		self.rock = EntIndexToHScript(keys.rock)
 		self:StartIntervalThink(0.1)
 	end
@@ -232,18 +237,24 @@ function modifier_imba_boulder_smash_move_to_cast:OnIntervalThink()
 		self:Destroy()
 		return
 	end
-	local rocks = Entities:FindAllInSphere(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("rock_search_aoe"))
+	local rock = FindStoneRemnant(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("rock_search_aoe"))
+	if rock == self.rock then
+		self:GetParent():CastAbilityOnPosition(self.pos, self:GetAbility(), self:GetParent():GetPlayerOwnerID())
+		self:Destroy()
+	end
+	--[[local rocks = Entities:FindAllInSphere(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("rock_search_aoe"))
 	for _, rock in pairs(rocks) do
 		if self.rock and not self.rock:IsNull() and self.rock:IsAlive() and self.rock == rock then
-			self:GetParent():CastAbilityOnPosition(self.rock:GetAbsOrigin(), self:GetAbility(), self:GetParent():GetPlayerOwnerID())
+			self:GetParent():CastAbilityOnPosition(self.pos, self:GetAbility(), self:GetParent():GetPlayerOwnerID())
 			self:Destroy()
 			return
 		end
-	end
+	end]]
 end
 
 function modifier_imba_boulder_smash_move_to_cast:OnDestroy()
 	if IsServer() then
+		self.pos = nil
 		self.rock = nil
 	end
 end
@@ -454,7 +465,7 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 		self:GetParent():SetAbsOrigin(next_pos)
 	end
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 80, true)
-	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		if not IsInTable(enemy, self.hitted) then
 			self.hitted[#self.hitted+1] = enemy
@@ -538,6 +549,9 @@ function imba_earth_spirit_geomagnetic_grip:CastFilterResultTarget(target)
 	if target:IsInvulnerable() then
 		return UF_FAIL_INVULNERABLE
 	end
+	if IsServer() and PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), self:GetCaster():GetPlayerOwnerID()) then
+		return UF_FAIL_DISABLE_HELP
+	end
 	if target == self:GetCaster() or not target:IsHero() then
 		return UF_FAIL_CUSTOM
 	end
@@ -553,6 +567,7 @@ end
 
 function imba_earth_spirit_geomagnetic_grip:OnAbilityPhaseStart()
 	local caster = self:GetCaster()
+	print(caster:GetClassname())
 	local target = self:GetCursorTarget() or FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("radius"))
 	if target then
 		return true
@@ -667,6 +682,7 @@ function imba_earth_spirit_petrify:IsHiddenWhenStolen() 	return false end
 function imba_earth_spirit_petrify:IsRefreshable() 			return true end
 function imba_earth_spirit_petrify:IsStealable() 			return false end
 function imba_earth_spirit_petrify:IsNetherWardStealable()	return false end
+function imba_earth_spirit_petrify:ProcsMagicStick()		return false end
 function imba_earth_spirit_petrify:IsTalentAbility() return true end
 function imba_earth_spirit_petrify:GetIntrinsicModifierName() return "modifier_imba_petrify_controller" end
 function imba_earth_spirit_petrify:GetAbilityTextureName() return "earth_spirit_petrify_"..self:GetCaster():GetModifierStackCount("modifier_imba_petrify_controller", nil) end
@@ -693,7 +709,12 @@ function imba_earth_spirit_petrify:OnSpellStart()
 		end
 	elseif caster:HasScepter() then
 		if not self:GetCursorTarget():TriggerStandardTargetSpell(self) then
-			self:GetCursorTarget():AddNewModifier(caster, self, "modifier_imba_stone_remnant_status", {duration = self:GetSpecialValueFor("duration_scepter")})
+			if not PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), caster:GetPlayerOwnerID()) then
+				target:AddNewModifier(caster, self, "modifier_imba_stone_remnant_status", {duration = self:GetSpecialValueFor("duration_scepter")})
+			else
+				caster:AddNewModifier(caster, self, "modifier_imba_stunned", {duration = self:GetSpecialValueFor("duration_scepter")})
+				FindClearSpaceForUnit(caster, target:GetAbsOrigin(), true)
+			end
 		end
 	end
 end

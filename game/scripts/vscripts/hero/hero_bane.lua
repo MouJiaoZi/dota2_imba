@@ -324,7 +324,7 @@ function imba_bane_fiends_grip:OnChannelFinish(bInterrupted)
 	if self:GetCaster():HasScepter() then
 		extra_duration = self:GetSpecialValueFor("fiends_grip_extra_duration_scepter")
 	end
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), Vector(0,0,0), nil, 250000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_UNITS_EVERYWHERE, false)
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), Vector(0,0,0), nil, 250000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_DEAD, FIND_UNITS_EVERYWHERE, false)
 	for _, enemy in pairs(enemies) do
 		local buffs = enemy:FindAllModifiersByName("modifier_imba_bane_fiends_grip")
 		for _, buff in pairs(buffs) do
@@ -342,6 +342,7 @@ function modifier_imba_bane_fiends_grip:IsHidden() 			return false end
 function modifier_imba_bane_fiends_grip:IsPurgable() 		return false end
 function modifier_imba_bane_fiends_grip:IsPurgeException() 	return false end
 function modifier_imba_bane_fiends_grip:IsStunDebuff() 		return true end
+function modifier_imba_bane_fiends_grip:RemoveOnDeath() 	return false end
 function modifier_imba_bane_fiends_grip:GetAttributes()		return MODIFIER_ATTRIBUTE_MULTIPLE + MODIFIER_ATTRIBUTE_IGNORE_INVULNERABLE end
 
 function modifier_imba_bane_fiends_grip:GetEffectName()	return "particles/units/heroes/hero_bane/bane_fiends_grip.vpcf"	 end

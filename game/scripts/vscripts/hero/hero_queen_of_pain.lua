@@ -123,6 +123,7 @@ function imba_queenofpain_blink:IsHiddenWhenStolen() 		return false end
 function imba_queenofpain_blink:IsRefreshable() 			return true end
 function imba_queenofpain_blink:IsStealable() 				return true end
 function imba_queenofpain_blink:IsNetherWardStealable()		return true end
+function imba_queenofpain_blink:GetCastRange()	if IsClient() then return self:GetSpecialValueFor("blink_range") end end
 
 function imba_queenofpain_blink:OnSpellStart()
 	local caster = self:GetCaster()

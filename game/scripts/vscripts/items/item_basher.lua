@@ -21,6 +21,25 @@ function modifier_imba_basher_passive:GetModifierBonusStats_Strength() return se
 function modifier_imba_basher_passive:OnCreated()
 	if IsServer() then
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_basher_unique", {})
+		if HeroItems:UnitHasItem(self:GetParent(), "skullbasher.vmdl") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5/antimage_ambient_skullbasher.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h1", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, true, false, 15, false, false)
+			if HeroItems:UnitHasItem(self:GetParent(), "skullbasher_offhand.vmdl") then
+				local pfx2 = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5/antimage_ambient_skullbasher_offhand.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+				ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h2", self:GetParent():GetAbsOrigin(), true)
+				self:AddParticle(pfx2, true, false, 15, false, false)
+			end
+		elseif HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold.vmdl") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/antimage_ambient_skullbasher_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h1", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, true, false, 15, false, false)
+			if HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold_offhand.vmdl") then
+				local pfx2 = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/antimage_ambient_skullbasher_offhand_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+				ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h2", self:GetParent():GetAbsOrigin(), true)
+				self:AddParticle(pfx2, true, false, 15, false, false)
+			end
+		end
 	end
 end
 
@@ -69,6 +88,23 @@ function modifier_imba_basher_unique:OnAttackLanded(keys)
 			SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, keys.target, self.ability:GetSpecialValueFor("bonus_chance_damage"), nil)
 			keys.target:EmitSound("DOTA_Item.MKB.Minibash")
 			self.ability:UseResources(true, true, true)
+			if HeroItems:UnitHasItem(self:GetParent(), "skullbasher.vmdl") then
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5/am_basher.vpcf", PATTACH_CUSTOMORIGIN, nil)
+				ParticleManager:SetParticleControlForward(pfx, 0, keys.target:GetForwardVector())
+				ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 3, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 2, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:ReleaseParticleIndex(pfx)
+			elseif HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold.vmdl") then
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/am_basher_gold.vpcf", PATTACH_CUSTOMORIGIN, nil)
+				ParticleManager:SetParticleControlForward(pfx, 0, keys.target:GetForwardVector())
+				ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 3, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 2, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:ReleaseParticleIndex(pfx)
+			end
 		end
 	end
 end
@@ -132,6 +168,25 @@ function modifier_imba_abyssal_blade_passive:GetModifierBonusStats_Strength() re
 function modifier_imba_abyssal_blade_passive:OnCreated()
 	if IsServer() then
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_abyssal_blade_unique", {})
+		if HeroItems:UnitHasItem(self:GetParent(), "skullbasher.vmdl") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5/antimage_ambient_skullbasher.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h1", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, true, false, 15, false, false)
+			if HeroItems:UnitHasItem(self:GetParent(), "skullbasher_offhand.vmdl") then
+				local pfx2 = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5/antimage_ambient_skullbasher_offhand.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+				ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h2", self:GetParent():GetAbsOrigin(), true)
+				self:AddParticle(pfx2, true, false, 15, false, false)
+			end
+		elseif HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold.vmdl") then
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/antimage_ambient_skullbasher_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h1", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, true, false, 15, false, false)
+			if HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold_offhand.vmdl") then
+				local pfx2 = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/antimage_ambient_skullbasher_offhand_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+				ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_h2", self:GetParent():GetAbsOrigin(), true)
+				self:AddParticle(pfx2, true, false, 15, false, false)
+			end
+		end
 	end
 end
 
@@ -180,6 +235,23 @@ function modifier_imba_abyssal_blade_unique:OnAttackLanded(keys)
 			ApplyDamage({victim = keys.target, attacker = self:GetParent(), ability = self.ability, damage = self.ability:GetSpecialValueFor("bonus_chance_damage"), damage_type = DAMAGE_TYPE_MAGICAL})
 			SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, keys.target, self.ability:GetSpecialValueFor("bonus_chance_damage"), nil)
 			keys.target:EmitSound("DOTA_Item.MKB.Minibash")
+			if HeroItems:UnitHasItem(self:GetParent(), "skullbasher.vmdl") then
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5/am_basher.vpcf", PATTACH_CUSTOMORIGIN, nil)
+				ParticleManager:SetParticleControlForward(pfx, 0, keys.target:GetForwardVector())
+				ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 3, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 2, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:ReleaseParticleIndex(pfx)
+			elseif HeroItems:UnitHasItem(self:GetParent(), "skullbasher_gold.vmdl") then
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/am_basher_gold.vpcf", PATTACH_CUSTOMORIGIN, nil)
+				ParticleManager:SetParticleControlForward(pfx, 0, keys.target:GetForwardVector())
+				ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 3, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 2, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:ReleaseParticleIndex(pfx)
+			end
 		end
 	end
 end

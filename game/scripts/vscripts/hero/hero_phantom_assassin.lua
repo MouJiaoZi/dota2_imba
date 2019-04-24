@@ -66,7 +66,7 @@ function imba_phantom_assassin_stifling_dagger:OnProjectileHit(target, location)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), location, 450, self:GetSpecialValueFor("slow_duration"), false)
 	local caster = self:GetCaster()
 	caster:AddNewModifier(caster, self, "modifier_imba_stifling_dagger_atk", {})
-	caster:PerformAttack(target, true, true, true, false, false, false, true)
+	caster:PerformAttack(target, false, true, true, false, false, false, true)
 	caster:RemoveModifierByName("modifier_imba_stifling_dagger_atk")
 	if not target:IsMagicImmune() then
 		target:AddNewModifier(caster, self, "modifier_imba_stifling_dagger_slow", {duration = self:GetSpecialValueFor("slow_duration")})

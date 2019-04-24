@@ -12,6 +12,11 @@ function updataPlayerInfo()
 	playerPanel.FindChildTraverse("IMBAPlayerDeaths").text=Players.GetDeaths(i);
 	playerPanel.FindChildTraverse("IMBAPlayerAssists").text=Players.GetAssists(i);
 
+	if(Players.GetLocalPlayer() == i)
+	{
+		playerPanel.FindChildTraverse("IMBAPlayerAndHeroName").style.washColor = GameUI.CustomUIConfig().player_colors[i] + "FF";// + " -3px -3px 6px 6px";
+	}
+
 	if(playerInfoTable != null)
 	{
 		playerPanel.FindChildTraverse("IMBAPlayerGold").text = playerInfoTable.player_gold;

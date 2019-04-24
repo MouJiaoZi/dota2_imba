@@ -139,7 +139,7 @@ function imba_ember_spirit_sleight_of_fist:OnSpellStart()
 			caster:SetForwardVector(Vector(direction[1], direction[2], 0))
 			if not caster:IsDisarmed() then
 				caster:SetAttacking(enemy)
-				caster:PerformAttack(enemy, true, true, true, false, false, false, false)
+				caster:PerformAttack(enemy, false, true, true, false, false, false, false)
 			end
 			if ability and ability:GetLevel() > 0 and PseudoRandom:RollPseudoRandom(self, self:GetSpecialValueFor("chain_chance")) and not enemy:IsMagicImmune() then
 				enemy:AddNewModifier(caster, ability, "modifier_imba_searing_chains", {duration = ability:GetSpecialValueFor("duration")})

@@ -9,6 +9,7 @@ function imba_jakiro_fire_breath:IsHiddenWhenStolen() 		return false end
 function imba_jakiro_fire_breath:IsRefreshable() 			return true  end
 function imba_jakiro_fire_breath:IsStealable() 				return true  end
 function imba_jakiro_fire_breath:IsNetherWardStealable() 	return true end
+function imba_jakiro_fire_breath:GetCastRange() if IsClient() then return self:GetSpecialValueFor("range") end end
 
 function imba_jakiro_fire_breath:GetAssociatedSecondaryAbilities() return "imba_jakiro_ice_breath" end
 
@@ -147,6 +148,7 @@ function imba_jakiro_ice_breath:IsHiddenWhenStolen() 		return true end
 function imba_jakiro_ice_breath:IsRefreshable() 			return true end
 function imba_jakiro_ice_breath:IsStealable() 				return true end
 function imba_jakiro_ice_breath:IsNetherWardStealable() 	return true end
+function imba_jakiro_ice_breath:GetCastRange() if IsClient() then return self:GetSpecialValueFor("range") end end
 
 function imba_jakiro_ice_breath:GetAssociatedPrimaryAbilities() return "imba_jakiro_fire_breath" end
 

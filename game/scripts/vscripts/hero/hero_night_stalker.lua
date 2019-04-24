@@ -225,17 +225,18 @@ function modifier_imba_hunter_in_the_night:OnCreated()
 end
 
 function modifier_imba_hunter_in_the_night:OnIntervalThink()
+	local caster = self:GetParent()
 	if not GameRules:IsDaytime() then
-		if not self:GetParent():HasModifier("modifier_imba_hunter_in_the_night_dummy") then
-			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_hunter_in_the_night_dummy", {})
+		if not caster:HasModifier("modifier_imba_hunter_in_the_night_dummy") then
+			caster:AddNewModifier(caster, self:GetAbility(), "modifier_imba_hunter_in_the_night_dummy", {})
 		end
 	else
-		local a = self:GetParent():FindModifierByName("modifier_imba_hunter_in_the_night_dummy") and self:GetParent():FindModifierByName("modifier_imba_hunter_in_the_night_dummy"):Destroy() or 1
+		caster:RemoveModifierByName("modifier_imba_hunter_in_the_night_dummy")
 	end
 end
 
 function modifier_imba_hunter_in_the_night:OnDestroy()
-	if IsServer then
+	if IsServer() then
 		self:GetParent():RemoveModifierByName("modifier_imba_hunter_in_the_night_dummy")
 	end
 end
@@ -355,7 +356,7 @@ function modifier_imba_darkness_caster:IsPurgable() 		return false end
 function modifier_imba_darkness_caster:IsPurgeException()	return false end
 function modifier_imba_darkness_caster:RemoveOnDeath()		return false end
 function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT} end
-function modifier_imba_darkness_caster:GetModifierMoveSpeedBonus_Percentage() return 10000 end
+function modifier_imba_darkness_caster:GetBonusNightVision() return self:GetAbility():GetSpecialValueFor("bonus_vision") end
 function modifier_imba_darkness_caster:GetModifierIgnoreMovespeedLimit() return 1 end
 function modifier_imba_darkness_caster:GetIMBAMaxMovespeed() return 10000 end
 

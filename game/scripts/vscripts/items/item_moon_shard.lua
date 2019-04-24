@@ -53,7 +53,7 @@ function modifier_imba_moon_shard_slot:IsPurgable() 		return false end
 function modifier_imba_moon_shard_slot:IsPurgeException() 	return false end
 function modifier_imba_moon_shard_slot:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_BONUS_NIGHT_VISION} end
 function modifier_imba_moon_shard_slot:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("bonus_attack_speed")) end
-function modifier_imba_moon_shard_slot:GetBonusNightVision() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("bonus_night_vision")) end
+function modifier_imba_moon_shard_slot:GetBonusNightVision() return (self:GetAbility():GetSpecialValueFor("bonus_night_vision")) end
 
 function modifier_imba_moon_shard_slot:OnCreated()
 	if IsServer() then

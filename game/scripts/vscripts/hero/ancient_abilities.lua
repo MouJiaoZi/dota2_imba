@@ -535,6 +535,16 @@ end
 function modifier_imba_courier_buff:OnDeath(keys)
 	if IsServer() and keys.unit == self:GetParent() then
 		GameRules:SendCustomMessage("Courier Controller: "..self.id..". Game Time: "..GameRules:GetGameTime()..". Player: "..PlayerResource:GetPlayerName(tonumber(self.pid)), 0, 0)
+		IMBA_COURIER_FEEDING[self.pid] = IMBA_COURIER_FEEDING[self.pid] + 1
+		if IMBA_COURIER_FEEDING[self.pid] >= 7 then
+			IMBA_DISABLE_PLAYER[self.pid] = true
+			IMBA:SendHTTPRequest("imba_add_disable.php", {["steamid_64"] = tostring(PlayerResource:GetSteamID(self.pid)), ["match_id"] = GameRules:GetMatchID(), ["game_time"] = GameRules:GetGameTime(), ["add_type"] = "record"}, nil, nil)
+			IMBA:SendHTTPRequest("imba_add_disable.php", {["steamid_64"] = tostring(PlayerResource:GetSteamID(self.pid)), ["add_type"] = "disable"}, nil, nil)
+			Notifications:BottomToAll({text = PlayerResource:GetPlayerName(self.pid).."(ID:"..tostring(PlayerResource:GetSteamID(self.pid))..") ", duration = 20.0})
+			Notifications:BottomToAll({text = "#imba_player_banned_message", duration = 20.0, continue = true})
+		else
+			IMBA:SendHTTPRequest("imba_add_disable.php", {["steamid_64"] = tostring(PlayerResource:GetSteamID(self.pid)), ["match_id"] = GameRules:GetMatchID(), ["game_time"] = GameRules:GetGameTime(), ["add_type"] = "record"}, nil, nil)
+		end
 	end
 end
 

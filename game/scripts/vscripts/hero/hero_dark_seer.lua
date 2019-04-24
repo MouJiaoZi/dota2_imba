@@ -38,8 +38,8 @@ function imba_dark_seer_wall_of_replica:OnSpellStart()
 	local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 2.0}, pos, caster:GetTeamNumber(), false)
 	sound:EmitSound("Hero_Dark_Seer.Wall_of_Replica_Start")
 	-----------------
-	local wall_start = CreateModifierThinker(caster, self, "modifier_imba_wall_of_scan_start", {duration = self:GetSpecialValueFor("duration"), center_x = pos.x, center_y = pos.y}, point_1, caster:GetTeamNumber(), false)
-	local wall_end = CreateModifierThinker(caster, self, "modifier_imba_wall_of_scan_end", {duration = self:GetSpecialValueFor("duration"), center_x = pos.x, center_y = pos.y, start = wall_start:entindex()}, point_2, caster:GetTeamNumber(), false)
+	local wall_start = CreateModifierThinker(nil, self, "modifier_imba_wall_of_scan_start", {duration = self:GetSpecialValueFor("duration"), center_x = pos.x, center_y = pos.y}, point_1, caster:GetTeamNumber(), false)
+	local wall_end = CreateModifierThinker(nil, self, "modifier_imba_wall_of_scan_end", {duration = self:GetSpecialValueFor("duration"), center_x = pos.x, center_y = pos.y, start = wall_start:entindex()}, point_2, caster:GetTeamNumber(), false)
 	wall_start:EmitSound("Hero_Dark_Seer.Wall_of_Replica_Start")
 end
 
@@ -47,6 +47,7 @@ modifier_imba_wall_of_scan_start = class({})
 
 function modifier_imba_wall_of_scan_start:OnCreated(keys)
 	if IsServer() then
+		self:GetParent():GiveVisionForBothTeam()
 		self.center = Vector(keys.center_x, keys.center_y, 0)
 		self.center = GetGroundPosition(self.center, nil)
 		self:StartIntervalThink(FrameTime())
@@ -72,6 +73,7 @@ modifier_imba_wall_of_scan_end = class({})
 
 function modifier_imba_wall_of_scan_end:OnCreated(keys)
 	if IsServer() then
+		self:GetParent():GiveVisionForBothTeam()
 		self.head = EntIndexToHScript(keys.start)
 		self.center = Vector(keys.center_x, keys.center_y, 0)
 		self.center = GetGroundPosition(self.center, nil)
@@ -93,20 +95,21 @@ function modifier_imba_wall_of_scan_end:OnIntervalThink()
 	pos.z = self.center.z
 	local rorate_speed = self:GetAbility():GetSpecialValueFor("rotate_speed") / (1.0 / FrameTime())
 	local new_pos = RotatePosition(self.center, QAngle(0, rorate_speed, 0), pos)
+	local caster = self:GetAbility():GetCaster()
 	self:GetParent():SetAbsOrigin(new_pos)
 	local length = (self.head:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D()
 	local direction = (self.head:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
 	direction.z = 0.0
-	local enemy = FindUnitsInLine(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self.head:GetAbsOrigin(), nil, 50, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS)
+	local enemy = FindUnitsInLine(caster:GetTeamNumber(), self:GetParent():GetAbsOrigin(), self.head:GetAbsOrigin(), nil, 50, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS)
 	for i=1, #enemy do
-		if not IsNearEnemyFountain(enemy[i]:GetAbsOrigin(), self:GetCaster():GetTeamNumber(), 1600) then
-			enemy[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_wall_of_scan_debuff", {duration = self:GetAbility():GetSpecialValueFor("scan_duration")})
-			AddFOWViewer(self:GetCaster():GetTeamNumber(), enemy[i]:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("fow_range"), FrameTime() * 2, false)
-			if self:GetCaster():HasScepter() then
-				local ability = self:GetCaster():FindAbilityByName("dark_seer_ion_shell")
+		if not IsNearEnemyFountain(enemy[i]:GetAbsOrigin(), caster:GetTeamNumber(), 1600) then
+			enemy[i]:AddNewModifier(caster, self:GetAbility(), "modifier_imba_wall_of_scan_debuff", {duration = self:GetAbility():GetSpecialValueFor("scan_duration")})
+			AddFOWViewer(caster:GetTeamNumber(), enemy[i]:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("fow_range"), FrameTime() * 2, false)
+			if caster:HasScepter() then
+				local ability = caster:FindAbilityByName("dark_seer_ion_shell")
 				if ability and ability:GetLevel() > 0 then
-					if not enemy[i]:FindModifierByNameAndCaster("modifier_dark_seer_ion_shell", self:GetCaster()) then
-						enemy[i]:AddNewModifier(self:GetCaster(), ability, "modifier_dark_seer_ion_shell", {duration = self:GetAbility():GetSpecialValueFor("ion_duration_scepter")})
+					if not enemy[i]:FindModifierByNameAndCaster("modifier_dark_seer_ion_shell", caster) then
+						enemy[i]:AddNewModifier(caster, ability, "modifier_dark_seer_ion_shell", {duration = self:GetAbility():GetSpecialValueFor("ion_duration_scepter")})
 					else
 						if enemy[i]:HasModifier("modifier_dark_seer_ion_shell") then
 							local buff = enemy[i]:FindModifierByName("modifier_dark_seer_ion_shell")
@@ -119,7 +122,7 @@ function modifier_imba_wall_of_scan_end:OnIntervalThink()
 			end
 		end
 	end
-	AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, FrameTime() * 2, true)
+	AddFOWViewer(caster:GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, FrameTime() * 2, true)
 	--DebugDrawLine(self.head:GetAbsOrigin(), self:GetParent():GetAbsOrigin(), 0, 33, 255, true, FrameTime())
 end
 

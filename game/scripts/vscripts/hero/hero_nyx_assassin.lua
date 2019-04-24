@@ -240,7 +240,6 @@ function modifier_imba_spiked_carapace:IsPurgable() 		return false end
 function modifier_imba_spiked_carapace:IsPurgeException() 	return false end
 function modifier_imba_spiked_carapace:GetEffectName() return "particles/units/heroes/hero_nyx_assassin/nyx_assassin_spiked_carapace.vpcf" end
 function modifier_imba_spiked_carapace:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-
 function modifier_imba_spiked_carapace:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE} end
 
 function modifier_imba_spiked_carapace:GetModifierIncomingDamage_Percentage(keys)
@@ -248,7 +247,7 @@ function modifier_imba_spiked_carapace:GetModifierIncomingDamage_Percentage(keys
 		return 
 	end
 	if keys.attacker:IsMagicImmune() or keys.attacker:GetTeamNumber() == self:GetParent():GetTeamNumber() or keys.attacker:IsBuilding() then
-		return -100000
+		return -300
 	end
 	local dmg = keys.damage
 	keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_spiked_carapace_stun", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
@@ -262,7 +261,7 @@ function modifier_imba_spiked_carapace:GetModifierIncomingDamage_Percentage(keys
 						}
 	ApplyDamage(damageTable)
 	keys.attacker:EmitSound("Hero_NyxAssassin.SpikedCarapace.Stun")
-	return -100000
+	return -300
 end
 
 modifier_imba_spiked_carapace_stun = class({})
@@ -466,18 +465,17 @@ function modifier_imba_vendetta_damage_stacks:IsDebuff()			return false end
 function modifier_imba_vendetta_damage_stacks:IsHidden() 			return false end
 function modifier_imba_vendetta_damage_stacks:IsPurgable() 			return false end
 function modifier_imba_vendetta_damage_stacks:IsPurgeException() 	return false end
-function modifier_imba_vendetta_damage_stacks:DeclareFunctions() return {MODIFIER_EVENT_ON_TAKEDAMAGE} end
-function modifier_imba_vendetta_damage_stacks:OnTakeDamage(keys)
+function modifier_imba_vendetta_damage_stacks:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_TOOLTIP} end
+function modifier_imba_vendetta_damage_stacks:OnTooltip() return (10 * self:GetStackCount()) end
+function modifier_imba_vendetta_damage_stacks:GetModifierIncomingDamage_Percentage(keys)
 	if IsServer() then
-		if keys.unit ~= self:GetParent() then
-			return
-		end
 		local stacks = math.floor(keys.damage / 10)
 		local max_stacks = self:GetAbility():GetSpecialValueFor("damage_storage") / 10
 		if self:GetParent():HasScepter() then
 			max_stacks = 99999999
 		end
 		self:SetStackCount(math.min(self:GetStackCount()+stacks, max_stacks))
+		return 0
 	end
 end
 

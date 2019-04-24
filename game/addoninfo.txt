@@ -3,8 +3,8 @@
 	"TeamCount"				"2"
 	"PenaltiesEnabled"		"1"
 	"EnablePickRules"		"1"
-	"CheckAFKPlayers"		"0"
-	"maps"      			"dbii_5v5 dbii_10v10"
+	"CheckAFKPlayers"		"1"
+	"maps"      			"dbii_5v5 dbii_10v10 dbii_death_match"
 	"IsPlayable"  			"1"
 	"dbii_5v5"
 	{

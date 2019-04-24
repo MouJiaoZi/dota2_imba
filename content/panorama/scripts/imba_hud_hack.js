@@ -115,7 +115,7 @@ function SetDeathMatchKillGoal()
 	DoN.style.height = "" + (DoN.actuallayoutheight * 2) + "px";
 	FindDotaHudElement("GameTime").style.verticalAlign = "top";
 	var goal = $.CreatePanel('Label', DoN, 'DM_KILL_GOAL');
-	goal.text = "???";
+	goal.text = "";
 	if(Game.GetMapInfo().map_display_name == "dbii_death_match")
 	{
 		$.Schedule(1.0, SetDeathMatchKillGoalNum);

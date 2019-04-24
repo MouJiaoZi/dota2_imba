@@ -7,6 +7,7 @@ var $img =
 "file://{images}/spellicons/pangolier_heartpiercer.png",
 "file://{images}/spellicons/centaur_return.png",
 "file://{images}/spellicons/bristleback_bristleback.png",
+"file://{images}/spellicons/chen_holy_persuasion.png",
 ];
 
 var $tip = 
@@ -17,6 +18,7 @@ var $tip =
 "#IMBA_LOADING_TIPS_4",
 "#IMBA_LOADING_TIPS_5",
 "#IMBA_LOADING_TIPS_6",
+"#IMBA_LOADING_TIPS_7",
 ];
 
 function FindDotaHudElement(sElement)

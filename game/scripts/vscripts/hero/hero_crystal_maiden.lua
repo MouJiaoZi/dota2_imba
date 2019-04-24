@@ -22,11 +22,18 @@ function imba_crystal_maiden_crystal_nova:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
 	local radius = self:GetSpecialValueFor("radius")
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_crystalmaiden/maiden_crystal_nova.vpcf", PATTACH_WORLDORIGIN, nil)
+	local pfx_name = "particles/units/heroes/hero_crystalmaiden/maiden_crystal_nova.vpcf"
+	local sound_name = "Hero_Crystal.CrystalNova"
+	if HeroItems:UnitHasItem(caster, "cowl_of_ice") then
+		pfx_name = "particles/econ/items/crystal_maiden/crystal_maiden_cowl_of_ice/maiden_crystal_nova_cowlofice.vpcf"
+		sound_name = "Hero_Crystal.CrystalNova.Yulsaria"
+	end
+	local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx, 0, pos)
 	ParticleManager:SetParticleControl(pfx, 1, Vector(radius * 1.3, 3, radius * 1.3))
 	ParticleManager:ReleaseParticleIndex(pfx)
-	EmitSoundOnLocationWithCaster(pos, "Hero_Crystal.CrystalNova", caster)
+	local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 2.0}, pos, caster:GetTeamNumber(), false)
+	sound:EmitSound(sound_name)
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		local damageTable = {
@@ -409,6 +416,7 @@ end
 
 function modifier_imba_freezing_field_thinker:OnIntervalThink()
 	if not self:GetAbility():IsChanneling() then
+		self:Destroy()
 		self:StartIntervalThink(-1)
 		return
 	end

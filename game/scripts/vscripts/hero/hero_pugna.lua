@@ -483,6 +483,8 @@ function modifier_imba_nether_ward:OnSpentMana(keys)
 		"imba_terrorblade_conjure_image",
 		"mars_spear",
 		"mars_arena_of_blood",
+		"imba_rattletrap_power_cogs",
+		"imba_rattletrap_rocket_flare",
 	}
 	if IsInTable(keys.ability:GetName(), forbidden_abilities) or (keys.ability.IsNetherWardStealable and not keys.ability:IsNetherWardStealable()) or keys.ability:IsItem() or keys.ability:GetCaster():IsMagicImmune() then
 		return

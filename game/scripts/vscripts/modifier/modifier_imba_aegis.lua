@@ -100,31 +100,35 @@ end
 function modifier_imba_roshan_upgrade:OnCreated()
 	if IsServer() then
 		self.damage = 0
-		self:StartIntervalThink(0.1)
+		self:StartIntervalThink(0.2)
 	end
 end
 
 function modifier_imba_roshan_upgrade:OnIntervalThink()
-	if self:IsNull() or self:GetParent():IsNull() or not self:GetParent():IsAlive() then
+	local boss = self:GetParent()
+	if self:IsNull() or boss:IsNull() or not boss:IsAlive() then
 		self:Destroy()
 		return
 	end
+	if boss:GetAttackTarget() and boss:GetAttackTarget():IsCourier() then
+		boss:Stop()
+	end
 	----back to your house
-	if (self:GetParent():GetAbsOrigin() - roshan_pos):Length2D() > 1200 then
-		FindClearSpaceForUnit(self:GetParent(), roshan_pos, true)
-		self:GetParent():Stop()
+	if (boss:GetAbsOrigin() - roshan_pos):Length2D() > 1200 then
+		FindClearSpaceForUnit(boss, roshan_pos, true)
+		boss:Stop()
 	end
 	----regen health
-	if GameRules:GetGameTime() - self.damage > 5.0 then
-		self:GetParent():Heal(self:GetParent():GetMaxHealth() * 0.05, nil)
-		FindClearSpaceForUnit(self:GetParent(), roshan_pos, true)
-		self:GetParent():Stop()
+	if GameRules:GetGameTime() - self.damage > 5.0 and boss:GetHealth() < boss:GetMaxHealth() then
+		boss:Heal(boss:GetMaxHealth() * 0.1, nil)
+		FindClearSpaceForUnit(boss, roshan_pos, true)
+		boss:Stop()
 	end
 	----ability
-	if self:GetParent():HasAbility("imba_roshan_slam") then
-		local ability = self:GetParent():FindAbilityByName("imba_roshan_slam")
-		if ability:IsCooldownReady() and self:GetParent():GetAttackTarget() then
-			self:GetParent():CastAbilityNoTarget(ability, -1)
+	if boss:HasAbility("imba_roshan_slam") then
+		local ability = boss:FindAbilityByName("imba_roshan_slam")
+		if ability:IsCooldownReady() and boss:GetAttackTarget() then
+			boss:CastAbilityNoTarget(ability, -1)
 		end
 	end
 end

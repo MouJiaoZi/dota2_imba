@@ -219,12 +219,15 @@ function imba_lich_chain_frost:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	local speed = self:GetSpecialValueFor("projectile_speed")
-
+	local pfx_name = "particles/units/heroes/hero_lich/lich_chain_frost.vpcf"
+	if HeroItems:UnitHasItem(caster, "lich_ti8") then
+		pfx_name = "particles/econ/items/lich/lich_ti8_immortal_arms/lich_ti8_chain_frost.vpcf"
+	end
 	local info = {
 				Target = target,
 				Source = caster,
 				Ability = self,	
-				EffectName = "particles/units/heroes/hero_lich/lich_chain_frost.vpcf",
+				EffectName = pfx_name,
 				iMoveSpeed = speed,
 				vSourceLoc= caster:GetAbsOrigin(),                -- Optional (HOW)
 				bDrawsOnMinimap = false,                          -- Optional
@@ -237,7 +240,7 @@ function imba_lich_chain_frost:OnSpellStart()
 				ExtraData = {speed = speed, first = 1, bounces = 0}
 				}
 	ProjectileManager:CreateTrackingProjectile(info)
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_Lich.ChainFrost", caster)
+	caster:EmitSound("Hero_Lich.ChainFrost")
 end
 
 function imba_lich_chain_frost:OnProjectileThink_ExtraData(location, keys)
@@ -256,7 +259,7 @@ function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
 		target:TriggerSpellAbsorb(self)
 		target:Interrupt()
 	end
-	EmitSoundOnLocationWithCaster(location, "Hero_Lich.ChainFrostImpact.Hero", target)
+	target:EmitSound("Hero_Lich.ChainFrostImpact.Hero")
 	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_chain_frost", {duration = self:GetSpecialValueFor("slow_duration")})
 	if IsNearEnemyFountain(target:GetAbsOrigin(), self:GetCaster():GetTeamNumber(), 1100) then
 		speed = self:GetSpecialValueFor("speed_fountain")
@@ -289,18 +292,22 @@ function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
 	if not hero_got then
 		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), location, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
 		for _, enemy in pairs(enemies) do
-			if enemy ~= target then
+			if enemy ~= target and not string.find(enemy:GetUnitName(), "npc_dota_unit_undying_zombie") then
 				next_target = enemy
 				break
 			end
 		end
 	end
 	if next_target then
+		local pfx_name = "particles/units/heroes/hero_lich/lich_chain_frost.vpcf"
+		if HeroItems:UnitHasItem(self:GetCaster(), "lich_ti8") then
+			pfx_name = "particles/econ/items/lich/lich_ti8_immortal_arms/lich_ti8_chain_frost.vpcf"
+		end
 		local info = {
 					Target = next_target,
 					Source = target,
 					Ability = self,	
-					EffectName = "particles/units/heroes/hero_lich/lich_chain_frost.vpcf",
+					EffectName = pfx_name,
 					iMoveSpeed = speed,
 					vSourceLoc= location,                -- Optional (HOW)
 					bDrawsOnMinimap = false,                          -- Optional

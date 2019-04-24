@@ -382,7 +382,7 @@ function imba_sniper_assassinate:OnProjectileThink_ExtraData(location, keys)
 								}
 			ApplyDamage(damageTable)
 			if self:GetCaster():HasScepter() then
-				self:GetCaster():PerformAttack(enemy, true, true, true, true, true, false, true)
+				self:GetCaster():PerformAttack(enemy, false, true, true, true, true, false, true)
 			end
 		end
 	end

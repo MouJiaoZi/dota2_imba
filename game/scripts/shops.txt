@@ -133,7 +133,7 @@
 	{
 		"item"		"item_imba_hood_of_defiance"
 		"item"		"item_imba_vanguard"
-		"item"		"item_blade_mail"
+		"item"		"item_imba_blade_mail"
 		"item"		"item_soul_booster"
 		"item"		"item_imba_crimson_guard"		
 		"item"		"item_aeon_disk"	

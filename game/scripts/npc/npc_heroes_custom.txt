@@ -303,14 +303,21 @@
 		"AttackDamageMin"			"25"
 
 		"MovementTurnRate"			"0.4"
+
+		"Ability1"					"puck_illusory_orb"
+		"Ability2"					"puck_waning_rift"
+		"Ability3"					"puck_phase_shift"
+		"Ability4"					"puck_ethereal_jaunt"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"imba_puck_dream_coil"
 		
 		"Ability10"					"special_bonus_intelligence_7"
-		"Ability11"					"special_bonus_unique_puck_3"
+		"Ability11"					"special_bonus_exp_boost_15"
 		"Ability12"					"special_bonus_attack_damage_30"
 		"Ability13"					"special_bonus_movement_speed_20"
-		"Ability14"					"special_bonus_spell_amplify_6"
+		"Ability14"					"special_bonus_spell_amplify_12"
 		"Ability15"					"special_bonus_unique_puck_2"
-		"Ability16"					"special_bonus_gold_income_70"
+		"Ability16"					"special_bonus_gold_income_imba_1200"
 		"Ability17"					"special_bonus_unique_puck"
 
 	}
@@ -969,6 +976,8 @@
 	}
 	"npc_dota_hero_luna"
 	{
+		"AttackRange"				"430"
+
 		"AttributeAgilityGain"		"3.5"
 		
 		"Ability2"					"imba_luna_moon_glaive"
@@ -1025,15 +1034,22 @@
 		"ArmorPhysical"				"2"
 
 		"AttributeAgilityGain"		"3.0"
+		
+		"Ability1"					"imba_rattletrap_battery_assault"
+		"Ability2"					"imba_rattletrap_power_cogs"
+		"Ability3"					"imba_rattletrap_rocket_flare"
+		"Ability4"					"imba_rattletrap_hookshot_stop"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"imba_rattletrap_hookshot"
 
 		"Ability10"		"special_bonus_armor_5"
 		"Ability11"		"special_bonus_movement_speed_20"
 		"Ability12"		"special_bonus_strength_5"
-		"Ability13"		"special_bonus_unique_clockwerk_3"
-		"Ability14"		"special_bonus_unique_clockwerk_4"
-		"Ability15"		"special_bonus_magic_resistance_20"
-		"Ability16"		"special_bonus_attack_speed_60"
-		"Ability17"		"special_bonus_unique_clockwerk"
+		"Ability13"		"special_bonus_attack_speed_35"
+		"Ability14"		"special_bonus_imba_rattletrap_3"
+		"Ability15"		"special_bonus_imba_rattletrap_4"
+		"Ability16"		"special_bonus_imba_rattletrap_1"
+		"Ability17"		"special_bonus_imba_rattletrap_2"
 		
 	}
 	"npc_dota_hero_leshrac"
@@ -1254,7 +1270,7 @@
 
 		"ProjectileSpeed"			"3000"
 		
-		"AttackRange"				"555"
+		"AttackRange"				"425"
 
 		"Ability10"		"special_bonus_strength_7"
 		"Ability11"		"special_bonus_exp_boost_35"
@@ -1904,7 +1920,7 @@
 	{
 		"Ability1"		"visage_grave_chill"
 		"Ability2"		"visage_soul_assumption"
-		"Ability3"		"visage_gravekeepers_cloak"
+		"Ability3"		"imba_visage_gravekeepers_cloak"
 		"Ability4"		"visage_stone_form_self_cast"
 		"Ability5"		"generic_hidden"
 		"Ability6"		"visage_summon_familiars"
@@ -1915,7 +1931,7 @@
 		"Ability13"		"special_bonus_unique_visage_3"
 		"Ability14"		"special_bonus_unique_visage_4"
 		"Ability15"		"special_bonus_unique_visage_2"
-		"Ability16"		"special_bonus_unique_visage_5"
+		"Ability16"		"special_bonus_imba_visage_1"
 		"Ability17"		"special_bonus_unique_visage_6"
 	}
 	"npc_dota_hero_slark"
@@ -2407,8 +2423,8 @@
 	{
 		"Ability1"					"pangolier_swashbuckle"
 		"Ability2"					"pangolier_shield_crash"
-		"Ability3"					"pangolier_heartpiercer"
-		"Ability4"					"pangolier_lucky_shot"
+		"Ability3"					"imba_pangolier_lucky_shot"
+		"Ability4"					"generic_hidden"
 		"Ability5"					"generic_hidden"
 		"Ability6"					"pangolier_gyroshell"
 		"Ability7"					"pangolier_gyroshell_stop"

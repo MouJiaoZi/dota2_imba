@@ -92,6 +92,7 @@ function UpdateScoreBoard()
 			var ult_state = heroTable.ult_state;
 			var level = heroTable.level;
 			var gold = heroTable.gold;
+			var connect = heroTable.connection_state;
 			
 			if(!$.GetContextPanel().FindChildTraverse("IMBAScoreBoard_Player_" + i))
 			{
@@ -149,6 +150,14 @@ function UpdateScoreBoard()
 				playerScore.FindChildTraverse("IMBAPlayerDeaths").text=Players.GetDeaths(i);
 				playerScore.FindChildTraverse("IMBAPlayerAssists").text=Players.GetAssists(i);
 				SetUltimateIconState(playerScore, ult_state);
+				if(connect == 4)
+				{
+					playerScore.style.washColor = "#7F0200FF";
+				}
+				else
+				{
+					playerScore.style.washColor = "#7F020000";
+				}
 			}
 		}
 	}

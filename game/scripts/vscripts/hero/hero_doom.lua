@@ -68,7 +68,7 @@ function modifier_imba_doom_enemy:IsDebuff()			return true end
 function modifier_imba_doom_enemy:IsHidden() 			return false end
 function modifier_imba_doom_enemy:IsPurgable() 			return false end
 function modifier_imba_doom_enemy:IsPurgeException() 	return false end
-function modifier_imba_doom_enemy:CheckState() return {[MODIFIER_STATE_MUTED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = true} end
+function modifier_imba_doom_enemy:CheckState() return {[MODIFIER_STATE_MUTED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = self:GetCaster():HasScepter()} end
 function modifier_imba_doom_enemy:GetEffectName() return "particles/units/heroes/hero_doom_bringer/doom_bringer_doom.vpcf" end
 function modifier_imba_doom_enemy:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_doom_enemy:GetStatusEffectName() return "particles/status_fx/status_effect_doom.vpcf" end

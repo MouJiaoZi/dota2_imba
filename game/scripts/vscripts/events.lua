@@ -24,6 +24,9 @@ if CDOTAGamerules.IMBA_TOWER == nil then
 		CDOTAGamerules.IMBA_TOWER[DOTA_TEAM_BADGUYS][i] = {}
 	end
 end
+if CDOTAGamerules.IMBA_FORT == nil then
+	CDOTAGamerules.IMBA_FORT = {}
+end
 
 -- Cleanup a player when they leave
 function GameMode:OnDisconnect(keys)
@@ -154,44 +157,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			return 1.0
 		end
 		)
-
-		Timers:CreateTimer({
-			useGameTime = false,
-			endTime = 0.01, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
-			callback = function()
-				if not IMBA_UPDATE_NOTICED then
-					local req = CreateHTTPRequestScriptVM("GET", IMBA_WEB_SERVER.."imba_request_version.php?game=imba")
-					req:Send(function(res)
-						if res.StatusCode == 200 then
-							IMBA_GAME_VERSION_GETTED = tonumber(res.Body)
-						end
-					end)
-					return 60.0
-				else
-					return nil
-				end
-			end
-		})
-		Timers:CreateTimer({
-			useGameTime = false,
-			endTime = 20.0, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
-			callback = function()
-				if not IMBA_UPDATE_NOTICED and IMBA_GAME_VERSION_GETTED > IMBA_GAME_VERSION then
-					IMBA_UPDATE_NOTICED = true
-					print("game updated")
-					EmitGlobalSound("Loot_Drop_Stinger_Immortal")
-					Notifications:TopToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
-					Notifications:TopToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
-					Notifications:TopToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
-					Notifications:BottomToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
-					Notifications:BottomToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
-					Notifications:BottomToAll({text="#DOTA_IMBA_GAME_UPDATE_NOTICE", duration = 15, style={["font-size"] = "30px"}})
-					return nil
-				else
-					return 20.0
-				end
-			end
-		})
 	end
 
 	if newState == DOTA_GAMERULES_STATE_HERO_SELECTION then
@@ -221,13 +186,31 @@ function GameMode:OnGameRulesStateChange(keys)
 			end
 			CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[i + 1] = 0
 			CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[i + 1] = 0
+			if PlayerResource:IsValidPlayer(i) then
+				local function setUpIMBADisable(res)
+					if res.Body == "1" then
+						IMBA_DISABLE_PLAYER[i] = true
+						Timers:CreateTimer(1.0, function()
+							if GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
+								Notifications:BottomToAll({text = PlayerResource:GetPlayerName(i).."(ID:"..tostring(PlayerResource:GetSteamID(i))..") ", duration = 20.0})
+								Notifications:BottomToAll({text = "#imba_player_banned_message", duration = 20.0, continue = true})
+								return nil
+							else
+								return 1.0
+							end
+						end
+						)
+					end
+				end
+				IMBA:SendHTTPRequest("imba_check_disable.php", {["steamid_64"] = tostring(PlayerResource:GetSteamID(i))}, nil, setUpIMBADisable)
+			end
 		end
 	end
 
 	if newState == DOTA_GAMERULES_STATE_PRE_GAME then--and not GameRules:IsCheatMode() then
 		if GetMapName() == "dbii_death_match" then
 			GameRules:SetSafeToLeave(true)
-			GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
+			--GameRules:SendCustomMessage("#dota_safe_to_abandon_match_not_scored", 0, 0)
 		end
 		if USE_CUSTOM_TEAM_COLORS_FOR_PLAYERS then
 			for i=0, 23 do
@@ -241,6 +224,8 @@ function GameMode:OnGameRulesStateChange(keys)
 					if GameRules:IsCheatMode() then
 						CreateUnitByName("npc_dota_hero_target_dummy", Vector(-5345,-6549,384), false, nil, nil, DOTA_TEAM_NEUTRALS)
 					end
+					IMBAEvents:StartIMBAVersionCheck()
+					IMBAEvents:StartAbandonCheck()
 					local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 					for _, tower in pairs(towers) do
 						if string.find(tower:GetUnitName(), "_tower1_") then --T1 Tower set
@@ -319,8 +304,11 @@ function GameMode:OnGameRulesStateChange(keys)
 							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 							SetCreatureHealth(tower, 3200, true)
 						end
-						if string.find(tower:GetName(), "_fort") and GetMapName() == "dbii_death_match" then
-							tower:AddNewModifier(tower, nil, "modifier_imba_base_protect", {})
+						if string.find(tower:GetName(), "_fort") then
+							if GetMapName() == "dbii_death_match" then
+								tower:AddNewModifier(tower, nil, "modifier_imba_base_protect", {})
+							end
+							CDOTAGamerules.IMBA_FORT[tower:GetTeamNumber()] = tower
 							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 						end
 					end
@@ -418,7 +406,7 @@ function GameMode:OnNPCSpawned(keys)
 	--Game Start Hero Set
 	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerID() and npc:GetPlayerID() and npc:GetPlayerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 		
-		Timers:CreateTimer({useGameTime = false, endTime = 1.5,
+		Timers:CreateTimer({useGameTime = false, endTime = FrameTime(),
 			callback = function()
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
@@ -481,6 +469,13 @@ function GameMode:OnNPCSpawned(keys)
 		local pID = npc:GetPlayerOwnerID()
 		local player_table = {["player_id"] = pID, ["player_name"] = PlayerResource:GetPlayerName(pID), ["player_team"] = npc:GetTeamNumber(), ["steamid_64"] = PlayerResource:GetSteamID(pID), ["hero_index"] = npc:entindex(), ["hero_name"] = npc:GetUnitName()}
 		CustomNetTables:SetTableValue("imba_player_detail", tostring(pID), player_table)
+
+		if IMBA_TEAM_DUMMY_GOOD == nil and npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+			IMBA_TEAM_DUMMY_GOOD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_GOODGUYS)
+		end
+		if IMBA_TEAM_DUMMY_BAD == nil and npc:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+			IMBA_TEAM_DUMMY_BAD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_BADGUYS)
+		end
 	end
 
 	if npc:IsRealHero() and npc.firstSpawn and GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
@@ -788,120 +783,66 @@ function GameMode:OnEntityKilled( keys )
 
 	local damagebits = keys.damagebits -- This might always be 0 and therefore useless
 
-	if victim:IsRealHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+	-------------------------------------------------------------------------------------------------
+	-- IMBA: Hero Kill
+	-------------------------------------------------------------------------------------------------
 
-		if GameRules:GetDOTATime(false, false) >= 1200 then
-			GameRules:SetSafeToLeave(true)
-		end
-
-		local buff = victim:FindModifierByName("modifier_alchemist_goblins_greed")
-		if buff then
-			buff:Destroy()
-		end
-
-		--Lose Gold
-		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
-		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
-		PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
-
-		--print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
-
-		--Death Streak
-		if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
-			local line_duration = 7
-
-			local death_player = victim:GetPlayerID()
-			local kill_player = attacker:GetPlayerID()
-			if death_player and kill_player then
-				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
-				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0
-				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[death_player + 1] = 0
-				CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] = CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[kill_player + 1] + 1
-
-				if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] >= 3 then
-					Notifications:BottomToAll({hero = victim:GetName(), duration = line_duration})
-					Notifications:BottomToAll({text = PlayerResource:GetPlayerName(death_player).." ", duration = line_duration, continue = true})
-					Notifications:BottomToAll({text = "#imba_deathstreak_"..CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1], duration = line_duration, continue = true})
-				end
-			end
-		end
-
-		if END_GAME_ON_KILLS then
-			if GetTeamHeroKills(DOTA_TEAM_GOODGUYS) >= IMBA_KILL_GOAL then
-				GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
-				GameRules:MakeTeamLose(DOTA_TEAM_BADGUYS)
-				GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
-				UpDatePlayerInfo()
-				IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
-			elseif GetTeamHeroKills(DOTA_TEAM_BADGUYS) >= IMBA_KILL_GOAL then
-				GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
-				GameRules:MakeTeamLose(DOTA_TEAM_GOODGUYS)
-				GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
-				UpDatePlayerInfo()
-				IMBA:EndGameAPI(DOTA_TEAM_BADGUYS)
-			end
-		end
+	if victim:IsRealHero() then
+		--IMBAEvents:OnHeroKilled(victim, attacker)
+		xpcall((IMBAEvents:OnHeroKilled(victim, attacker)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 	end
 
 	-------------------------------------------------------------------------------------------------
 	-- IMBA: Roshan
 	-------------------------------------------------------------------------------------------------
 
-	if killed_unit:GetName() == "npc_dota_roshan" then
-		for i=3, roshan_kill do
-			local drop_cheese = CreateItem("item_imba_cheese", nil, nil)
-			if drop_cheese then
-				CreateItemOnPositionSync(killed_unit:GetAbsOrigin(), drop_cheese)
-				drop_cheese:LaunchLoot(false, 100, 0.5, killed_unit:GetAbsOrigin() + RandomVector(100))
-			end
-		end
-		if roshan_kill >= 15 then
-			local drop_cheese = CreateItem("item_aegis", nil, nil)
-			if drop_cheese then
-				CreateItemOnPositionSync(killed_unit:GetAbsOrigin(), drop_cheese)
-				drop_cheese:LaunchLoot(false, 100, 0.5, killed_unit:GetAbsOrigin() + RandomVector(100))
-			end
-		end
-		Timers:CreateTimer(CUSTOM_ROSHAN_RESPAWN, function()
-			IMBA:SpawnRoshan()
-			return nil
-		end
-		)
+	if killed_unit:IsBoss() then
+		--IMBAEvents:OnRoshanKilled(killed_unit)
+		xpcall((IMBAEvents:OnRoshanKilled(killed_unit)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 	end
 
 	-------------------------------------------------------------------------------------------------
 	-- IMBA: Lion ult refresh
 	-------------------------------------------------------------------------------------------------
 
-	if ability and ability:GetName() == "imba_lion_finger_of_death" and ability.KillCredit then
-		ability:KillCredit(killed_unit)
-		if ability:GetCaster() and HeroItems:UnitHasItem(ability:GetCaster(), "lion_ti8") then
-			local pfx_target = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_death_arcana.vpcf", PATTACH_ABSORIGIN, killed_unit)
-			ParticleManager:SetParticleControlEnt(pfx_target, 0, killed_unit, PATTACH_ABSORIGIN, nil, killed_unit:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControlEnt(pfx_target, 1, killed_unit, PATTACH_ABSORIGIN, nil, killed_unit:GetAbsOrigin(), true)
-			ParticleManager:ReleaseParticleIndex(pfx_target)
+	local function FingerOfDeathKillCredit(ability, killed_unit)
+		if ability and ability:GetName() == "imba_lion_finger_of_death" and ability.KillCredit then
+			ability:KillCredit(killed_unit)
+			if ability:GetCaster() and HeroItems:UnitHasItem(ability:GetCaster(), "lion_ti8") then
+				local pfx_target = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_death_arcana.vpcf", PATTACH_ABSORIGIN, killed_unit)
+				ParticleManager:SetParticleControlEnt(pfx_target, 0, killed_unit, PATTACH_ABSORIGIN, nil, killed_unit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_target, 1, killed_unit, PATTACH_ABSORIGIN, nil, killed_unit:GetAbsOrigin(), true)
+				ParticleManager:ReleaseParticleIndex(pfx_target)
+			end
 		end
+	end
+
+	if ability and ability:GetName() == "imba_lion_finger_of_death" and ability.KillCredit then
+		--FingerOfDeathKillCredit(ability, killed_unit)
+		xpcall((FingerOfDeathKillCredit(ability, killed_unit)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 	end
 
 	-------------------------------------------------------------------------------------------------
 	-- IMBA: Necrolyte Reapers Scythe Permanent Debuff
 	-------------------------------------------------------------------------------------------------
 
-	if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsRealHero() then
-		local buff = killed_unit:FindModifierByName("modifier_imba_reapers_scythe_permanent")
-		if buff then
-			buff:SetStackCount(buff:GetStackCount() + 1)
-		end
-		if ability:GetCaster():HasScepter() then
-			local allies = FindUnitsInRadius(ability:GetCaster():GetTeamNumber(), killed_unit:GetAbsOrigin(), nil, ability:GetSpecialValueFor("sadist_aoe_scepter"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-			local sadist = ability:GetCaster():FindAbilityByName("necrolyte_heartstopper_aura")
-			if sadist and sadist:GetLevel() > 0 then
-				for i=1, #allies do
-					if allies[i] ~= ability:GetCaster() then
-						for j=1, ability:GetSpecialValueFor("stacks_scepter") do
-							allies[i]:AddNewModifier(ability:GetCaster(), sadist, "modifier_imba_reapers_scythe_scepter_ally_remover", {duration = sadist:GetSpecialValueFor("regen_duration")})
-							local buff = allies[i]:AddNewModifier(ability:GetCaster(), sadist, "modifier_necrolyte_heartstopper_aura_counter", {duration = sadist:GetSpecialValueFor("regen_duration")})
-							buff:SetStackCount(buff:GetStackCount() + 1)
+	local function ReapersScytheKillCredit(ability, killed_unit)
+		if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsRealHero() then
+			local buff = killed_unit:FindModifierByName("modifier_imba_reapers_scythe_permanent")
+			if buff then
+				buff:SetStackCount(buff:GetStackCount() + 1)
+			end
+			if ability:GetCaster():HasScepter() then
+				local allies = FindUnitsInRadius(ability:GetCaster():GetTeamNumber(), killed_unit:GetAbsOrigin(), nil, ability:GetSpecialValueFor("sadist_aoe_scepter"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+				local sadist = ability:GetCaster():FindAbilityByName("necrolyte_heartstopper_aura")
+				if sadist and sadist:GetLevel() > 0 then
+					for i=1, #allies do
+						if allies[i] ~= ability:GetCaster() then
+							for j=1, ability:GetSpecialValueFor("stacks_scepter") do
+								allies[i]:AddNewModifier(ability:GetCaster(), sadist, "modifier_imba_reapers_scythe_scepter_ally_remover", {duration = sadist:GetSpecialValueFor("regen_duration")})
+								local buff = allies[i]:AddNewModifier(ability:GetCaster(), sadist, "modifier_necrolyte_heartstopper_aura_counter", {duration = sadist:GetSpecialValueFor("regen_duration")})
+								buff:SetStackCount(buff:GetStackCount() + 1)
+							end
 						end
 					end
 				end
@@ -909,17 +850,22 @@ function GameMode:OnEntityKilled( keys )
 		end
 	end
 
+	if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsRealHero() then
+		--ReapersScytheKillCredit(ability, killed_unit)
+		xpcall((ReapersScytheKillCredit(ability, killed_unit)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
+	end
+
 	-------------------------------------------------------------------------------------------------
 	-- IMBA: Ancient destruction detection
 	-------------------------------------------------------------------------------------------------
 
-	if killed_unit:GetUnitName() == "npc_dota_badguys_fort" then
+	if killed_unit.GetUnitName and killed_unit:GetUnitName() == "npc_dota_badguys_fort" then
 		GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
 		GameRules:MakeTeamLose(DOTA_TEAM_BADGUYS)
 		GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
 		UpDatePlayerInfo()
 		IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
-	elseif killed_unit:GetUnitName() == "npc_dota_goodguys_fort" then
+	elseif killed_unit.GetUnitName and killed_unit:GetUnitName() == "npc_dota_goodguys_fort" then
 		GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
 		GameRules:MakeTeamLose(DOTA_TEAM_GOODGUYS)
 		GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
@@ -955,6 +901,7 @@ end
 function GameMode:OnIllusionsCreated(keys)
 	DebugPrint('[BAREBONES] OnIllusionsCreated')
 	DebugPrintTable(keys)
+	PrintTable(keys)
 
 	local originalEntity = EntIndexToHScript(keys.original_entindex)
 end
@@ -1003,6 +950,19 @@ function GameMode:OnTowerKill(keys)
 		EmitGlobalSound("powerup_02")
 	end
 	UpgradeTower(tower_team)
+
+	-- Refresh TP
+	for i=1, 24 do
+		if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i] then
+			local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i]
+			if hero:GetTeamNumber() == tower_team then
+				local tp = hero:GetTP()
+				if tp then
+					tp:EndCooldown()
+				end
+			end
+		end
+	end
 end
 
 -- This function is called whenever a player changes there custom team selection during Game Setup 
@@ -1027,10 +987,16 @@ end
 
 -- This function is called whenever any player sends a chat message to team or All
 function GameMode:OnPlayerChat(keys)
+	--[[
+	playerid: 0
+	splitscreenplayer: -1
+	teamonly: 1
+	text: 12
+	userid: 1
+	]]
 	local teamonly = keys.teamonly
-	local userID = keys.userid
-	--local playerID = self.vUserIds[userID]:GetPlayerID()
-
+	local pID = keys.playerid
+	local playerHero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[pID + 1]
 	local text = keys.text
 
 	if not (string.byte(text) == 45) then
@@ -1038,6 +1004,30 @@ function GameMode:OnPlayerChat(keys)
 	end
 
 	for str in string.gmatch(text, "%S+") do
+		if str == "-blink" then
+			local color = {}
+			for color_num in string.gmatch(text, "%S+") do
+				local colorRGB = tonumber(color_num)
+				if colorRGB and playerHero and colorRGB == -1 then
+					playerHero.blinkcolor = nil
+				end
+				if colorRGB and playerHero and colorRGB >= 0 and colorRGB <= 255 then
+					color[#color + 1] = colorRGB
+					if #color >= 3 then
+						playerHero.blinkcolor = Vector(color[1], color[2], color[3])
+						break
+					end
+				end
+			end
+		end
+		if GameRules:IsCheatMode() then
+			if str == "-dummy" then
+				if playerHero then
+					local dummy = CreateUnitByName("npc_dota_hero_target_dummy", playerHero:GetAbsOrigin(), false, nil, nil, DOTA_TEAM_NEUTRALS)
+					FindClearSpaceForUnit(dummy, dummy:GetAbsOrigin(), true)
+				end
+			end
+		end
 		if IsInToolsMode() then
 			if str == "-illunique" then
 				IllusionManager:PrintIllusionUnique()
@@ -1052,7 +1042,12 @@ function GameMode:OnPlayerChat(keys)
 				CheckRandomAbilityKV()
 			end
 			if str == "-api" then
-				IMBA:SendHTTPRequest()
+				local function httpprint(res)
+					for k, v in pairs(res) do
+						print(k, v)
+					end
+				end
+				IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
 			end
 		end
 	end
