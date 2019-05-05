@@ -85,7 +85,7 @@ function modifier_imba_purification_passive:OnTakeDamage(keys)
 	if self:GetParent():HasModifier("modifier_imba_purification_passive_cooldown") or self:GetParent():IsIllusion() then
 		return
 	end
-	if self:GetParent():GetHealth() <= self:GetParent():GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("passive_threshold") / 100) then
+	if self:GetParent():GetHealth() <= self:GetParent():GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("passive_threshold") / 100) and self:GetParent():IsAlive() then
 		self:GetParent():SetCursorCastTarget(self:GetParent())
 		self:GetAbility():OnSpellStart()
 		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_purification_passive_cooldown", {duration = self:GetAbility():GetSpecialValueFor("passive_cooldown")})

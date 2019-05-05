@@ -72,7 +72,7 @@ end
 
 imba_abaddon_aphotic_shield = class({})
 
-LinkLuaModifier("modifier_aphotic_shield", "hero/hero_abaddon", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_aphotic_shield", "hero/hero_abaddon", LUA_MODIFIER_MOTION_NONE)
 
 function imba_abaddon_aphotic_shield:IsHiddenWhenStolen() 		return false end
 function imba_abaddon_aphotic_shield:IsRefreshable() 			return true end
@@ -86,44 +86,47 @@ end
 
 function imba_abaddon_aphotic_shield:OnSpellStart()
 	local target = self:GetCursorTarget()
-	local buff = target:FindModifierByName("modifier_aphotic_shield")
+	local buff = target:FindModifierByName("modifier_imba_aphotic_shield")
 	if buff then
 		buff:SetStackCount(0)
 		buff:Destroy()
 	end
-	target:AddNewModifier(self:GetCaster(), self, "modifier_aphotic_shield", {duration = self:GetSpecialValueFor("duration")})
+	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_aphotic_shield", {duration = self:GetSpecialValueFor("duration")})
 	target:Purge(false, true, false, true, true)
 end
 
-modifier_aphotic_shield = class({})
+modifier_imba_aphotic_shield = class({})
 
-function modifier_aphotic_shield:IsDebuff()				return false end
-function modifier_aphotic_shield:IsHidden() 			return false end
-function modifier_aphotic_shield:IsPurgable() 			return true end
-function modifier_aphotic_shield:IsPurgeException() 	return true end
+function modifier_imba_aphotic_shield:IsDebuff()				return false end
+function modifier_imba_aphotic_shield:IsHidden() 			return false end
+function modifier_imba_aphotic_shield:IsPurgable() 			return true end
+function modifier_imba_aphotic_shield:IsPurgeException() 	return true end
 
-function modifier_aphotic_shield:OnCreated()
-	EmitSoundOn("Hero_Abaddon.AphoticShield.Loop", self:GetParent())
+function modifier_imba_aphotic_shield:OnCreated()
+	self:SetAbilityKV()
+	self:SetStackCount(self:GetAbilityKV("damage_absorb") + self:GetCaster():GetTalentValue("special_bonus_imba_abaddon_1"))
+	if IsClient() then
+		EmitSoundOn("Hero_Abaddon.AphoticShield.Loop", self:GetParent())
+		EmitSoundOn("Hero_Abaddon.AphoticShield.Cast", self:GetParent())
+	end
 	if IsServer() then
-		self:SetStackCount(self:GetAbility():GetSpecialValueFor("damage_absorb") + self:GetCaster():GetTalentValue("special_bonus_imba_abaddon_1"))
-		EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_Abaddon.AphoticShield.Cast", self:GetParent())
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_abaddon/abaddon_aphotic_shield.vpcf", PATTACH_POINT_FOLLOW, self:GetParent())
-		self.pfx = pfx
 		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 5, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 		local ex = self:GetParent():GetModelScale() * 100
 		ParticleManager:SetParticleControl(pfx, 1, Vector(ex,ex,ex))
 		ParticleManager:SetParticleControl(pfx, 2, Vector(ex,ex,ex))
 		ParticleManager:SetParticleControl(pfx, 4, Vector(ex,ex,ex))
+		self:AddParticle(pfx, false, false, 15, false, false)
 	end
 end
 
-function modifier_aphotic_shield:DeclareFunctions()
+function modifier_imba_aphotic_shield:DeclareFunctions()
 	local funcs = {MODIFIER_EVENT_ON_TAKEDAMAGE,}
 	return funcs
 end
 
-function modifier_aphotic_shield:OnTakeDamage(keys)
+function modifier_imba_aphotic_shield:OnTakeDamage(keys)
 	if keys.unit ~= self:GetParent() then
 		return 
 	end
@@ -139,24 +142,23 @@ function modifier_aphotic_shield:OnTakeDamage(keys)
 	end
 end
 
-function modifier_aphotic_shield:OnDestroy()
-	StopSoundOn("Hero_Abaddon.AphoticShield.Loop", self:GetParent())
+function modifier_imba_aphotic_shield:OnDestroy()
+	if IsClient() then
+		StopSoundOn("Hero_Abaddon.AphoticShield.Loop", self:GetParent())
+		EmitSoundOn("Hero_Abaddon.AphoticShield.Destroy", self:GetParent())
+	end
 	if IsServer() then
-		EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_Abaddon.AphoticShield.Destroy", self:GetParent())
-		ParticleManager:DestroyParticle(self.pfx, true)
-		ParticleManager:ReleaseParticleIndex(self.pfx)
-		self.pfx = nil
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_abaddon/abaddon_aphotic_shield_explosion.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
 		local pos = self:GetParent():GetAttachmentOrigin(self:GetParent():ScriptLookupAttachment("attach_hitloc"))
 		ParticleManager:SetParticleControl(pfx, 0, pos)
 		ParticleManager:SetParticleControl(pfx, 5, pos)
 		ParticleManager:ReleaseParticleIndex(pfx)
 
-		local damage = self:GetAbility():GetSpecialValueFor("damage_absorb") - self:GetStackCount()
+		local damage = self:GetAbilityKV("damage_absorb") - self:GetStackCount()
 		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),
 											self:GetParent():GetAbsOrigin(),
 											nil,
-											self:GetAbility():GetSpecialValueFor("radius"),
+											self:GetAbilityKV("radius"),
 											DOTA_UNIT_TARGET_TEAM_ENEMY,
 											DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
 											DOTA_UNIT_TARGET_FLAG_NONE,
@@ -314,12 +316,16 @@ function modifier_borrowed_time_autocast:DeclareFunctions()
 	return funcs
 end
 
+function modifier_borrowed_time_autocast:OnCreated() self:SetAbilityKV() end
+
+function modifier_borrowed_time_autocast:OnRefresh() self:OnCreated() end
+
 function modifier_borrowed_time_autocast:OnTakeDamage(keys)
 	if keys.unit ~= self:GetParent() then
 		return 
 	end
 	if IsServer() then
-		if self:GetParent():GetHealth() <= self:GetAbility():GetSpecialValueFor("hp_threshold") and not self:GetParent():PassivesDisabled() and not self:GetParent():IsIllusion() and self:GetAbility():IsCooldownReady() then
+		if self:GetParent():GetHealth() <= self:GetAbilityKV("hp_threshold") and not self:GetParent():PassivesDisabled() and not self:GetParent():IsIllusion() and self:GetAbility():IsCooldownReady() then
 			self:GetAbility():OnSpellStart()
 			self:GetAbility():UseResources(false, false, true)
 		end

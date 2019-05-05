@@ -174,7 +174,10 @@ function imba_kunkka_tidebringer:OnUpgrade()
 	end
 end
 
-function imba_kunkka_tidebringer:OnSpellStart() self:EndCooldown() end
+function imba_kunkka_tidebringer:OnAbilityPhaseStart()
+	self:EndCooldown()
+	return false
+end
 
 function imba_kunkka_tidebringer:GetIntrinsicModifierName() return "modifier_imba_tidebringer" end
 

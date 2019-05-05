@@ -12149,7 +12149,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"duration"				"40 80 12 160"
+				"duration"				"40 80 120 160"
 			}
 			"02"
 			{

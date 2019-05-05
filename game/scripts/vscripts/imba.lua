@@ -327,6 +327,14 @@ end
 76561198845399966
 76561198054917153
 76561198103991184
+76561198096631135
+76561198142179354
+76561198146229057
+76561198109522270
+76561198240599250
+76561198082036401
+76561198312782420
+76561198104023318
 ]]
 
 function IMBA:OrderFilter(keys)
@@ -426,7 +434,7 @@ function IMBA:OrderFilter(keys)
 				end
 			end
 		end
-		if keys.order_type ~= DOTA_UNIT_ORDER_CAST_NO_TARGET and keys.order_type ~= DOTA_UNIT_ORDER_TRAIN_ABILITY and PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1] then
+		if keys.order_type ~= DOTA_UNIT_ORDER_CAST_NO_TARGET and keys.order_type ~= DOTA_UNIT_ORDER_TRAIN_ABILITY and keys.order_type ~= DOTA_UNIT_ORDER_PURCHASE_ITEM and PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1] then
 			if unit:HasModifier("modifier_imba_courier_transfer_owning") then
 				if unit:FindModifierByNameAndCaster("modifier_imba_courier_transfer_owning", PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1]) then
 					return true
@@ -443,8 +451,8 @@ function IMBA:OrderFilter(keys)
 	------------------------------------------------------------------------------------
 
 	if keys.entindex_ability == 2228 and keys.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM then
-		local hero = unit
-		if hero:IsAlive() then
+		local hero = PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1]
+		if hero and hero:IsAlive() then
 			if hero:HasModifier("modifier_imba_suicide") then
 				hero:RemoveModifierByName("modifier_imba_suicide")
 			else

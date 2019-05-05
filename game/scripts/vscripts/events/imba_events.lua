@@ -197,7 +197,7 @@ LinkLuaModifier("modifier_imba_abandon_check", "events/imba_events.lua", LUA_MOD
 modifier_imba_abandon_check = class({})
 
 function modifier_imba_abandon_check:OnCreated()
-	if IsServer() and not IsInToolsMode() then
+	if IsServer() and not GameRules:IsCheatMode() then
 		self:StartIntervalThink(30.0)
 	end
 end

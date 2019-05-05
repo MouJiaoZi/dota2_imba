@@ -104,6 +104,15 @@ GameEvents.Subscribe("imba_compare_cursor_pos_client", GetLocalPlayerCursorPos);
 
 function SetDeathMatchKillGoal()
 {
+	$.Msg(a);
+	if(Game.GetMapInfo().map_display_name == "dbii_death_match")
+	{
+		$.Schedule(1.0, SetDeathMatchKillGoalNum);
+	}
+	else
+	{
+		return;
+	}
 	var DoN = FindDotaHudElement("TimeOfDay");
 	var NSN_ICON = FindDotaHudElement("NightstalkerNight");
 	NSN_ICON.SetParent(FindDotaHudElement("DayNightCycle"));
@@ -116,10 +125,6 @@ function SetDeathMatchKillGoal()
 	FindDotaHudElement("GameTime").style.verticalAlign = "top";
 	var goal = $.CreatePanel('Label', DoN, 'DM_KILL_GOAL');
 	goal.text = "";
-	if(Game.GetMapInfo().map_display_name == "dbii_death_match")
-	{
-		$.Schedule(1.0, SetDeathMatchKillGoalNum);
-	}
 	goal.hittest = false;
 	goal.style.width = "100%";
 	goal.style.fontSize = "22px";
@@ -157,3 +162,5 @@ function SetDeathMatchKillGoalNum()
 }
 
 $.Schedule(1.0, SetDeathMatchKillGoal);
+
+//var a = Particles.CreateParticle("particles/customgames/capturepoints/cp_earth.vpcf", ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, Players.GetPlayerHeroEntityIndex(Players.GetLocalPlayer()));

@@ -1,4 +1,4 @@
-IMBA_GAME_VERSION = 49
+IMBA_GAME_VERSION = 54
 
 IMBA_WEB_SERVER = "https://www.bilibiliduang.cn/"
 
@@ -334,3 +334,5 @@ IMBA_COURIER_FEEDING = {}
 for i=0, 23 do
 	IMBA_COURIER_FEEDING[i] = 0
 end
+
+IMBA_RESET_COURIER_FEEDING = false

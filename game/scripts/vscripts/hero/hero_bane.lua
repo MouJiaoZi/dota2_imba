@@ -168,6 +168,9 @@ function imba_bane_nightmare:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
+	if not IsEnemy(caster, target) and PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), caster:GetPlayerOwnerID()) then
+		target = caster
+	end
 	target:AddNewModifier(caster, self, "modifier_imba_bane_nightmare", {duration = self:GetSpecialValueFor("duration")})
 	target:AddNewModifier(caster, self, "modifier_imba_bane_nightmare_invul", {duration = self:GetSpecialValueFor("nightmare_invuln_time")})
 end

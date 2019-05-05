@@ -1,10 +1,5 @@
 require('events/imba_events')
 
-GOOD_PLAYERS = 0
-BAD_PLAYERS = 0
-GOOD_PLAYERS_ABA = 0
-BAD_PLAYERS_ABA = 0
-
 -- This file contains all barebones-registered events and has already set up the passed-in parameters for your use.
 if CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK == nil then
 	CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK = {}
@@ -26,6 +21,11 @@ if CDOTAGamerules.IMBA_TOWER == nil then
 end
 if CDOTAGamerules.IMBA_FORT == nil then
 	CDOTAGamerules.IMBA_FORT = {}
+end
+if CDOTAGamerules.IMBA_COURIER == nil then
+	CDOTAGamerules.IMBA_COURIER = {}
+	CDOTAGamerules.IMBA_COURIER[DOTA_TEAM_GOODGUYS] = {}
+	CDOTAGamerules.IMBA_COURIER[DOTA_TEAM_BADGUYS] = {}
 end
 
 -- Cleanup a player when they leave
@@ -56,47 +56,12 @@ function GameMode:OnDisconnect(keys)
 		return
 	end
 
-	--[[if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-		GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
-		if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
-			Notifications:BottomToAll({text = "#imba_team_good_abandon_message", duration = line_duration, style = {color = "DodgerBlue"} })
-			Timers:CreateTimer(15.0, function()
-				if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
-					GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
-					GAME_WINNER_TEAM = DOTA_TEAM_BADGUYS
-				end
-				return nil
-			end
-			)
-		end
-	end
-	if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
-		BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
-		if BAD_PLAYERS_ABA >= BAD_PLAYERS then
-			Notifications:BottomToAll({text = "#imba_team_bad_abandon_message", duration = line_duration, style = {color = "DodgerBlue"} })
-			Timers:CreateTimer(15.0, function()
-				if GOOD_PLAYERS_ABA >= GOOD_PLAYERS then
-					GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
-					GAME_WINNER_TEAM = DOTA_TEAM_GOODGUYS
-				end
-				return nil
-			end
-			)
-		end
-	end]]
-
 	Timers:CreateTimer(1.0, function()
 		time = time + 1
 		if GameRules:State_Get() <= DOTA_GAMERULES_STATE_PRE_GAME or DOTA_GAMERULES_STATE_PRE_GAME >= DOTA_GAMERULES_STATE_POST_GAME then
 			return nil
 		end
 		if PlayerResource:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_ABANDONED then
-			if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-				GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
-			end
-			if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
-				BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
-			end
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
@@ -106,12 +71,6 @@ function GameMode:OnDisconnect(keys)
 			return nil
 		end
 		if time >= max_time then
-			if playerHero:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-				GOOD_PLAYERS_ABA = GOOD_PLAYERS_ABA + 1
-			end
-			if playerHero:GetTeamNumber() == DOTA_TEAM_BADGUYS then
-				BAD_PLAYERS_ABA = BAD_PLAYERS_ABA + 1
-			end
 			Notifications:BottomToAll({hero = playerHero:GetName(), duration = line_duration})
 			Notifications:BottomToAll({text = playerName.." ", duration = line_duration, continue = true})
 			Notifications:BottomToAll({text = "#imba_player_abandon_message", duration = line_duration, style = {color = "DodgerBlue"}, continue = true})
@@ -167,6 +126,10 @@ function GameMode:OnGameRulesStateChange(keys)
 			GameRules:SetSafeToLeave(true)
 		end
 		Timers:CreateTimer(5, function()
+			local function httpprint(res)
+				GameRules:SendCustomMessage(res.Body, 0, 0)
+			end
+			IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
 			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
 			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
 			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
@@ -411,13 +374,7 @@ function GameMode:OnNPCSpawned(keys)
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1].order = 0
-					if npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-						GOOD_PLAYERS = GOOD_PLAYERS + 1
-					else
-						BAD_PLAYERS = BAD_PLAYERS + 1
-					end
 				end
-
 				-- Set Talent Ability
 				for i = 0, 23 do
 					local ability = npc:GetAbilityByIndex(i)
@@ -494,7 +451,7 @@ function GameMode:OnNPCSpawned(keys)
 		)
 	end
 
-	--Courier Setuo
+	--Courier Setup
 	if npc:IsCourier() and npc:HasAbility("imba_courier_speed") then
 		npc:FindAbilityByName("imba_courier_speed"):SetLevel(1)
 		if npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
@@ -504,6 +461,7 @@ function GameMode:OnNPCSpawned(keys)
 			npc.courier_num = courier_num_dire
 			courier_num_dire = courier_num_dire + 1
 		end
+		table.insert(CDOTAGamerules.IMBA_COURIER[npc:GetTeamNumber()], npc)
 	end
 
 	--modifier_imba_unlimited_level_powerup
@@ -1027,6 +985,9 @@ function GameMode:OnPlayerChat(keys)
 					FindClearSpaceForUnit(dummy, dummy:GetAbsOrigin(), true)
 				end
 			end
+			if str == "-bot" then
+				GameRules:BotPopulate()
+			end
 		end
 		if IsInToolsMode() then
 			if str == "-illunique" then
@@ -1034,9 +995,6 @@ function GameMode:OnPlayerChat(keys)
 			end
 			if str == "-illcommon" then
 				IllusionManager:PrintIllusionCommon()
-			end
-			if str == "-bot" then
-				GameRules:BotPopulate()
 			end
 			if str == "-checkak" then
 				CheckRandomAbilityKV()

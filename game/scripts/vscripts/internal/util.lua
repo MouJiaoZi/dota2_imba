@@ -1455,3 +1455,47 @@ function StringToVector(sString)
 	end
 	return Vector(temp[1], temp[2], temp[3])
 end
+
+function CDOTABaseAbility:GetAbilityCurrentKV()
+	local kv_to_return = {}
+	local level = self:GetLevel()
+	if level <= 0 then
+		return nil
+	end
+	local kv = self:GetAbilityKeyValues()["AbilitySpecial"]
+	for k, v in pairs(kv) do
+		for a, b in pairs(v) do
+			for str in string.gmatch(b, "%S+") do
+				if tonumber(str) then
+					local lv = 0
+					for s in string.gmatch(b, "%S+") do
+						lv = lv + 1
+						if lv <= level then
+							kv_to_return[a] = tonumber(s)
+						else
+							break
+						end
+					end
+					break
+				end
+			end
+		end
+	end
+	return kv_to_return == {} and nil or kv_to_return
+end
+
+function CDOTA_Buff:SetAbilityKV()
+	self.kv = self:GetAbility():GetAbilityCurrentKV()
+	return self.kv
+end
+
+function CDOTA_Buff:GetAbilityKV(sKeyname)
+	return self.kv and (self.kv[sKeyname] or 0) or 0
+end
+
+function CDOTA_BaseNPC:RemoveAllModifiersByName(sBuffname)
+	local buff = self:FindAllModifiersByName(sBuffname)
+	for i=1, #buff do
+		buff[i]:Destroy()
+	end
+end

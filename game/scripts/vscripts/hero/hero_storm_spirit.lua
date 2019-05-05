@@ -260,7 +260,7 @@ function modifier_imba_ball_lightning_travel:IsHidden() 		return false end
 function modifier_imba_ball_lightning_travel:IsPurgable() 		return false end
 function modifier_imba_ball_lightning_travel:IsPurgeException() return false end
 function modifier_imba_ball_lightning_travel:IsMotionController() return true end
-function modifier_imba_ball_lightning_travel:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGHEST end
+function modifier_imba_ball_lightning_travel:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 function modifier_imba_ball_lightning_travel:CheckState() return {[MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_ball_lightning_travel:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_ball_lightning_travel:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_4 end

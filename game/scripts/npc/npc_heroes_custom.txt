@@ -863,7 +863,7 @@
 		"Ability12"					"special_bonus_attack_speed_25"
 		"Ability13"					"special_bonus_attack_damage_30"
 		"Ability14"					"special_bonus_hp_200"
-		"Ability15"					"special_bonus_mp_350"
+		"Ability15"					"special_bonus_mp_175"
 		"Ability16"					"special_bonus_imba_faceless_void_2"
 		"Ability17"					"special_bonus_imba_faceless_void_1"
 	}
@@ -1805,20 +1805,21 @@
 	"npc_dota_hero_disruptor"
 	{
 
-		"Ability1"		"disruptor_thunder_strike"
-		"Ability2"		"disruptor_glimpse"
-		"Ability3"		"disruptor_kinetic_field"
+		"Ability1"		"imba_disruptor_thunder_strike"
+		"Ability2"		"imba_disruptor_glimpse"
+		"Ability3"		"imba_disruptor_kinetic_field"
 		"Ability4"		"generic_hidden"
 		"Ability5"		"generic_hidden"
-		"Ability6"		"disruptor_static_storm"
+		"Ability6"		"imba_disruptor_static_storm"
+
 		"Ability10"		"special_bonus_hp_200"
-		"Ability11"		"special_bonus_unique_disruptor_3"
+		"Ability11"		"special_bonus_imba_disruptor_1"
 		"Ability12"		"special_bonus_cast_range_150"
-		"Ability13"		"special_bonus_unique_disruptor_2"
-		"Ability14"		"special_bonus_gold_income_30"
-		"Ability15"		"special_bonus_unique_disruptor"
-		"Ability16"		"special_bonus_unique_disruptor_4"
-		"Ability17"		"special_bonus_unique_disruptor_5"
+		"Ability13"		"special_bonus_imba_disruptor_4"
+		"Ability14"		"special_bonus_imba_disruptor_2"
+		"Ability15"		"special_bonus_imba_disruptor_3"
+		"Ability16"		"special_bonus_imba_disruptor_5"
+		"Ability17"		"special_bonus_imba_disruptor_6"
 		
 	}
 	"npc_dota_hero_nyx_assassin"
@@ -2279,7 +2280,7 @@
 	}
 	"npc_dota_hero_oracle"
 	{
-		"Ability1"		"oracle_fortunes_end"
+		"Ability1"		"imba_oracle_fortunes_end"
 		"Ability2"		"oracle_fates_edict"
 		"Ability3"		"oracle_purifying_flames"
 		"Ability4"		"generic_hidden"

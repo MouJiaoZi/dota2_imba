@@ -176,7 +176,7 @@ function GameMode:InitGameMode()
 
 	Random_Abilities_Normal = LoadKeyValues("scripts/npc/kv/random_abilities.kv")
 	Rnadom_Abilities_Ultimate = LoadKeyValues("scripts/npc/kv/random_abilities_ult.kv")
-	
+
 end
 
 -- This is an example console command

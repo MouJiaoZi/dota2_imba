@@ -273,43 +273,43 @@ end
 
 function modifier_imba_march_of_the_machines_thinker:OnCreated()
 	if IsServer() then
+		self.caster = self:GetCaster()
+		self.parent = self:GetParent()
+		self.ability = self:GetAbility()
 		self.range = self:GetAbility():GetSpecialValueFor("search_range")
-		self.pfx = ParticleManager:CreateParticleForPlayer("particles/basic_ambient/generic_range_display.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetCaster():GetPlayerOwner())
+		--[[self.pfx = ParticleManager:CreateParticleForPlayer("particles/basic_ambient/generic_range_display.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetCaster():GetPlayerOwner())
 		self.color = PLAYER_COLORS[self:GetCaster():GetPlayerID()]
 		ParticleManager:SetParticleControl(self.pfx, 1, Vector(self.range,0,0))
 		ParticleManager:SetParticleControl(self.pfx, 2, Vector(10,0,0))
 		ParticleManager:SetParticleControl(self.pfx, 3, Vector(100,0,0))
-		ParticleManager:SetParticleControl(self.pfx, 15, Vector(self.color[1], self.color[2], self.color[3]))
+		ParticleManager:SetParticleControl(self.pfx, 15, Vector(self.color[1], self.color[2], self.color[3]))]]
 		self:StartIntervalThink(0.5)
 	end
 end
 
 function modifier_imba_march_of_the_machines_thinker:OnIntervalThink()
-	local caster = self:GetCaster()
-	local parent = self:GetParent()
-	local ability = self:GetAbility()
-	if not ability or caster:IsNull() or ability:IsNull() or not caster:HasAbility("imba_tinker_march_of_the_machines") then
-		parent:ForceKill(false)
+	if not self.ability or self.caster:IsNull() or self.ability:IsNull() or not self.caster:HasAbility("imba_tinker_march_of_the_machines") then
+		self.parent:ForceKill(false)
 		self:Destroy()
 		return
 	end
 
-	local range = ability:GetSpecialValueFor("search_range") + ability:GetSpecialValueFor("stack_range") * caster:GetModifierStackCount("modifier_imba_rearm_stack", nil)
+	local range = self.ability:GetSpecialValueFor("search_range") + self.ability:GetSpecialValueFor("stack_range") * self.caster:GetModifierStackCount("modifier_imba_rearm_stack", nil)
 	if self.range ~= range then
 		self.range = range
-		ParticleManager:DestroyParticle(self.pfx, true)
+		--[[ParticleManager:DestroyParticle(self.pfx, true)
 		ParticleManager:ReleaseParticleIndex(self.pfx)
-		self.pfx = ParticleManager:CreateParticleForPlayer("particles/basic_ambient/generic_range_display.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetCaster():GetPlayerOwner())
+		self.pfx = ParticleManager:CreateParticleForPlayer("particles/basic_ambient/generic_range_display.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.self.parent, self.self.caster:GetPlayerOwner())
 		ParticleManager:SetParticleControl(self.pfx, 1, Vector(range,0,0))
 		ParticleManager:SetParticleControl(self.pfx, 2, Vector(10,0,0))
 		ParticleManager:SetParticleControl(self.pfx, 3, Vector(100,0,0))
-		ParticleManager:SetParticleControl(self.pfx, 15, Vector(self.color[1], self.color[2], self.color[3]))
+		ParticleManager:SetParticleControl(self.pfx, 15, Vector(self.color[1], self.color[2], self.color[3]))]]
 	end
-	local laser = caster:FindAbilityByName("imba_tinker_laser")
-	local missile = caster:FindAbilityByName("imba_tinker_heat_seeking_missile")
+	local laser = self.caster:FindAbilityByName("imba_tinker_laser")
+	local missile = self.caster:FindAbilityByName("imba_tinker_heat_seeking_missile")
 
-	local self_laser = parent:FindAbilityByName("imba_tinker_laser")
-	local self_missile = parent:FindAbilityByName("imba_tinker_heat_seeking_missile")
+	local self_laser = self.parent:FindAbilityByName("imba_tinker_laser")
+	local self_missile = self.parent:FindAbilityByName("imba_tinker_heat_seeking_missile")
 
 	if laser then
 		self_laser:SetLevel(laser:GetLevel())
@@ -319,32 +319,40 @@ function modifier_imba_march_of_the_machines_thinker:OnIntervalThink()
 	end
 
 	if self:GetStackCount() == 0 then
-		if (caster:GetAbsOrigin() - parent:GetAbsOrigin()):Length2D() > 550 then
-			parent:SetAbsOrigin(GetRandomPosition2D(caster:GetAbsOrigin(), 300))
+		if (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > 550 then
+			self.parent:SetAbsOrigin(GetRandomPosition2D(self.caster:GetAbsOrigin(), 300))
 		else
-			parent:MoveToNPC(caster)
+			self.parent:MoveToNPC(self.caster)
 		end
 	end
 
-	if not parent:HasModifier("modifier_imba_march_of_the_machines_cooldown") and not ability:GetAutoCastState() and caster:IsAlive() then
-		local enemies = FindUnitsInRadius(caster:GetTeamNumber(), parent:GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_FARTHEST, false)
-		local hero = FindUnitsInRadius(caster:GetTeamNumber(), parent:GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_FARTHEST, false)
+	if not self.parent:HasModifier("modifier_imba_march_of_the_machines_cooldown") and not self.ability:GetAutoCastState() and self.caster:IsAlive() then
+		local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_FARTHEST, false)
+		local hero = FindUnitsInRadius(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_FARTHEST, false)
 		if #enemies > 0 then
 			if self_laser:GetLevel() > 0 then
 				local target = enemies[1]
 				if #hero > 0 then
 					target = hero[1]
 				end
-				parent:SetCursorCastTarget(target)
+				self.parent:SetCursorCastTarget(target)
 				self_laser:OnSpellStart()
 			end
 			if self_missile:GetLevel() > 0 then
 				self_missile:OnSpellStart()
 			end
-			parent:AddNewModifier(caster, ability, "modifier_imba_march_of_the_machines_cooldown", {duration = ability:GetSpecialValueFor("cast_cooldown")})
+			self.parent:AddNewModifier(self.caster, self.ability, "modifier_imba_march_of_the_machines_cooldown", {duration = self.ability:GetSpecialValueFor("cast_cooldown")})
 		end
 	end
-	
+end
+
+function modifier_imba_march_of_the_machines_thinker:OnDestroy()
+	if IsServer() then
+		self.caster = nil
+		self.parent = nil
+		self.ability = nil
+		self.range = nil
+	end
 end
 
 function modifier_imba_march_of_the_machines_thinker:IsAura()
@@ -358,16 +366,12 @@ function modifier_imba_march_of_the_machines_thinker:IsAura()
 end
 function modifier_imba_march_of_the_machines_thinker:GetAuraDuration() return 0.1 end
 function modifier_imba_march_of_the_machines_thinker:GetModifierAura() return "modifier_imba_march_of_the_machines_creep_vision" end
-function modifier_imba_march_of_the_machines_thinker:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("search_range") end
+function modifier_imba_march_of_the_machines_thinker:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("search_range") + self:GetAbility():GetSpecialValueFor("stack_range") * self:GetCaster():GetModifierStackCount("modifier_imba_rearm_stack", nil) end
 function modifier_imba_march_of_the_machines_thinker:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_NONE end
 function modifier_imba_march_of_the_machines_thinker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
 function modifier_imba_march_of_the_machines_thinker:GetAuraSearchType() return DOTA_UNIT_TARGET_CREEP end
 function modifier_imba_march_of_the_machines_thinker:GetAuraEntityReject(unit)
-	if string.find(unit:GetUnitName(), "creep") then
-		return false
-	else
-		return true
-	end
+	return (unit:GetTeamNumber() == DOTA_TEAM_NEUTRALS)
 end
 
 modifier_imba_march_of_the_machines_creep_vision =({})
@@ -454,7 +458,7 @@ function modifier_imba_rearm_stack:IsHidden() 			return false end
 function modifier_imba_rearm_stack:IsPurgable() 		return false end
 function modifier_imba_rearm_stack:IsPurgeException() 	return false end
 function modifier_imba_rearm_stack:DeclareFunctions() return {MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE} end
-function modifier_imba_rearm_stack:GetModifierTotalPercentageManaRegen() return (0 - self:GetAbility():GetSpecialValueFor("mana_penalty") * self:GetStackCount()) end
+function modifier_imba_rearm_stack:GetModifierTotalPercentageManaRegen() return (0 - self:GetAbility():GetSpecialValueFor("mana_penalty")) end
 
 modifier_imba_rearm_fuck = class({})
 

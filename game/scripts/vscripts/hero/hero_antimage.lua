@@ -125,6 +125,7 @@ imba_antimage_spell_shield = class({})
 
 LinkLuaModifier("modifier_imba_antimage_spell_shield_passive", "hero/hero_antimage", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_antimage_spell_shield_active", "hero/hero_antimage", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_antimage_spell_shield_ability", "hero/hero_antimage", LUA_MODIFIER_MOTION_NONE)
 
 function imba_antimage_spell_shield:IsHiddenWhenStolen() 		return false end
 function imba_antimage_spell_shield:IsRefreshable() 			return true end
@@ -134,7 +135,8 @@ function imba_antimage_spell_shield:IsNetherWardStealable() 	return true end
 function imba_antimage_spell_shield:GetIntrinsicModifierName() return "modifier_imba_antimage_spell_shield_passive" end
 
 function imba_antimage_spell_shield:OnSpellStart()
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_antimage_spell_shield_active", {duration = self:GetSpecialValueFor("active_duration")})
+	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_antimage_spell_shield_active", {duration = self:GetSpecialValueFor("active_duration")}):SetStackCount(self:GetSpecialValueFor("max_reflect"))
+	self:GetCaster():Purge(false, true, false, true, true)
 	local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_blink_end_glow.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster())
 	ParticleManager:SetParticleControlEnt(pfx2, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
 	ParticleManager:ReleaseParticleIndex(pfx2)
@@ -168,7 +170,8 @@ function modifier_imba_antimage_spell_shield_active:IsDebuff()					return false 
 function modifier_imba_antimage_spell_shield_active:IsHidden() 					return false end
 function modifier_imba_antimage_spell_shield_active:IsPurgable() 				return true end
 function modifier_imba_antimage_spell_shield_active:IsPurgeException() 			return true end
-function modifier_imba_antimage_spell_shield_active:DeclareFunctions() return {MODIFIER_PROPERTY_ABSORB_SPELL} end
+function modifier_imba_antimage_spell_shield_active:DeclareFunctions() return {MODIFIER_PROPERTY_ABSORB_SPELL, MODIFIER_PROPERTY_REFLECT_SPELL, MODIFIER_PROPERTY_TOOLTIP} end
+function modifier_imba_antimage_spell_shield_active:OnTooltip() return self:GetStackCount() end
 
 function modifier_imba_antimage_spell_shield_active:OnCreated()
 	if IsServer() then
@@ -176,6 +179,7 @@ function modifier_imba_antimage_spell_shield_active:OnCreated()
 		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 		ParticleManager:SetParticleControl(pfx, 1, Vector(100*self:GetParent():GetModelScale(), 1, 1))
 		self:AddParticle(pfx, false, false, 15, false, false)
+		self.time = {}
 	end
 end
 
@@ -193,6 +197,38 @@ function modifier_imba_antimage_spell_shield_active:GetAbsorbSpell(keys)
 	return 1
 end
 
+function modifier_imba_antimage_spell_shield_active:GetReflectSpell(keys)
+	if not IsServer() then
+		return
+	end
+	if not IsEnemy(keys.ability:GetCaster(), self:GetParent()) or self:GetStackCount() <= 0 or keys.ability:GetAbilityName() == "rubick_spell_steal" or self.time[GameRules:GetGameTime()] or keys.ability:GetCaster():GetName() == "npc_dota_thinker" then
+		return 0
+	end
+	self.time[GameRules:GetGameTime()] = true
+	local caster = self:GetParent()
+	local target = keys.ability:GetCaster()
+	local thinker = CreateModifierThinker(caster, keys.ability, "modifier_imba_antimage_spell_shield_ability", {duration = 60.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
+	local ability = thinker:AddAbility(keys.ability:GetAbilityName())
+	ability:SetLevel(keys.ability:GetLevel())
+	ability:SetStolen(true)
+	ability:EndCooldown()
+	thinker:SetCursorCastTarget(target)
+	ability:OnSpellStart()
+	self:SetStackCount(self:GetStackCount() - 1)
+end
+
+function modifier_imba_antimage_spell_shield_active:OnDestroy()
+	if IsServer() then
+		self.time = 0
+	end
+end
+
+modifier_imba_antimage_spell_shield_ability = class({})
+
+function modifier_imba_antimage_spell_shield_ability:IsDebuff()			return false end
+function modifier_imba_antimage_spell_shield_ability:IsHidden() 		return false end
+function modifier_imba_antimage_spell_shield_ability:IsPurgable() 		return false end
+function modifier_imba_antimage_spell_shield_ability:IsPurgeException() return false end
 
 imba_antimage_magehunter = class({})
 

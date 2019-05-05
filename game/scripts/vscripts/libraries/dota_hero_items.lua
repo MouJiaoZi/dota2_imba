@@ -6,7 +6,7 @@ local steamid =
 }
 
 function HeroItems:UnitHasItem(hUnit, sItemModelName)
-	return true
+	return false
 	--[[if IsInTable(tostring(PlayerResource:GetSteamID(hUnit:GetPlayerOwnerID())), steamid) then
 		return true
 	end

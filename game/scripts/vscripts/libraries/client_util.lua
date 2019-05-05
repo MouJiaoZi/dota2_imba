@@ -76,3 +76,41 @@ function C_DOTA_BaseNPC:GetCastRangeBonus()
 	local range = self:GetModifierStackCount("modifier_imba_talent_modifier_adder", nil)
 	return range
 end
+
+function C_DOTABaseAbility:GetAbilityCurrentKV()
+	local name = self:GetName()
+	local kv_to_return = {}
+	local level = self:GetLevel()
+	if level <= 0 then
+		return nil
+	end
+	local kv = AbilityKV[name]["AbilitySpecial"] or ItemKV[name]["AbilitySpecial"]
+	for k, v in pairs(kv) do
+		for a, b in pairs(v) do
+			for str in string.gmatch(b, "%S+") do
+				if tonumber(str) then
+					local lv = 0
+					for s in string.gmatch(b, "%S+") do
+						lv = lv + 1
+						if lv <= level then
+							kv_to_return[a] = tonumber(s)
+						else
+							break
+						end
+					end
+					break
+				end
+			end
+		end
+	end
+	return kv_to_return
+end
+
+function C_DOTA_Modifier_Lua:SetAbilityKV()
+	self.kv = self:GetAbility():GetAbilityCurrentKV()
+	return self.kv
+end
+
+function C_DOTA_Modifier_Lua:GetAbilityKV(sKeyname)
+	return self.kv and (self.kv[sKeyname] or 0) or 0
+end

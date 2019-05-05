@@ -463,6 +463,8 @@ IMBA_COURIER_POSITION[3][8] = Vector(7075, 6575, 256)
 IMBA_COURIER_POSITION[3][9] = Vector(6975, 6675, 256)
 IMBA_COURIER_POSITION[3][10] = Vector(6875, 6775, 256)
 
+IMBA_COURIER_ORDER = {}
+
 imba_courier_speed = class({})
 
 LinkLuaModifier("modifier_imba_courier_buff", "hero/ancient_abilities", LUA_MODIFIER_MOTION_NONE)
@@ -512,12 +514,31 @@ function modifier_imba_courier_buff:OnOrder(keys)
 		elseif keys.new_pos ~= Vector(0,0,0) then
 			local distance = (keys.new_pos - self.pos):Length2D()
 			if distance > self.distance then
-				self.distance = distance
 				self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 				self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
 				self.pid = keys.issuer_player_index
 				self:SetStackCount(keys.issuer_player_index + 1)
 			end
+			self.distance = distance
+			local time = GameRules:GetGameTime()
+			if not IMBA_COURIER_ORDER[time] then
+				IMBA_COURIER_ORDER[time] = {}
+			end
+			IMBA_COURIER_ORDER[time][#IMBA_COURIER_ORDER[time] + 1] = self:GetParent()
+			Timers:CreateTimer(0.1, function()
+					if #IMBA_COURIER_ORDER[time] > 1 then
+						for i=1, #IMBA_COURIER_ORDER[time] do
+							IMBA_COURIER_ORDER[time][i]:FindAbilityByName("courier_return_to_base"):OnSpellStart()
+						end
+					end
+					Timers:CreateTimer(1.0, function()
+							IMBA_COURIER_ORDER[time] = nil
+							return nil
+						end
+					)
+					return nil
+				end
+			)
 		elseif keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET then
 			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
@@ -534,6 +555,12 @@ end
 
 function modifier_imba_courier_buff:OnDeath(keys)
 	if IsServer() and keys.unit == self:GetParent() then
+		if GameRules:GetGameTime() >= 2400 and not IMBA_RESET_COURIER_FEEDING then
+			IMBA_RESET_COURIER_FEEDING = true
+			for i=0, 23 do
+				IMBA_COURIER_FEEDING[self.pid] = 0
+			end
+		end
 		GameRules:SendCustomMessage("Courier Controller: "..self.id..". Game Time: "..GameRules:GetGameTime()..". Player: "..PlayerResource:GetPlayerName(tonumber(self.pid)), 0, 0)
 		IMBA_COURIER_FEEDING[self.pid] = IMBA_COURIER_FEEDING[self.pid] + 1
 		if IMBA_COURIER_FEEDING[self.pid] >= 7 then
