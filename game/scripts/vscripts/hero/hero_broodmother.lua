@@ -42,17 +42,20 @@ end
 function modifier_imba_spider_strikes_motion:OnIntervalThink()
 	local caster = self:GetParent()
 	local target = self.target
-	if not target:IsAlive() or caster:IsStunned() or caster:IsHexed() then
+	if not target:IsAlive() or caster:IsStunned() or caster:IsHexed() or self:GetRemainingTime() < 0 then
 		self:Destroy()
 		return
 	end
-	local pos = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")) - target:GetForwardVector() * (100 * target:GetModelScale())
+	local dir = target:GetForwardVector()
+	dir.z = 0
+	local pos = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")) - dir * (100 * target:GetModelScale())
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
 	direction.z = 0
 	local length = (caster:GetAbsOrigin() - pos):Length2D()
-	if length > 0 then
+	if length > 0 and self:GetRemainingTime() > 0 then
 		length = length / (self:GetRemainingTime() / FrameTime())
-		local next_pos = GetGroundPosition(caster:GetAbsOrigin() + direction * length, nil)
+		local next_pos = GetGroundPosition(caster:GetAbsOrigin(), nil)
+		next_pos = next_pos + direction * length
 		local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
 		local height = 300
 		next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
@@ -66,17 +69,21 @@ function modifier_imba_spider_strikes_motion:OnDestroy()
 		self:GetAbility():SetActivated(true)
 		local target = self.target
 		local caster = self:GetParent()
-		if self:GetElapsedTime() >= self:GetDuration() and target:IsAlive() and not target:IsInvulnerable() and not target:IsMagicImmune() then
-			local pos = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")) - target:GetForwardVector() * (100 * target:GetModelScale())
-			FindClearSpaceForUnit(self:GetParent(), pos, false)
-			caster:AddNewModifier(caster, self:GetAbility(), "modifier_imba_spider_strikes_caster", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-			target:AddNewModifier(caster, self:GetAbility(), "modifier_imba_spider_strikes", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-			if target:HasModifier("modifier_imba_spin_web_debuff") and target:GetModifierStackCount("modifier_imba_spin_web_debuff", nil) ~= -1 then
-				local buff = target:FindModifierByName("modifier_imba_spin_web_debuff")
-				buff:SetStackCount(buff:GetStackCount() + self:GetAbility():GetSpecialValueFor("web_duration_bonus") * 10)
+		if self:GetElapsedTime() >= self:GetDuration() then
+			local direction = target:GetForwardVector()
+			direction.z = 0
+			local pos = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")) - direction * (100 * target:GetModelScale())
+			FindClearSpaceForUnit(caster, pos, true)
+				if target:IsAlive() and not target:IsInvulnerable() and not target:IsMagicImmune() then
+				caster:AddNewModifier(caster, self:GetAbility(), "modifier_imba_spider_strikes_caster", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+				target:AddNewModifier(caster, self:GetAbility(), "modifier_imba_spider_strikes", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+				if target:HasModifier("modifier_imba_spin_web_debuff") and target:GetModifierStackCount("modifier_imba_spin_web_debuff", nil) ~= -1 then
+					local buff = target:FindModifierByName("modifier_imba_spin_web_debuff")
+					buff:SetStackCount(buff:GetStackCount() + self:GetAbility():GetSpecialValueFor("web_duration_bonus") * 10)
+				end
 			end
 		else
-			FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), false)
+			FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		end
 		self.target = nil
 	end
