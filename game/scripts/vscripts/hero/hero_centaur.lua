@@ -271,7 +271,6 @@ function modifier_imba_centaur_stampede:IsDebuff()			return false end
 function modifier_imba_centaur_stampede:IsHidden() 			return false end
 function modifier_imba_centaur_stampede:IsPurgable() 		return false end
 function modifier_imba_centaur_stampede:IsPurgeException() 	return false end
-
 function modifier_imba_centaur_stampede:GetEffectName() return "particles/units/heroes/hero_centaur/centaur_stampede_overhead.vpcf" end
 function modifier_imba_centaur_stampede:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
 function modifier_imba_centaur_stampede:ShouldUseOverheadOffset() return true end
@@ -329,11 +328,11 @@ function modifier_imba_centaur_stampede:OnDestroy()
 end
 
 function modifier_imba_centaur_stampede:DeclareFunctions()
-	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE_MIN, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,}
+	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE_MIN, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING}
 end
 
 function modifier_imba_centaur_stampede:GetModifierMoveSpeed_AbsoluteMin() return 550 end
-
+function modifier_imba_centaur_stampede:GetModifierStatusResistanceStacking() return self:GetAbility():GetSpecialValueFor("status_resistance") end
 function modifier_imba_centaur_stampede:GetModifierIncomingDamage_Percentage()
 	if self:GetCaster():HasScepter() then
 		return (0-self:GetAbility():GetSpecialValueFor("damage_reduction_scepter"))

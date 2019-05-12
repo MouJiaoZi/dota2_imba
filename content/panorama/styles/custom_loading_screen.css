@@ -9,7 +9,7 @@
 	height: 100%;
 	background-color: black;
 	overflow: clip;
-	background-image: url("file://{images}/custom_game/loading_screen/background.jpg");
+	background-image: url("file://{images}/loadingscreens/araknarok_broodmother_araknarok_broodmother_loading_screen/loadingscreen.vtex");
 	background-position: center center;
 	background-size: cover;
 }

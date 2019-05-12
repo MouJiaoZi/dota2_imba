@@ -152,6 +152,7 @@ local forbidden_buff = {
 	"modifier_imba_burrow",
 	"modifier_doom_bringer_devour",
 	"modifier_dark_willow_bedlam",
+	"modifier_pangolier_gyroshell",
 	}
 
 function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDMG, iIncomingDMG, iIllsuionType, fDuration)

@@ -155,7 +155,7 @@ function modifier_imba_shadow_dance_effect:IsPurgable() 		return false end
 function modifier_imba_shadow_dance_effect:IsPurgeException() 	return false end
 function modifier_imba_shadow_dance_effect:CheckState() return {[MODIFIER_STATE_INVISIBLE] = true, [MODIFIER_STATE_TRUESIGHT_IMMUNE] = true ,[MODIFIER_STATE_PROVIDES_VISION] = false} end
 function modifier_imba_shadow_dance_effect:DeclareFunctions() return {MODIFIER_PROPERTY_PROVIDES_FOW_POSITION} end
-function modifier_imba_shadow_dance_effect:GetModifierProvidesFOWVision() return false end
+function modifier_imba_shadow_dance_effect:GetModifierProvidesFOWVision() return 0 end
 function modifier_imba_shadow_dance_effect:GetStatusEffectName() return "particles/status_fx/status_effect_slark_shadow_dance.vpcf" end
 function modifier_imba_shadow_dance_effect:StatusEffectPriority() return 15 end
 function modifier_imba_shadow_dance_effect:GetPriority() return MODIFIER_PRIORITY_ULTRA + 10 end

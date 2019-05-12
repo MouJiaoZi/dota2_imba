@@ -335,6 +335,10 @@ end
 76561198082036401
 76561198312782420
 76561198104023318
+76561198113420595
+76561198137694912
+76561198053084768
+76561198096612746
 ]]
 
 function IMBA:OrderFilter(keys)
@@ -372,45 +376,6 @@ function IMBA:OrderFilter(keys)
 			return false
 		end
 	end
-
-	------------------------------------------------------------------------------------
-	-- Dota 2 Anti Script Cheating
-	------------------------------------------------------------------------------------
-
-	--[[if keys.issuer_player_id_const >= 0 and (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION or keys.order_type == DOTA_UNIT_ORDER_ATTACK_TARGET or keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET or keys.order_type == DOTA_UNIT_ORDER_DROP_ITEM) then
-		local parm = {}
-		local target = EntIndexToHScript(keys.entindex_target)
-		if (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_ATTACK_TARGET or keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET) and target then
-			local hit_loc = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_loc"))
-			parm = {["lua_x"] = hit_loc[1], ["lua_y"] = hit_loc[2], ["lua_z"] = hit_loc[3], ["player_id"] = keys.issuer_player_id_const}
-		else
-			parm = {["lua_x"] = keys.position_x, ["lua_y"] = keys.position_y, ["lua_z"] = keys.position_z, ["player_id"] = keys.issuer_player_id_const}
-		end
-		parm.order_type = keys.order_type
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.issuer_player_id_const), "imba_compare_cursor_pos_client", parm)
-	end
-
-	if keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET and unit:HasModifier("modifier_imba_rearm_fuck") then
-		local buff = unit:FindModifierByName("modifier_imba_rearm_fuck")
-		local ability = EntIndexToHScript(keys.entindex_ability)
-		if ability and (ability:GetName() == "item_imba_sheepstick" or string.find(ability:GetName(), "dagon") or ability:GetName() == "item_ethereal_blade" or ability:GetName() == "item_imba_bloodthorn" or ability:GetName() == "item_imba_orchid") then
-			if buff:GetParent():IsAlive() then
-				if (GameRules:GetGameTime() - buff.time) <= 0.03 then
-					buff:SetStackCount(buff:GetStackCount() + 1)
-					buff.id = PlayerResource:GetSteamID(keys.issuer_player_id_const)
-					unit.order = unit.order + 1
-				else
-					buff:SetStackCount(math.max(buff:GetStackCount() - 1, 0))
-				end
-			end
-			buff.time = GameRules:GetGameTime()
-			if buff:GetStackCount() >= 20 and buff:GetParent():IsAlive() then
-				buff:SetStackCount(18)
-				buff:GetParent():ForceKill(true)
-				IMBA:SendHTTPRequest("imba_suicide_record.php", {["match_id"] = GameRules:GetMatchID(), ["map_name"] = GetMapName(), ["steamid_64"] = buff.id, ["hero_name"] = buff:GetParent():GetUnitName()})
-			end
-		end
-	end]]
 
 	------------------------------------------------------------------------------------
 	-- Courier Set
@@ -463,6 +428,33 @@ function IMBA:OrderFilter(keys)
 	end
 
 	------------------------------------------------------------------------------------
+	-- Tiny Toss / Furion Sprout Disable Help
+	------------------------------------------------------------------------------------
+
+	if (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION) and (EntIndexToHScript(keys.entindex_ability):GetName() == "furion_sprout" or EntIndexToHScript(keys.entindex_ability):GetName() == "tiny_toss") then
+		local ability = EntIndexToHScript(keys.entindex_ability)
+		if ability:GetName() == "furion_sprout" then
+			if keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION then
+				local unit = FindUnitsInRadius(ability:GetCaster():GetTeamNumber(), Vector(keys.position_x, keys.position_y, keys.position_z), nil, 300, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+				for i=1, #unit do
+					if PlayerResource:IsDisableHelpSetForPlayerID(unit[i]:GetPlayerOwnerID(), ability:GetCaster():GetPlayerOwnerID()) then
+						return false
+					end
+				end
+			else
+				return not PlayerResource:IsDisableHelpSetForPlayerID(EntIndexToHScript(keys.entindex_target):GetPlayerOwnerID(), ability:GetCaster():GetPlayerOwnerID())
+			end
+		else
+			local unit = FindUnitsInRadius(ability:GetCaster():GetTeamNumber(), ability:GetCaster():GetAbsOrigin(), nil, ability:GetSpecialValueFor("grab_radius"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+			for i=1, #unit do
+				if PlayerResource:IsDisableHelpSetForPlayerID(unit[i]:GetPlayerOwnerID(), ability:GetCaster():GetPlayerOwnerID()) then
+					return false
+				end
+			end
+		end
+	end
+
+	------------------------------------------------------------------------------------
 	-- Global Sniper Assassinate
 	------------------------------------------------------------------------------------
 
@@ -473,6 +465,19 @@ function IMBA:OrderFilter(keys)
 			ability.global = 50000
 		else
 			ability.global = 0
+		end
+	end
+
+	------------------------------------------------------------------------------------
+	-- Spin Web Cast Range
+	------------------------------------------------------------------------------------
+
+	if keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION and EntIndexToHScript(keys.entindex_ability):GetName() == "imba_broodmother_spin_web" then
+		local ability = EntIndexToHScript(keys.entindex_ability)
+		if #Entities:FindAllByClassnameWithin("npc_dota_broodmother_web", Vector(keys.position_x, keys.position_y, keys.position_z), ability:GetSpecialValueFor("radius") * 2) > 0 then
+			ability.range = 50000
+		else
+			ability.range = 0
 		end
 	end
 
@@ -493,15 +498,7 @@ function IMBA:OrderFilter(keys)
 	-- Queen of Pain's Sonic Wave confusion
 	------------------------------------------------------------------------------------
 
-	local buffs = unit:FindAllModifiers()
-	local confuse = false
-	for _, buff in pairs(buffs) do
-		if buff.IsConfuse and buff:IsConfuse() then
-			confuse = true
-			break
-		end
-	end
-
+	local confuse = unit:HasModifier("modifier_confuse")
 	if confuse then
 
 		-- Determine order type

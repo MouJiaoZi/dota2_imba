@@ -114,3 +114,7 @@ end
 function C_DOTA_Modifier_Lua:GetAbilityKV(sKeyname)
 	return self.kv and (self.kv[sKeyname] or 0) or 0
 end
+
+function C_DOTA_BaseNPC:IsUnit()
+	return self:IsHero() or self:IsCreep() or self:IsBoss()
+end

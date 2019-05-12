@@ -553,8 +553,6 @@ function modifier_imba_track_speed:OnCreated()
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 1, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 2, self:GetParent():GetAbsOrigin())
-
 		self:AddParticle(pfx, false, false, -1, false, false)
-		ParticleManager:ReleaseParticleIndex(pfx)
 	end
 end

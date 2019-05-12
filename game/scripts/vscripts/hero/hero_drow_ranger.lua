@@ -369,7 +369,7 @@ end
 
 function modifier_imba_marksmanship_effect:OnIntervalThink()
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS + DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_ANY_ORDER, false)
-	if #enemies > 0 or self:GetParent():PassivesDisabled() then
+	if (#enemies > 0 or self:GetParent():PassivesDisabled()) and not self:GetCaster():HasTalent("special_bonus_imba_drow_ranger_1") then
 		self:SetStackCount(1)
 		if self.pfx then
 			ParticleManager:DestroyParticle(self.pfx, false)

@@ -45,6 +45,9 @@ function SetupTopBar()
 	//RadiantTeamContainer.style.height = '737px';
 
 	// Top Bar Dire
+	var TopBarDireTeam = topbar.FindChildTraverse('DireTeamScorePlayers');
+	TopBarDireTeam.style.overflow = 'noclip';
+
 	var TopBarDireTeam = topbar.FindChildTraverse('TopBarDireTeam');
 	TopBarDireTeam.style.width = '690px';
 
@@ -104,7 +107,6 @@ GameEvents.Subscribe("imba_compare_cursor_pos_client", GetLocalPlayerCursorPos);
 
 function SetDeathMatchKillGoal()
 {
-	$.Msg(a);
 	if(Game.GetMapInfo().map_display_name == "dbii_death_match")
 	{
 		$.Schedule(1.0, SetDeathMatchKillGoalNum);

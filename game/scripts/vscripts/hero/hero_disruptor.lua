@@ -54,7 +54,7 @@ function modifier_imba_thunder_strike:OnDeath(keys)
 				end
 			end
 			for i = 1, #target do
-				if target[i] ~= self:GetParent() then
+				if target[i] ~= self:GetParent() and #target[i]:FindAllModifiersByName(self:GetName()) < 20 then
 					target[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), self:GetName(), {strikes = self:GetStackCount()})
 				end
 			end
@@ -62,7 +62,7 @@ function modifier_imba_thunder_strike:OnDeath(keys)
 		else
 			local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
 			for i = 1, #enemy do
-				if enemy[i] ~= self:GetParent() then
+				if enemy[i] ~= self:GetParent() and #enemy[i]:FindAllModifiersByName(self:GetName()) < 20 then
 					enemy[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), self:GetName(), {strikes = self:GetStackCount()})
 					self:Destroy()
 					break

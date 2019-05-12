@@ -1499,3 +1499,7 @@ function CDOTA_BaseNPC:RemoveAllModifiersByName(sBuffname)
 		buff[i]:Destroy()
 	end
 end
+
+function CDOTA_BaseNPC:IsUnit()
+	return self:IsHero() or self:IsCreep() or self:IsBoss()
+end

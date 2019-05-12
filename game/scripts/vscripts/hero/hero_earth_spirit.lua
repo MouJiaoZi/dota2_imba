@@ -800,7 +800,7 @@ function modifier_imba_magnetize_debuff:OnIntervalThink()
 	ParticleManager:SetParticleControlEnt(pfx2, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 	ParticleManager:SetParticleControl(pfx2, 2, Vector(self:GetAbility():GetSpecialValueFor("rock_search_radius"),0,0))
 	ParticleManager:ReleaseParticleIndex(pfx2)
-	ApplyDamage({victim = parent, attacker = self:GetCaster(), ability = self:GetAbility(), damage = dmg, damage_type = self:GetAbility():GetAbilityDamageType()})
+	ApplyDamage({victim = parent, attacker = self:GetCaster(), ability = self:GetAbility(), damage = dmg, damage_type = self:GetCaster():GetModifierStackCount("modifier_imba_petrify_controller", nil) == 0 and DAMAGE_TYPE_PURE or self:GetAbility():GetAbilityDamageType()})
 	local stone = FindStoneRemnant(parent:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("rock_search_radius"))
 	if stone and not parent:IsMagicImmune() then
 		stone:EmitSound("Imba.Hero_EarthSpirit.Magnetize.StoneBolt")

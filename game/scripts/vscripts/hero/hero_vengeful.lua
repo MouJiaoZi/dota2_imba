@@ -351,6 +351,10 @@ function imba_vengeful_nether_swap:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
+	if not IsEnemy(caster, target) and PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), caster:GetPlayerOwnerID()) then
+		caster:AddNewModifier(caster, self, "modifier_imba_stunned", {duration = 10.0})
+		return
+	end
 	local caster_loc = caster:GetAbsOrigin()
 	local target_loc = target:GetAbsOrigin()
 	local pos = {}
@@ -358,7 +362,7 @@ function imba_vengeful_nether_swap:OnSpellStart()
 	table.insert(pos, target_loc)
 	caster:EmitSound("Hero_VengefulSpirit.NetherSwap")
 	target:EmitSound("Hero_VengefulSpirit.NetherSwap")
-	target:Interrupt()
+	target:InterruptChannel()
 	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_vengeful/vengeful_nether_swap.vpcf", PATTACH_CUSTOMORIGIN, caster)
 	ParticleManager:SetParticleControlEnt(pfx1, 0, caster, PATTACH_POINT, "attach_hitloc", caster:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlEnt(pfx1, 1, target, PATTACH_POINT, "attach_hitloc", target:GetAbsOrigin(), true)

@@ -156,8 +156,8 @@
 		"Ability13"					"special_bonus_agility_13"
 		"Ability14"					"special_bonus_hp_200"
 		"Ability15"					"special_bonus_agility_14"
-		"Ability16"					"special_bonus_cooldown_reduction_25"
-		"Ability17"					"special_bonus_strength_14"
+		"Ability16"					"special_bonus_cooldown_reduction_40"
+		"Ability17"					"special_bonus_imba_drow_ranger_1"
 	}
 	"npc_dota_hero_earthshaker"
 	{
@@ -1227,13 +1227,18 @@
 	}
 	"npc_dota_hero_broodmother"
 	{
-		"Ability6"						"imba_broodmother_insatiable_hunger"
+		"Ability1"					"imba_broodmother_spider_strikes"
+		"Ability2"					"imba_broodmother_spin_web"
+		"Ability3"					"imba_broodmother_incapacitating_bite"
+		"Ability4"					"generic_hidden"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"imba_broodmother_insatiable_hunger"
 		
 		"Ability10"					"special_bonus_agility_13"
 		"Ability11"					"special_bonus_exp_boost_15"
 		"Ability12"					"special_bonus_cooldown_reduction_15"
 		"Ability13"					"special_bonus_armor_5"
-		"Ability14"					"special_bonus_unique_broodmother_2"
+		"Ability14"					"special_bonus_agility_15"
 		"Ability15"					"special_bonus_attack_damage_100"
 		"Ability16"					"special_bonus_imba_broodmother_1"
 		"Ability17"					"special_bonus_imba_broodmother_2"

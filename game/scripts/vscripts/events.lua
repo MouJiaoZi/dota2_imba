@@ -119,9 +119,7 @@ function GameMode:OnGameRulesStateChange(keys)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_HERO_SELECTION then
-		--if not IsInToolsMode() then
-			IMBA:SendHTTPRequest("imba_new_match.php", {["match_id"] = GameRules:IsCheatMode() and tostring(RandomInt(0, 1000000))..tostring(RandomInt(200, 9000)).."0000000" or GameRules:GetMatchID(), ["map_name"] = GetMapName(), ["player_number"] = (PlayerResource:GetPlayerCountForTeam(2) + PlayerResource:GetPlayerCountForTeam(3)), ["game_version"] = IMBA_GAME_VERSION,})
-		--end
+		IMBA:SendHTTPRequest("imba_new_match.php", {["match_id"] = GameRules:IsCheatMode() and tostring(RandomInt(0, 1000000))..tostring(RandomInt(200, 9000)).."0000000" or GameRules:GetMatchID(), ["map_name"] = GetMapName(), ["player_number"] = (PlayerResource:GetPlayerCountForTeam(2) + PlayerResource:GetPlayerCountForTeam(3)), ["game_version"] = IMBA_GAME_VERSION,})
 		if GameRules:IsCheatMode() then
 			GameRules:SetSafeToLeave(true)
 		end
@@ -274,6 +272,14 @@ function GameMode:OnGameRulesStateChange(keys)
 							CDOTAGamerules.IMBA_FORT[tower:GetTeamNumber()] = tower
 							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 						end
+						---------------
+						--[[if string.find(tower:GetUnitName(), "tower") then
+							if tower:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+								tower:SetRangedProjectileName("particles/econ/world/towers/rock_golem/radiant_rock_golem_attack.vpcf")
+							else
+								tower:SetRangedProjectileName("particles/econ/world/towers/rock_golem/dire_rock_golem_attack.vpcf")
+							end
+						end]]
 					end
 				end
 				if tick >= 2 and not announce then

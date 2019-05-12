@@ -429,7 +429,9 @@ function modifier_imba_enigma_black_hole_aura:OnCreated()
 		local a = self:CheckMotionControllers() and self:StartIntervalThink(FrameTime()) or 0
 		local pfx = ParticleManager:CreateParticleForPlayer("particles/hero/enigma/screen_blackhole_indicator.vpcf", PATTACH_EYES_FOLLOW, self:GetParent(), PlayerResource:GetPlayer(self:GetParent():GetPlayerID()))
 		self:AddParticle(pfx, false, false, 15, false, false)
-		PlayerResource:SetCameraTarget(self:GetParent():GetPlayerID(), self:GetParent())
+		if self:GetParent():IsRealHero() then
+			PlayerResource:SetCameraTarget(self:GetParent():GetPlayerOwnerID(), self:GetParent())
+		end
 	end
 end
 

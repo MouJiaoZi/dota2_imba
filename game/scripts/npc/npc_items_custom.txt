@@ -4272,12 +4272,13 @@
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"0"
+		"AbilityManaCost"				"10"
 		"ItemCost"						"2200"
 		"ItemShopTags"					"damage;armor;int;hard_to_tag"
 		"ItemQuality"					"artifact"
 		"ItemAliases"					"blade mail"
 		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_TO_SPECTATORS"
+		"AbilitySharedCooldown"			"blademail"
 		
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
@@ -7038,7 +7039,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"mana_burn"					"30"
+				"mana_burn"					"50"
 			}
 			"04"
 			{
@@ -7110,7 +7111,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"mana_burn"					"60"
+				"mana_burn"					"80"
 			}
 			"04"
 			{
@@ -7183,7 +7184,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"mana_burn"					"90"
+				"mana_burn"					"110"
 			}
 			"04"
 			{
@@ -10261,7 +10262,7 @@
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"SpellImmunityType"				"DOTA_UNIT_TARGET_FLAG_NONE"
 		"FightRecapLevel"				"1"
-		"ScriptFile"					"items/item_imba_nullifier.lua"
+		"ScriptFile"					"items/item_nullifier.lua"
 		
 		// Stats		
 		//-------------------------------------------------------------------------------------------------------------
@@ -10367,5 +10368,107 @@
 		}
 	}
 
-	//next free ID: 2233
+	//=================================================================================================================
+	// Recipe: Blade Mail
+	//=================================================================================================================
+	"item_recipe_imba_blade_mail_2"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2233"
+		"BaseClass"						"item_datadriven"
+		"AbilityTextureName" 			"item_recipe_imba_blade_mail_2"
+		"Model"							"models/props_gameplay/recipe.mdl"
+		"FightRecapLevel"				"1"
+		
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemCost"						"0"	
+		"ItemShopTags"					""
+		
+		// Recipe
+		//-------------------------------------------------------------------------------------------------------------
+		"ItemRecipe"					"1"
+		"ItemResult"					"item_imba_blade_mail_2"
+		"ItemRequirements"
+		{
+			"01"						"item_imba_blade_mail;item_imba_crown"
+		}
+	}
+
+	//=================================================================================================================
+	// Blade Mail
+	//=================================================================================================================
+	"item_imba_blade_mail_2"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"ID"							"2234"
+		"BaseClass"						"item_lua"
+		"AbilityTextureName"			"imba_blade_mail_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"FightRecapLevel"				"1"
+		"ScriptFile"					"items/item_blade_mail.lua"
+
+		// Stats		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"16.0"
+
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"10"
+		"ItemShopTags"					"damage;armor;int;hard_to_tag"
+		"ItemQuality"					"artifact"
+		"ItemAliases"					"blade mail"
+		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_TO_SPECTATORS"
+		"AbilitySharedCooldown"			"blademail"
+		
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_damage"			"45"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_armor"			"8"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_intellect"		"30"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_strength"		"20"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bonus_agility"			"20"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"4.5"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"origin_pct"			"50"
+			}
+			"08"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"attack_debuff_duration" "0.3"
+			}
+		}
+	}
+
+	//next free ID: 2235
 }

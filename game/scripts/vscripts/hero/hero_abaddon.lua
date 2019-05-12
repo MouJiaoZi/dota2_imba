@@ -97,7 +97,7 @@ end
 
 modifier_imba_aphotic_shield = class({})
 
-function modifier_imba_aphotic_shield:IsDebuff()				return false end
+function modifier_imba_aphotic_shield:IsDebuff()			return false end
 function modifier_imba_aphotic_shield:IsHidden() 			return false end
 function modifier_imba_aphotic_shield:IsPurgable() 			return true end
 function modifier_imba_aphotic_shield:IsPurgeException() 	return true end

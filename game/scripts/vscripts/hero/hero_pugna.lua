@@ -140,6 +140,11 @@ function imba_pugna_decrepify:OnSpellStart()
 	if IsEnemy(target, caster) then
 		target:AddNewModifier(caster, self, buff_name, {duration = self:GetSpecialValueFor("duration")})
 	else
+		if PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), caster:GetPlayerOwnerID()) then
+			FindClearSpaceForUnit(caster, target:GetAbsOrigin(), true)
+			caster:AddNewModifier(caster, self, "modifier_imba_stunned", {duration = 10.0})
+			return
+		end
 		target:AddNewModifier(caster, self, buff_name, {duration = self:GetSpecialValueFor("duration")})
 	end
 	target:EmitSound("Hero_Pugna.Decrepify")

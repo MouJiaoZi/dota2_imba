@@ -69,7 +69,7 @@ var IMBAHeroes =
 ["npc_dota_hero_windrunner", 0],
 ["npc_dota_hero_witch_doctor", 1],
 ["npc_dota_hero_zuus", 0],
-["npc_dota_hero_broodmother", 2],
+["npc_dota_hero_broodmother", 1],
 ["npc_dota_hero_skeleton_king", 1],
 ["npc_dota_hero_queenofpain", 1],
 ["npc_dota_hero_huskar", 2],
@@ -263,11 +263,16 @@ function FillTopBarPlayer()
 	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
 	var herocard = FindDotaHudElement('GridCore');
 	total = herocard.GetChildCount();
+	var delay = 0.03;
+	if(Game.IsInToolsMode())
+	{
+		delay = 0;
+	}
 	for(var i=0; i<total; i++)
 	{
-		$.Schedule((0.03 * i), UpdateHeroCard);
+		$.Schedule((delay * i), UpdateHeroCard);
 	}
-	$.Schedule((0.03 * (i + 3)), ReEnablePickButton);
+	$.Schedule((delay * (i + 3)), ReEnablePickButton);
 }
 
 function ReEnablePickButton()
@@ -347,6 +352,10 @@ if(!Players.IsSpectator(Players.GetLocalPlayer()))
 	FillTopBarPlayer() ;
 }
 
+FindDotaHudElement("BattlePassHeroUpsell").style.width = "0%";
+FindDotaHudElement("BattlePassHeroUpsell").style.height = "0%";
+FindDotaHudElement("BattlePassHeroData").style.width = "0%";
+FindDotaHudElement("BattlePassHeroData").style.height = "0%";
 FindDotaHudElement("ToGameTransition").style.width = "0%";
 FindDotaHudElement("ToGameTransition").style.height = "0%";
 FindDotaHudElement("HeroRoles").style.width = "0%";

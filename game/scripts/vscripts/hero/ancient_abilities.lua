@@ -506,7 +506,7 @@ end
 
 function modifier_imba_courier_buff:OnOrder(keys)
 	if IsServer() and keys.unit == self:GetParent() and self.pos then
-		if (keys.ability and (keys.ability:GetAbilityName() == "courier_go_to_secretshop" or keys.ability:GetAbilityName() == "courier_transfer_items")) then
+		if (keys.ability and (keys.ability:GetAbilityName() == "courier_go_to_secretshop" or keys.ability:GetAbilityName() == "courier_transfer_items" or keys.ability:GetAbilityName() == "courier_take_stash_and_transfer_items")) then
 			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
 			self.pid = keys.issuer_player_index
@@ -525,8 +525,10 @@ function modifier_imba_courier_buff:OnOrder(keys)
 				IMBA_COURIER_ORDER[time] = {}
 			end
 			IMBA_COURIER_ORDER[time][#IMBA_COURIER_ORDER[time] + 1] = self:GetParent()
+			local buff = self
 			Timers:CreateTimer(0.1, function()
 					if #IMBA_COURIER_ORDER[time] > 1 then
+						Notifications:Bottom(PlayerResource:GetPlayer(buff.pid), {text="#imba_introduction_line_04", duration = 10, style={["font-size"] = "30px"}})
 						for i=1, #IMBA_COURIER_ORDER[time] do
 							IMBA_COURIER_ORDER[time][i]:FindAbilityByName("courier_return_to_base"):OnSpellStart()
 						end
