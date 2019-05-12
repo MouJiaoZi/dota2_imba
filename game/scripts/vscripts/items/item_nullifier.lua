@@ -1,9 +1,9 @@
 item_imba_nullifier_2 = class({})
 
-LinkLuaModifier("modifier_imba_nullifier_2", "items/item_imba_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_nullifier_aura", "items/item_imba_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_nullifier_debuff", "items/item_imba_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_nullifier_slow", "items/item_imba_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_nullifier_2", "items/item_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_nullifier_aura", "items/item_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_nullifier_debuff", "items/item_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_nullifier_slow", "items/item_nullifier.lua", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_nullifier_2:GetIntrinsicModifierName() return "modifier_imba_nullifier_2" end
 
