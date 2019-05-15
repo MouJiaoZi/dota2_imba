@@ -10460,7 +10460,7 @@
 			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"origin_pct"			"50"
+				"origin_pct"			"30"
 			}
 			"08"
 			{

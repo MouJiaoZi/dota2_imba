@@ -4,10 +4,20 @@ CreateEmptyTalents("rubick")
 
 imba_rubick_telekinesis_land = class({})
 
+LinkLuaModifier("modifier_imba_telekinesis_pfx", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
+
 function imba_rubick_telekinesis_land:IsHiddenWhenStolen() 		return false end
 function imba_rubick_telekinesis_land:IsRefreshable() 			return true end
 function imba_rubick_telekinesis_land:IsStealable() 			return false end
 function imba_rubick_telekinesis_land:IsNetherWardStealable()	return false end
+function imba_rubick_telekinesis_land:GetCastRange()
+	if IsServer() then
+		return 50000
+	else
+		return self:GetCaster():GetModifierStackCount("modifier_imba_telekinesis_range", nil) == 1 and self:GetSpecialValueFor("ally_land_distance") or self:GetSpecialValueFor("enemy_land_distance")
+	end
+end
+
 function imba_rubick_telekinesis_land:GetAOERadius() return self:GetSpecialValueFor("landing_stun_radius") end
 function imba_rubick_telekinesis_land:OnSpellStart()
 	local buff = self:GetCaster():FindModifierByName("modifier_imba_telekinesis_range")
@@ -24,15 +34,33 @@ function imba_rubick_telekinesis_land:OnSpellStart()
 		pos = self:GetCursorPosition()
 	end
 	target_buff.pos = GetGroundPosition(pos, nil)
-	if self.pfx then
-		ParticleManager:DestroyParticle(self.pfx, false)
-		ParticleManager:ReleaseParticleIndex(self.pfx)
-		self.pfx = nil
+	if not self.pfx then
+		self.pfx = CreateModifierThinker(target_buff:GetParent(), self, "modifier_imba_telekinesis_pfx", {duration = target_buff:GetRemainingTime()}, pos, self:GetCaster():GetTeamNumber(), false)
+	else
+		self.pfx:FindModifierByName("modifier_imba_telekinesis_pfx"):SetStackCount(1)
+		self.pfx:FindModifierByName("modifier_imba_telekinesis_pfx"):Destroy()
+		self.pfx = CreateModifierThinker(target_buff:GetParent(), self, "modifier_imba_telekinesis_pfx", {duration = target_buff:GetRemainingTime()}, pos, self:GetCaster():GetTeamNumber(), false)
 	end
-	self.pfx = ParticleManager:CreateParticleForTeam("particles/econ/items/rubick/rubick_force_ambient/rubick_telekinesis_marker_force.vpcf", PATTACH_CUSTOMORIGIN, nil, self:GetCaster():GetTeamNumber())
-	ParticleManager:SetParticleControl(self.pfx, 0, target_buff.pos)
-	ParticleManager:SetParticleControl(self.pfx, 1, Vector(target_buff:GetRemainingTime() + 0.5, 0, 0))
-	ParticleManager:SetParticleControl(self.pfx, 2, target_buff:GetParent():GetAbsOrigin())
+end
+
+modifier_imba_telekinesis_pfx = class({})
+
+function modifier_imba_telekinesis_pfx:CheckState() return {[MODIFIER_STATE_INVISIBLE] = true} end
+
+function modifier_imba_telekinesis_pfx:OnCreated()
+	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/econ/items/rubick/rubick_force_ambient/rubick_telekinesis_marker_force.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetRemainingTime() + 0.5, 0, 0))
+		ParticleManager:SetParticleControl(pfx, 2, self:GetCaster():GetAbsOrigin())
+		self:AddParticle(pfx, false, false, 15, false, false)
+	end
+end
+
+function modifier_imba_telekinesis_pfx:OnDestroy()
+	if IsServer() then
+		self:GetAbility().pfx = nil
+	end
 end
 
 imba_rubick_telekinesis = class({})
@@ -179,7 +207,7 @@ function modifier_imba_telekinesis_ally_lift:IsPurgable() 			return false end
 function modifier_imba_telekinesis_ally_lift:IsPurgeException() 	return false end
 function modifier_imba_telekinesis_ally_lift:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_telekinesis_ally_lift:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_telekinesis_ally_lift:CheckState() return {[MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
+function modifier_imba_telekinesis_ally_lift:CheckState() return {[MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 
 function modifier_imba_telekinesis_ally_lift:OnCreated()
 	if IsServer() then
@@ -195,13 +223,12 @@ function modifier_imba_telekinesis_ally_lift:OnDestroy()
 	if IsServer() then
 		self:GetParent():StopSound("Hero_Rubick.Telekinesis.Target")
 		self:GetCaster():SwapAbilities("imba_rubick_telekinesis", "imba_rubick_telekinesis_land", true, false)
-		local ability = self:GetCaster():FindAbilityByName("imba_rubick_telekinesis_land")
-		if ability.pfx then
-			ParticleManager:DestroyParticle(ability.pfx, false)
-			ParticleManager:ReleaseParticleIndex(ability.pfx)
-			ability.pfx = nil
+		if PlayerResource:IsDisableHelpSetForPlayerID(self:GetParent():GetPlayerOwnerID(), self:GetCaster():GetPlayerOwnerID()) then
+			self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_telekinesis_end_motion", {duration = 0.2, pos_x = self.pos.x, pos_y = self.pos.y, pos_z = self.pos.z})
+			self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = 10.0})
+		else
+			self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_telekinesis_end_motion", {duration = 0.2, pos_x = self.pos.x, pos_y = self.pos.y, pos_z = self.pos.z})
 		end
-		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_telekinesis_end_motion", {duration = 0.2, pos_x = self.pos.x, pos_y = self.pos.y, pos_z = self.pos.z})
 		self.pos = nil
 	end
 end
@@ -214,7 +241,7 @@ function modifier_imba_telekinesis_enemy_lift:IsPurgable() 			return false end
 function modifier_imba_telekinesis_enemy_lift:IsPurgeException() 	return false end
 function modifier_imba_telekinesis_enemy_lift:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_telekinesis_enemy_lift:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_telekinesis_enemy_lift:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
+function modifier_imba_telekinesis_enemy_lift:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 
 function modifier_imba_telekinesis_enemy_lift:OnCreated()
 	if IsServer() then
@@ -230,12 +257,6 @@ function modifier_imba_telekinesis_enemy_lift:OnDestroy()
 	if IsServer() then
 		self:GetParent():StopSound("Hero_Rubick.Telekinesis.Target")
 		self:GetCaster():SwapAbilities("imba_rubick_telekinesis", "imba_rubick_telekinesis_land", true, false)
-		local ability = self:GetCaster():FindAbilityByName("imba_rubick_telekinesis_land")
-		if ability.pfx then
-			ParticleManager:DestroyParticle(ability.pfx, false)
-			ParticleManager:ReleaseParticleIndex(ability.pfx)
-			ability.pfx = nil
-		end
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_telekinesis_end_motion", {duration = 0.2, pos_x = self.pos.x, pos_y = self.pos.y, pos_z = self.pos.z})
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = 0.2})
 		self.pos = nil
@@ -271,6 +292,7 @@ function modifier_imba_spell_steal_buff:OnAbilityFullyCast(keys)
 		for _, talent in pairs(self.talents) do
 			rubick:RemoveAbility(talent:GetAbilityName())
 		end
+		self.talents = {}
 		for i=0, 23 do
 			local talent = target:GetAbilityByIndex(i)
 			if talent and (string.find(talent:GetAbilityName(), "special_bonus_imba") or string.find(talent:GetAbilityName(), "special_bonus_unique_")) and talent:GetLevel() > 0 then

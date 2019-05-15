@@ -388,9 +388,9 @@ function GameMode:OnNPCSpawned(keys)
 						ability:SetLevel(1)
 					end
 				end
-
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
+				HeroItems:SetHeroItemTable(npc)
 				for i=0, 10 do
 					AddFOWViewer(i, npc:GetAbsOrigin(), 200, FrameTime(), false)
 				end

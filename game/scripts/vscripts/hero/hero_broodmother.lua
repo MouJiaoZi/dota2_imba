@@ -439,7 +439,7 @@ function modifier_imba_incapacitating_bite:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or not keys.target:IsAlive() or keys.target:IsOther() or keys.target:IsBuilding() or self:GetParent():IsIllusion() or keys.target:IsMagicImmune() then
+	if keys.attacker ~= self:GetParent() or not keys.target:IsAlive() or keys.target:IsOther() or keys.target:IsBuilding() or self:GetParent():IsIllusion() or keys.target:IsMagicImmune() or self:GetParent():PassivesDisabled() then
 		return
 	end
 	local caster = self:GetCaster()

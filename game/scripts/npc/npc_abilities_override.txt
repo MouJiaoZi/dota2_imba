@@ -15138,7 +15138,7 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"cooldown_scepter"			"2 1 0"
+				"cooldown_scepter"			"3 2 1"
 			}
 		}
 	}	

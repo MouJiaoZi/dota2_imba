@@ -1,55 +1,48 @@
 HeroItems = class({})
 
-local steamid = 
+Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
+
+local HeroItems_steamid_64 = 
 {
 	"76561198097609945",
 }
 
+local hero_item_table = {}
+for i=0, 23 do
+	hero_item_table[i] = {}
+end
+
+function HeroItems:SetHeroItemTable(hUnit)
+	local hero_name = hUnit:GetUnitName()
+	local pID = hUnit:GetPlayerOwnerID()
+	local items_info = Hero_Items_KV[hero_name]
+	local steamid = tostring(PlayerResource:GetSteamID(pID))
+	if IsInTable(steamid, HeroItems_steamid_64) then
+		for k, v in pairs(items_info) do
+			if hero_item_table[pID][k] == nil then
+				hero_item_table[pID][k] = true
+			end
+		end
+	else
+		local temp = hUnit:GetChildren()
+		local items = {}
+		for i=1, #temp do
+			if temp[i]:GetClassname() == "dota_item_wearable" then
+				items[#items + 1] = temp[i]:GetModelName()
+			end
+		end
+		for k, v in pairs(items_info) do
+			if hero_item_table[pID][k] == nil then
+				if IsInTable(v, temp) then
+					hero_item_table[pID][k] = true
+				else
+					hero_item_table[pID][k] = false
+				end
+			end
+		end
+	end
+end
+
 function HeroItems:UnitHasItem(hUnit, sItemModelName)
-	return false
-	--[[if IsInTable(tostring(PlayerResource:GetSteamID(hUnit:GetPlayerOwnerID())), steamid) then
-		return true
-	end
-	local item = hUnit:GetChildren()
-	for i=1, #item do
-		if item[i]:GetClassname() == "dota_item_wearable" and string.find(item[i]:GetModelName(), sItemModelName) then
-			return true
-		end
-	end
-	return nil]]
-end
-
-function HeroItems:UnitHasItem2(hUnit, sItemModelName)
-	local entity = hUnit:FirstMoveChild()
-	while entity do
-		if entity:GetClassname() == "dota_item_wearable" and string.find(entity:GetModelName(), sItemModelName) then
-			return entity
-		end
-		entity = hUnit:NextMovePeer()
-	end
-	return nil
-end
-
-function HeroItems:RemoveHeroItem(hHeroItem)
-	Timers:CreateTimer(0.1, function()
-		if hHeroItem and hHeroItem.GetModelName then
-			hHeroItem:AddEffects(EF_NODRAW)
-			print("Removing Hero Item:",hHeroItem:GetModelName())
-			hHeroItem:SetModel("models/development/invisiblebox.vmdl")
-		end
-	end)
-end
-
-function HeroItems:AddHeroItem(hUnit, sItemSlot, sNewItemModelName, sParticleName, iParticleAttach)
-	if not hUnit or not sItemSlot or not sNewItemModelName then
-		return
-	end
-	local pre_item = HeroItems:UnitHasItem(hUnit, sItemSlot)
-	if not pre_item then
-		return
-	end
-	local new_item = SpawnEntityFromTableSynchronous("prop_dynamic", {model = sNewItemModelName})
-	new_item:SetParent(hUnit, "attach_hitloc")
-	new_item:FollowEntity(hUnit, true)
-	HeroItems:RemoveHeroItem(pre_item)
+	return hero_item_table[hUnit:GetPlayerOwnerID()][sItemModelName]
 end

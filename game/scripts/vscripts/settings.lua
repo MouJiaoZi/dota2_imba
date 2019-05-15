@@ -1,4 +1,4 @@
-IMBA_GAME_VERSION = 61
+IMBA_GAME_VERSION = 62
 
 IMBA_WEB_SERVER = "https://www.bilibiliduang.cn/"
 
