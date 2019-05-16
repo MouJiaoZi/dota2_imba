@@ -28,34 +28,58 @@ function SetupTopBar()
 	var topbar = FindDotaHudElement('topbar');
 	topbar.style.width = '1550px';
 
+	var HUDSkinTopBarBG = topbar.FindChildTraverse('HUDSkinTopBarBG');
+	HUDSkinTopBarBG.style.width = '90%';
+
 	// Top Bar Radiant
+	var TopBarRadiantTeamContainer = topbar.FindChildTraverse('TopBarRadiantTeamContainer');
+	TopBarRadiantTeamContainer.style.marginLeft = '40px';
+
+	var RadiantTeamScorePlayers = topbar.FindChildTraverse('RadiantTeamScorePlayers');
+	RadiantTeamScorePlayers.style.overflow = 'noclip';
+
 	var TopBarRadiantTeam = topbar.FindChildTraverse('TopBarRadiantTeam');
 	TopBarRadiantTeam.style.width = '690px';
 
 	var topbarRadiantPlayers = topbar.FindChildTraverse('TopBarRadiantPlayers');
+	topbarRadiantPlayers.style.overflow = 'noclip';
 	topbarRadiantPlayers.style.width = '690px';
 
 	var topbarRadiantPlayersContainer = topbar.FindChildTraverse('TopBarRadiantPlayersContainer');
 	topbarRadiantPlayersContainer.style.width = '630px';
 	topbarRadiantPlayersContainer.SetHasClass("LeftRightFlow", false);
 	topbarRadiantPlayersContainer.style.flowChildren="left";
+
+	var TopBarLeftFlare = topbar.FindChildTraverse('TopBarLeftFlare');
+	TopBarLeftFlare.style.visibility = 'visible';
+	TopBarLeftFlare.style.marginLeft = '36px';
+
 	FillTopBarPlayer(topbarRadiantPlayersContainer);
 
 	//var RadiantTeamContainer = topbar.FindChildTraverse('RadiantTeamContainer');
 	//RadiantTeamContainer.style.height = '737px';
 
 	// Top Bar Dire
-	var TopBarDireTeam = topbar.FindChildTraverse('DireTeamScorePlayers');
-	TopBarDireTeam.style.overflow = 'noclip';
+	var TopBarDireTeamContainer = topbar.FindChildTraverse('TopBarDireTeamContainer');
+	TopBarDireTeamContainer.style.marginRight = '160px';
+
+	var DireTeamScorePlayers = topbar.FindChildTraverse('DireTeamScorePlayers');
+	DireTeamScorePlayers.style.overflow = 'noclip';
 
 	var TopBarDireTeam = topbar.FindChildTraverse('TopBarDireTeam');
 	TopBarDireTeam.style.width = '690px';
 
 	var topbarDirePlayers = topbar.FindChildTraverse('TopBarDirePlayers');
+	topbarDirePlayers.style.overflow = 'noclip';
 	topbarDirePlayers.style.width = '690px';
 
 	var topbarDirePlayersContainer = topbar.FindChildTraverse('TopBarDirePlayersContainer');
 	topbarDirePlayersContainer.style.width = '630px';
+
+	var TopBarRightFlare = topbar.FindChildTraverse('TopBarRightFlare');
+	TopBarRightFlare.style.visibility = 'visible';
+	TopBarRightFlare.style.marginRight = '35px';
+
 	FillTopBarPlayer(topbarDirePlayersContainer);
 
 	//var DireTeamContainer = topbar.FindChildTraverse('DireTeamContainer');

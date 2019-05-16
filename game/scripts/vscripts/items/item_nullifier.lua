@@ -127,7 +127,7 @@ function modifier_imba_nullifier_debuff:OnAttackLanded(keys)
 end
 
 function modifier_imba_nullifier_debuff:OnDeath(keys)
-	if IsServer() and keys.unit == self:GetParent() and not keys.reincarnate and self:GetAbility():IsItem() then
+	if IsServer() and keys.unit == self:GetParent() and not keys.reincarnate and self:GetAbility() and self:GetAbility():IsItem() then
 		self:GetAbility():SetCurrentCharges(self:GetAbility():GetCurrentCharges() + self:GetAbility():GetSpecialValueFor("kill_charge"))
 	end
 end
