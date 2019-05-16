@@ -16,6 +16,9 @@ function HeroItems:SetHeroItemTable(hUnit)
 	local hero_name = hUnit:GetUnitName()
 	local pID = hUnit:GetPlayerOwnerID()
 	local items_info = Hero_Items_KV[hero_name]
+	if not items_info then
+		return
+	end
 	local steamid = tostring(PlayerResource:GetSteamID(pID))
 	if IsInTable(steamid, HeroItems_steamid_64) then
 		for k, v in pairs(items_info) do
@@ -40,9 +43,16 @@ function HeroItems:SetHeroItemTable(hUnit)
 				end
 			end
 		end
+		for k, v in pairs(items_info) do
+			for i=1, #items do
+				if hero_item_table[pID][k] == nil and string.find(items[i], k) then
+					hero_item_table[pID][k] = true
+				end
+			end
+		end
 	end
 end
 
-function HeroItems:UnitHasItem(hUnit, sItemModelName)
-	return hero_item_table[hUnit:GetPlayerOwnerID()][sItemModelName]
+function HeroItems:UnitHasItem(hUnit, sItemKeyword)
+	return hero_item_table[hUnit:GetPlayerOwnerID()][sItemKeyword]
 end

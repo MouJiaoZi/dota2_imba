@@ -138,7 +138,7 @@ function IMBAEvents:OnRoshanKilled(killed_unit)
 				drop_cheese:LaunchLoot(false, 100, 0.5, killed_unit:GetAbsOrigin() + RandomVector(100))
 			end
 		end
-		local dummy = CreateModifierThinker(nil, nil, "modifier_dummy_thinker", {duration = CUSTOM_ROSHAN_RESPAWN}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
+		local dummy = CreateModifierThinker(nil, nil, "modifier_dummy_thinker", {duration = CUSTOM_ROSHAN_RESPAWN}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 		local buff = dummy:FindModifierByName("modifier_dummy_thinker")
 		buff.OnRemoved = function()
 			if IsServer() then
@@ -188,7 +188,7 @@ end
 
 function IMBAEvents:StartIMBAVersionCheck()
 	if IsServer() then
-		CreateModifierThinker(nil, nil, "modifier_imba_version_check", {}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
+		CreateModifierThinker(nil, nil, "modifier_imba_version_check", {}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -230,6 +230,6 @@ end
 
 function IMBAEvents:StartAbandonCheck()
 	if IsServer() then
-		CreateModifierThinker(nil, nil, "modifier_imba_abandon_check", {}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
+		CreateModifierThinker(nil, nil, "modifier_imba_abandon_check", {}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 	end
 end

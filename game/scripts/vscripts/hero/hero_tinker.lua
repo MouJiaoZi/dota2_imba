@@ -460,21 +460,184 @@ function modifier_imba_rearm_stack:IsPurgeException() 	return false end
 function modifier_imba_rearm_stack:DeclareFunctions() return {MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE} end
 function modifier_imba_rearm_stack:GetModifierTotalPercentageManaRegen() return (0 - self:GetAbility():GetSpecialValueFor("mana_penalty")) end
 
-modifier_imba_rearm_fuck = class({})
+function March( keys )
+	local caster = keys.caster
+	local target = keys.target_points[1]
+	local ability = keys.ability
+	local ability_level = ability:GetLevel() - 1
+	local ability_rearm = caster:FindAbilityByName(keys.ability_rearm)
+	local sound_cast = keys.sound_cast
+	local modifier_machine = keys.modifier_machine
+	local modifier_rearm_stack = keys.modifier_rearm_stack
+	local modifier_rearm_mana = keys.modifier_rearm_mana
+	local scepter = caster:HasScepter()
+	
+	-- Parameters
+	local spawner_width = ability:GetLevelSpecialValueFor("spawner_width", ability_level)
+	local spawner_amount = ability:GetLevelSpecialValueFor("spawner_amount", ability_level)
+	local movement_scepter = ability:GetLevelSpecialValueFor("movement_scepter", ability_level)
 
-function modifier_imba_rearm_fuck:IsDebuff()			return false end
-function modifier_imba_rearm_fuck:IsHidden() 			return true end
-function modifier_imba_rearm_fuck:IsPurgable() 			return false end
-function modifier_imba_rearm_fuck:IsPurgeException() 	return false end
-function modifier_imba_rearm_fuck:RemoveOnDeath() 		return self:GetParent():IsIllusion() end
-function modifier_imba_rearm_fuck:DeclareFunctions() return {MODIFIER_EVENT_ON_ORDER} end
+	-- Play cast sound
+	caster:EmitSound(sound_cast)
 
-function modifier_imba_rearm_fuck:OnCreated()
-	if IsServer() then
-		if self:GetParent():IsIllusion() then
-			return
+	-- Rearm stacks logic
+	local rearm_stacks = caster:GetModifierStackCount(modifier_rearm_stack, caster)
+	spawner_amount = spawner_amount + rearm_stacks
+
+	-- Calculate fixed spawn point positions
+	local spawn_points = {}
+	local caster_pos = caster:GetAbsOrigin()
+	local target_direction = (target - caster_pos):Normalized()
+	if target == caster_pos then
+		target_direction = caster:GetForwardVector()
+	end
+	spawn_points[1] = RotatePosition(target, QAngle(0, -90, 0), target + target_direction * spawner_width / 2 )
+	spawn_points[2] = RotatePosition(target, QAngle(0, 90, 0), target + target_direction * spawner_width / 2 )
+
+	-- Calculate variable spawn point positions
+	if spawner_amount <= 3 then
+		spawn_points[3] = target
+	else
+		for i = 3,spawner_amount do
+			spawn_points[i] = RotatePosition(target, QAngle(0, (i - 2) * 360 / (spawner_amount - 2), 0), target + target_direction * spawner_width / 4 )
 		end
-		self.time = -10000
-		self.id = 0
+	end
+
+	-- Place spawners on spawn positions
+	for _,spawn_point in pairs(spawn_points) do
+
+		-- Spawn spawner
+		local spawner = CreateUnitByName("npc_imba_tinker_mom_spawner", spawn_point, false, nil, nil, caster:GetTeamNumber())
+
+		-- Apply spawner modifier (controls projectile spawning)
+		ability:ApplyDataDrivenModifier(caster, spawner, modifier_machine, {})
+
+		-- Align spawner to face the cast direction
+		spawner:SetForwardVector(target_direction)
+		
+		-- If scepter, make the spawners controllable
+		if scepter then
+			Physics:Unit(spawner)
+			spawner:SetPhysicsVelocity(target_direction * movement_scepter)	
+			spawner:SetPhysicsFriction(0)
+			spawner:SetNavCollisionType(PHYSICS_NAV_NOTHING)
+		else
+			spawner:AddNewModifier(spawner, ability, "modifier_rooted", {})
+		end
+
+		-- Movement animation
+		StartAnimation(spawner, {duration = 12, activity = ACT_DOTA_RUN, rate = 1.0})
 	end
 end
+
+function MarchSpawn( keys )
+	local caster = keys.caster
+	local spawner = keys.target
+	local ability = keys.ability
+	local ability_level = ability:GetLevel() - 1
+	local particle_machine = keys.particle_machine
+
+	-- If the ability was unlearned, or the spawner is near the enemy fountain, destroy it
+	if not ability or IsNearEnemyClass(spawner, 1360, "ent_dota_fountain")then
+		spawner:Destroy()
+		return nil
+	end
+	
+	-- Parameters
+	local spawn_radius = ability:GetLevelSpecialValueFor("spawn_radius", ability_level)
+	local spawn_length = ability:GetLevelSpecialValueFor("spawn_length", ability_level)
+	local collision_radius = ability:GetLevelSpecialValueFor("collision_radius", ability_level)
+	local speed = ability:GetLevelSpecialValueFor("speed", ability_level)
+
+	-- Calculate spawn point
+	local spawner_loc = spawner:GetAbsOrigin()
+	local forward_direction = spawner:GetForwardVector()
+	local spawn_start = spawner_loc - forward_direction * spawn_length / 3
+	local spawn_point = RotatePosition(spawn_start, QAngle(0, 90, 0), spawn_start + forward_direction * ( RandomInt(0, 10) - 5 ) * spawn_radius / 5 )
+
+	-- Spawn projectile
+	local machine_projectile = {
+		Ability				= ability,
+		EffectName			= particle_machine,
+		vSpawnOrigin		= spawn_point,
+		fDistance			= spawn_length,
+		fStartRadius		= collision_radius,
+		fEndRadius			= collision_radius,
+		Source				= caster,
+		bHasFrontalCone		= false,
+		bReplaceExisting	= false,
+		iUnitTargetTeam		= DOTA_UNIT_TARGET_TEAM_ENEMY,
+	--	iUnitTargetFlags	= ,
+		iUnitTargetType		= DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_CREEP,
+	--	fExpireTime			= ,
+		bDeleteOnHit		= true,
+		vVelocity			= Vector(forward_direction.x, forward_direction.y, 0) * speed,
+		bProvidesVision		= false,
+	--	iVisionRadius		= ,
+	--	iVisionTeamNumber	= caster:GetTeamNumber(),
+	}
+	ProjectileManager:CreateLinearProjectile(machine_projectile)
+
+	-- If this spawner is dying, destroy it
+	if spawner:GetHealth() <= 1 then
+		spawner:Destroy()
+
+	-- If not, reduce its health by 1
+	else
+		spawner:SetHealth( spawner:GetHealth() - 1 )
+	end
+end
+
+function MarchDamage( keys )
+	local caster = keys.caster
+	local spawner = keys.target
+	local attacker = keys.attacker
+	local ability = keys.ability
+	local ability_level = ability:GetLevel() - 1
+
+	-- If the ability was unlearned, do nothing
+	if not ability then
+		return nil
+	end
+	
+	-- Parameters
+	local attacks_to_kill = ability:GetLevelSpecialValueFor("attacks_to_kill", ability_level)
+	local max_spawns = ability:GetLevelSpecialValueFor("max_spawns", ability_level)
+	local damage = 1
+
+	-- If the attacker is a hero, deal more damage
+	if attacker:IsHero() then
+		damage = math.ceil( max_spawns / attacks_to_kill )
+	end
+
+	-- If the damage is enough to kill the spawner, destroy it
+	if spawner:GetHealth() <= damage then
+		spawner:Destroy()
+
+	-- Else, reduce its HP
+	else
+		spawner:SetHealth(spawner:GetHealth() - damage)
+	end
+end
+
+--[[
+
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines"							"空战机械"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Description"					"<font color='#FF7800'>被动召唤一个空战机械为修补匠作战，空战机械拥有激光和热导飞弹两个技能，技能等级和神杖加成与修补匠同步。</font>\n机械自动对%search_range%范围内的敌人施放技能，如果机械对敌方英雄造成了伤害，则机械的技能将进入较长的冷却中。\n开启本技能的自动施放将使空战机械停止施放技能。\n<font color='#FF7800'>部署：</font>令空战机械停留在目标位置并获得%search_range%范围内所有小兵的视野，对自身施法将召回机械。\n<font color='#FF7800'>过载：</font>每层过载效果提高机械%stack_range%搜索范围。"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Lore"						"就算实验室最后被封锁了，呼叫机械兵锋的无线电还是通的。"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Note0"						"如果目标是英雄或空战机械与修补匠之间超过1000距离，那么它造成的伤害降低50%。"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Note1"						"修补匠死亡时空战机械不会施法，空战机械不会施加激光的致盲和降低视野效果。"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_cast_cooldown"				"机械技能冷却时间："
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_hero_cooldown"				"击中英雄冷却时间："
+
+
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines"							"Air Combat Machinery"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Description"					"<font color='#FF7800'>Summon a Air combat machinery for Tinker passively, machinery has Laser and Heat-Seeking Missiles abilities, their level and scepter upgrade is same as Tinker's.</font>\nMachinery casts abilities automatically on enemies in %search_range% radius, if it deals damage to enemy hero, it's abilities will turn into a longer cooldown time.\nEnable auto-cast can disable machinery's abilities.\n<font color='#FF7800'>Deploy:</font>Let machinery stay in target location and gain enemy creeps' vision in %search_range% radius, cast this ability on yourself will call back the machinery.\n<font color='#FF7800'>Overdrive:</font>Every stack conut increases the search range by %stack_range%."
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Lore"						"Even though the laboratory has since been sealed off, the ability to radio in robotic drones is still in working order."
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Note0"						"If the target is a hero or the distance between Tinker and Machinery is over 1000, the machinery's outgoing damage will reduced by 50%."
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_Note1"						"Won't cast if Tinker is dead, won't apply Laser's debuff."
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_cast_cooldown"				"MACHINERY ABILITY COOLDOWN:"
+		"DOTA_Tooltip_ability_imba_tinker_march_of_the_machines_hero_cooldown"				"HIT HERO COOLDOWN:"
+
+
+]]

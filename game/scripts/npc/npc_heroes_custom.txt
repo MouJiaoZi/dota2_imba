@@ -2245,21 +2245,21 @@
 	{
 		"GibTintColor"	"0 29 137 255"
 	
-		"Ability1"		"imba_terrorblade_reflection"
-		"Ability2"		"imba_terrorblade_conjure_image"
-		"Ability3"		"imba_terrorblade_metamorphosis"
-		"Ability4"		"imba_terrorblade_demonic_power"
-		"Ability5"		"generic_hidden"
-		"Ability6"		"imba_terrorblade_sunder"
+		//"Ability1"		"imba_terrorblade_reflection"
+		//"Ability2"		"imba_terrorblade_conjure_image"
+		//"Ability3"		"imba_terrorblade_metamorphosis"
+		//"Ability4"		"imba_terrorblade_demonic_power"
+		//"Ability5"		"generic_hidden"
+		//"Ability6"		"imba_terrorblade_sunder"
 		
 		"Ability10"		"special_bonus_movement_speed_20"
 		"Ability11"		"special_bonus_evasion_10"
 		"Ability12"		"special_bonus_hp_300"
 		"Ability13"		"special_bonus_attack_speed_25"
 		"Ability14"		"special_bonus_all_stats_8"
-		"Ability15"		"special_bonus_imba_terrorblade_1"
-		"Ability16"		"special_bonus_imba_terrorblade_2"
-		"Ability17"		"special_bonus_imba_terrorblade_3"
+		//"Ability15"		"special_bonus_imba_terrorblade_1"
+		//"Ability16"		"special_bonus_imba_terrorblade_2"
+		//"Ability17"		"special_bonus_imba_terrorblade_3"
 
 	}
 	"npc_dota_hero_phoenix"

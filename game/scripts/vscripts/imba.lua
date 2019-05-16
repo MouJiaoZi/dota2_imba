@@ -95,14 +95,6 @@ function IMBA:BountyRuneFilter(keys)
 	return true
 end
 
-local noDamageFilterUnits = {
-	"npc_dota_unit_tombstone1",
-	"npc_dota_unit_tombstone2",
-	"npc_dota_unit_tombstone3",
-	"npc_dota_unit_tombstone4",
-	"npc_dota_unit_undying_zombie",
-}
-
 function IMBA:DamageFilter(keys)
 	--[[
 	damage: 75.159187316895
@@ -126,7 +118,7 @@ function IMBA:DamageFilter(keys)
 
 	local red_cirt = false
 
-	if IsInTable(target:GetName(), noDamageFilterUnits) then
+	if noDamageFilterUnits[target:GetName()] then
 		return true
 	end
 

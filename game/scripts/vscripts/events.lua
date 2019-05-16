@@ -706,26 +706,25 @@ function GameMode:OnTeamKillCredit(keys)
 	local killerTeamNumber = keys.teamnumber
 end
 
-local noDamageFilterUnits = {
-	"npc_dota_unit_tombstone1",
-	"npc_dota_unit_tombstone2",
-	"npc_dota_unit_tombstone3",
-	"npc_dota_unit_tombstone4",
-	"npc_dota_unit_undying_zombie",
-}
-
 -- An entity died
 function GameMode:OnEntityKilled( keys )
 	DebugPrint( '[BAREBONES] OnEntityKilled Called' )
 	DebugPrintTable( keys )
-	
+	--[[
+	damagebits: 0
+	entindex_attacker: 866
+	entindex_inflictor: 866
+	entindex_killed: 866
+	splitscreenplayer: -1
+	]]
 
 	-- The Unit that was Killed
 	local killed_unit = EntIndexToHScript( keys.entindex_killed )
 
 	local victim = killed_unit
 
-	if IsInTable(victim:GetName(), noDamageFilterUnits) then
+	if noDamageFilterUnits[victim:GetName()] then
+		CreateModifierThinker(victim, nil, "modifier_imba_remove_self", {duration = 2.0, entid = victim:entindex()}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 		return
 	end
 

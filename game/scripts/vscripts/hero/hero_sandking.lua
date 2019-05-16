@@ -150,6 +150,7 @@ imba_sandking_sand_storm = class({})
 
 LinkLuaModifier("modifier_sand_storm_caster", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_sand_storm_sound", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 
 function imba_sandking_sand_storm:IsHiddenWhenStolen() 		return false end
 function imba_sandking_sand_storm:IsRefreshable() 			return true end
@@ -163,12 +164,7 @@ function imba_sandking_sand_storm:OnSpellStart()
 	local caster = self:GetCaster()
 	caster:RemoveModifierByName("modifier_sand_storm_caster")
 	caster:AddNewModifier(caster, self, "modifier_sand_storm_caster", {})
-	self.dummy = CreateUnitByName("npc_dummy_unit", caster:GetAbsOrigin(), false, caster, caster, caster:GetTeamNumber())
-	if RollPercentage(30) then
-		self.dummy:EmitSound("Imba.SandKingSandStorm")
-	else
-		self.dummy:EmitSound("Ability.SandKing_SandStorm.loop")
-	end
+	CreateModifierThinker(caster, self, "modifier_sand_storm_sound", {duration = self:GetChannelTime()}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 	caster:EmitSound("Ability.SandKing_SandStorm.start")
 end
 
@@ -178,9 +174,33 @@ function imba_sandking_sand_storm:OnChannelFinish(bInterrupted)
 		buff:StartIntervalThink(-1)
 		buff:SetDuration(self:GetSpecialValueFor("invis_duration"), true)
 	end
-	self.dummy:StopSound("Imba.SandKingSandStorm")
-	self.dummy:StopSound("Ability.SandKing_SandStorm.loop")
-	self.dummy:ForceKill(false)
+end
+
+modifier_sand_storm_sound = class({})
+
+function modifier_sand_storm_sound:OnCreated()
+	if IsServer() then
+		if RollPercentage(30) then
+			self:GetParent():EmitSound("Imba.SandKingSandStorm")
+		else
+			self:GetParent():EmitSound("Ability.SandKing_SandStorm.loop")
+		end
+		self:StartIntervalThink(0.2)
+	end
+end
+
+function modifier_sand_storm_sound:OnIntervalThink()
+	self:GetParent():SetAbsOrigin(self:GetCaster():GetAbsOrigin())
+	if not self:GetAbility():IsChanneling() then
+		self:Destroy()
+	end
+end
+
+function modifier_sand_storm_sound:OnDestroy()
+	if IsServer() then
+		self:GetParent():StopSound("Imba.SandKingSandStorm")
+		self:GetParent():StopSound("Ability.SandKing_SandStorm.loop")
+	end
 end
 
 modifier_sand_storm_caster = class({})

@@ -120,7 +120,7 @@ var IMBAHeroes =
 ["npc_dota_hero_ember_spirit", 1],
 ["npc_dota_hero_legion_commander", 0],
 ["npc_dota_hero_phoenix", 0],
-["npc_dota_hero_terrorblade", 1],
+["npc_dota_hero_terrorblade", 0],
 ["npc_dota_hero_techies", 1],
 ["npc_dota_hero_oracle", 2],
 ["npc_dota_hero_winter_wyvern", 0],

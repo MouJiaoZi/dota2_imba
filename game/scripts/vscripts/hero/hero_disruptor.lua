@@ -318,6 +318,7 @@ end
 function modifier_imba_kinetic_field_delay:OnDestroy()
 	if IsServer() then
 		CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_imba_kinetic_field_thinker", {duration = self:GetAbility():GetSpecialValueFor("duration") + self:GetCaster():GetTalentValue("special_bonus_imba_disruptor_5"), sound = self.sound}, self:GetParent():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
+		AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("radius"), self:GetAbility():GetSpecialValueFor("duration") + self:GetCaster():GetTalentValue("special_bonus_imba_disruptor_5"), false)
 		self.sound = nil
 	end
 end
