@@ -2,10 +2,14 @@ HeroItems = class({})
 
 Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
 
-local HeroItems_steamid_64 = 
-{
-	"76561198097609945",
-}
+local HeroItems_steamid_64 = {}
+HeroItems_steamid_64[76561198097609945] = true
+HeroItems_steamid_64[76561198100269546] = true
+HeroItems_steamid_64[76561198111357621] = true
+HeroItems_steamid_64[76561198319625131] = true
+HeroItems_steamid_64[76561198115082141] = true
+HeroItems_steamid_64[76561198077798616] = true
+HeroItems_steamid_64[76561198236042082] = true
 
 local hero_item_table = {}
 for i=0, 23 do
@@ -19,8 +23,8 @@ function HeroItems:SetHeroItemTable(hUnit)
 	if not items_info then
 		return
 	end
-	local steamid = tostring(PlayerResource:GetSteamID(pID))
-	if IsInTable(steamid, HeroItems_steamid_64) then
+	local steamid = tonumber(tostring(PlayerResource:GetSteamID(pID)))
+	if HeroItems_steamid_64[steamid] then
 		for k, v in pairs(items_info) do
 			if hero_item_table[pID][k] == nil then
 				hero_item_table[pID][k] = true
@@ -36,17 +40,10 @@ function HeroItems:SetHeroItemTable(hUnit)
 		end
 		for k, v in pairs(items_info) do
 			if hero_item_table[pID][k] == nil then
-				if IsInTable(v, temp) then
+				if IsInTable(v, items) then
 					hero_item_table[pID][k] = true
 				else
 					hero_item_table[pID][k] = false
-				end
-			end
-		end
-		for k, v in pairs(items_info) do
-			for i=1, #items do
-				if hero_item_table[pID][k] == nil and string.find(items[i], k) then
-					hero_item_table[pID][k] = true
 				end
 			end
 		end

@@ -263,7 +263,7 @@ function FillTopBarPlayer()
 	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
 	var herocard = FindDotaHudElement('GridCore');
 	total = herocard.GetChildCount();
-	var delay = 0.03;
+	var delay = 0.015;
 	if(Game.IsInToolsMode())
 	{
 		delay = 0;

@@ -749,7 +749,7 @@ end
 function modifier_imba_nether_ward:OnDestroy()
 	if IsServer() then
 		TrueKill(self:GetParent(), self:GetParent(), self:GetAbility())
-		UTIL_Remove(self:GetParent())
+		CreateModifierThinker(victim, nil, "modifier_imba_remove_self", {duration = 3.0, entid = self:GetParent():entindex()}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 

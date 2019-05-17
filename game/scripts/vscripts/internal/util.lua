@@ -1309,12 +1309,13 @@ function CDOTA_BaseNPC:RemoveAllModifiers()
 								"modifier_item_ultimate_scepter_consumed",
 								"modifier_imba_moon_shard_consume",}
 	for i=1, #buff do
-		if buff[i].IsMotionController and buff[i]:IsMotionController() then
-			buff[i]:Destroy()
+		if not IsInTable(buff[i]:GetName(), no_move_buff_name) and not string.find(buff[i]:GetName(), "charge_counter") or (buff[i].CheckState and buff[i]:CheckState()[MODIFIER_STATE_STUNNED]) then
+			if buff[i]:GetAbility() and buff[i]:GetAbility().GetIntrinsicModifierName and buff[i]:GetName() == buff[i]:GetAbility():GetIntrinsicModifierName() then
+				--
+			else
+				buff[i]:Destroy()
+			end
 		end
-		--if not IsInTable(buff[i]:GetName(), no_move_buff_name) and not string.find(buff[i]:GetName(), "charge_counter") and (not buff[i].IsMotionController or (buff[i].IsMotionController and not buff[i]:IsMotionController)) then
-		--	buff[i]:Destroy()
-		--end
 	end
 end
 

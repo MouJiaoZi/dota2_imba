@@ -311,7 +311,7 @@ function imba_enigma_black_hole:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
 	self.pos = pos
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetAOERadius(), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetAOERadius(), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_ANY_ORDER, false)
 	local buff = caster:FindModifierByName("modifier_imba_enigma_black_hole_singularity")
 	buff:SetStackCount(buff:GetStackCount() + #enemies)
 	self.thinker = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = self:GetChannelTime() + FrameTime() * 2}, pos, caster:GetTeamNumber(), false)

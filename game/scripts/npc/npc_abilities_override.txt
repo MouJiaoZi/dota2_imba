@@ -6788,7 +6788,7 @@
 			"02"
 			{
 				"var_type"			"FIELD_FLOAT"
-				"cloud_bolt_interval"	"1.0"
+				"cloud_bolt_interval"	"2.0"
 			}
 			"03"
 			{

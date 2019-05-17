@@ -303,9 +303,9 @@ function modifier_imba_take_aim_far:DeclareFunctions() return {MODIFIER_PROPERTY
 function modifier_imba_take_aim_far:GetModifierAttackRangeBonus() return self:GetAbility():GetSpecialValueFor("range") end
 function modifier_imba_take_aim_far:GetModifierBaseAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("damage_bonus") end
 function modifier_imba_take_aim_far:GetModifierBaseAttackTimeConstant() return self:GetAbility():GetSpecialValueFor("BAT") end
-function modifier_imba_take_aim_far:GetModifierMoveSpeed_Absolute() return 0.1 end
-function modifier_imba_take_aim_far:GetModifierMoveSpeed_Limit() return 0.1 end
-function modifier_imba_take_aim_far:GetModifierMoveSpeed_Max() return 0.1 end
+function modifier_imba_take_aim_far:GetModifierMoveSpeed_Absolute() return 0.01 end
+function modifier_imba_take_aim_far:GetModifierMoveSpeed_Limit() return 0.01 end
+function modifier_imba_take_aim_far:GetModifierMoveSpeed_Max() return 0.01 end
 
 --modifier_sniper_shrapnel_slow
 

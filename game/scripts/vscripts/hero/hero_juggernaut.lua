@@ -41,7 +41,7 @@ function modifier_imba_juggernaut_blade_fury:OnCreated()
 	if IsServer() then
 		self:GetCaster():Purge(false, true, false, false, false)
 		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
-			local pfx_dragon = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_blade_fury.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+			local pfx_dragon = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_blade_fury.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
 			self:AddParticle(pfx_dragon, false, false, 15, false, false)
 		end
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_juggernaut/juggernaut_blade_fury.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
@@ -323,7 +323,11 @@ function modifier_imba_blade_dance_passive:DeclareFunctions() return {MODIFIER_E
 function modifier_imba_blade_dance_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("crit_chance")) then
-			self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
+			if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
+				self:GetParent():EmitSound("Hero_Juggernaut.BladeDance.Arcana")
+			else
+				self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
+			end
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_check", {})
 			return self:GetAbility():GetSpecialValueFor("crit_damage")
 		else
@@ -344,8 +348,8 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 		self:GetParent():RemoveModifierByName("modifier_imba_blade_dance_check")
 		self:GetParent():AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_stacks", {duration = self:GetAbility():GetSpecialValueFor("bonus_duration")}, 1, false, true)
 		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
-			local pfx_crit = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_crit_tgt.vpcf", PATTACH_ABSORIGIN_FOLLOW, keys.target)
-			ParticleManager:SetParticleControlEnt(pfx_crit, 1, keys.target, PATTACH_ABSORIGIN_FOLLOW, "", keys.target:GetAbsOrigin(), true)
+			local pfx_crit = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_crit_tgt.vpcf", PATTACH_ABSORIGIN_FOLLOW, keys.target)
+			ParticleManager:SetParticleControlEnt(pfx_crit, 1, keys.target, PATTACH_ABSORIGIN_FOLLOW, nil, keys.target:GetAbsOrigin(), true)
 			ParticleManager:ReleaseParticleIndex(pfx_crit)
 		end
 	end
@@ -380,6 +384,7 @@ end
 imba_juggernaut_omni_slash = class({})
 
 LinkLuaModifier("modifier_imba_omni_slash_caster", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_omni_slash_arcana", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
 
 function imba_juggernaut_omni_slash:IsHiddenWhenStolen() 		return false end
 function imba_juggernaut_omni_slash:IsRefreshable() 			return true end
@@ -399,7 +404,7 @@ function imba_juggernaut_omni_slash:OnSpellStart()
 	local buff = caster:AddNewModifier(caster, self, "modifier_imba_omni_slash_caster", {target = target:entindex(), stack = attacks})
 	buff:SetStackCount(attacks)
 	if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
-		local pfx_dash = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_dash.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		local pfx_dash = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_dash.vpcf", PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControlEnt(pfx_dash, 0, caster, PATTACH_ABSORIGIN, nil, caster:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControl(pfx_dash, 1, target:GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx_dash, 2, target:GetAbsOrigin())
@@ -416,14 +421,31 @@ function modifier_imba_omni_slash_caster:IsPurgeException() 	return false end
 function modifier_imba_omni_slash_caster:GetStatusEffectName()  return "particles/status_fx/status_effect_omnislash.vpcf" end
 function modifier_imba_omni_slash_caster:StatusEffectPriority() return 16 end
 function modifier_imba_omni_slash_caster:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_TETHERED] = true} end
-function modifier_imba_omni_slash_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_omni_slash_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_HERO_KILLED} end
 function modifier_imba_omni_slash_caster:GetModifierBaseAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_omni_slash_caster:GetModifierMoveSpeed_Absolute() return 1 end
 function modifier_imba_omni_slash_caster:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_4 end
 
+function modifier_imba_omni_slash_caster:OnHeroKilled(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.attacker == self:GetParent() and keys.target:IsRealHero() then
+		self.kills = self.kills + 1
+		if HeroItems:UnitHasItem(self:GetParent(), "juggernaut_arcana") then
+			local pfx_kill = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_trigger.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx_kill, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlEnt(pfx_kill, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControlEnt(pfx_kill, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControl(pfx_kill, 3, Vector(self.kills, 0, 0))
+		end
+	end
+end
+
 function modifier_imba_omni_slash_caster:OnCreated(keys)
 	if IsServer() then
 		local stacks = keys.stack
+		self.kills = 0
 		self.attacks = 0
 		self.first_target = EntIndexToHScript(keys.target)
 		self.bFirstJump = true
@@ -480,12 +502,12 @@ end
 function modifier_imba_omni_slash_caster:JumpAndSlash(target)
 	local caster = self:GetParent()
 	self.target = target
-	if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
-		local pfx_tgt = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt.vpcf", PATTACH_WORLDORIGIN, nil)
+	if HeroItems:UnitHasItem(caster, "juggernaut_arcana") then
+		local pfx_tgt = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_tgt.vpcf", PATTACH_WORLDORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx_tgt, 0, caster:GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx_tgt, 1, target:GetAbsOrigin())
 		ParticleManager:ReleaseParticleIndex(pfx_tgt)
-		local pfx_trail = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_trail.vpcf", PATTACH_WORLDORIGIN, nil)
+		local pfx_trail = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_trail.vpcf", PATTACH_WORLDORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx_trail, 0, caster:GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx_trail, 1, target:GetAbsOrigin())
 		ParticleManager:ReleaseParticleIndex(pfx_trail)
@@ -520,14 +542,29 @@ function modifier_imba_omni_slash_caster:OnDestroy()
 		self.target = nil
 		self.delay = nil
 		self.tick = nil
+		self.kills = nil
 		self:GetParent():SetForceAttackTarget(nil)
 		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
-			local pfx_end = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			local pfx_end = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 			for i=0, 3 do
 				ParticleManager:SetParticleControlEnt(pfx_end, i, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
 			end
 			ParticleManager:SetParticleControl(pfx_end, 5, Vector(1,1,1))
 			ParticleManager:ReleaseParticleIndex(pfx_end)
+			local kills = PlayerResource:GetKills(self:GetCaster():GetPlayerOwnerID())
+			if kills > 0 then
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_counter.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
+				ParticleManager:SetParticleControl(pfx, 1, Vector(1, kills, 0))
+				ParticleManager:SetParticleControl(pfx, 2, Vector(#tostring(kills), 0, 0))
+				ParticleManager:ReleaseParticleIndex(pfx)
+				local pfx_kill = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_trigger.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+				ParticleManager:SetParticleControlEnt(pfx_kill, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_kill, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_kill, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+				ParticleManager:SetParticleControl(pfx_kill, 3, Vector(kills, 0, 0))
+				self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_omni_slash_arcana", {duration = 1.8})
+				self:GetParent():EmitSound("Hero_Juggernaut.ArcanaTrigger.Loadout")
+			end
 		end
 		local parent = self:GetParent()
 		Timers:CreateTimer(0.1, function()
@@ -536,3 +573,13 @@ function modifier_imba_omni_slash_caster:OnDestroy()
 		end)
 	end
 end
+
+modifier_imba_omni_slash_arcana = class({})
+
+function modifier_imba_omni_slash_arcana:IsHidden()			return false end
+function modifier_imba_omni_slash_arcana:IsDebuff()			return true end
+function modifier_imba_omni_slash_arcana:IsPurgable() 		return false end
+function modifier_imba_omni_slash_arcana:IsPurgeException() return false end
+function modifier_imba_omni_slash_arcana:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
+function modifier_imba_omni_slash_arcana:GetOverrideAnimation() return {ACT_DOTA_OVERRIDE_ARCANA} end
+function modifier_imba_omni_slash_arcana:GetActivityTranslationModifiers() return "arcana_style" end

@@ -130,10 +130,16 @@ function imba_phantom_assassin_phantom_strike:OnSpellStart()
 	local startpos = caster:GetAbsOrigin()
 	local endpos = target:GetAbsOrigin() + (target:GetForwardVector() * -1) * 100
 	FindClearSpaceForUnit(caster, endpos, true)
-	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_blur.vpcf", PATTACH_WORLDORIGIN, nil)
+	local pfx_name1 = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_blur.vpcf"
+	local pfx_name2 = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf"
+	if HeroItems:UnitHasItem(caster, "pa_arcana") then
+		pfx_name1 = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_start.vpcf"
+		pfx_name2 = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_end.vpcf"
+	end
+	local pfx1 = ParticleManager:CreateParticle(pfx_name1, PATTACH_WORLDORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx1, 0, startpos)
 	ParticleManager:ReleaseParticleIndex(pfx1)
-	local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf", PATTACH_WORLDORIGIN, caster)
+	local pfx2 = ParticleManager:CreateParticle(pfx_name2, PATTACH_WORLDORIGIN, caster)
 	ParticleManager:SetParticleControl(pfx2, 0, endpos)
 	ParticleManager:ReleaseParticleIndex(pfx2)
 	caster:AddNewModifier(caster, self, "modifier_imba_phantom_strike", {duration = self:GetSpecialValueFor("buff_duration")})
@@ -242,7 +248,11 @@ function modifier_imba_coup_de_grace:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
 		local pct = self:GetAbility():GetSpecialValueFor("crit_chance") + self:GetParent():GetModifierStackCount("modifier_imba_coup_de_grace_stacks", nil)
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), pct) then
-			self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
+			if HeroItems:UnitHasItem(self:GetParent(), "pa_arcana") then
+				self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace.Arcana")
+			else
+				self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
+			end
 			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_coup_de_grace_check", {})
 			return self:GetAbility():GetSpecialValueFor("crit_bonus")
 		else
@@ -259,19 +269,36 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or not keys.target:IsAlive() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_coup_de_grace_check") then
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_phantom_assassin/phantom_assassin_crit_impact.vpcf", PATTACH_CUSTOMORIGIN, keys.target)
+	local caster = self:GetParent()
+	if caster:HasModifier("modifier_imba_coup_de_grace_check") then
+		local pfx_name = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_crit_impact.vpcf"
+		if HeroItems:UnitHasItem(caster, "pa_arcana") then
+			pfx_name = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/phantom_assassin_crit_arcana_swoop.vpcf"
+		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_ABSORIGIN, keys.target)
 		ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.target:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControl(pfx, 1, keys.target:GetAbsOrigin())
-		ParticleManager:SetParticleControlOrientation(pfx, 1, self:GetParent():GetForwardVector() * -1, self:GetParent():GetRightVector(), self:GetParent():GetUpVector())
+		ParticleManager:SetParticleControlOrientation(pfx, 1, caster:GetForwardVector() * -1, caster:GetRightVector(), caster:GetUpVector())
 		ParticleManager:ReleaseParticleIndex(pfx)
-		self:GetParent():RemoveModifierByName("modifier_imba_coup_de_grace_check")
+		caster:RemoveModifierByName("modifier_imba_coup_de_grace_check")
 	end
-	if PseudoRandom:RollPseudoRandom(self:GetCreationTime(), self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and self:GetParent():HasScepter() and keys.target:IsRealHero() and self:GetParent():IsRealHero() then
-		TrueKill(self:GetParent(), keys.target, self:GetAbility())
+	if caster:HasScepter() and caster:IsRealHero() and PseudoRandom:RollPseudoRandom(self:GetCreationTime(), self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and keys.target:IsRealHero() then
+		TrueKill(caster, keys.target, self:GetAbility())
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, keys.target, 999999, nil)
 		local blood_pfx = ParticleManager:CreateParticle("particles/hero/phantom_assassin/screen_blood_splatter.vpcf", PATTACH_EYES_FOLLOW, keys.target)
 		ParticleManager:ReleaseParticleIndex(blood_pfx)
+
+		for i=0, 3 do
+			local pfx = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/phantom_assassin_crit_arcana_swoop.vpcf", PATTACH_ABSORIGIN, keys.target)
+			ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT_FOLLOW, "attach_hitloc", keys.target:GetAbsOrigin(), true)
+			ParticleManager:SetParticleControl(pfx, 1, keys.target:GetAbsOrigin())
+			local direction = caster:GetForwardVector()
+			direction.z = 0
+			local point = caster:GetAbsOrigin() + direction * 100
+			point = RotatePosition(caster:GetAbsOrigin(), QAngle(0, 90 * i, 0), point)
+			ParticleManager:SetParticleControlOrientation(pfx, 1, (point - caster:GetAbsOrigin()):Normalized(), caster:GetRightVector(), caster:GetUpVector())
+			ParticleManager:ReleaseParticleIndex(pfx)
+		end
 
 		-- Play fatality message
 		Notifications:BottomToAll({text = "#coup_de_grace_fatality", duration = 4.0, style = {["font-size"] = "50px", color = "Red"} })
