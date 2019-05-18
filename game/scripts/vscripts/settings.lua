@@ -1,4 +1,4 @@
-IMBA_GAME_VERSION = 69
+IMBA_GAME_VERSION = 70
 
 IMBA_WEB_SERVER = "https://www.bilibiliduang.cn/"
 
@@ -343,3 +343,5 @@ noDamageFilterUnits["npc_dota_unit_tombstone2"] = true
 noDamageFilterUnits["npc_dota_unit_tombstone3"] = true
 noDamageFilterUnits["npc_dota_unit_tombstone4"] = true
 noDamageFilterUnits["npc_dota_unit_undying_zombie"] = true
+
+IMBA_WARD_TABLE = {}

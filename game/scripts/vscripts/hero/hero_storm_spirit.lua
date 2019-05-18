@@ -238,12 +238,14 @@ function modifier_imba_overload_slow:GetModifierAttackSpeedBonus_Constant() retu
 imba_storm_spirit_ball_lightning = class({})
 
 LinkLuaModifier("modifier_imba_ball_lightning_travel", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_ball_lightning_mana_penalty", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_storm_spirit_ball_lightning:IsHiddenWhenStolen() 		return false end
 function imba_storm_spirit_ball_lightning:IsRefreshable() 			return true end
 function imba_storm_spirit_ball_lightning:IsStealable() 			return true end
 function imba_storm_spirit_ball_lightning:IsNetherWardStealable()	return false end
-function imba_storm_spirit_ball_lightning:GetManaCost() return self:GetSpecialValueFor("ball_lightning_initial_mana_base") + self:GetCaster():GetMaxMana() * (self:GetSpecialValueFor("ball_lightning_initial_mana_percentage") / 100) end
+function imba_storm_spirit_ball_lightning:GetManaCost() return (self:GetSpecialValueFor("ball_lightning_initial_mana_base") + self:GetCaster():GetMaxMana() * (self:GetSpecialValueFor("ball_lightning_initial_mana_percentage") / 100)) * (1 + self:GetCaster():GetModifierStackCount("modifier_imba_ball_lightning_mana_penalty", nil) * (self:GetSpecialValueFor("mana_penalty_pct") / 100)) end
+
 function imba_storm_spirit_ball_lightning:GetCastRange() return (IsServer() and 9999999 or self:GetSpecialValueFor("ball_lightning_aoe")) end
 
 function imba_storm_spirit_ball_lightning:OnSpellStart()
@@ -252,6 +254,9 @@ function imba_storm_spirit_ball_lightning:OnSpellStart()
 	caster:AddNewModifier(caster, self, "modifier_invulnerable", {duration = self:GetSpecialValueFor("cast_invul_duration")})
 	caster:AddNewModifier(caster, self, "modifier_imba_ball_lightning_travel", {pos_x = pos.x, pos_y = pos.y, pos_z = pos.z})
 	ProjectileManager:ProjectileDodge(caster)
+	if (caster:GetAbsOrigin() - pos):Length2D() >= self:GetSpecialValueFor("mana_penalty_distance") then
+		caster:AddModifierStacks(caster, self, "modifier_imba_ball_lightning_mana_penalty", {}, 1, false, true):SetDuration(-1, true)
+	end
 end
 
 modifier_imba_ball_lightning_travel = class({})
@@ -317,5 +322,28 @@ function modifier_imba_ball_lightning_travel:OnDestroy()
 		self.current_pos = nil
 		self.ability = nil
 		self.talent_travel = nil
+	end
+end
+
+modifier_imba_ball_lightning_mana_penalty = class({})
+
+function modifier_imba_ball_lightning_mana_penalty:IsDebuff()			return false end
+function modifier_imba_ball_lightning_mana_penalty:IsHidden() 			return false end
+function modifier_imba_ball_lightning_mana_penalty:IsPurgable() 		return false end
+function modifier_imba_ball_lightning_mana_penalty:IsPurgeException() 	return false end
+function modifier_imba_ball_lightning_mana_penalty:RemoveOnDeath() return self:GetParent():IsIllusion() end
+function modifier_imba_ball_lightning_mana_penalty:AllowIllusionDuplicate() return false end
+function modifier_imba_ball_lightning_mana_penalty:DeclareFunctions() return {MODIFIER_EVENT_ON_TAKEDAMAGE, MODIFIER_PROPERTY_TOOLTIP} end
+
+function modifier_imba_ball_lightning_mana_penalty:OnTooltip() return self:GetAbility():GetSpecialValueFor("mana_penalty_pct") * self:GetStackCount() end
+
+function modifier_imba_ball_lightning_mana_penalty:OnTakeDamage(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.attacker == self:GetParent() and IsEnemy(keys.unit, keys.attacker) and keys.unit:IsHero() then
+		if self:GetDuration() <= 0 then
+			self:SetDuration(self:GetAbility():GetSpecialValueFor("mana_penalty_remove_delay"), true)
+		end
 	end
 end

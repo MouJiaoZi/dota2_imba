@@ -15,6 +15,12 @@
 		"cowl_of_ice"					"models/items/crystal_maiden/cowl_of_ice/cowl_of_ice.vmdl"
 		"crystal_maiden_arcana_back"	"models/heroes/crystal_maiden/crystal_maiden_arcana_back.vmdl"
 	}
+	"npc_dota_hero_earthshaker"
+	{
+		"eges_totem.vmdl"				"models/items/earthshaker/eges_totem/eges_totem.vmdl"
+		"totem_dragon.vmdl"				"models/items/earthshaker/totem_dragon_wall/totem_dragon.vmdl"
+		"earthshaker/ti9_immortal"		"models/items/earthshaker/ti9_immortal/ti9_immortal.vmdl" 
+	}
 	"npc_dota_hero_faceless_void"
 	{
 		"models/items/faceless_void/bracers_of_aeons/bracers_of_aeons.vmdl"	"models/items/faceless_void/bracers_of_aeons/bracers_of_aeons.vmdl"
@@ -58,5 +64,46 @@
 	"npc_dota_hero_rattletrap"
 	{
 		"paraflare_cannon"				"models/items/rattletrap/paraflare_cannon/paraflare_cannon.vmdl"
+	}
+	//PATTACH_INVALID	-1	
+	//PATTACH_ABSORIGIN	0	Attaches the particle to the an origin.
+	//PATTACH_ABSORIGIN_FOLLOW	1	Attaches the particle to an origin, and causes it to follow the unit that is considered the source of the particle.
+	//PATTACH_CUSTOMORIGIN	2	Attaches the particle to a custom origin. (Requires passing a vector to the Control points)
+	//PATTACH_CUSTOMORIGIN_FOLLOW	3	
+	//PATTACH_POINT	4	
+	//PATTACH_POINT_FOLLOW	5	
+	//PATTACH_EYES_FOLLOW	6	Attaches the particle to the "eyes" of the entity.
+	//PATTACH_OVERHEAD_FOLLOW	7	Attaches the particle to be set above the head of the entity.
+	//PATTACH_WORLDORIGIN	8	Attaches the particle to the ground.
+	//PATTACH_ROOTBONE_FOLLOW	9	
+	//PATTACH_RENDERORIGIN_FOLLOW	10	
+	//PATTACH_MAIN_VIEW	11	
+	//PATTACH_WATERWAKE	12	
+	//MAX_PATTACH_TYPES	13	
+	"ward_particle"
+	{
+		"particles/econ/courier/courier_roshan_darkmoon/courier_roshan_darkmoon.vpcf"
+		{
+			"0"		"PATTACH_POINT_FOLLOW attach_hitloc"
+			"1"		"PATTACH_POINT_FOLLOW attach_hitloc"
+			"2"		"PATTACH_POINT_FOLLOW attach_hitloc"
+			"3"		"PATTACH_POINT_FOLLOW attach_hitloc"
+		}
+		"particles/econ/courier/courier_roshan_desert_sands/baby_roshan_desert_sands_ambient.vpcf"
+		{
+			"0"		"PATTACH_POINT_FOLLOW attach_hitloc"
+			"1"		"PATTACH_POINT_FOLLOW attach_hitloc"
+			"2"		"PATTACH_POINT_FOLLOW attach_hitloc"
+			"4"		"PATTACH_ABSORIGIN_FOLLOW attach_hitloc"
+			"5"		"PATTACH_ABSORIGIN_FOLLOW attach_hitloc"
+		}
+		"particles/econ/courier/courier_trail_spirit/courier_trail_spirit.vpcf"
+		{
+			"0"		"PATTACH_ABSORIGIN_FOLLOW attach_hitloc"
+		}
+		"particles/econ/courier/courier_trail_international_2014/courier_international_2014.vpcf"
+		{
+			"0"		"PATTACH_POINT_FOLLOW attach_hitloc"
+		}
 	}
 }

@@ -496,6 +496,14 @@ function GameMode:OnNPCSpawned(keys)
 		npc:SetMinimumGoldBounty(npc:GetMinimumGoldBounty() * 1.3)
 		npc:SetMaximumGoldBounty(npc:GetMaximumGoldBounty() * 1.3)
 	end
+
+	if npc:IsOther() and (npc:GetUnitName() == "npc_dota_observer_wards" or npc:GetUnitName() == "npc_dota_sentry_wards") then
+		if not IMBA_WARD_TABLE[npc:GetCreationTime()] then
+			IMBA_WARD_TABLE[npc:GetCreationTime()] = {}
+		end
+		IMBA_WARD_TABLE[npc:GetCreationTime()]["ward"] = npc
+		HeroItems:ApplyWardsParticle(npc:GetCreationTime())
+	end
 end
 
 -- An entity somewhere has been hurt.  This event fires very often with many units so don't do too many expensive
@@ -570,6 +578,13 @@ function GameMode:OnAbilityUsed(keys)
 
 	local player = PlayerResource:GetPlayer(keys.PlayerID)
 	local abilityname = keys.abilityname
+
+	if abilityname == "item_ward_observer" or abilityname == "item_ward_dispenser" or abilityname == "item_ward_sentry" then
+		if not IMBA_WARD_TABLE[GameRules:GetGameTime()] then
+			IMBA_WARD_TABLE[GameRules:GetGameTime()] = {}
+		end
+		IMBA_WARD_TABLE[GameRules:GetGameTime()]["player_id"] = keys.PlayerID
+	end
 end
 
 -- A non-player entity (necro-book, chen creep, etc) used an ability

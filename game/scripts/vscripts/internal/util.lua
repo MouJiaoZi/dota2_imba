@@ -1431,6 +1431,7 @@ function IsRefreshableByAbility(str)
 		"item_imba_skadi",
 		"item_imba_sphere",
 		"item_aeon_disk",
+		"zuus_cloud",
 	}
 	return IsInTable(str, NO_REFRESH)
 end

@@ -8,17 +8,6 @@ function imba_earthshaker_fissure:IsStealable() 			return true end
 function imba_earthshaker_fissure:IsNetherWardStealable()	return true end
 function imba_earthshaker_fissure:GetCastRange() return self:GetSpecialValueFor("fissure_range") end
 
-function imba_earthshaker_fissure:OnUpgrade()
-	local abi1 = self:GetCaster():FindAbilityByName("imba_earthshaker_fissure_main")
-	local abi2 = self:GetCaster():FindAbilityByName("imba_earthshaker_fissure_sec")
-	if abi1 then
-		abi1:SetLevel(self:GetLevel())
-	end
-	if abi2 then
-		abi2:SetLevel(self:GetLevel())
-	end
-end
-
 function imba_earthshaker_fissure:OnSpellStart()
 	local caster = self:GetCaster()
 	local pos = self:GetCursorPosition()
@@ -29,6 +18,16 @@ function imba_earthshaker_fissure:OnSpellStart()
 	local pos1 = caster:GetAbsOrigin() + direction * (length + 128)
 	local angle = 360 / self:GetSpecialValueFor("number")
 	local total = (length / 80)
+	local sound_name = "Hero_EarthShaker.Fissure"
+	local pfx_name = "particles/units/heroes/hero_earthshaker/earthshaker_fissure.vpcf"
+	if HeroItems:UnitHasItem(caster, "earthshaker/ti9_immortal") then
+		pfx_name = "particles/econ/items/earthshaker/earthshaker_ti9/earthshaker_fissure_ti9_lvl2.vpcf"
+	elseif HeroItems:UnitHasItem(caster, "totem_dragon.vmdl") then
+		pfx_name = "particles/econ/items/earthshaker/earthshaker_gravelmaw/earthshaker_fissure_gravelmaw_gold.vpcf"
+		sound_name = "Hero_EarthShaker.Gravelmaw.Cast"
+	elseif HeroItems:UnitHasItem(caster, "eges_totem.vmdl") then
+		pfx_name = "particles/econ/items/earthshaker/egteam_set/hero_earthshaker_egset/earthshaker_fissure_egset.vpcf"
+	end
 	for i=0, (self:GetSpecialValueFor("number") - 1) do
 		local pos_start = pos0
 		local pos_end = pos1
@@ -39,9 +38,9 @@ function imba_earthshaker_fissure:OnSpellStart()
 		local direc = (pos_end - pos_start):Normalized()
 		direc.z = 0
 		local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 2.0}, pos_end, caster:GetTeamNumber(), false)
-		sound:EmitSound("Hero_EarthShaker.Fissure")
+		sound:EmitSound(sound_name)
 		if i == 0 then
-			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earthshaker/earthshaker_fissure.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 			ParticleManager:SetParticleControl(pfx, 0, pos_start)
 			ParticleManager:SetParticleControl(pfx, 1, pos_end)
 			ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetSpecialValueFor("fissure_duration"), 0, 0))
@@ -57,7 +56,7 @@ function imba_earthshaker_fissure:OnSpellStart()
 			end
 		end
 		if i ~= 0 then
-			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earthshaker/earthshaker_fissure.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 			ParticleManager:SetParticleControl(pfx, 0, pos_start)
 			ParticleManager:SetParticleControl(pfx, 1, pos_end)
 			ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetSpecialValueFor("secondary_duration"), 0, 0))
@@ -77,5 +76,5 @@ function imba_earthshaker_fissure:OnSpellStart()
 	for i=1, #enemy do
 		enemy[i]:AddNewModifier(caster, self, "modifier_phased", {duration = FrameTime()*2})
 	end
-	caster:EmitSound("Hero_EarthShaker.Fissure")
+	caster:EmitSound(sound_name)
 end

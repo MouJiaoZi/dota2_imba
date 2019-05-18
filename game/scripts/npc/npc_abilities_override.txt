@@ -539,20 +539,27 @@
 	//=================================================================================================================
 	"special_bonus_unique_dark_seer_2"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"					"6365"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"value"					"175"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Ability: Special Bonus
+	//=================================================================================================================
+	"special_bonus_unique_lycan_3"
+	{
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"100"
 			}
 		}
 	}
@@ -11440,7 +11447,7 @@
 			"02"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"damage"				"10"
+				"damage"				"15"
 				"LinkedSpecialBonus"	"special_bonus_unique_spirit_breaker_3"
 			}
 			"03"
@@ -13742,7 +13749,7 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"min_movement"			"-100"
+				"min_movement"			"-50"
 			}
 			"05"
 			{
