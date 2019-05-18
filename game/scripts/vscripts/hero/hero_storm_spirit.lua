@@ -112,6 +112,7 @@ function imba_storm_spirit_electric_vortex:OnSpellStart()
 		local remnants = self:GetSpecialValueFor("remnant_counts")
 		for i=1, remnants do
 			local pos0 = RotatePosition(caster:GetAbsOrigin(), QAngle(0, i*(360/remnants), 0), pos)
+			pos0 = GetGroundPosition(pos0, caster)
 			ability:OnSpellStart(pos0)
 		end
 	end

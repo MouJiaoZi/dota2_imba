@@ -72,12 +72,12 @@ function modifier_imba_multicast_passive:OnAttackLanded(keys)
 		multicast = 2
 	end
 	if multicast > 0 then
+		self:GetAbility():StartCooldown(self:GetAbility():GetCooldown(-1) * ((100 - self:GetParent():GetCooldownReduction()) / 100))
 		self:DoMultiAttack(self:GetParent(), target, multicast)
 	end
 end
 
 function modifier_imba_multicast_passive:DoMultiAttack(caster, target, times)
-	self:GetAbility():UseResources(true, true, true)
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			caster:StartGesture(ACT_DOTA_ATTACK)
@@ -147,6 +147,9 @@ local NoMultiCastItems = {
 "imba_jakiro_ice_breath",
 "wisp_tether",
 "wisp_tether_break",
+"shredder_timber_chain",
+"shredder_chakram",
+"shredder_chakram_2",
 }
 
 function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
@@ -194,7 +197,7 @@ function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
 end
 
 function modifier_imba_multicast_passive:DoMultiTargetAbility(caster, target, ability, times)
-	self:GetAbility():UseResources(true, true, true)
+	self:GetAbility():StartCooldown(self:GetAbility():GetCooldown(-1) * ((100 - self:GetParent():GetCooldownReduction()) / 100))
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			self.nocast = true
