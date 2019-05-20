@@ -384,7 +384,6 @@ end
 imba_juggernaut_omni_slash = class({})
 
 LinkLuaModifier("modifier_imba_omni_slash_caster", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_omni_slash_arcana", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
 
 function imba_juggernaut_omni_slash:IsHiddenWhenStolen() 		return false end
 function imba_juggernaut_omni_slash:IsRefreshable() 			return true end
@@ -562,7 +561,6 @@ function modifier_imba_omni_slash_caster:OnDestroy()
 				ParticleManager:SetParticleControlEnt(pfx_kill, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx_kill, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
 				ParticleManager:SetParticleControl(pfx_kill, 3, Vector(kills, 0, 0))
-				self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_omni_slash_arcana", {duration = 1.8})
 				self:GetParent():EmitSound("Hero_Juggernaut.ArcanaTrigger.Loadout")
 			end
 		end
@@ -573,13 +571,3 @@ function modifier_imba_omni_slash_caster:OnDestroy()
 		end)
 	end
 end
-
-modifier_imba_omni_slash_arcana = class({})
-
-function modifier_imba_omni_slash_arcana:IsHidden()			return false end
-function modifier_imba_omni_slash_arcana:IsDebuff()			return true end
-function modifier_imba_omni_slash_arcana:IsPurgable() 		return false end
-function modifier_imba_omni_slash_arcana:IsPurgeException() return false end
-function modifier_imba_omni_slash_arcana:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
-function modifier_imba_omni_slash_arcana:GetOverrideAnimation() return {ACT_DOTA_OVERRIDE_ARCANA} end
-function modifier_imba_omni_slash_arcana:GetActivityTranslationModifiers() return "arcana_style" end

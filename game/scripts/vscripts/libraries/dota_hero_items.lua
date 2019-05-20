@@ -19,7 +19,7 @@ end
 function HeroItems:SetHeroItemTable(hUnit)
 	local hero_name = hUnit:GetUnitName()
 	local pID = hUnit:GetPlayerOwnerID()
-	local items_info = Hero_Items_KV[hero_name]
+	local items_info = Hero_Items_KV['ability_particle'][hero_name]
 	if not items_info then
 		return
 	end

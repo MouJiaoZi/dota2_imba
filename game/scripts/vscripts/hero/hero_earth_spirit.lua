@@ -160,6 +160,13 @@ end
 function imba_earth_spirit_boulder_smash:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = FindStoneRemnant(caster:GetAbsOrigin(), self:GetSpecialValueFor("rock_search_aoe")) or self:GetCursorTarget()
+
+	if not target then
+		self:EndCooldown()
+		self:RefundManaCost()
+		return
+	end
+
 	local pos0 = target:GetAbsOrigin()
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
 		pos0 = self:GetCursorPosition()
@@ -282,11 +289,11 @@ function modifier_imba_boulder_smash_motion:OnCreated()
 end
 
 function modifier_imba_boulder_smash_motion:OnIntervalThink()
-	if self:GetParent():HasModifier("modifier_imba_stone_remnant_status") then
-		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self.pos, nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-		for _, enemy in pairs(enemies) do
-			if not IsInTable(enemy, self.hitted) then
-				self.hitted[#self.hitted+1] = enemy
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self.pos, nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	for _, enemy in pairs(enemies) do
+		if not IsInTable(enemy, self.hitted) then
+			self.hitted[#self.hitted+1] = enemy
+			if self:GetParent():HasModifier("modifier_imba_stone_remnant_status") then
 				if not enemy:IsMagicImmune() then
 					enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
 				else
@@ -295,9 +302,9 @@ function modifier_imba_boulder_smash_motion:OnIntervalThink()
 				if enemy:IsAttackImmune() then
 					enemy:AddNewEarthSpiritModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_boulder_smash_silent", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
 				end
-				ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("rock_damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
-				enemy:EmitSound("Hero_EarthSpirit.BoulderSmash.Damage")
 			end
+			ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("rock_damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
+			enemy:EmitSound("Hero_EarthSpirit.BoulderSmash.Damage")
 		end
 	end
 	GridNav:DestroyTreesAroundPoint(self.pos, 80, true)
@@ -567,7 +574,6 @@ end
 
 function imba_earth_spirit_geomagnetic_grip:OnAbilityPhaseStart()
 	local caster = self:GetCaster()
-	print(caster:GetClassname())
 	local target = self:GetCursorTarget() or FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("radius"))
 	if target then
 		return true
@@ -578,6 +584,12 @@ end
 function imba_earth_spirit_geomagnetic_grip:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget() or FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("radius"))
+
+	if not target then
+		self:EndCooldown()
+		self:RefundManaCost()
+		return
+	end
 
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_geomagentic_grip_caster.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
 	ParticleManager:SetParticleControl(pfx, 10, caster:GetAbsOrigin())

@@ -387,8 +387,10 @@ function modifier_imba_darkness_enemy:IsDebuff()			return true end
 function modifier_imba_darkness_enemy:IsHidden() 			return false end
 function modifier_imba_darkness_enemy:IsPurgable() 			return false end
 function modifier_imba_darkness_enemy:IsPurgeException()	return false end
+function modifier_imba_darkness_enemy:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_VISION_PERCENTAGE} end
+function modifier_imba_darkness_enemy:GetBonusVisionPercentage() return (0 - self:GetAbility():GetSpecialValueFor("vision_radius_pct")) end
 
-function modifier_imba_darkness_enemy:OnCreated()
+--[[function modifier_imba_darkness_enemy:OnCreated()
 	if IsServer() then
 		self.vision = self:GetParent():GetNightTimeVisionRange()
 		self:GetParent():SetNightTimeVisionRange(self:GetAbility():GetSpecialValueFor("vision_radius"))
@@ -400,4 +402,4 @@ function modifier_imba_darkness_enemy:OnDestroy()
 		self:GetParent():SetNightTimeVisionRange(self.vision)
 		self.vision = nil
 	end
-end
+end]]

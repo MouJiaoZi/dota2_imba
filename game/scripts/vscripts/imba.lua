@@ -89,7 +89,9 @@ function IMBA:BountyRuneFilter(keys)
 	xp_bounty: 0
 	]]
 	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[keys.player_id_const + 1]
-	hero:AddNewModifier(hero, nil, "modifier_imba_rune_bounty", {duration = 30})
+	if hero then
+		hero:AddNewModifier(hero, nil, "modifier_imba_rune_bounty", {duration = 60})
+	end
 
 	keys.gold_bounty = keys.gold_bounty * 4
 	return true
@@ -695,7 +697,23 @@ function IMBA:ModifierAddFilter(keys)
 		return false
 	end
 	if modifier_name == "modifier_rune_arcane" then
-		target:AddNewModifier(target, nil, "modifier_imba_rune_arcane", {duration = 30.0})
+		target:AddNewModifier(target, nil, "modifier_imba_rune_arcane", {duration = 45.0})
+		for i=0, 23 do
+			local caster_ability = target:GetAbilityByIndex(i)
+			if caster_ability and not caster_ability:IsCooldownReady() then
+				local cd = caster_ability:GetCooldownTimeRemaining() * 0.6
+				caster_ability:EndCooldown()
+				caster_ability:StartCooldown(cd)
+			end
+		end
+		for i=0, 23 do
+			local caster_ability = target:GetItemInSlot(i)
+			if caster_ability and not caster_ability:IsCooldownReady() then
+				local cd = caster_ability:GetCooldownTimeRemaining() * 0.6
+				caster_ability:EndCooldown()
+				caster_ability:StartCooldown(cd)
+			end
+		end
 		return false
 	end
 

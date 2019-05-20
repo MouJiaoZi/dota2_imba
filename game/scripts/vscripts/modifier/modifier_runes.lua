@@ -7,9 +7,8 @@ function modifier_imba_rune_doubledamage:IsPurgeException() 	return false end
 function modifier_imba_rune_doubledamage:GetTexture() return "rune_doubledamage" end
 function modifier_imba_rune_doubledamage:GetEffectName() return "particles/generic_gameplay/rune_doubledamage_owner.vpcf" end
 function modifier_imba_rune_doubledamage:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_doubledamage:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
+function modifier_imba_rune_doubledamage:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE} end
 function modifier_imba_rune_doubledamage:GetModifierBaseDamageOutgoing_Percentage() return 100 end
-function modifier_imba_rune_doubledamage:GetModifierSpellAmplify_Percentage() return 50 end
 
 function modifier_imba_rune_doubledamage:IsAura() return true end
 function modifier_imba_rune_doubledamage:GetAuraDuration() return 0.1 end
@@ -34,9 +33,8 @@ function modifier_imba_rune_doubledamage_ally:IsPurgeException() 	return false e
 function modifier_imba_rune_doubledamage_ally:GetTexture() return "rune_doubledamage" end
 function modifier_imba_rune_doubledamage_ally:GetEffectName() return "particles/generic_gameplay/rune_doubledamage_owner.vpcf" end
 function modifier_imba_rune_doubledamage_ally:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_doubledamage_ally:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
+function modifier_imba_rune_doubledamage_ally:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE} end
 function modifier_imba_rune_doubledamage_ally:GetModifierBaseDamageOutgoing_Percentage() return 50 end
-function modifier_imba_rune_doubledamage_ally:GetModifierSpellAmplify_Percentage() return 25 end
 
 modifier_imba_rune_haste = class({})
 
@@ -49,8 +47,8 @@ function modifier_imba_rune_haste:GetEffectName() return "particles/generic_game
 function modifier_imba_rune_haste:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_imba_rune_haste:GetIMBAMaxMovespeed() return 10000 end
-function modifier_imba_rune_haste:GetModifierMoveSpeedBonus_Percentage() return 100 end
-function modifier_imba_rune_haste:GetModifierAttackSpeedBonus_Constant() return 100 end
+function modifier_imba_rune_haste:GetModifierMoveSpeedBonus_Percentage() return 70 end
+function modifier_imba_rune_haste:GetModifierAttackSpeedBonus_Constant() return 70 end
 
 function modifier_imba_rune_haste:IsAura() return true end
 function modifier_imba_rune_haste:GetAuraDuration() return 0.1 end
@@ -76,8 +74,8 @@ function modifier_imba_rune_haste_ally:GetTexture() return "rune_haste" end
 function modifier_imba_rune_haste_ally:GetEffectName() return "particles/generic_gameplay/rune_haste_owner.vpcf" end
 function modifier_imba_rune_haste_ally:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_rune_haste_ally:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
-function modifier_imba_rune_haste_ally:GetModifierMoveSpeedBonus_Percentage() return 50 end
-function modifier_imba_rune_haste_ally:GetModifierAttackSpeedBonus_Constant() return 50 end
+function modifier_imba_rune_haste_ally:GetModifierMoveSpeedBonus_Percentage() return 35 end
+function modifier_imba_rune_haste_ally:GetModifierAttackSpeedBonus_Constant() return 35 end
 
 modifier_imba_rune_invisibility = class({})
 
@@ -87,10 +85,10 @@ function modifier_imba_rune_invisibility:IsPurgable() 			return false end
 function modifier_imba_rune_invisibility:IsPurgeException() 	return false end
 function modifier_imba_rune_invisibility:GetTexture() return "rune_invis" end
 function modifier_imba_rune_invisibility:CheckState() return {[MODIFIER_STATE_INVISIBLE] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
-function modifier_imba_rune_invisibility:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_START, MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_PROPERTY_DISABLE_AUTOATTACK, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_INVISIBILITY_LEVEL} end
---function modifier_imba_rune_invisibility:GetModifierBaseDamageOutgoing_Percentage() return 200 end
+function modifier_imba_rune_invisibility:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_START, MODIFIER_PROPERTY_DISABLE_AUTOATTACK, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_INVISIBILITY_LEVEL, MODIFIER_PROPERTY_CASTTIME_PERCENTAGE} end
 function modifier_imba_rune_invisibility:GetDisableAutoAttack() return true end
 function modifier_imba_rune_invisibility:GetModifierInvisibilityLevel() return 1 end
+function modifier_imba_rune_invisibility:GetModifierPercentageCasttime() return 100 end
 
 function modifier_imba_rune_invisibility:OnCreated()
 	if IsServer() then
@@ -178,9 +176,10 @@ function modifier_imba_rune_arcane:IsPurgeException() 	return false end
 function modifier_imba_rune_arcane:GetTexture() return "rune_arcane" end
 function modifier_imba_rune_arcane:GetEffectName() return "particles/generic_gameplay/rune_arcane_owner.vpcf" end
 function modifier_imba_rune_arcane:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_arcane:DeclareFunctions() return {MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING} end
+function modifier_imba_rune_arcane:DeclareFunctions() return {MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
 function modifier_imba_rune_arcane:GetModifierPercentageCooldown() return 40 end
 function modifier_imba_rune_arcane:GetModifierPercentageManacostStacking() return 40 end
+function modifier_imba_rune_arcane:GetModifierSpellAmplify_Percentage() return 40 end
 
 function modifier_imba_rune_arcane:IsAura() return true end
 function modifier_imba_rune_arcane:GetAuraDuration() return 0.1 end
@@ -205,9 +204,10 @@ function modifier_imba_rune_arcane_ally:IsPurgeException() 	return false end
 function modifier_imba_rune_arcane_ally:GetTexture() return "rune_arcane" end
 function modifier_imba_rune_arcane_ally:GetEffectName() return "particles/generic_gameplay/rune_arcane_owner.vpcf" end
 function modifier_imba_rune_arcane_ally:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_arcane_ally:DeclareFunctions() return {MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING} end
+function modifier_imba_rune_arcane_ally:DeclareFunctions() return {MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
 function modifier_imba_rune_arcane_ally:GetModifierPercentageCooldown() return 20 end
 function modifier_imba_rune_arcane_ally:GetModifierPercentageManacostStacking() return 20 end
+function modifier_imba_rune_arcane_ally:GetModifierSpellAmplify_Percentage() return 20 end
 
 modifier_imba_rune_bounty = class({})
 

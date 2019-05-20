@@ -608,10 +608,16 @@ end
 function GameMode:OnPlayerLearnedAbility( keys)
 	DebugPrint('[BAREBONES] OnPlayerLearnedAbility')
 	DebugPrintTable(keys)
+	--[[
+	PlayerID: 0
+	abilityname: imba_axe_berserkers_call
+	player: 1
+	splitscreenplayer: -1
+	]]
 
-	local player = EntIndexToHScript(keys.player)
+	local pID = keys.PlayerID
 	local abilityname = keys.abilityname
-
+	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[pID + 1]
 end
 
 -- A channelled ability finished by either completing or being interrupted

@@ -80,6 +80,7 @@
 		"ID"							"2000"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"imba_recipe"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -247,6 +248,7 @@
 		"ID"							"2005"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_hand_of_midas"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		"AbilityCooldown"				"40.0"
 		
@@ -338,6 +340,7 @@
 		"ID"							"2009"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_poor_mans_shield"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -416,6 +419,7 @@
 		"ID"							"2010"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_bracer"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -483,6 +487,7 @@
 		"ID"							"2011"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"imba_recipe"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -550,6 +555,7 @@
 		"ID"							"2012"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"imba_recipe"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -618,6 +624,7 @@
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_mekansm"
 		"Model"							"models/props_gameplay/recipe.mdl"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -641,6 +648,7 @@
 		"ID"							"2014"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_mekansm_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -841,6 +849,7 @@
 		"ID"							"2017"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"imba_recipe"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -865,6 +874,7 @@
 		"ID"							"2018"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_vladmir_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1027,6 +1037,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"ID"							"2022"
 		"BaseClass"						"item_datadriven"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"AbilityTextureName" 			"imba_recipe"
 		
 		// Item Info
@@ -1118,6 +1129,7 @@
 		"ID"							"2023"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_pipe"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1217,6 +1229,7 @@
 		"ID"							"2027"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_sheepstick"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1315,6 +1328,7 @@
 		"ID"							"2029"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_orchid"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1420,6 +1434,7 @@
 		"ID"							"2139"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_bloodthorn"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1543,6 +1558,7 @@
 		"ID"							"2032"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_dagon"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1567,6 +1583,7 @@
 		"ID"							"2033"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_dagon_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1591,6 +1608,7 @@
 		"ID"							"2034"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_dagon_3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1615,6 +1633,7 @@
 		"ID"							"2035"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_dagon_4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1639,6 +1658,7 @@
 		"ID"							"2036"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_dagon_5"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1663,6 +1683,7 @@
 		"ID"							"2037"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_dagon_6"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1687,6 +1708,7 @@
 		"ID"							"2038"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_dagon_7"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1711,6 +1733,7 @@
 		"ID"							"2039"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_dagon_8"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1735,6 +1758,7 @@
 		"ID"							"2040"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_dagon_9"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -1759,6 +1783,7 @@
 		"ID"							"2041"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_dagon_10"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -2471,6 +2496,7 @@
 		"ID"							"2044"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_necronomicon"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -2495,6 +2521,8 @@
 		"ID"							"2045"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_necronomicon_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -2519,6 +2547,8 @@
 		"ID"							"2046"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_necronomicon_3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -2543,6 +2573,8 @@
 		"ID"							"2192"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_necronomicon_4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -2567,6 +2599,8 @@
 		"ID"							"2193"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_necronomicon_5"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -3129,6 +3163,7 @@
 		"ID"							"2051"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_refresher"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3198,6 +3233,7 @@
 		"ID"							"2052"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_assault"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3283,6 +3319,7 @@
 		"ID"							"2149"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_siege_cuirass"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3425,6 +3462,7 @@
 		"ID"							"2053"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_heart"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3521,6 +3559,7 @@
 		"ID"							"2054"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_black_king_bar"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3606,6 +3645,7 @@
 		"ID"							"2055"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_shivas_guard"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3716,6 +3756,7 @@
 		"ID"							"2056"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_bloodstone"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3825,6 +3866,7 @@
 		"ID"							"2057"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_sphere"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3911,6 +3953,7 @@
 		"ID"							"2058"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_vanguard"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -3987,6 +4030,7 @@
 		"ID"							"2059"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_crimson_guard"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -4094,6 +4138,7 @@
 		"ID"							"2183"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_greatwyrm_plate_0"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -4237,6 +4282,7 @@
 		"ID"							"2061"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_blade_mail"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		"FightRecapLevel"				"1"
 		
@@ -4317,6 +4363,8 @@
 		"ID"							"2063"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_hood_of_defiance"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -4399,6 +4447,8 @@
 		"ID"							"2066"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_monkey_king_bar"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -4499,6 +4549,7 @@
 		"ID"							"2067"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_radiance"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -4587,6 +4638,7 @@
 		"ID"							"2069"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_butterfly"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -4686,6 +4738,7 @@
 		"ID"							"2071"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_greater_crit"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -4761,6 +4814,7 @@
 		"ID"							"2072"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_basher"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -4865,6 +4919,8 @@
 		"ID"							"2073"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_bfury"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -4963,6 +5019,7 @@
 		"ID"							"2075"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_lesser_crit"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5030,6 +5087,7 @@
 		"ID"							"2076"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_armlet"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5153,6 +5211,7 @@
 		"ID"							"2167"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_shadow_blade"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -5261,6 +5320,7 @@
 		"ID"							"2118"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_silver_edge"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -5396,6 +5456,7 @@
 		"ID"							"2083"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_skadi"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5518,6 +5579,7 @@
 		"ID"							"2088"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_yasha"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5625,6 +5687,7 @@
 		"ID"							"2084"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_sange"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5724,6 +5787,7 @@
 		"ID"							"2107"
 		"BaseClass"						"item_lua"
 		"AbilityTextureName" 			"item_recipe_imba_azura"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5803,6 +5867,7 @@
 		"ID"							"2080"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_sange_and_yasha"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -5934,6 +5999,7 @@
 		"ID"							"2129"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_sange_and_azura"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6050,6 +6116,7 @@
 		"ID"							"2132"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_azura_and_yasha"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6171,6 +6238,7 @@
 		"ID"							"2135"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_sange_and_azura_and_yasha"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6325,6 +6393,7 @@
 		"ID"							"2074"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_manta"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6447,6 +6516,7 @@
 		"ID"							"2142"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_maelstrom"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6532,6 +6602,7 @@
 		"ID"							"2144"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_mjollnir"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6662,6 +6733,7 @@
 		"ID"							"2087"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_desolator"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6789,6 +6861,7 @@
 		"ID"							"2198"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_desolator_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6916,6 +6989,7 @@
 		"ID"							"2090"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_diffusal_blade"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6940,6 +7014,7 @@
 		"ID"							"2091"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_diffusal_blade_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -6964,6 +7039,7 @@
 		"ID"							"2200"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_diffusal_blade_3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -7214,6 +7290,7 @@
 		"ID"							"2094"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_arcane_boots"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -7308,6 +7385,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"ID"							"2096"
 		"BaseClass"						"item_datadriven"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		"AbilityTextureName" 			"item_recipe_imba_ancient_janggo"
 		
@@ -7435,6 +7513,7 @@
 		"ID"							"2100"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_veil_of_discord"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -7545,6 +7624,7 @@
 		"ID"							"2104"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_heavens_halberd"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -7672,6 +7752,7 @@
 		"ID"							"2109"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_white_queen_cape"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -7830,6 +7911,7 @@
 		"ID"							"2120"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_octarine_core"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -7930,6 +8012,7 @@
 		"ID"							"2122"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_guardian_greaves"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -8111,6 +8194,7 @@
 		"ID"							"2176"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_shotgun"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -8197,6 +8281,7 @@
 		"ID"							"2178"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_starfury"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -8437,6 +8522,7 @@
 		"ID"							"2188"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_phase_boots_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -8529,6 +8615,7 @@
 		"ID"							"2190"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_tranquil_boots_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -8679,6 +8766,7 @@
 		"ID"							"2152"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_blink_boots"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -8770,6 +8858,7 @@
 		"ID"							"2154"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_echo_sabre"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -8885,6 +8974,7 @@
 		"ID"							"2156"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_reverb_rapier"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -9000,6 +9090,7 @@
 		"ID"							"2158"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_initiate_robe"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -9083,6 +9174,7 @@
 		"ID"							"2160"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_ultimate_scepter_synth"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -9218,6 +9310,7 @@
 		"ID"							"2162"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_aether_lens"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -9293,6 +9386,7 @@
 		"ID"							"2164"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_nether_wand"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -9388,6 +9482,7 @@
 		"ID"							"2205"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_elder_staff"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 	
 		// Item Info
@@ -9499,6 +9594,7 @@
 		"ID"							"2064"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_rapier"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -9570,6 +9666,7 @@
 		"ID"							"2207"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_rapier_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -9640,6 +9737,7 @@
 		"ID"							"2208"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_rapier_magic"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -9711,6 +9809,7 @@
 		"ID"							"2209"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_rapier_magic_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -9781,6 +9880,7 @@
 		"ID"							"2210"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_rapier_cursed"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		
 		// Item Info
@@ -9876,6 +9976,7 @@
 		"ID"							"2222"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_abyssal_blade"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -10002,6 +10103,7 @@
 		"ID"							"2224"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_shiva_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -10132,6 +10234,7 @@
 		"ID"							"2226"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_crown"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -10230,6 +10333,7 @@
 		"ID"							"2231"														// unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_nullifier_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 
 		// Item Info
@@ -10378,6 +10482,7 @@
 		"ID"							"2233"
 		"BaseClass"						"item_datadriven"
 		"AbilityTextureName" 			"item_recipe_imba_blade_mail_2"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"Model"							"models/props_gameplay/recipe.mdl"
 		"FightRecapLevel"				"1"
 		

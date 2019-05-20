@@ -10,11 +10,11 @@ function imba_crystal_maiden_crystal_nova:IsHiddenWhenStolen() 		return false en
 function imba_crystal_maiden_crystal_nova:IsRefreshable() 			return true  end
 function imba_crystal_maiden_crystal_nova:IsStealable() 			return true  end
 function imba_crystal_maiden_crystal_nova:IsNetherWardStealable()	return true end
-
 function imba_crystal_maiden_crystal_nova:GetAOERadius() return self:GetSpecialValueFor("radius") end
+function imba_crystal_maiden_crystal_nova:GetCastPoint() return self:GetCaster():HasTalent("special_bonus_imba_crystal_maiden_1") and 0 or self.BaseClass.GetCastPoint(self) end 
 
 function imba_crystal_maiden_crystal_nova:OnAbilityPhaseStart()
-	EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "hero_Crystal.CrystalNovaCast", self:GetCaster())
+	self:GetCaster():EmitSound("hero_Crystal.CrystalNovaCast")
 	return true
 end
 
@@ -173,7 +173,7 @@ function imba_crystal_maiden_frostbite:OnSpellStart()
 	if target:IsCreep() and not target:IsAncient() then
 		debuff_duration = self:GetSpecialValueFor("creep_duration")
 	end
-	target:Interrupt()
+	target:InterruptChannel()
 	target:AddNewModifier(caster, self, "modifier_imba_frostbite_root", {duration = debuff_duration})
 end
 

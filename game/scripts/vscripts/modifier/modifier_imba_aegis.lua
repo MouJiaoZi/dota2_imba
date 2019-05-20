@@ -166,6 +166,11 @@ function imba_roshan_slam:OnSpellStart()
 			buff:GetAbility():StartCooldown(cd * 2)
 			enemy[i]:RemoveModifierByName("modifier_wisp_tether_haste")
 		end
+		local buff2 = enemy[i]:FindModifierByName("modifier_imba_gravekeepers_cloak")
+		if buff2 then
+			buff2:GetCaster():FindModifierByName("modifier_imba_gravekeepers_cloak"):SetStackCount(0)
+			buff2:GetCaster():AddNewModifierWhenPossible(buff2:GetCaster(), buff2:GetAbility(), "modifier_imba_gravekeepers_cloak_recover_timer", {duration = 10})
+		end
 	end
 end
 
