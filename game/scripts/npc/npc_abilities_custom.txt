@@ -6452,7 +6452,7 @@
 				"Orb"
 				{
 					"Priority"					"DOTA_ORB_PRIORITY_ABILITY"
-					"ProjectileName"			"particles/units/heroes/hero_drow/drow_frost_arrow.vpcf"
+					"ProjectileName"			"particles/units/heroes/hero_drow/drow_marksmanship_frost_arrow.vpcf"
 					"CastAttack"				"1"
 				}
 
@@ -6630,6 +6630,11 @@
 		"BaseClass"						"ability_lua"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
 		"AbilityTextureName"			"drow_ranger_marksmanship"
 		"HasScepterUpgrade"				"1"
 		"ScriptFile"					"hero/hero_drow_ranger.lua"
@@ -6672,9 +6677,19 @@
 			"06"
 			{
 				"var_type"							"FIELD_INTEGER"
-				"damage_reduction_scepter"			"50"
+				"pure_chance"						"50"
 			}
 			"07"
+			{
+				"var_type"							"FIELD_INTEGER"
+				"pure_pct"							"40 60 80"
+			}
+			"08"
+			{
+				"var_type"							"FIELD_INTEGER"
+				"damage_reduction_scepter"			"50"
+			}
+			"09"
 			{
 				"var_type"							"FIELD_INTEGER"
 				"splinter_radius_scepter"			"400"

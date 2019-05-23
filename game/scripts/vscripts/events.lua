@@ -745,7 +745,6 @@ function GameMode:OnEntityKilled( keys )
 	local victim = killed_unit
 
 	if noDamageFilterUnits[victim:GetName()] then
-		CreateModifierThinker(victim, nil, "modifier_imba_remove_self", {duration = 2.0, entid = victim:entindex()}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 		return
 	end
 

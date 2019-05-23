@@ -351,6 +351,7 @@ modifier_imba_marksmanship_effect = class({})
 function modifier_imba_marksmanship_effect:IsDebuff()				return false end
 function modifier_imba_marksmanship_effect:IsPurgable() 			return false end
 function modifier_imba_marksmanship_effect:IsPurgeException() 		return false end
+function modifier_imba_marksmanship_effect:GetPriority() 			return MODIFIER_PRIORITY_LOW end
 function modifier_imba_marksmanship_effect:IsHidden()
 	if self:GetStackCount() ~= 0 then
 		return true
@@ -398,44 +399,52 @@ function modifier_imba_marksmanship_effect:OnDestroy()
 end
 
 function modifier_imba_marksmanship_effect:DeclareFunctions()
-	return {MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACK_RANGE_BONUS, MODIFIER_EVENT_ON_ATTACK_LANDED}
+	return {MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACK_RANGE_BONUS, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PROJECTILE_NAME}
 end
 
 function modifier_imba_marksmanship_effect:GetModifierBonusStats_Agility() return self:GetStackCount() ~= 0 and 0 or self:GetAbility():GetSpecialValueFor("agility_bonus") end
 function modifier_imba_marksmanship_effect:GetBonusNightVision() return self:GetStackCount() ~= 0 and 0 or self:GetAbility():GetSpecialValueFor("night_vision_bonus") end
 function modifier_imba_marksmanship_effect:GetModifierMoveSpeedBonus_Percentage() return self:GetStackCount() ~= 0 and 0 or self:GetAbility():GetSpecialValueFor("movement_speed_bonus") end
 function modifier_imba_marksmanship_effect:GetModifierAttackRangeBonus() return self:GetStackCount() ~= 0 and 0 or self:GetAbility():GetSpecialValueFor("range_bonus") end
+function modifier_imba_marksmanship_effect:GetModifierProjectileName() return "particles/units/heroes/hero_drow/drow_marksmanship_attack.vpcf" end
 
 function modifier_imba_marksmanship_effect:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and self:GetParent():HasScepter() and self:GetParent().splitattack and keys.target:IsAlive() then
-		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), keys.target:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("splinter_radius_scepter"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NOT_NIGHTMARED, FIND_ANY_ORDER, false)
-		for _ , enemy in pairs(enemies) do
-			if enemy ~= keys.target then
-				local info = 
-				{
-					hTarget = enemy,
-					hCaster = keys.target,
-					hAbility = self:GetAbility(),	
-					EffectName = self:GetParent():GetRangedProjectileName(),
-					iMoveSpeed = self:GetParent():GetProjectileSpeed(),
-					vSourceLoc= self:GetParent():GetAbsOrigin(),
-					flRadius = 1,
-					SoundName = "",
-					bDrawsOnMinimap = false,
-					bDodgeable = true,
-					bDestroyOnDodge = true,
-					bIsAttack = false,
-					bVisibleToEnemies = true,
-					iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION,
-					OnProjectileHitUnit = function(params, projectileID)
-											Scepter_Arrow_hit(params, projectileID, self)
-										end
-				}
-				TrackingProjectiles:Projectile(info)
+	if keys.attacker == self:GetParent() and self:GetParent().splitattack and keys.target:IsAlive() and keys.target:IsUnit() then
+		if self:GetParent():HasScepter() then
+			local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), keys.target:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("splinter_radius_scepter"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NOT_NIGHTMARED, FIND_ANY_ORDER, false)
+			for _ , enemy in pairs(enemies) do
+				if enemy ~= keys.target then
+					local info = 
+					{
+						hTarget = enemy,
+						hCaster = keys.target,
+						hAbility = self:GetAbility(),	
+						EffectName = self:GetParent():GetRangedProjectileName(),
+						iMoveSpeed = self:GetParent():GetProjectileSpeed(),
+						vSourceLoc= self:GetParent():GetAbsOrigin(),
+						flRadius = 1,
+						SoundName = "",
+						bDrawsOnMinimap = false,
+						bDodgeable = true,
+						bDestroyOnDodge = true,
+						bIsAttack = false,
+						bVisibleToEnemies = true,
+						iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION,
+						OnProjectileHitUnit = function(params, projectileID)
+												Scepter_Arrow_hit(params, projectileID, self)
+											end
+					}
+					TrackingProjectiles:Projectile(info)
+				end
 			end
+		end
+		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("pure_chance")) then
+			keys.target:EmitSound("Hero_DrowRanger.Marksmanship.Target")
+			local dmg = ApplyDamage({victim = keys.target, attacker = self:GetParent(), damage = self:GetParent():GetAverageTrueAttackDamage(keys.target), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL + DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
+			SendOverheadEventMessage(nil, OVERHEAD_ALERT_DAMAGE, keys.target, dmg, nil)
 		end
 	end
 end

@@ -298,7 +298,11 @@ function modifier_imba_caustic_finale_passive:OnTakeDamage(keys)
 		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "item_imba_nether_wand" or keys.inflictor:GetName() == "item_imba_elder_staff") then
 			return
 		end
-		keys.unit:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_caustic_finale", {duration = self:GetAbility():GetSpecialValueFor("debuff_duration")})
+		if keys.unit:IsAlive() then
+			keys.unit:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_caustic_finale", {duration = self:GetAbility():GetSpecialValueFor("debuff_duration")})
+		else
+			CreateModifierThinker(self:GetParent(), self:GetAbility(), "modifier_imba_caustic_finale", {duration = 0.1}, keys.unit:GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
+		end
 		return
 	end
 	if keys.inflictor and keys.inflictor:GetName() == "imba_sandking_caustic_finale" and keys.unit:HasModifier("modifier_imba_caustic_finale") then
