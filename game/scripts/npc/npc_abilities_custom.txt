@@ -3228,6 +3228,32 @@
 		}
 	}
 
+	"special_bonus_imba_axe_1" // Attacks proc Counter Helix
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_axe_counter_helix"
+			
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"1"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Axe Culling Blade
 	//=================================================================================================================
@@ -6682,7 +6708,7 @@
 			"07"
 			{
 				"var_type"							"FIELD_INTEGER"
-				"pure_pct"							"40 60 80"
+				"pure_pct"							"10 30 50"
 			}
 			"08"
 			{

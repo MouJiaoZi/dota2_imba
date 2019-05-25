@@ -186,35 +186,39 @@ function modifier_imba_axe_counter_helix:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.target ~= self:GetParent() or self:GetParent():PassivesDisabled() or not self:GetAbility():IsCooldownReady() or self:GetParent():IsIllusion() or not self:GetParent():IsAlive() then
+	if self:GetParent():PassivesDisabled() or not self:GetAbility():IsCooldownReady() or not self:GetParent():IsAlive() then
 		return
 	end
-	if not PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("proc_chance")) or not self:GetAbility():IsCooldownReady() or not self:GetParent():IsAlive() or self:GetParent():IsHexed() then
-		return
-	end
-	local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_axe/axe_attack_blur_counterhelix.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_axe/axe_counterhelix.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:ReleaseParticleIndex(pfx1)
-	ParticleManager:ReleaseParticleIndex(pfx2)
-	self:GetParent():StartGesture(ACT_DOTA_CAST_ABILITY_3)
-	EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_Axe.CounterHelix_Blood_Chaser", self:GetParent())
-	self:GetAbility():UseResources(true, true, true)
-	if not self:GetParent():IsIllusion() then
-		dmg = self:GetAbility():GetSpecialValueFor("base_damage") + self:GetParent():GetStrength() * (self:GetAbility():GetSpecialValueFor("str_as_damage") / 100)
-		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-		for _,enemy in pairs(enemies) do
-			local damageTable = {
-								victim = enemy,
-								attacker = self:GetCaster(),
-								damage = dmg,
-								damage_type = self:GetAbility():GetAbilityDamageType(),
-								damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
-								ability = self:GetAbility(), --Optional.
-								}
-			ApplyDamage(damageTable)
+	if keys.target == self:GetParent() or keys.attacker == self:GetParent() then
+		if (keys.attacker == self:GetParent() and not self:GetParent():HasTalent("special_bonus_imba_axe_1") and not keys.target:IsUnit()) then
+			return
 		end
+		if not self:GetAbility():IsCooldownReady() or not self:GetParent():IsAlive() or self:GetParent():IsHexed() or not PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("proc_chance")) then
+			return
+		end
+		local pfx1 = ParticleManager:CreateParticle("particles/units/heroes/hero_axe/axe_attack_blur_counterhelix.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+		local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_axe/axe_counterhelix.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+		ParticleManager:ReleaseParticleIndex(pfx1)
+		ParticleManager:ReleaseParticleIndex(pfx2)
+		self:GetParent():StartGesture(ACT_DOTA_CAST_ABILITY_3)
+		self:GetParent():EmitSound("Hero_Axe.CounterHelix_Blood_Chaser")
+		if not self:GetParent():IsIllusion() then
+			dmg = self:GetAbility():GetSpecialValueFor("base_damage") + self:GetParent():GetStrength() * (self:GetAbility():GetSpecialValueFor("str_as_damage") / 100)
+			local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+			for _,enemy in pairs(enemies) do
+				local damageTable = {
+									victim = enemy,
+									attacker = self:GetCaster(),
+									damage = dmg,
+									damage_type = self:GetAbility():GetAbilityDamageType(),
+									damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+									ability = self:GetAbility(), --Optional.
+									}
+				ApplyDamage(damageTable)
+			end
+		end
+		self:GetAbility():UseResources(true, true, true)
 	end
-	self:GetAbility():UseResources(true, true, true)
 end
 
 imba_axe_culling_blade = class({})

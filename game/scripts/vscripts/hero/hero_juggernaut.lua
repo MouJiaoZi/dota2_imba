@@ -17,7 +17,6 @@ function imba_juggernaut_blade_fury:GetCastRange(vLocation, hTarget) return self
 function imba_juggernaut_blade_fury:OnSpellStart()
 	local caster = self:GetCaster()
 	caster:AddNewModifier(caster, self, "modifier_imba_juggernaut_blade_fury", {duration = self:GetSpecialValueFor("duration")})
-	EmitSoundOn("Hero_Juggernaut.BladeFuryStart", caster)
 end
 
 modifier_imba_juggernaut_blade_fury = class({})
@@ -26,6 +25,7 @@ function modifier_imba_juggernaut_blade_fury:IsDebuff()				return false end
 function modifier_imba_juggernaut_blade_fury:IsHidden() 			return false end
 function modifier_imba_juggernaut_blade_fury:IsPurgable() 			return false end
 function modifier_imba_juggernaut_blade_fury:IsPurgeException() 	return false end
+function modifier_imba_juggernaut_blade_fury:DeclareFunctions() return {MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_juggernaut_blade_fury:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = true} end
 function modifier_imba_juggernaut_blade_fury:IsAura() return true end
 function modifier_imba_juggernaut_blade_fury:GetAuraDuration() return 0.1 end
@@ -36,6 +36,12 @@ function modifier_imba_juggernaut_blade_fury:GetAuraSearchTeam() return DOTA_UNI
 function modifier_imba_juggernaut_blade_fury:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
 function modifier_imba_juggernaut_blade_fury:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_juggernaut_blade_fury:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_1 end
+
+function modifier_imba_juggernaut_blade_fury:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
+	end
+end
 
 function modifier_imba_juggernaut_blade_fury:OnCreated()
 	if IsServer() then
@@ -48,6 +54,10 @@ function modifier_imba_juggernaut_blade_fury:OnCreated()
 		ParticleManager:SetParticleControl(pfx, 5, Vector(self:GetAbility():GetSpecialValueFor("effect_radius") + 100, 0, 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
 		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("damage_tick"))
+		self:GetParent():EmitSound("Hero_Juggernaut.BladeFuryStart")
+		if self:GetParent():HasAbility("imba_juggernaut_omni_slash") then
+			self:GetParent():FindAbilityByName("imba_juggernaut_omni_slash"):SetActivated(false)
+		end
 	end
 end
 
@@ -75,8 +85,11 @@ end
 function modifier_imba_juggernaut_blade_fury:OnDestroy()
 	if IsServer() then
 		local caster = self:GetParent()
-		EmitSoundOn("Hero_Juggernaut.BladeFuryStop", caster)
-		StopSoundOn("Hero_Juggernaut.BladeFuryStart", caster)
+		caster:EmitSound("Hero_Juggernaut.BladeFuryStop")
+		caster:StopSound("Hero_Juggernaut.BladeFuryStart")
+		if caster:HasAbility("imba_juggernaut_omni_slash") then
+			caster:FindAbilityByName("imba_juggernaut_omni_slash"):SetActivated(true)
+		end
 	end
 end
 

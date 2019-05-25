@@ -129,6 +129,7 @@ function Precache( context )
 	PrecacheResource("particle_folder", "particles/items3_fx", context)
 	PrecacheResource("particle_folder", "particles/creeps/lane_creeps/", context)
 	PrecacheResource("particle_folder", "particles/customgames/capturepoints/", context)
+	PrecacheResource("particle_folder", "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/", context)
 	PrecacheResource("particle", "particles/units/heroes/hero_faceless_void/faceless_void_backtrack.vpcf", context)
 
 	-- Models can also be precached by folder or individually

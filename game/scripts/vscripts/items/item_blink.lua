@@ -24,16 +24,27 @@ function item_imba_blink:OnSpellStart()
 		color = Vector(0, 20, 255)
 	end
 	-- Creating the particle & sound at the start-location
-	local blink_pfx = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_start_imba.vpcf", PATTACH_CUSTOMORIGIN, caster)
-	ParticleManager:SetParticleControl(blink_pfx, 0, pos0)
-	ParticleManager:SetParticleControl(blink_pfx, 15, color )
-	ParticleManager:ReleaseParticleIndex(blink_pfx)
-	caster:EmitSound("DOTA_Item.BlinkDagger.Activate")
-	ProjectileManager:ProjectileDodge(caster)
-	local blink_pfx2 = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_imbaend.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
-	ParticleManager:SetParticleControl(blink_pfx2, 15, color )
-	ParticleManager:ReleaseParticleIndex(blink_pfx2)
+	if HeroItems:UnitHasItem(caster, "earthshaker_arcana") then
+		local blink_pfx = ParticleManager:CreateParticle("particles/econ/items/earthshaker/earthshaker_arcana/earthshaker_arcana_blink_start_v2.vpcf", PATTACH_CUSTOMORIGIN, caster)
+		ParticleManager:SetParticleControl(blink_pfx, 0, pos0)
+		ParticleManager:ReleaseParticleIndex(blink_pfx)
+		caster:EmitSound("DOTA_Item.BlinkDagger.Activate")
+		ProjectileManager:ProjectileDodge(caster)
+		local blink_pfx2 = ParticleManager:CreateParticle("particles/econ/items/earthshaker/earthshaker_arcana/earthshaker_arcana_blink_end_v2.vpcf", PATTACH_ABSORIGIN, caster)
+		ParticleManager:ReleaseParticleIndex(blink_pfx2)
+	else
+		local blink_pfx = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_start_imba.vpcf", PATTACH_CUSTOMORIGIN, caster)
+		ParticleManager:SetParticleControl(blink_pfx, 0, pos0)
+		ParticleManager:SetParticleControl(blink_pfx, 15, color )
+		ParticleManager:ReleaseParticleIndex(blink_pfx)
+		caster:EmitSound("DOTA_Item.BlinkDagger.Activate")
+		ProjectileManager:ProjectileDodge(caster)
+		local blink_pfx2 = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_imbaend.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+		ParticleManager:SetParticleControl(blink_pfx2, 15, color )
+		ParticleManager:ReleaseParticleIndex(blink_pfx2)
+	end
 	FindClearSpaceForUnit(caster, pos, true)
+	caster:StartGesture(ACT_DOTA_BLINK_DAGGER_END)
 	caster:AddNewModifier(caster, self, "modifier_imba_blink_break_motion", {duration = FrameTime()})
 end
 
@@ -70,16 +81,27 @@ function item_imba_blink_boots:OnSpellStart()
 		color = Vector(0, 20, 255)
 	end
 	-- Creating the particle & sound at the start-location
-	local blink_pfx = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_start_imba.vpcf", PATTACH_CUSTOMORIGIN, caster)
-	ParticleManager:SetParticleControl(blink_pfx, 0, pos0)
-	ParticleManager:SetParticleControl(blink_pfx, 15, color )
-	ParticleManager:ReleaseParticleIndex(blink_pfx)
-	caster:EmitSound("DOTA_Item.BlinkDagger.Activate")
-	ProjectileManager:ProjectileDodge(caster)
-	local blink_pfx2 = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_imbaend.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
-	ParticleManager:SetParticleControl(blink_pfx2, 15, color )
-	ParticleManager:ReleaseParticleIndex(blink_pfx2)
+	if HeroItems:UnitHasItem(caster, "earthshaker_arcana") then
+		local blink_pfx = ParticleManager:CreateParticle("particles/econ/items/earthshaker/earthshaker_arcana/earthshaker_arcana_blink_start_v2.vpcf", PATTACH_CUSTOMORIGIN, caster)
+		ParticleManager:SetParticleControl(blink_pfx, 0, pos0)
+		ParticleManager:ReleaseParticleIndex(blink_pfx)
+		caster:EmitSound("DOTA_Item.BlinkDagger.Activate")
+		ProjectileManager:ProjectileDodge(caster)
+		local blink_pfx2 = ParticleManager:CreateParticle("particles/econ/items/earthshaker/earthshaker_arcana/earthshaker_arcana_blink_end_v2.vpcf", PATTACH_ABSORIGIN, caster)
+		ParticleManager:ReleaseParticleIndex(blink_pfx2)
+	else
+		local blink_pfx = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_start_imba.vpcf", PATTACH_CUSTOMORIGIN, caster)
+		ParticleManager:SetParticleControl(blink_pfx, 0, pos0)
+		ParticleManager:SetParticleControl(blink_pfx, 15, color )
+		ParticleManager:ReleaseParticleIndex(blink_pfx)
+		caster:EmitSound("DOTA_Item.BlinkDagger.Activate")
+		ProjectileManager:ProjectileDodge(caster)
+		local blink_pfx2 = ParticleManager:CreateParticle("particles/item/blink/blink_dagger_imbaend.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+		ParticleManager:SetParticleControl(blink_pfx2, 15, color )
+		ParticleManager:ReleaseParticleIndex(blink_pfx2)
+	end
 	FindClearSpaceForUnit(caster, pos, true)
+	caster:StartGesture(ACT_DOTA_BLINK_DAGGER_END)
 	caster:AddNewModifier(caster, self, "modifier_imba_blink_break_motion", {duration = FrameTime()})
 end
 

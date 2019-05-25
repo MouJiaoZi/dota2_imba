@@ -3920,8 +3920,8 @@
 		"ArmorPhysical"				"4"			// Physical protection.
 		"MagicalResistance"				"35"		// Magical protection.
 
-		"AttackDamageMin"			"100"			// Damage range min.
-		"AttackDamageMax"			"100"			// Damage range max.
+		"AttackDamageMin"			"80"			// Damage range min.
+		"AttackDamageMax"			"80"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
@@ -3943,8 +3943,8 @@
 		"ArmorPhysical"				"8"			// Physical protection.
 		"MagicalResistance"				"55"		// Magical protection.
 
-		"AttackDamageMin"			"200"			// Damage range min.
-		"AttackDamageMax"			"200"			// Damage range max.
+		"AttackDamageMin"			"160"			// Damage range min.
+		"AttackDamageMax"			"160"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
@@ -3966,8 +3966,8 @@
 		"ArmorPhysical"				"12"			// Physical protection.
 		"MagicalResistance"				"75"		// Magical protection.
 
-		"AttackDamageMin"			"300"			// Damage range min.
-		"AttackDamageMax"			"300"			// Damage range max.
+		"AttackDamageMin"			"240"			// Damage range min.
+		"AttackDamageMax"			"240"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.

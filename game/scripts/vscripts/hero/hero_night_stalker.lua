@@ -265,9 +265,7 @@ function modifier_imba_hunter_in_the_night_active:IsDebuff()			return false end
 function modifier_imba_hunter_in_the_night_active:IsHidden() 			return false end
 function modifier_imba_hunter_in_the_night_active:IsPurgable() 			return true end
 function modifier_imba_hunter_in_the_night_active:IsPurgeException()	return true end
-
 function modifier_imba_hunter_in_the_night_active:DeclareFunctions() return {MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
-
 function modifier_imba_hunter_in_the_night_active:CheckState() return {[MODIFIER_STATE_FLYING] = true} end
 
 function modifier_imba_hunter_in_the_night_active:OnCreated()

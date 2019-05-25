@@ -1,5 +1,17 @@
 HeroItems = class({})
 
+LinkLuaModifier("modifier_imba_heroitems_arcana", "libraries/dota_hero_items.lua", LUA_MODIFIER_MOTION_NONE)
+
+modifier_imba_heroitems_arcana = class({})
+
+function modifier_imba_heroitems_arcana:IsDebuff()			return false end
+function modifier_imba_heroitems_arcana:IsHidden() 			return true end
+function modifier_imba_heroitems_arcana:IsPurgable() 		return false end
+function modifier_imba_heroitems_arcana:IsPurgeException() 	return false end
+function modifier_imba_heroitems_arcana:RemoveOnDeath() return self:GetParent():IsIllusion() end
+function modifier_imba_heroitems_arcana:DeclareFunctions() return {MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
+function modifier_imba_heroitems_arcana:GetActivityTranslationModifiers() return "arcana" end
+
 Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
 
 local HeroItems_steamid_64 = {}
@@ -29,7 +41,64 @@ function HeroItems:SetHeroItemTable(hUnit)
 			if hero_item_table[pID][k] == nil then
 				hero_item_table[pID][k] = true
 			end
+			if k == "earthshaker_arcana" then
+				hUnit:SetOriginalModel("models/items/earthshaker/earthshaker_arcana/earthshaker_arcana.vmdl")
+				hUnit:SetModel("models/items/earthshaker/earthshaker_arcana/earthshaker_arcana.vmdl")
+				hUnit:SetSkin(1)
+				local head = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/items/earthshaker/earthshaker_arcana/earthshaker_arcana_head.vmdl"})
+				head:SetParent(hUnit, nil)
+				head:FollowEntity(hUnit, true)
+				head:SetSkin(1)
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/earthshaker/earthshaker_arcana/earthshaker_arcana_head_ambient_v2.vpcf", PATTACH_ABSORIGIN_FOLLOW, head)
+			end
+			if k == "pa_arcana" then
+				hUnit:SetOriginalModel("models/heroes/phantom_assassin/pa_arcana.vmdl")
+				hUnit:SetModel("models/heroes/phantom_assassin/pa_arcana.vmdl")
+				local weapon = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/heroes/phantom_assassin/pa_arcana_weapons.vmdl"})
+				weapon:SetParent(hUnit, nil)
+				weapon:FollowEntity(hUnit, true)
+				local weapon_pfx1 = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_blade_ambient_a.vpcf", PATTACH_ABSORIGIN_FOLLOW, hUnit)
+				ParticleManager:SetParticleControlEnt(weapon_pfx1, 0, hUnit, PATTACH_POINT_FOLLOW, "attach_attack1", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControl(weapon_pfx1, 9, Vector(-100, 0, 0))
+				ParticleManager:SetParticleControl(weapon_pfx1, 26, Vector(100, 0, 0))
+				local weapon_pfx2 = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_blade_ambient_b.vpcf", PATTACH_ABSORIGIN_FOLLOW, hUnit)
+				ParticleManager:SetParticleControlEnt(weapon_pfx2, 0, hUnit, PATTACH_POINT_FOLLOW, "attach_attack2", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControl(weapon_pfx2, 9, Vector(-100, 0, 0))
+				ParticleManager:SetParticleControl(weapon_pfx2, 26, Vector(100, 0, 0))
+				local temp = hUnit:GetChildren()
+				local items = {}
+				for i=1, #temp do
+					if temp[i]:GetClassname() == "dota_item_wearable" then
+						items[#items + 1] = temp[i]:GetModelName()
+					end
+				end
+				for i=1, #items do
+					if not string.find(items[i], "weapon") and items[i] ~= "" and not string.find(items[i], "head") then
+						local item = SpawnEntityFromTableSynchronous("prop_dynamic", {model = items[i]})
+						item:SetParent(hUnit, nil)
+						item:FollowEntity(hUnit, true)
+					end
+				end
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_elder_ambient.vpcf", PATTACH_ABSORIGIN_FOLLOW, hUnit)
+				ParticleManager:SetParticleControlEnt(pfx, 0, hUnit, PATTACH_POINT_FOLLOW, "attach_leg_r", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 1, hUnit, PATTACH_POINT_FOLLOW, "attach_leg_l", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 2, hUnit, PATTACH_POINT_FOLLOW, "attach_hand_r", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 3, hUnit, PATTACH_POINT_FOLLOW, "attach_hand_l", hUnit:GetAbsOrigin(), true)
+				local head = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/items/phantom_assassin/pa_ti8_immortal_head/pa_ti8_immortal_head.vmdl"})
+				head:SetParent(hUnit, nil)
+				head:FollowEntity(hUnit, true)
+				local pfx_head = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/pa_ti8_immortal_head/pa_ti8_immortal_head_ambient.vpcf", PATTACH_ABSORIGIN_FOLLOW, hUnit)
+				ParticleManager:SetParticleControlEnt(pfx_head, 0, head, PATTACH_POINT_FOLLOW, "attach_tail_1", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_head, 1, head, PATTACH_POINT_FOLLOW, "attach_tail_2", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_head, 2, head, PATTACH_POINT_FOLLOW, "attach_tail_3", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_head, 3, head, PATTACH_POINT_FOLLOW, "attach_tail_4", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_head, 4, head, PATTACH_POINT_FOLLOW, "attach_tail_sml_4", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_head, 5, head, PATTACH_POINT_FOLLOW, "attach_core", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx_head, 7, head, PATTACH_POINT_FOLLOW, "attach_front", hUnit:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControl(pfx_head, 11, Vector(1000, 0, 0))
+			end
 		end
+		hUnit:AddNewModifier(hUnit, nil, "modifier_imba_heroitems_arcana", {})
 	else
 		local temp = hUnit:GetChildren()
 		local items = {}
@@ -42,8 +111,6 @@ function HeroItems:SetHeroItemTable(hUnit)
 			if hero_item_table[pID][k] == nil then
 				if IsInTable(v, items) then
 					hero_item_table[pID][k] = true
-				else
-					hero_item_table[pID][k] = false
 				end
 			end
 		end

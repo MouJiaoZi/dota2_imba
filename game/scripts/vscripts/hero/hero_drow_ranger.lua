@@ -443,7 +443,7 @@ function modifier_imba_marksmanship_effect:OnAttackLanded(keys)
 		end
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("pure_chance")) then
 			keys.target:EmitSound("Hero_DrowRanger.Marksmanship.Target")
-			local dmg = ApplyDamage({victim = keys.target, attacker = self:GetParent(), damage = self:GetParent():GetAverageTrueAttackDamage(keys.target), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL + DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
+			local dmg = ApplyDamage({victim = keys.target, attacker = self:GetParent(), damage = self:GetParent():GetAverageTrueAttackDamage(keys.target) * (self:GetAbility():GetSpecialValueFor("pure_pct") / 100), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_LIFESTEAL + DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
 			SendOverheadEventMessage(nil, OVERHEAD_ALERT_DAMAGE, keys.target, dmg, nil)
 		end
 	end
