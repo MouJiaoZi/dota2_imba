@@ -3008,7 +3008,12 @@
 			"05"
 			{
 				"var_type"							"FIELD_FLOAT"
-				"cd"								"70.0"
+				"mana_void_stun_scepter"			"2.0"
+			}
+			"06"
+			{
+				"var_type"							"FIELD_FLOAT"
+				"cooldown_increase_scepter"			"75.0"
 			}
 		}
 	}
@@ -3052,6 +3057,7 @@
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
 		"FightRecapLevel"				"1"
+		"HasScepterUpgrade"				"1"
 		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"axe_berserkers_call"		
 		"ScriptFile"					"hero/hero_axe.lua"
@@ -3430,6 +3436,7 @@
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
 		"FightRecapLevel"				"1"
+		"HasScepterUpgrade"				"1"
 		"AbilityTextureName"			"bane_brain_sap"
 		"ScriptFile"					"hero/hero_bane.lua"
 
@@ -3475,6 +3482,11 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"mana_percent"			"25 30 35 40"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"cooldown_scepter"		"1.5"
 			}
 		}
 	}
@@ -4104,6 +4116,7 @@
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
 		"FightRecapLevel"				"1"
+		"HasScepterUpgrade"				"1"
 		"AbilitySound"					"Hero_Broodmother.SpawnSpiderlingsImpact"
 		"ScriptFile"					"hero/hero_broodmother.lua"
 
@@ -4146,6 +4159,11 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"as_bonus"				"20 40 60 80"
+			}
+			"07"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"model_scale_scepter"	"70"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -16435,7 +16453,7 @@
 		"AbilityTextureName"			"riki_tricks_of_the_trade"
 		"MaxLevel" 						"1"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT | DOTA_ABILITY_BEHAVIOR_CHANNELLED | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
-		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityType"					"DOTA_ABILITY_TYPE_BASIC"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"

@@ -20,10 +20,11 @@ end
 function imba_axe_berserkers_call:OnAbilityPhaseInterrupted() self:GetCaster():FadeGesture(ACT_DOTA_OVERRIDE_ABILITY_1) end
 
 function imba_axe_berserkers_call:OnSpellStart()
-	self:GetCaster():EmitSound("Hero_Axe.Berserkers_Call")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_berserkers_call_armor", {duration = self:GetSpecialValueFor("duration")})
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),
-									self:GetCaster():GetAbsOrigin(),
+	local caster = self:GetCaster()
+	caster:EmitSound("Hero_Axe.Berserkers_Call")
+	caster:AddNewModifier(caster, self, "modifier_axe_berserkers_call_armor", {duration = self:GetSpecialValueFor("duration")})
+	local enemies = FindUnitsInRadius(caster:GetTeamNumber(),
+									caster:GetAbsOrigin(),
 									nil,
 									self:GetSpecialValueFor("radius"),
 									DOTA_UNIT_TARGET_TEAM_ENEMY,
@@ -32,12 +33,15 @@ function imba_axe_berserkers_call:OnSpellStart()
 									FIND_ANY_ORDER,
 									false)
 	for _, enemy in pairs(enemies) do
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_berserkers_call", {duration = self:GetSpecialValueFor("duration")})
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_berserkers_call_as", {duration = self:GetSpecialValueFor("duration")})
+		enemy:AddNewModifier(caster, self, "modifier_axe_berserkers_call", {duration = self:GetSpecialValueFor("duration")})
+		enemy:AddNewModifier(caster, self, "modifier_axe_berserkers_call_as", {duration = self:GetSpecialValueFor("duration")})
+		if caster:HasScepter() and caster:FindAbilityByName("imba_axe_battle_hunger") and caster:FindAbilityByName("imba_axe_battle_hunger"):GetLevel() > 0 then
+			enemy:AddNewModifier(caster, caster:FindAbilityByName("imba_axe_battle_hunger"), "modifier_imba_axe_battle_hunger_enemy", {})
+		end
 	end
-	local pfx = ParticleManager:CreateParticle("particles/econ/items/axe/axe_helm_shoutmask/axe_beserkers_call_owner_shoutmask.vpcf", PATTACH_ABSORIGIN, self:GetCaster())
-	ParticleManager:SetParticleControl(pfx, 0, self:GetCaster():GetAbsOrigin())
-	ParticleManager:SetParticleControl(pfx, 1, self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_mouth")))
+	local pfx = ParticleManager:CreateParticle("particles/econ/items/axe/axe_helm_shoutmask/axe_beserkers_call_owner_shoutmask.vpcf", PATTACH_ABSORIGIN, caster)
+	ParticleManager:SetParticleControl(pfx, 0, caster:GetAbsOrigin())
+	ParticleManager:SetParticleControl(pfx, 1, caster:GetAttachmentOrigin(caster:ScriptLookupAttachment("attach_mouth")))
 	ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetSpecialValueFor("radius"), 0, 0))
 end
 
@@ -79,8 +83,8 @@ function imba_axe_battle_hunger:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
-	self:GetCursorTarget():AddNewModifier(self:GetCaster(), self, "modifier_imba_axe_battle_hunger_enemy", {})
-	EmitSoundOnLocationWithCaster(self:GetCursorTarget():GetAbsOrigin(), "Hero_Axe.Battle_Hunger", self:GetCaster())
+	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_axe_battle_hunger_enemy", {})
+	target:EmitSound("Hero_Axe.Battle_Hunger")
 end
 
 modifier_imba_axe_battle_hunger_caster =class({})
@@ -107,15 +111,10 @@ function modifier_imba_axe_battle_hunger_enemy:IsDebuff()				return true end
 function modifier_imba_axe_battle_hunger_enemy:IsPurgable() 			return true end
 function modifier_imba_axe_battle_hunger_enemy:IsPurgeException() 		return true end
 function modifier_imba_axe_battle_hunger_enemy:IsHidden()				return false end
-
 function modifier_imba_axe_battle_hunger_enemy:GetEffectName() return "particles/units/heroes/hero_axe/axe_battle_hunger.vpcf" end
 function modifier_imba_axe_battle_hunger_enemy:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
 function modifier_imba_axe_battle_hunger_enemy:ShouldUseOverheadOffset() return true end
-
-function modifier_imba_axe_battle_hunger_enemy:DeclareFunctions()
-	return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,MODIFIER_EVENT_ON_DEATH,}
-end
-
+function modifier_imba_axe_battle_hunger_enemy:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,MODIFIER_EVENT_ON_DEATH,} end
 function modifier_imba_axe_battle_hunger_enemy:GetModifierMoveSpeedBonus_Percentage() return (0-self:GetAbility():GetSpecialValueFor("speed_bonus")) end
 
 function modifier_imba_axe_battle_hunger_enemy:OnDeath(keys)
@@ -125,7 +124,10 @@ function modifier_imba_axe_battle_hunger_enemy:OnDeath(keys)
 	if keys.attacker ~= self:GetParent() or keys.unit:IsIllusion() then
 		return
 	end
-	self:Destroy()
+	self:SetStackCount(self:GetStackCount() - 1)
+	if self:GetStackCount() <= 0 then
+		self:Destroy()
+	end
 end
 
 function modifier_imba_axe_battle_hunger_enemy:OnCreated()

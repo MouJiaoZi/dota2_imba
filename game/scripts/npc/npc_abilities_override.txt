@@ -7583,7 +7583,7 @@
 		
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"70 60 50"
+		"AbilityCooldown"				"30 20 10"
 		"AbilityDuration"				"20.0 20.0 20.0"
 
 		// Cost
@@ -7597,12 +7597,13 @@
 			"01"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"bonus_attack_speed"			"400 800 1200"
+				"bonus_attack_speed"			"1200"
 			}
 			"02"
 			{
 				"var_type"						"FIELD_INTEGER"
 				"focusfire_damage_reduction"	"0"
+				"LinkedSpecialBonus"		"special_bonus_unique_windranger_8"
 			}						
 			"03"
 			{
@@ -7610,16 +7611,6 @@
 				"focusfire_duration_tooltip"	"20"
 			}
 			"04"
-			{
-				"var_type"						"FIELD_FLOAT"
-				"cooldown_scepter"				"5.0"
-			}
-			"05"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"focusfire_damage_reduction_scepter"	"0"
-			}
-			"06"
 			{
 				"var_type"						"FIELD_INTEGER"
 				"focusfire_fire_on_the_move"	"1"
@@ -21295,7 +21286,7 @@
 			"09"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"scepter_cooldown"			"0.7"
+				"scepter_cooldown"			"1.7"
 			}
 		}
 	}

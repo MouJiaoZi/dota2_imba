@@ -28,6 +28,9 @@ function modifier_imba_spider_strikes_motion:IsPurgable() 		return false end
 function modifier_imba_spider_strikes_motion:IsPurgeException() return false end
 function modifier_imba_spider_strikes_motion:IsMotionController() return true end
 function modifier_imba_spider_strikes_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
+function modifier_imba_spider_strikes_motion:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = self:GetCaster():HasScepter()} end
+function modifier_imba_spider_strikes_motion:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_SCALE} end
+function modifier_imba_spider_strikes_motion:GetModifierModelScale() return self:GetParent():HasScepter() and (0 - self:GetAbility():GetSpecialValueFor("model_scale_scepter")) or 0 end
 
 function modifier_imba_spider_strikes_motion:OnCreated(keys)
 	if IsServer() then
@@ -96,9 +99,10 @@ function modifier_imba_spider_strikes_caster:IsHidden() 		return false end
 function modifier_imba_spider_strikes_caster:IsPurgable() 		return false end
 function modifier_imba_spider_strikes_caster:IsPurgeException() return false end
 function modifier_imba_spider_strikes_caster:AllowIllusionDuplicate() return false end
-function modifier_imba_spider_strikes_caster:CheckState() return {[MODIFIER_STATE_IGNORING_MOVE_AND_ATTACK_ORDERS] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
-function modifier_imba_spider_strikes_caster:DeclareFunctions() return {MODIFIER_EVENT_ON_ORDER, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_spider_strikes_caster:CheckState() return {[MODIFIER_STATE_IGNORING_MOVE_AND_ATTACK_ORDERS] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true, [MODIFIER_STATE_MAGIC_IMMUNE] = self:GetCaster():HasScepter()} end
+function modifier_imba_spider_strikes_caster:DeclareFunctions() return {MODIFIER_EVENT_ON_ORDER, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MODEL_SCALE} end
 function modifier_imba_spider_strikes_caster:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("as_bonus") end
+function modifier_imba_spider_strikes_caster:GetModifierModelScale() return self:GetParent():HasScepter() and (0 - self:GetAbility():GetSpecialValueFor("model_scale_scepter")) or 0 end
 
 function modifier_imba_spider_strikes_caster:OnOrder(keys)
 	if IsServer() and keys.unit == self:GetParent() then
@@ -123,6 +127,11 @@ end
 function modifier_imba_spider_strikes_caster:OnCreated()
 	if IsServer() then
 		self:GetAbility():SetActivated(false)
+		if self:GetCaster():HasScepter() then
+			local pfx = ParticleManager:CreateParticle("particles/hero/broodmother/spider_strikes_magic_immune.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, false, false, 15, false, false)
+		end
 	end
 end
 
@@ -216,6 +225,7 @@ function imba_broodmother_spin_web:OnSpellStart()
 	web:AddNewModifier(caster, nil, "modifier_invulnerable", {})
 	web:AddNewModifier(caster, nil, "modifier_magicimmune", {})
 	web:AddNewModifier(caster, self, "modifier_imba_spin_web_enemy_aura", {})
+	web:AddNewModifier(caster, self, "modifier_techies_land_mine", {})
 	web:EmitSound("Hero_Broodmother.SpinWebCast")
 	for i=1, self:GetSpecialValueFor("count") do
 		if not self.webs[i] then
@@ -396,7 +406,9 @@ function broodmother_spin_web_destroy:OnSpellStart()
 	end
 	caster:ForceKill(false)
 	Timers:CreateTimer(FrameTime(), function()
-			caster:RemoveSelf()
+			if not caster:IsNull() then
+				caster:RemoveSelf()
+			end
 			return nil
 		end
 	)

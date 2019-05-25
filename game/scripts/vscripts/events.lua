@@ -839,6 +839,20 @@ function GameMode:OnEntityKilled( keys )
 	end
 
 	-------------------------------------------------------------------------------------------------
+	-- IMBA: Antimage Mana Void Scepter Effect
+	-------------------------------------------------------------------------------------------------
+
+	local function ManaVoidKillCredit(ability, killed_unit)
+		if ability and ability:GetAbilityName() == "imba_antimage_mana_void" and killed_unit:IsRealHero() then
+			CreateModifierThinker(killed_unit, ability, "modifier_imba_mana_void_scepter", {},  Vector(30000,30000,5000), ability:GetCaster():GetTeamNumber(), false)
+		end
+	end
+
+	if ability and ability:GetName() == "imba_antimage_mana_void" and killed_unit:IsRealHero() and ability:GetCaster():HasScepter() then
+		xpcall((ManaVoidKillCredit(ability, killed_unit)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
+	end
+
+	-------------------------------------------------------------------------------------------------
 	-- IMBA: Ancient destruction detection
 	-------------------------------------------------------------------------------------------------
 

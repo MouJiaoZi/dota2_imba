@@ -58,6 +58,13 @@ function imba_riki_tott_true:OnSpellStart()
 end
 
 function imba_riki_tott_true:OnChannelThink(flInterval)
+	if not self.target:IsAlive() then
+		self:GetCaster():InterruptChannel()
+		return
+	end
+	if not self.thinker or self.thinker:IsNull() then
+		return
+	end
 	self.thinker:SetAbsOrigin(self.target:GetAbsOrigin())
 	self:GetCaster():SetAbsOrigin(self.thinker:GetAbsOrigin())
 end
@@ -101,7 +108,7 @@ function modifier_imba_tricks_of_the_trade_thinker:OnCreated()
 end
 
 function modifier_imba_tricks_of_the_trade_thinker:OnIntervalThink()
-	if self:GetElapsedTime() > 0.1 and not self:GetCaster():IsChanneling() then
+	if (self:GetElapsedTime() > 0.1 and not self:GetCaster():IsChanneling()) then
 		self:Destroy()
 		return
 	end

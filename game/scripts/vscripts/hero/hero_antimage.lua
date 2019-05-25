@@ -301,13 +301,14 @@ function modifier_imba_antimage_magehunter_counter:GetAttributes() return MODIFI
 
 imba_antimage_mana_void = class({})
 
+LinkLuaModifier("modifier_imba_mana_void_scepter", "hero/hero_antimage", LUA_MODIFIER_MOTION_NONE)
+
 function imba_antimage_mana_void:IsHiddenWhenStolen() 		return false end
 function imba_antimage_mana_void:IsRefreshable() 			return true end
 function imba_antimage_mana_void:IsStealable() 				return true end
 function imba_antimage_mana_void:IsNetherWardStealable() 	return true end
-
 function imba_antimage_mana_void:GetAOERadius()	return self:GetSpecialValueFor("mana_void_aoe_radius") end
-function imba_antimage_mana_void:GetCooldown(i) return self:GetSpecialValueFor("cd") + self:GetCaster():GetTalentValue("special_bonus_imba_antimage_3") end
+function imba_antimage_mana_void:GetCooldown(i) return self.BaseClass.GetCooldown(self, i) + self:GetCaster():GetTalentValue("special_bonus_imba_antimage_3") end
 
 function imba_antimage_mana_void:OnAbilityPhaseStart()
 	self:GetCaster():EmitSound("Hero_Antimage.ManaVoidCast")
@@ -360,4 +361,31 @@ function imba_antimage_mana_void:OnSpellStart()
 	ParticleManager:SetParticleControl(pfx, 0, target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")))
 	ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetSpecialValueFor("mana_void_aoe_radius"), 0, 0))
 	ParticleManager:ReleaseParticleIndex(pfx)
+end
+
+modifier_imba_mana_void_scepter = class({})
+
+function modifier_imba_mana_void_scepter:DeclareFunctions() return {MODIFIER_EVENT_ON_RESPAWN} end
+
+function modifier_imba_mana_void_scepter:OnRespawn(keys)
+	if not IsServer() or keys.unit ~= self:GetCaster() then
+		return
+	end
+	local ability = self:GetAbility()
+	local target = self:GetCaster()
+	local max_cd = 0
+	local max_ability = nil
+	for i=0, 23 do
+		local current_ability = target:GetAbilityByIndex(i)
+		if current_ability and max_cd <= current_ability:GetCooldown(current_ability:GetLevel()) then
+			max_cd = current_ability:GetCooldown(current_ability:GetLevel())
+			max_ability = current_ability
+		end
+	end
+	if max_ability then
+		local cd = max_ability:GetCooldownTimeRemaining() + ability:GetSpecialValueFor("cooldown_increase_scepter")
+		max_ability:EndCooldown()
+		max_ability:StartCooldown(cd)
+	end
+	self:Destroy()
 end

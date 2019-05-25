@@ -95,6 +95,7 @@ function imba_bane_brain_sap:IsHiddenWhenStolen() 		return false end
 function imba_bane_brain_sap:IsRefreshable() 			return true end
 function imba_bane_brain_sap:IsStealable() 				return true end
 function imba_bane_brain_sap:IsNetherWardStealable() 	return true end
+function imba_bane_brain_sap:GetCooldown(i) return self:GetCaster():HasScepter() and self:GetSpecialValueFor("cooldown_scepter") or self.BaseClass.GetCooldown(self, i) end
 
 function imba_bane_brain_sap:OnSpellStart()
 	local caster = self:GetCaster()

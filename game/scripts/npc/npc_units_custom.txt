@@ -3982,4 +3982,99 @@
 		"StatusManaRegen"			"0.0"		// Mana regeneration rate.
 	}	
 	
+	"npc_dota_techies_land_mine"
+	{
+		// Abilities
+		//----------------------------------------------------------------
+		"Ability1"					"imba_techies_minefield_teleport"			// Ability 1
+		"Ability2"					""			// Ability 2
+		"Ability3"					""			// Ability 3
+		"Ability4"					""			// Ability 4
+	}
+
+	"npc_dota_techies_stasis_trap"
+	{
+		// Abilities
+		//----------------------------------------------------------------
+		"Ability1"					"imba_techies_minefield_teleport"			// Ability 1
+		"Ability2"					""			// Ability 2
+		"Ability3"					""			// Ability 3
+		"Ability4"					""			// Ability 4
+	}
+
+	"npc_dota_techies_remote_mine"
+	{
+		// Abilities
+		//----------------------------------------------------------------
+		"Ability1"					"imba_techies_remote_mines_self_detonate"			// Ability 1
+		"Ability2"					"imba_techies_remote_auto_creep"			// Ability 2
+		"Ability3"					"imba_techies_remote_auto_hero"			// Ability 3
+		"Ability4"					"imba_techies_minefield_teleport"			// Ability 4
+	}
+
+	// Techies Minefield Sign
+	"npc_dota_techies_minefield_sign"
+	{
+		"Model"						"models/heroes/techies/techies_sign.mdl"
+		"Level"						"1"
+		"ModelScale" 				"1.0"
+		"SelectionGroup"			"techies_minefield_sign"
+
+		// Abilities
+		//----------------------------------------------------------------
+		"Ability1"					""
+		"Ability2"					""
+		"Ability3"					""
+		"Ability4"					""
+
+		// Armor
+		//----------------------------------------------------------------
+		"ArmorPhysical"				"0"
+
+		// Attack
+		//----------------------------------------------------------------
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"AttackDamageMin"			"0"
+		"AttackDamageMax"			"0"
+		"AttackRate"				"1.0"
+		"AttackAnimationPoint"		"0.0"
+		"AttackAcquisitionRange"	"0"
+		"AttackRange"				"0"
+		"ProjectileModel"			""
+		"ProjectileSpeed"			"0"
+
+		// Bounds
+		//----------------------------------------------------------------
+		"BoundsHullName"			"DOTA_HULL_SIZE_REGULAR"
+		"HealthBarOffset"			"170"
+
+		// Movement
+		//----------------------------------------------------------------
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_NONE"
+		"MovementSpeed"				"0"
+		"MovementTurnRate"			"0"
+	
+		// Bounty
+		//----------------------------------------------------------------
+		"BountyXP"					"0"
+		"BountyGoldMin"				"0"
+		"BountyGoldMax"				"0"
+
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"1"
+		"StatusHealthRegen"			"0.25"
+		"StatusMana"				"0"
+		"StatusManaRegen"			"0"
+		
+		// Vision
+		//----------------------------------------------------------------
+		"VisionDaytimeRange"		"0"
+		"VisionNighttimeRange"		"0"
+
+		//Inventory
+		//----------------------------------------------------------------
+		"HasInventory"				"0"
+	}
+
 }
