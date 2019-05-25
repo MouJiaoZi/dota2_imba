@@ -321,7 +321,8 @@ function imba_antimage_mana_void:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
-	target:AddNewModifier(caster, self, "modifier_imba_stunned", {duration = self:GetSpecialValueFor("mana_void_ministun")})
+	local stun_duration = caster:HasScepter() and self:GetSpecialValueFor("mana_void_stun_scepter") or self:GetSpecialValueFor("mana_void_ministun")
+	target:AddNewModifier(caster, self, "modifier_imba_stunned", {duration = stun_duration})
 	local dmg = 0
 	target:SetMana(math.max(0, (target:GetMana() - target:GetMaxMana() * (self:GetSpecialValueFor("mana_void_mana_burn_pct") / 100))))
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(),

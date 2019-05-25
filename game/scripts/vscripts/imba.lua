@@ -655,6 +655,10 @@ function IMBA:ModifierAddFilter(keys)
 
 	local modifier_name = keys.name_const
 
+	if target:GetUnitName() == "npc_dota_techies_remote_mine" or target:GetUnitName() == "techies_minefield_sign" then
+		print(modifier_name)
+	end
+
 	-- volvo bugfix
 	if modifier_name == "modifier_datadriven" then
 		return false

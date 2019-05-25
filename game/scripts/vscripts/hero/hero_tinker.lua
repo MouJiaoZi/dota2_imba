@@ -458,7 +458,7 @@ function modifier_imba_rearm_stack:IsHidden() 			return false end
 function modifier_imba_rearm_stack:IsPurgable() 		return false end
 function modifier_imba_rearm_stack:IsPurgeException() 	return false end
 function modifier_imba_rearm_stack:DeclareFunctions() return {MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE} end
-function modifier_imba_rearm_stack:GetModifierTotalPercentageManaRegen() return (0 - self:GetAbility():GetSpecialValueFor("mana_penalty")) end
+function modifier_imba_rearm_stack:GetModifierTotalPercentageManaRegen() return (0 - self:GetAbility():GetSpecialValueFor("mana_penalty") * self:GetStackCount()) end
 
 function March( keys )
 	local caster = keys.caster
