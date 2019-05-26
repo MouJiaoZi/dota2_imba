@@ -298,11 +298,20 @@ imba_ember_spirit_fire_remnant = class({})
 LinkLuaModifier("modifier_imba_fire_remnant_state", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fire_remnant_target", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fire_remnant_timer", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_fire_remnant_scepter", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_ember_spirit_fire_remnant:IsHiddenWhenStolen() 	return false end
 function imba_ember_spirit_fire_remnant:IsRefreshable() 		return true end
 function imba_ember_spirit_fire_remnant:IsStealable() 			return true end
 function imba_ember_spirit_fire_remnant:IsNetherWardStealable()	return false end
+function imba_ember_spirit_fire_remnant:GetIntrinsicModifierName() return "modifier_imba_fire_remnant_scepter" end
+function imba_ember_spirit_fire_remnant:GetCastRange(vLocation, hTarget)
+	if self:GetCaster():HasScepter() then
+		return self:GetSpecialValueFor("cast_range") * self:GetSpecialValueFor("multiplier_scepter")
+	else
+		return self:GetSpecialValueFor("cast_range")
+	end
+end
 function imba_ember_spirit_fire_remnant:OnUpgrade()
 	local ability = self:GetCaster():FindAbilityByName("imba_ember_spirit_activate_fire_remnant")
 	if ability then
@@ -345,7 +354,7 @@ function imba_ember_spirit_fire_remnant:OnSpellStart()
 		iUnitTargetType = DOTA_UNIT_TARGET_NONE,
 		fExpireTime = GameRules:GetGameTime() + 30.0,
 		bDeleteOnHit = true,
-		vVelocity = direction * self:GetSpecialValueFor("speed"),
+		vVelocity = direction * (self:GetSpecialValueFor("speed") * (self:GetCaster():HasScepter() and self:GetSpecialValueFor("multiplier_scepter") or 1)),
 		bProvidesVision = false,
 		ExtraData = {dummy = dummy:entindex()}
 	}
@@ -365,6 +374,27 @@ function imba_ember_spirit_fire_remnant:OnProjectileHit_ExtraData(hTarget, pos, 
 		if dummy:FindModifierByName("modifier_imba_fire_remnant_state") then
 			dummy:FindModifierByName("modifier_imba_fire_remnant_state"):CreatePfx()
 		end
+	end
+end
+
+modifier_imba_fire_remnant_scepter = class({})
+
+function modifier_imba_fire_remnant_scepter:IsDebuff()			return false end
+function modifier_imba_fire_remnant_scepter:IsHidden() 			return true end
+function modifier_imba_fire_remnant_scepter:IsPurgable() 		return false end
+function modifier_imba_fire_remnant_scepter:IsPurgeException() 	return false end
+
+function modifier_imba_fire_remnant_scepter:OnCreated()
+	if IsServer() and not self:GetParent():IsIllusion() then
+		self:StartIntervalThink(0.5)
+	end
+end
+
+function modifier_imba_fire_remnant_scepter:OnIntervalThink()
+	if self:GetParent():HasScepter() then
+		AbilityChargeController:ChangeChargeAbilityConfig(self:GetAbility(), self:GetAbility():GetSpecialValueFor("charge_restore_time"), self:GetAbility():GetSpecialValueFor("max_charges") * self:GetAbility():GetSpecialValueFor("multiplier_scepter"), 1, true, true)
+	else
+		AbilityChargeController:ChangeChargeAbilityConfig(self:GetAbility(), self:GetAbility():GetSpecialValueFor("charge_restore_time"), self:GetAbility():GetSpecialValueFor("max_charges"), 1, true, true)
 	end
 end
 
@@ -418,8 +448,12 @@ function modifier_imba_fire_remnant_state:Explode(bActive)
 		self:GetParent():AddNewModifier(self:GetCaster(), shell, "modifier_imba_flame_guard", {duration = shell:GetSpecialValueFor("duration")})
 	end
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local dmg = self:GetAbility():GetSpecialValueFor("damage")
+	if self:GetCaster():HasScepter() then
+		dmg = dmg / self:GetAbility():GetSpecialValueFor("multiplier_scepter")
+	end
 	for _, enemy in pairs(enemies) do
-		ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE})
+		ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = dmg, ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType(), damage_flags = DOTA_DAMAGE_FLAG_PROPERTY_FIRE})
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("chain_chance")) and chain and chain:GetLevel() > 0 then
 			enemy:AddNewModifier(self:GetCaster(), chain, "modifier_imba_searing_chains", {duration = chain:GetSpecialValueFor("duration")})
 			enemy:EmitSound("Hero_EmberSpirit.SearingChains.Target")
@@ -461,6 +495,7 @@ function imba_ember_spirit_activate_fire_remnant:IsRefreshable() 			return true 
 function imba_ember_spirit_activate_fire_remnant:IsStealable() 				return true end
 function imba_ember_spirit_activate_fire_remnant:IsNetherWardStealable()	return false end
 function imba_ember_spirit_activate_fire_remnant:GetAssociatedPrimaryAbilities() return "imba_ember_spirit_fire_remnant" end
+function imba_ember_spirit_activate_fire_remnant:GetManaCost(iLevel) return self:GetCaster():HasScepter() and 0 or self.BaseClass.GetManaCost(self, iLevel) end
 
 function imba_ember_spirit_activate_fire_remnant:OnSpellStart()
 	local caster = self:GetCaster()
@@ -500,6 +535,9 @@ function modifier_imba_fire_remnant_active_caster:OnCreated(keys)
 		self.target = EntIndexToHScript(keys.target)
 		self.pos = self.target:GetAbsOrigin()
 		self.speed = self:GetAbility():GetSpecialValueFor("speed")
+		if self:GetParent():HasScepter() then
+			self.speed = self.speed * self:GetAbility():GetSpecialValueFor("multiplier_scepter")
+		end
 		self:OnIntervalThink()
 		self:StartIntervalThink(FrameTime())
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_remnant_dash.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())

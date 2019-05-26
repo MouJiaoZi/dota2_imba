@@ -24,7 +24,7 @@ end
 
 function imba_templar_assassin_psionic_trap:GetCustomCastErrorLocation(loc)
 	if self:GetCaster():GetModifierStackCount("modifier_imba_psionic_trap_counter", nil) >= self:GetSpecialValueFor("max_traps") then
-		return "#dota_hud_error_ability_inactive"
+		return "#IMBA_HUD_ERROR_PSI_TRAP_MAX"
 	end
 end
 
@@ -84,9 +84,9 @@ function modifier_imba_psionic_trap_timer:GetEffectName() return "particles/unit
 function modifier_imba_psionic_trap_timer:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_psionic_trap_timer:CheckState()
 	if self:GetElapsedTime() >= self:GetAbility():GetSpecialValueFor("trap_fade_time") then
-		return {[MODIFIER_STATE_INVISIBLE] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true}
+		return {[MODIFIER_STATE_INVISIBLE] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true}
 	end
-	return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true}
+	return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true}
 end
 
 function modifier_imba_psionic_trap_timer:OnDestroy()
@@ -120,3 +120,129 @@ function modifier_imba_psionic_trap_slow:GetStatusEffectName() return "particles
 function modifier_imba_psionic_trap_slow:StatusEffectPriority() return 15 end
 function modifier_imba_psionic_trap_slow:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
 function modifier_imba_psionic_trap_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("ms_slow")) end
+
+imba_templar_assassin_psionic_projection = class({})
+
+LinkLuaModifier("modifier_imba_psionic_projection_layout", "hero/hero_templar_assassin", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_psionic_projection_model", "hero/hero_templar_assassin", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_psionic_projection_attack", "hero/hero_templar_assassin", LUA_MODIFIER_MOTION_NONE)
+
+function imba_templar_assassin_psionic_projection:IsHiddenWhenStolen() 		return false end
+function imba_templar_assassin_psionic_projection:IsRefreshable() 			return true end
+function imba_templar_assassin_psionic_projection:IsStealable() 			return false end
+function imba_templar_assassin_psionic_projection:IsNetherWardStealable()	return false end
+function imba_templar_assassin_psionic_projection:IsTalentAbility() 		return true end
+function imba_templar_assassin_psionic_projection:GetIntrinsicModifierName() return "modifier_imba_psionic_projection_layout" end
+function imba_templar_assassin_psionic_projection:GetBehavior() return self:GetCaster():GetModifierStackCount("modifier_imba_psionic_trap_counter", nil) <= 0 and (DOTA_ABILITY_BEHAVIOR_NO_TARGET) or self.BaseClass.GetBehavior(self) end
+
+function imba_templar_assassin_psionic_projection:CastFilterResult(loc)
+	if self:GetCaster():GetModifierStackCount("modifier_imba_psionic_trap_counter", nil) <= 0 then
+		return UF_FAIL_CUSTOM
+	else
+		return UF_SUCCESS
+	end
+end
+
+function imba_templar_assassin_psionic_projection:GetCustomCastError(loc)
+	if self:GetCaster():GetModifierStackCount("modifier_imba_psionic_trap_counter", nil) <= 0 then
+		return "#IMBA_HUD_ERROR_NO_PSI_TRAP"
+	end
+end
+
+function imba_templar_assassin_psionic_projection:OnSpellStart()
+	self.pos = self:GetCursorPosition()
+	self.thinker = CreateModifierThinker(self:GetCaster(), self, "modifier_imba_psionic_projection_model", {duration = 2.0}, self.pos, self:GetCaster():GetTeamNumber(), false)
+	local ability = self:GetCaster():FindAbilityByName("templar_assassin_meld")
+	if ability and ability:GetLevel() > 0 then
+		ability:OnSpellStart()
+	end
+end
+
+function imba_templar_assassin_psionic_projection:OnChannelThink(flInterval)
+	local pos = self.pos
+	local traps = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), pos, nil, 50000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
+	for _, trap in pairs(traps) do
+		if trap:GetUnitName() == "npc_dota_templar_assassin_psionic_trap" and trap:GetPlayerOwnerID() == self:GetCaster():GetPlayerOwnerID() then
+			if self.thinker and not self.thinker:IsNull() then
+				self.thinker:SetAbsOrigin(trap:GetAbsOrigin())
+			end
+			return
+		end
+	end
+	self:GetCaster():InterruptChannel()
+end
+
+function imba_templar_assassin_psionic_projection:OnChannelFinish(bInterrupted)
+	if self.thinker and not self.thinker:IsNull() then
+		self.thinker:ForceKill(false)
+	end
+	if bInterrupted then
+		return
+	end
+	local pos = self.pos
+	local traps = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), pos, nil, 50000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
+	for _, trap in pairs(traps) do
+		if trap:GetUnitName() == "npc_dota_templar_assassin_psionic_trap" and trap:GetPlayerOwnerID() == self:GetCaster():GetPlayerOwnerID() then
+			FindClearSpaceForUnit(self:GetCaster(), trap:GetAbsOrigin(), true)
+			self.trap = trap
+			self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_psionic_projection_attack", {})
+			return
+		end
+	end
+end
+
+modifier_imba_psionic_projection_layout = class({})
+
+function modifier_imba_psionic_projection_layout:IsDebuff()			return false end
+function modifier_imba_psionic_projection_layout:IsHidden() 		return true end
+function modifier_imba_psionic_projection_layout:IsPurgable() 		return false end
+function modifier_imba_psionic_projection_layout:IsPurgeException() return false end
+
+function modifier_imba_psionic_projection_layout:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(0.5)
+	end
+end
+
+function modifier_imba_psionic_projection_layout:OnIntervalThink() self:GetAbility():SetHidden(not self:GetCaster():HasScepter()) end
+
+modifier_imba_psionic_projection_model = class({})
+
+function modifier_imba_psionic_projection_model:OnCreated()
+	if IsServer() then
+		local pfx = ParticleManager:CreateParticleForTeam("particles/hero/templar_assassin/teleport_image.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetCaster():GetTeamNumber())
+		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(pfx, 3, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetCaster():GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 4, Vector(1.0, 0, 0))
+		ParticleManager:SetParticleControlEnt(pfx, 5, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
+		self:AddParticle(pfx, false, false, 15, false, false)
+	end
+end
+
+modifier_imba_psionic_projection_attack = class({})
+
+function modifier_imba_psionic_projection_attack:IsDebuff()			return false end
+function modifier_imba_psionic_projection_attack:IsHidden() 		return true end
+function modifier_imba_psionic_projection_attack:IsPurgable() 		return false end
+function modifier_imba_psionic_projection_attack:IsPurgeException() return false end
+
+function modifier_imba_psionic_projection_attack:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(0.1)
+	end
+end
+
+function modifier_imba_psionic_projection_attack:OnIntervalThink()
+	if not self:GetParent():IsInvisible() then
+		self:Destroy()
+	end
+end
+
+function modifier_imba_psionic_projection_attack:OnDestroy()
+	if IsServer() then
+		local trap = self:GetAbility().trap
+		if trap and not trap:IsNull() then
+			trap:ForceKill(false)
+		end
+	end
+end

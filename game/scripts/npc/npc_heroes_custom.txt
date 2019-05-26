@@ -945,7 +945,7 @@
 		"Ability2"					"templar_assassin_meld"
 		"Ability3"					"templar_assassin_psi_blades"
 		"Ability4"					"imba_templar_assassin_trap"
-		"Ability5"					"generic_hidden"
+		"Ability5"					"imba_templar_assassin_psionic_projection"
 		"Ability6"					"imba_templar_assassin_psionic_trap"
 		
 		"Ability10"					"special_bonus_attack_speed_25"

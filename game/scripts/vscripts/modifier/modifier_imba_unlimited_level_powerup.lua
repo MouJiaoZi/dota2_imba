@@ -65,6 +65,12 @@ function modifier_imba_ak_ability_adder:OnDestroy()
 	if IsServer() then
 		local ability = self:GetParent():AddAbility(self.ability_name)
 		self:GetParent():SwapAbilities(self.ability_name, "generic_hidden", true, false)
+		local buff = self:GetParent():FindAllModifiers()
+		for i=1, #buff do
+			if buff[i]:GetAbility() == ability then
+				buff[i]:Destroy()
+			end
+		end
 		self:GetParent():AddNewModifier(self:GetParent(), ability, "modifier_imba_ak_ability_controller", {})
 		ability.ak = true
 		self.ability_name = nil

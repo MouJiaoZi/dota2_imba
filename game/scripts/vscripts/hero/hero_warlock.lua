@@ -575,10 +575,18 @@ function modifier_imba_liquid_hellfire_autocast:OnCreated()
 end
 
 function modifier_imba_liquid_hellfire_autocast:OnIntervalThink()
+	if not self:GetAbility():IsFullyCastable() then
+		return
+	end
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("autocast_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_FARTHEST, false)
-	if enemies[1] and self:GetAbility():IsFullyCastable() then
-		self:GetParent():SetCursorPosition(enemies[1]:GetAbsOrigin())
-		self:GetAbility():OnSpellStart()
+	local max_targets = self:GetCaster():HasScepter() and self:GetAbility():GetSpecialValueFor("lhf_num_scepter") or 1
+	for i=1, max_targets do
+		if enemies[i] and self:GetAbility():IsFullyCastable() then
+			self:GetParent():SetCursorPosition(enemies[i]:GetAbsOrigin())
+			self:GetAbility():OnSpellStart()
+		end
+	end
+	if #enemies > 0 then
 		self:GetAbility():UseResources(true, true, true)
 	end
 end

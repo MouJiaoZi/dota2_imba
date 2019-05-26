@@ -35,7 +35,7 @@ function imba_axe_berserkers_call:OnSpellStart()
 	for _, enemy in pairs(enemies) do
 		enemy:AddNewModifier(caster, self, "modifier_axe_berserkers_call", {duration = self:GetSpecialValueFor("duration")})
 		enemy:AddNewModifier(caster, self, "modifier_axe_berserkers_call_as", {duration = self:GetSpecialValueFor("duration")})
-		if caster:HasScepter() and caster:FindAbilityByName("imba_axe_battle_hunger") and caster:FindAbilityByName("imba_axe_battle_hunger"):GetLevel() > 0 then
+		if caster:HasScepter() and caster:FindAbilityByName("imba_axe_battle_hunger") and caster:FindAbilityByName("imba_axe_battle_hunger"):GetLevel() > 0 and not enemy:IsBoss() then
 			enemy:AddNewModifier(caster, caster:FindAbilityByName("imba_axe_battle_hunger"), "modifier_imba_axe_battle_hunger_enemy", {})
 		end
 	end
@@ -131,6 +131,7 @@ function modifier_imba_axe_battle_hunger_enemy:OnDeath(keys)
 end
 
 function modifier_imba_axe_battle_hunger_enemy:OnCreated()
+	self:SetStackCount(self:GetAbility():GetSpecialValueFor("kill_need"))
 	if not IsServer() then
 		return 
 	end
@@ -139,6 +140,8 @@ function modifier_imba_axe_battle_hunger_enemy:OnCreated()
 	end
 	self:StartIntervalThink(1.0)
 end
+
+function modifier_imba_axe_battle_hunger_enemy:OnRefresh() self:SetStackCount(self:GetAbility():GetSpecialValueFor("kill_need")) end
 
 function modifier_imba_axe_battle_hunger_enemy:OnIntervalThink()
 	if IsNearEnemyFountain(self:GetParent():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), 1100) then

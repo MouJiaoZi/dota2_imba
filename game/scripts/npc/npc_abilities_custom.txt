@@ -3177,6 +3177,11 @@
 				"extra_damage"				"1.0 1.5 2.0 2.5"
 				"CalculateSpellDamageTooltip"			"0"
 			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"kill_need"					"1 2 3 4"
+			}
 		}
 	}
 
@@ -7576,11 +7581,11 @@
 		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
 		"AbilitySound"					"Hero_EmberSpirit.FireRemnant.Cast"
 		"FightRecapLevel"				"2"
+		"HasScepterUpgrade"				"1"
 		"ScriptFile"					"hero/hero_ember_spirit"
 
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1500"
 		"AbilityCastPoint"				"0.0"
 		"AbilityCastAnimation"			"ACT_INVALID"
 
@@ -7631,6 +7636,16 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"chain_chance"			"10 30 50"
+			}
+			"08"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"multiplier_scepter"	"3"
+			}
+			"09"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"cast_range"			"1500"
 			}
 		}
 		"AbilityDraftPreAbility"		"ember_spirit_activate_fire_remnant"
@@ -12489,7 +12504,7 @@
 			"07"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"charge_time"				"10.0"
+				"charge_time"				"3.3"
 			}
 		}
 	}
@@ -18041,6 +18056,42 @@
 	}
 
 	//=================================================================================================================
+	// Templar Assassin: Psionic Projection
+	//=================================================================================================================
+	"imba_templar_assassin_psionic_projection"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"templar_assassin_trap_teleport"
+		"MaxLevel" 						"1"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_SHOW_IN_GUIDES | DOTA_ABILITY_BEHAVIOR_CHANNELLED"
+		"FightRecapLevel"				"1"
+		"HasScepterUpgrade"				"1"
+		"ScriptFile"					"hero/hero_templar_assassin.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.2"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+		"AbilityChannelTime"			"2.0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"20"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"50"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+		}
+	}
+
+	//=================================================================================================================
 	// Wraith King's Wraithfire Blast
 	//=================================================================================================================
 	"imba_wraith_king_wraithfire_blast"
@@ -21940,9 +21991,10 @@
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
-		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
 		"FightRecapLevel"				"2"
+		"HasScepterUpgrade"				"1"
 		"ScriptFile"					"hero/hero_warlock.lua"
 
 		// Casting
@@ -22000,6 +22052,11 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"as_bonus"				"50 150 250"
+			}
+			"09"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"lhf_num_scepter"		"2 3 4"
 			}
 		}
 	}
@@ -22079,10 +22136,15 @@
 				"var_type"				"FIELD_INTEGER"
 				"aoe"					"240"
 			}
-			"07"
+			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"autocast_range"		"1200"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"lhf_num_scepter"		"2 3 4"
 			}
 		}
 	}
