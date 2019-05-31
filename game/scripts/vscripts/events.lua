@@ -377,6 +377,17 @@ function GameMode:OnNPCSpawned(keys)
 		
 		Timers:CreateTimer({useGameTime = false, endTime = FrameTime(),
 			callback = function()
+				
+				if npc:HasModifier("modifier_monkey_king_fur_army_soldier_hidden") then
+					return nil
+				end
+
+				local high_five = npc:AddAbility("high_five")
+				if high_five then
+					high_five:SetHidden(true)
+					high_five:SetLevel(1)
+				end
+
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1].order = 0

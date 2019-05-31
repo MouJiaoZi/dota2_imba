@@ -177,8 +177,46 @@ imba_phantom_assassin_blur = class({})
 
 LinkLuaModifier("modifier_imba_blur", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_blur_detected", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_blur_active", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 
+function imba_phantom_assassin_blur:IsHiddenWhenStolen() 		return false end
+function imba_phantom_assassin_blur:IsRefreshable() 			return true end
+function imba_phantom_assassin_blur:IsStealable() 				return true end
+function imba_phantom_assassin_blur:IsNetherWardStealable()		return true end
+function imba_phantom_assassin_blur:GetCastRange() return self:GetSpecialValueFor("radius") - self:GetCaster():GetCastRangeBonus() end
 function imba_phantom_assassin_blur:GetIntrinsicModifierName() return "modifier_imba_blur" end
+
+function imba_phantom_assassin_blur:OnHeroDiedNearby(unit, attacker, keys)
+	if self:GetCaster():HasScepter() and IsEnemy(unit, self:GetCaster()) and (unit:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self:GetSpecialValueFor("radius") then
+		local caster = self:GetCaster()
+		for i = 0, 23 do
+			local current_ability = caster:GetAbilityByIndex(i)
+			if current_ability and not IsRefreshableByAbility(current_ability:GetName()) then
+				current_ability:EndCooldown()
+			end
+		end
+	end
+end
+
+function imba_phantom_assassin_blur:OnSpellStart()
+	local caster = self:GetCaster()
+	caster:EmitSound("Hero_PhantomAssassin.Blur")
+	caster:Purge(false, true, false, false, false)
+	caster:AddNewModifier(caster, self, "modifier_imba_blur_active", {duration = self:GetSpecialValueFor("duration")})
+	local pfx = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_death_lines.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+	ParticleManager:SetParticleControlEnt(pfx, 1, caster, PATTACH_ABSORIGIN_FOLLOW, nil, caster:GetAbsOrigin(), true)
+	ParticleManager:ReleaseParticleIndex(pfx)
+end
+
+modifier_imba_blur_active = class({})
+
+function modifier_imba_blur_active:IsDebuff()			return false end
+function modifier_imba_blur_active:IsHidden() 			return false end
+function modifier_imba_blur_active:IsPurgable() 		return false end
+function modifier_imba_blur_active:IsPurgeException() 	return false end
+function modifier_imba_blur_active:GetEffectName() return "particles/units/heroes/hero_phantom_assassin/phantom_assassin_active_blur.vpcf" end
+function modifier_imba_blur_active:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+function modifier_imba_blur_active:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
 
 modifier_imba_blur = class({})
 
@@ -211,7 +249,7 @@ function modifier_imba_blur_detected:IsPurgable() 		return false end
 function modifier_imba_blur_detected:IsPurgeException() return false end
 function modifier_imba_blur_detected:GetStatusEffectName() return "particles/status_fx/status_effect_blur.vpcf" end
 function modifier_imba_blur_detected:StatusEffectPriority() return 15 end
-function modifier_imba_blur_detected:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_INVISIBILITY_LEVEL} end
+function modifier_imba_blur_detected:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
 function modifier_imba_blur_detected:GetModifierMoveSpeedBonus_Percentage() return self:GetCaster():PassivesDisabled() and 0 or self:GetAbility():GetSpecialValueFor("blur_ms") end
 function modifier_imba_blur_detected:CheckState()
 	if self:GetParent():HasTalent("special_bonus_imba_phantom_assassin_2") then

@@ -575,7 +575,7 @@ function modifier_imba_liquid_hellfire_autocast:OnCreated()
 end
 
 function modifier_imba_liquid_hellfire_autocast:OnIntervalThink()
-	if not self:GetAbility():IsFullyCastable() then
+	if not self:GetAbility():IsCooldownReady() then
 		return
 	end
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("autocast_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_FARTHEST, false)

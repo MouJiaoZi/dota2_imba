@@ -190,3 +190,6 @@ function SetDeathMatchKillGoalNum()
 $.Schedule(1.0, SetDeathMatchKillGoal);
 
 //var a = Particles.CreateParticle("particles/customgames/capturepoints/cp_earth.vpcf", ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, Players.GetPlayerHeroEntityIndex(Players.GetLocalPlayer()));
+
+FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.width = "0px";
+FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.height = "0px";

@@ -73,11 +73,12 @@ function modifier_imba_roshan_upgrade:IsHidden() 			return true end
 function modifier_imba_roshan_upgrade:IsPurgable() 			return false end
 function modifier_imba_roshan_upgrade:IsPurgeException() 	return false end
 function modifier_imba_roshan_upgrade:RemoveOnDeath() return true end
-function modifier_imba_roshan_upgrade:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
+function modifier_imba_roshan_upgrade:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_EVENT_ON_TAKEDAMAGE, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_ATTACK_RANGE_BONUS} end
 function modifier_imba_roshan_upgrade:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * 50) end
 function modifier_imba_roshan_upgrade:GetModifierPreAttack_BonusDamage() return (self:GetStackCount() * 80) end
 function modifier_imba_roshan_upgrade:GetModifierPhysicalArmorBonus() return (self:GetStackCount() * 2) end
 function modifier_imba_roshan_upgrade:GetModifierSpellAmplify_Percentage() return (self:GetStackCount() * 30) end
+function modifier_imba_roshan_upgrade:GetModifierAttackRangeBonus() return (self:GetStackCount() < 3 and 0 or 180) end
 function modifier_imba_roshan_upgrade:GetPriority() return (self:GetStackCount() < 8 and MODIFIER_PRIORITY_HIGH or 100) end
 function modifier_imba_roshan_upgrade:CheckState()
 	if self:GetStackCount() < 8 then
@@ -94,6 +95,7 @@ function modifier_imba_roshan_upgrade:OnTakeDamage(keys)
 	end
 	if keys.unit == self:GetParent() then
 		self.damage = GameRules:GetGameTime()
+		keys.attacker:RemoveModifierByName("modifier_dark_willow_shadow_realm_buff")
 	end
 end
 
@@ -114,7 +116,7 @@ function modifier_imba_roshan_upgrade:OnIntervalThink()
 		boss:Stop()
 	end
 	----back to your house
-	if (boss:GetAbsOrigin() - roshan_pos):Length2D() > 1200 then
+	if #Entities:FindAllByClassnameWithin("trigger_boss_attackable", boss:GetAbsOrigin(), 300) == 0 then
 		FindClearSpaceForUnit(boss, roshan_pos, true)
 		boss:Stop()
 	end
@@ -122,7 +124,6 @@ function modifier_imba_roshan_upgrade:OnIntervalThink()
 	if GameRules:GetGameTime() - self.damage > 5.0 and boss:GetHealth() < boss:GetMaxHealth() then
 		boss:Heal(boss:GetMaxHealth() * 0.1, nil)
 		FindClearSpaceForUnit(boss, roshan_pos, true)
-		boss:Stop()
 	end
 	----ability
 	if boss:HasAbility("imba_roshan_slam") then

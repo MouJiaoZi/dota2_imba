@@ -2475,7 +2475,7 @@
 		"Ability1"				"grimstroke_dark_artistry"
 		"Ability2"				"grimstroke_ink_creature"
 		"Ability3"				"grimstroke_spirit_walk"
-		"Ability4"				"generic_hidden"
+		"Ability4"				"grimstroke_scepter"
 		"Ability5"				"generic_hidden"
 		"Ability6"				"grimstroke_soul_chain"
 		

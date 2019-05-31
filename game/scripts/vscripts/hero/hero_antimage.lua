@@ -201,7 +201,7 @@ function modifier_imba_antimage_spell_shield_active:GetReflectSpell(keys)
 	if not IsServer() then
 		return
 	end
-	if not IsEnemy(keys.ability:GetCaster(), self:GetParent()) or self:GetStackCount() <= 0 or keys.ability:GetAbilityName() == "rubick_spell_steal" or self.time[GameRules:GetGameTime()] or keys.ability:GetCaster():GetName() == "npc_dota_thinker" then
+	if not IsEnemy(keys.ability:GetCaster(), self:GetParent()) or self:GetStackCount() <= 0 or keys.ability:GetAbilityName() == "rubick_spell_steal" or self.time[GameRules:GetGameTime()] or keys.ability:GetCaster():GetName() == "npc_dota_thinker" or bit.band(keys.ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_CHANNELLED) == DOTA_ABILITY_BEHAVIOR_CHANNELLED then
 		return 0
 	end
 	self.time[GameRules:GetGameTime()] = true
@@ -302,6 +302,7 @@ function modifier_imba_antimage_magehunter_counter:GetAttributes() return MODIFI
 imba_antimage_mana_void = class({})
 
 LinkLuaModifier("modifier_imba_mana_void_scepter", "hero/hero_antimage", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_mana_void_scepter_debuff", "hero/hero_antimage", LUA_MODIFIER_MOTION_NONE)
 
 function imba_antimage_mana_void:IsHiddenWhenStolen() 		return false end
 function imba_antimage_mana_void:IsRefreshable() 			return true end
@@ -378,15 +379,51 @@ function modifier_imba_mana_void_scepter:OnRespawn(keys)
 	local max_ability = nil
 	for i=0, 23 do
 		local current_ability = target:GetAbilityByIndex(i)
-		if current_ability and max_cd <= current_ability:GetCooldown(current_ability:GetLevel()) then
-			max_cd = current_ability:GetCooldown(current_ability:GetLevel())
+		if current_ability and not current_ability:IsHidden() and current_ability:GetLevel() > 0 and max_cd <= current_ability:GetCooldown(current_ability:GetLevel()) then
+			max_cd = current_ability:GetCooldown(-1)
 			max_ability = current_ability
 		end
 	end
 	if max_ability then
+		print(max_ability:GetName())
 		local cd = max_ability:GetCooldownTimeRemaining() + ability:GetSpecialValueFor("cooldown_increase_scepter")
-		max_ability:EndCooldown()
-		max_ability:StartCooldown(cd)
+		local debuff = target:FindAllModifiersByName("modifier_imba_mana_void_scepter_debuff")
+		local found = false
+		for i=1, #debuff do
+			if debuff[i]:GetAbility() == max_ability then
+				found = debuff[i]
+				break
+			end
+		end
+		if found then
+			found:SetDuration(cd, true)
+		else
+			target:AddNewModifier(target, max_ability, "modifier_imba_mana_void_scepter_debuff", {duration = cd})
+		end
 	end
 	self:Destroy()
+end
+
+modifier_imba_mana_void_scepter_debuff = class({})
+
+function modifier_imba_mana_void_scepter_debuff:IsDebuff()			return true end
+function modifier_imba_mana_void_scepter_debuff:IsHidden() 			return false end
+function modifier_imba_mana_void_scepter_debuff:IsPurgable() 		return false end
+function modifier_imba_mana_void_scepter_debuff:IsPurgeException() 	return false end
+function modifier_imba_mana_void_scepter_debuff:GetAttributes() 	return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_mana_void_scepter_debuff:RemoveOnDeath() return self:GetParent():IsIllusion() end
+
+function modifier_imba_mana_void_scepter_debuff:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(FrameTime())
+	end
+end
+
+function modifier_imba_mana_void_scepter_debuff:OnIntervalThink()
+	if not self:GetAbility() or self:GetAbility():IsNull() then
+		self:Destroy()
+		return
+	end
+	self:GetAbility():EndCooldown()
+	self:GetAbility():StartCooldown(self:GetRemainingTime())
 end

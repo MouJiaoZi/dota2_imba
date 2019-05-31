@@ -250,14 +250,14 @@ function modifier_imba_hunter_in_the_night_dummy:IsPurgeException()	return false
 function modifier_imba_hunter_in_the_night_dummy:RemoveOnDeath() return false end
 function modifier_imba_hunter_in_the_night_dummy:GetEffectName() return "particles/units/heroes/hero_night_stalker/nightstalker_night_buff.vpcf" end
 function modifier_imba_hunter_in_the_night_dummy:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_hunter_in_the_night_dummy:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE} end
+--function modifier_imba_hunter_in_the_night_dummy:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_CHANGE} end
 function modifier_imba_hunter_in_the_night_dummy:OnCreated()
 	if IsServer() then
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_night_stalker/nightstalker_change.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 		ParticleManager:ReleaseParticleIndex(pfx)
 	end
 end
-function modifier_imba_hunter_in_the_night_dummy:GetModifierModelChange() return "models/heroes/nightstalker/nightstalker_night.vmdl" end
+--function modifier_imba_hunter_in_the_night_dummy:GetModifierModelChange() return "models/heroes/nightstalker/nightstalker_night.vmdl" end
 
 modifier_imba_hunter_in_the_night_active = class({})
 

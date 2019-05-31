@@ -5196,114 +5196,6 @@
 	}
 	
 	//=================================================================================================================
-	// Morphling: Morph
-	//=================================================================================================================
-	"morphling_morph"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"					"5054"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_HIDDEN"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_attributes"		"4 8 12 16"
-			}
-		}
-	}
-
-	//=================================================================================================================
-	// Morphling: Morph (Agility Gain)
-	//=================================================================================================================
-	"morphling_morph_agi"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"					"5055"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE"
-		"LinkedAbility"					"morphling_morph_str"
-		"AbilityCastAnimation"			"ACT_INVALID"
-
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"0.0"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"points_per_tick"		"1"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"morph_cooldown"		"1.0 0.25 0.1 0.04"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_attributes"		"4 8 12 16"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"morph_rate_tooltip"	"1 4 10 25"
-			}
-		}
-	}
-
-	//=================================================================================================================
-	// Morphling: Morph (Strength Gain)
-	//=================================================================================================================
-	"morphling_morph_str"
-	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"ID"					"5056"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE"
-		"LinkedAbility"					"morphling_morph_agi"
- 		"AbilityCastAnimation"			"ACT_INVALID"
-
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"0.0"
-
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"points_per_tick"		"1"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"morph_cooldown"		"1.0 0.25 0.1 0.04"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_attributes"		"4 8 12 16"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"morph_rate_tooltip"	"1 4 10 25"
-			}
-		}
-	}
-	
-	//=================================================================================================================
 	// Morphling: Replicate
 	//=================================================================================================================
 	"morphling_replicate"
@@ -6645,7 +6537,7 @@
 	//=================================================================================================================
 	"tiny_tree_channel"
 	{
-		"AbilityChannelTime"			"10.0"
+		"AbilityChannelTime"			"5.0"
 		"AbilityCastRange"				"1700"
 		"AbilityCastPoint"				"0.2"
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_4"
@@ -6681,27 +6573,22 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"splash_pct"				"120"
+				"tree_grab_radius"				"1200"
 			}
 			"05"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"tree_grab_radius"		"1200"
-			}
-			"06"
 			{
 				"var_type"			"FIELD_FLOAT"
 				"interval"		"0.25"
 			}
+			"06"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"bonus_damage"		"20"
+			}
 			"07"
 			{
-				"var_type"					"FIELD_INTEGER"
-				"bonus_damage"				"10 20 30 40"
-			}
-			"08"
-			{
 				"var_type"					"FIELD_FLOAT"
-                "max_channel_time_tooltip"		"10.0"            			
+                "max_channel_time_tooltip"		"5.0"            			
 			}
 		}
 	}
@@ -20126,7 +20013,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"70 60 50"
+		"AbilityCooldown"				"70 65 60"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -20736,8 +20623,6 @@
 	//=================================================================================================================
 	"grimstroke_scepter"
 	{
-		"AbilityCastAnimation"			"ACT_DOTA_GS_INK_CREATURE"
-		"AbilityCastGestureSlot"		"DEFAULT"
 		"AbilityCastRange"				"1200"
 		"AbilityCastPoint"				"0.0"
 

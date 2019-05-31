@@ -14512,14 +14512,17 @@
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"							"ability_lua"
-		"AbilityBehavior"					"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityBehavior"					"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_CANCEL_CHANNEL | DOTA_ABILITY_BEHAVIOR_DONT_CANCEL_MOVEMENT | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
 		"AbilityUnitTargetTeam"				"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
 		"AbilityUnitTargetType"				"DOTA_UNIT_TARGET_HERO"
 		"AbilityUnitTargetFlags"			"DOTA_UNIT_TARGET_FLAG_NONE"
 		"SpellImmunityType"					"SPELL_IMMUNITY_ENEMIES_NO"
 		"SpellDispellableType"				"SPELL_DISPELLABLE_NO"
 		"AbilityTextureName"				"phantom_assassin_blur"
+		"HasScepterUpgrade"					"1"
 		"ScriptFile"						"hero/hero_phantom_assassin.lua"
+
+		"AbilityCooldown"					"18.0"
 
 		// Precache
 		//-------------------------------------------------------------------------------------------------------------
@@ -14547,6 +14550,11 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"blur_ms"					"12"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"0.8"
 			}
 		}
 	}

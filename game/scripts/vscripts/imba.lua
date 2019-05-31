@@ -336,6 +336,7 @@ end
 76561198049286339
 76561198302684975
 76561198103546522
+76561198866505549
 ]]
 
 function IMBA:OrderFilter(keys)
@@ -785,6 +786,12 @@ function IMBA:HeroKillAssistGoldIncrease(hero, gold, time)
 end
 
 function IMBA:GiveHeroHeroKillGold(time)
+	for _, v in pairs(HeroKillAssistGold[time]) do
+		local high_five = v[1]:FindAbilityByName("high_five")
+		if high_five then
+			high_five:OnSpellStart()
+		end
+	end
 	if firstBlood then
 		firstBlood = false
 		return
@@ -812,6 +819,10 @@ function IMBA:GiveHeroHeroKillGold(time)
 		if v[1] ~= killer then
 			SendOverheadEventMessage(PlayerResource:GetPlayer(v[1]:GetPlayerID()), OVERHEAD_ALERT_GOLD, v[1], GoldToGive, nil)
 			v[1]:ModifyGold(GoldToGive, true, DOTA_ModifyGold_Unspecified)
+		end
+		local high_five = v[1]:FindAbilityByName("high_five")
+		if high_five then
+			high_five:OnSpellStart()
 		end
 	end
 	HeroKillAssistGold[time] = nil

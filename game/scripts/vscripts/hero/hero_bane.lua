@@ -13,7 +13,7 @@ function imba_bane_enfeeble:IsStealable() 				return true end
 function imba_bane_enfeeble:IsNetherWardStealable() 	return true end
 
 function imba_bane_enfeeble:OnAbilityPhaseStart()
-	EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "Hero_Bane.Enfeeble.Cast", self:GetCaster())
+	self:GetCaster():EmitSound("Hero_Bane.Enfeeble.Cast")
 	return true
 end
 

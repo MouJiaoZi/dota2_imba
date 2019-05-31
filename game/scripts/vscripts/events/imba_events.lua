@@ -233,3 +233,14 @@ function IMBAEvents:StartAbandonCheck()
 		CreateModifierThinker(nil, nil, "modifier_imba_abandon_check", {}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 	end
 end
+
+function IMBAEvents:PlayerSpawnsWard(hWard)
+	local campname = hWard:GetTeamNumber() == DOTA_TEAM_GOODGUYS and "neutralcamp_good" or "neutralcamp_evil"
+	local trigger = Entities:FindAllByClassnameWithin("trigger_multiple", hWard:GetAbsOrigin(), 50)
+	for i=1, #trigger do
+		if string.find(trigger[i]:GetName(), campname) then
+			hWard:SetHealth(1)
+			break
+		end
+	end
+end

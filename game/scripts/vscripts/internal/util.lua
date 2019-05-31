@@ -698,8 +698,8 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 	"modifier_shredder_timber_chain",
 	"modifier_slark_pounce",
 	"modifier_spirit_breaker_charge_of_darkness",
-	"modifier_tusk_walrus_punch_air_time",
 	"modifier_earthshaker_enchant_totem_leap",
+	"modifier_tusk_walrus_kick_air_time",
 	}
 
 	-- Fetch all modifiers
@@ -1432,6 +1432,7 @@ function IsRefreshableByAbility(str)
 		"item_imba_sphere",
 		"item_aeon_disk",
 		"zuus_cloud",
+		"chen_hand_of_god",
 	}
 	return IsInTable(str, NO_REFRESH)
 end

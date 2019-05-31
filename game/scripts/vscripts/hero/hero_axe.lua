@@ -131,17 +131,21 @@ function modifier_imba_axe_battle_hunger_enemy:OnDeath(keys)
 end
 
 function modifier_imba_axe_battle_hunger_enemy:OnCreated()
-	self:SetStackCount(self:GetAbility():GetSpecialValueFor("kill_need"))
 	if not IsServer() then
 		return 
 	end
+	self:SetStackCount(self:GetAbility():GetSpecialValueFor("kill_need"))
 	if self:GetCaster():HasModifier("modifier_imba_axe_battle_hunger_caster") then
 		self:GetCaster():FindModifierByName("modifier_imba_axe_battle_hunger_caster"):IncrementStackCount()
 	end
 	self:StartIntervalThink(1.0)
 end
 
-function modifier_imba_axe_battle_hunger_enemy:OnRefresh() self:SetStackCount(self:GetAbility():GetSpecialValueFor("kill_need")) end
+function modifier_imba_axe_battle_hunger_enemy:OnRefresh()
+	if IsServer() then
+		self:SetStackCount(self:GetAbility():GetSpecialValueFor("kill_need"))
+	end
+end
 
 function modifier_imba_axe_battle_hunger_enemy:OnIntervalThink()
 	if IsNearEnemyFountain(self:GetParent():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), 1100) then
@@ -207,20 +211,18 @@ function modifier_imba_axe_counter_helix:OnAttackLanded(keys)
 		ParticleManager:ReleaseParticleIndex(pfx2)
 		self:GetParent():StartGesture(ACT_DOTA_CAST_ABILITY_3)
 		self:GetParent():EmitSound("Hero_Axe.CounterHelix_Blood_Chaser")
-		if not self:GetParent():IsIllusion() then
-			dmg = self:GetAbility():GetSpecialValueFor("base_damage") + self:GetParent():GetStrength() * (self:GetAbility():GetSpecialValueFor("str_as_damage") / 100)
-			local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-			for _,enemy in pairs(enemies) do
-				local damageTable = {
-									victim = enemy,
-									attacker = self:GetCaster(),
-									damage = dmg,
-									damage_type = self:GetAbility():GetAbilityDamageType(),
-									damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
-									ability = self:GetAbility(), --Optional.
-									}
-				ApplyDamage(damageTable)
-			end
+		dmg = self:GetAbility():GetSpecialValueFor("base_damage") + self:GetParent():GetStrength() * (self:GetAbility():GetSpecialValueFor("str_as_damage") / 100)
+		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+		for _,enemy in pairs(enemies) do
+			local damageTable = {
+								victim = enemy,
+								attacker = self:GetCaster(),
+								damage = dmg,
+								damage_type = self:GetAbility():GetAbilityDamageType(),
+								damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
+								ability = self:GetAbility(), --Optional.
+								}
+			ApplyDamage(damageTable)
 		end
 		self:GetAbility():UseResources(true, true, true)
 	end

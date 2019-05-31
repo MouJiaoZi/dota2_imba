@@ -145,6 +145,9 @@ function HeroItems:ApplyWardsParticle(fGameTime)
 	Timers:CreateTimer(FrameTime(), function()
 			local hWard = IMBA_WARD_TABLE[fGameTime]["ward"]
 			local pID = IMBA_WARD_TABLE[fGameTime]["player_id"]
+			if hWard then
+				IMBAEvents:PlayerSpawnsWard(hWard)
+			end
 			if not hWard or not pID then
 				return nil
 			end
