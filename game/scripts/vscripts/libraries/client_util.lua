@@ -81,10 +81,10 @@ function C_DOTABaseAbility:GetAbilityCurrentKV()
 	local name = self:GetName()
 	local kv_to_return = {}
 	local level = self:GetLevel()
-	if level <= 0 then
+	if level <= 0 or (not AbilityKV[name] and ItemKV[name]) then
 		return nil
 	end
-	local kv = AbilityKV[name]["AbilitySpecial"] or ItemKV[name]["AbilitySpecial"]
+	local kv = AbilityKV[name] and AbilityKV[name]["AbilitySpecial"] or ItemKV[name]["AbilitySpecial"]
 	for k, v in pairs(kv) do
 		for a, b in pairs(v) do
 			for str in string.gmatch(b, "%S+") do

@@ -905,10 +905,17 @@ function IMBA:SpawnRoshan()
 	buff2:SetStackCount(roshan_kill - 1)
 	---
 	if roshan_kill >= 2 then
-		unit:AddItemByName("item_imba_cheese")
+		unit:AddItemByName("item_imba_cheese"):SetCurrentCharges(RandomInt(1, roshan_kill-1))
 	end
 	if roshan_kill >= 5 then
-		unit:AddItemByName("item_refresher_shard")
+		if RollPercentage(90) then
+			unit:AddItemByName("item_refresher_shard")
+		else
+			unit:AddItemByName("item_imba_ultimate_scepter_synth")
+		end
+	end
+	if roshan_kill >= 15 then
+		unit:AddItemByName("item_aegis")
 	end
 	return unit
 end

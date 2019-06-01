@@ -13075,12 +13075,12 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"wolf_damage"				"50"
+				"wolf_damage"				"70 100 130 160"
 			}
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"wolf_hp"					"320"
+				"wolf_hp"					"450 650 850 1050"
 			}
 			"06"
 			{

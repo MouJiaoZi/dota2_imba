@@ -122,15 +122,18 @@ function IMBAEvents:OnHeroKilled(victim, attacker)
 	end
 end
 
+LinkLuaModifier("modifier_imba_roshan_spawn_timer", "events/imba_events.lua", LUA_MODIFIER_MOTION_NONE)
+
+modifier_imba_roshan_spawn_timer = class({})
+
+function modifier_imba_roshan_spawn_timer:OnDestroy()
+	if IsServer() then
+		IMBA:SpawnRoshan()
+	end
+end
+
 function IMBAEvents:OnRoshanKilled(killed_unit)
 	if killed_unit:IsBoss() then
-		for i=3, roshan_kill do
-			local drop_cheese = CreateItem("item_imba_cheese", nil, nil)
-			if drop_cheese then
-				CreateItemOnPositionSync(killed_unit:GetAbsOrigin(), drop_cheese)
-				drop_cheese:LaunchLoot(false, 100, 0.5, killed_unit:GetAbsOrigin() + RandomVector(100))
-			end
-		end
 		if roshan_kill >= 15 then
 			local drop_cheese = CreateItem("item_aegis", nil, nil)
 			if drop_cheese then
@@ -138,18 +141,7 @@ function IMBAEvents:OnRoshanKilled(killed_unit)
 				drop_cheese:LaunchLoot(false, 100, 0.5, killed_unit:GetAbsOrigin() + RandomVector(100))
 			end
 		end
-		local dummy = CreateModifierThinker(nil, nil, "modifier_dummy_thinker", {duration = CUSTOM_ROSHAN_RESPAWN}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
-		local buff = dummy:FindModifierByName("modifier_dummy_thinker")
-		buff.OnRemoved = function()
-			if IsServer() then
-				IMBA:SpawnRoshan()
-			end
-		end
-		--[[Timers:CreateTimer(CUSTOM_ROSHAN_RESPAWN, function()
-			IMBA:SpawnRoshan()
-			return nil
-		end
-		)]]
+		CreateModifierThinker(nil, nil, "modifier_imba_roshan_spawn_timer", {duration = CUSTOM_ROSHAN_RESPAWN}, Vector(30000,30000,5000), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 

@@ -264,7 +264,7 @@ function TrueKill(caster, target, ability)
 	-- Removes the relevant modifiers
 	target:RemoveModifierByName("modifier_invulnerable")
 	target:RemoveModifierByName("modifier_imba_shallow_grave")
-	target:RemoveModifierByName("modifier_aphotic_shield")
+	target:RemoveModifierByName("modifier_imba_aphotic_shield")
 	target:RemoveModifierByName("modifier_imba_spiked_carapace")
 	target:RemoveModifierByName("modifier_borrowed_time")
 	target:RemoveModifierByName("modifier_imba_centaur_return")
@@ -278,6 +278,8 @@ function TrueKill(caster, target, ability)
 	target:RemoveModifierByName("modifier_imba_cheese_death_prevention")
 	target:RemoveModifierByName("modifier_item_imba_rapier_cursed_unique")
 	target:RemoveModifierByName("modifier_imba_reincarnation_scepter_aura")
+	target:RemoveModifierByName("modifier_imba_vampiric_aura_effect")
+	target:RemoveModifierByName("modifier_imba_vampiric_aura_effect")
 	target:RemoveModifierByName("modifier_imba_vampiric_aura_effect")
 	
 
@@ -1307,7 +1309,8 @@ function CDOTA_BaseNPC:RemoveAllModifiers()
 								"modifier_illusion",
 								"modifier_imba_ability_charge",
 								"modifier_item_ultimate_scepter_consumed",
-								"modifier_imba_moon_shard_consume",}
+								"modifier_imba_moon_shard_consume",
+								"modifier_imba_consumable_scepter_consumed",}
 	for i=1, #buff do
 		if not IsInTable(buff[i]:GetName(), no_move_buff_name) and not string.find(buff[i]:GetName(), "charge_counter") or (buff[i].CheckState and buff[i]:CheckState()[MODIFIER_STATE_STUNNED]) then
 			if buff[i]:GetAbility() and buff[i]:GetAbility().GetIntrinsicModifierName and buff[i]:GetName() == buff[i]:GetAbility():GetIntrinsicModifierName() then
