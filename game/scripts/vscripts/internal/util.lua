@@ -1509,3 +1509,18 @@ end
 function CDOTA_BaseNPC:IsUnit()
 	return self:IsHero() or self:IsCreep() or self:IsBoss()
 end
+
+function CDOTA_BaseNPC:DoNotBlockNeutral()
+	local npc = self:GetTeamNumber() == DOTA_TEAM_GOODGUYS and IMBA_TEAM_DUMMY_GOOD or IMBA_TEAM_DUMMY_BAD
+	if not npc then
+		print("[ERROR] CDOTA_BaseNPC:DoNotBlockNeutral(): No Dummy Npc!")
+		return
+	end
+	local ability = npc:FindAbilityByName("dummy_unit_state")
+	if not ability then
+		print("[ERROR] CDOTA_BaseNPC:DoNotBlockNeutral(): No Dummy Npc Ability!")
+		return
+	end
+	ability:SetLevel(1)
+	self:AddNewModifier(npc, ability, "modifier_techies_land_mine", {})
+end

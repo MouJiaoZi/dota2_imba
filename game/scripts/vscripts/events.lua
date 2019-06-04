@@ -382,12 +382,6 @@ function GameMode:OnNPCSpawned(keys)
 					return nil
 				end
 
-				local high_five = npc:AddAbility("high_five")
-				if high_five then
-					high_five:SetHidden(true)
-					high_five:SetLevel(1)
-				end
-
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1].order = 0
@@ -446,9 +440,17 @@ function GameMode:OnNPCSpawned(keys)
 
 		if IMBA_TEAM_DUMMY_GOOD == nil and npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
 			IMBA_TEAM_DUMMY_GOOD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_GOODGUYS)
+			local move = IMBA_TEAM_DUMMY_GOOD:AddAbility("special_bonus_unique_techies_4")
+			if move then
+				move:SetLevel(1)
+			end
 		end
 		if IMBA_TEAM_DUMMY_BAD == nil and npc:GetTeamNumber() == DOTA_TEAM_BADGUYS then
 			IMBA_TEAM_DUMMY_BAD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_BADGUYS)
+			local move = IMBA_TEAM_DUMMY_BAD:AddAbility("special_bonus_unique_techies_4")
+			if move then
+				move:SetLevel(1)
+			end
 		end
 	end
 

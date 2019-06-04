@@ -53,3 +53,4 @@ function modifier_imba_consumable_scepter_consumed:GetModifierManaBonus() return
 function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Strength() return self:GetAbilityKV("bonus_all_stats") end
 function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Intellect() return self:GetAbilityKV("bonus_all_stats") end
 function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Agility() return self:GetAbilityKV("bonus_all_stats") end
+function modifier_imba_consumable_scepter_consumed:GetModifierScepter() return 1 end

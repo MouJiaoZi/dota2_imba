@@ -3,16 +3,15 @@
 
 function Necronomicon( keys )
 	local caster = keys.caster
+	local onwer = caster
 	local ability = keys.ability
 	local ability_level = ability:GetLevel() - 1
 	local sound_cast = keys.sound_cast
 	local necro_level = keys.necro_level
 
 	-- If this unit is not a real hero, do nothing
-	if not caster:IsRealHero() then
-		ability:RefundManaCost()
-		ability:EndCooldown()
-		return nil
+	if not onwer:IsRealHero() then
+		onwer = caster:GetOwnerEntity()
 	end
 
 	-- Parameters
@@ -33,14 +32,14 @@ function Necronomicon( keys )
 	GridNav:DestroyTreesAroundPoint(caster_loc + caster_direction * 180, 180, false)
 
 	-- Spawn the summons
-	local melee_summon = CreateUnitByName(melee_summon_name, melee_loc, true, caster, caster, caster:GetTeam())
-	local ranged_summon = CreateUnitByName(ranged_summon_name, ranged_loc, true, caster, caster, caster:GetTeam())
+	local melee_summon = CreateUnitByName(melee_summon_name, melee_loc, true, onwer, onwer, caster:GetTeam())
+	local ranged_summon = CreateUnitByName(ranged_summon_name, ranged_loc, true, onwer, onwer, caster:GetTeam())
 
 	-- Make the summons limited duration and controllable
-	melee_summon:SetControllableByPlayer(caster:GetPlayerID(), true)
+	melee_summon:SetControllableByPlayer(onwer:GetPlayerID(), true)
 	melee_summon:AddNewModifier(caster, ability, "modifier_kill", {duration = summon_duration})
 	ability:ApplyDataDrivenModifier(caster, melee_summon, "modifier_item_imba_necronomicon_summon", {})
-	ranged_summon:SetControllableByPlayer(caster:GetPlayerID(), true)
+	ranged_summon:SetControllableByPlayer(onwer:GetPlayerID(), true)
 	ranged_summon:AddNewModifier(caster, ability, "modifier_kill", {duration = summon_duration})
 	ability:ApplyDataDrivenModifier(caster, ranged_summon, "modifier_item_imba_necronomicon_summon", {})
 	

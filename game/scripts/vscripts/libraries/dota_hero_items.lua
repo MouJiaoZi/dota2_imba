@@ -108,6 +108,11 @@ function HeroItems:SetHeroItemTable(hUnit)
 			end
 		end
 		for k, v in pairs(items_info) do
+			for i=1, #items do
+				if string.find(items[i], k) then
+					hero_item_table[pID][k] = true
+				end
+			end
 			if hero_item_table[pID][k] == nil then
 				if IsInTable(v, items) then
 					hero_item_table[pID][k] = true

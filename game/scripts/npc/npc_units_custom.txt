@@ -3653,6 +3653,7 @@
 		"MovementSpeed"				"380"		// Speed
 		"StatusHealth"				"1765"		// Base health.
 		"StatusMana"				"800"		// Base mana.
+		"MagicalResistance"				"50"		// Magical protection.
 	}	
 		
 	//=================================================================================
@@ -3665,6 +3666,7 @@
 		"MovementSpeed"				"425"		// Speed
 		"StatusHealth"				"3500"		// Base health.
 		"StatusMana"				"1000"		// Base mana.
+		"MagicalResistance"			"80"		// Magical protection.
 	}	
 	
 	//=================================================================================
@@ -3677,6 +3679,7 @@
 		"MovementSpeed"				"380"		// Speed
 		"StatusHealth"				"1765"		// Base health.
 		"StatusMana"				"800"		// Base mana.
+		"MagicalResistance"			"50"		// Magical protection.
 	}	
 		
 	//=================================================================================
@@ -3689,6 +3692,7 @@
 		"MovementSpeed"				"425"		// Speed
 		"StatusHealth"				"3500"		// Base health.
 		"StatusMana"				"1000"		// Base mana.
+		"MagicalResistance"			"80"		// Magical protection.
 	}	
 	
 	//=================================================================================
@@ -3700,6 +3704,7 @@
 		"AttackDamageMax"			"225"		// Damage range max.
 		"MovementSpeed"				"380"		// Speed
 		"StatusHealth"				"2000"		// Base health.
+		"MagicalResistance"			"50"		// Magical protection.
 	}	
 		
 	//=================================================================================
@@ -3711,6 +3716,7 @@
 		"AttackDamageMax"			"325"		// Damage range max.
 		"MovementSpeed"				"425"		// Speed
 		"StatusHealth"				"4000"		// Base health.
+		"MagicalResistance"			"80"		// Magical protection.
 	}	
 	
 	//=================================================================================
@@ -3722,6 +3728,7 @@
 		"AttackDamageMax"			"225"		// Damage range max.
 		"MovementSpeed"				"380"		// Speed
 		"StatusHealth"				"2000"		// Base health.
+		"MagicalResistance"			"50"		// Magical protection.
 	}
 	
 	//=================================================================================
@@ -3733,6 +3740,7 @@
 		"AttackDamageMax"			"325"		// Damage range max.
 		"MovementSpeed"				"425"		// Speed
 		"StatusHealth"				"4000"		// Base health.
+		"MagicalResistance"			"80"		// Magical protection.
 
 	}
 
@@ -3745,6 +3753,7 @@
 		"AttackDamageMax"			"238"		// Damage range max.
 		"MovementSpeed"				"380"		// Speed
 		"StatusHealth"				"2400"		// Base health.
+		"MagicalResistance"			"50"		// Magical protection.
 	}	
 		
 	//=================================================================================
@@ -3756,6 +3765,7 @@
 		"AttackDamageMax"			"385"		// Damage range max.
 		"MovementSpeed"				"425"		// Speed
 		"StatusHealth"				"4800"		// Base health.
+		"MagicalResistance"			"80"		// Magical protection.
 	}	
 	
 	//=================================================================================
@@ -3767,6 +3777,7 @@
 		"AttackDamageMax"			"238"		// Damage range max.
 		"MovementSpeed"				"380"		// Speed
 		"StatusHealth"				"2400"		// Base health.
+		"MagicalResistance"			"50"		// Magical protection.
 	}	
 		
 	//=================================================================================
@@ -3778,6 +3789,7 @@
 		"AttackDamageMax"			"385"		// Damage range max.
 		"MovementSpeed"				"425"		// Speed
 		"StatusHealth"				"4800"		// Base health.
+		"MagicalResistance"			"80"		// Magical protection.
 	}	
 	
 	"npc_imba_earth_spirit_stone"
@@ -4086,7 +4098,7 @@
 		// Armor
 		//----------------------------------------------------------------
 		"ArmorPhysical"				"4"			// Physical protection.
-		"MagicalResistance"				"70"		// Magical protection.
+		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
 		//----------------------------------------------------------------
@@ -4135,13 +4147,13 @@
 		// Armor
 		//----------------------------------------------------------------
 		"ArmorPhysical"				"6"			// Physical protection.
-		"MagicalResistance"				"70"		// Magical protection.
+		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
 		//----------------------------------------------------------------
 		"AttackCapabilities"		"DOTA_UNIT_CAP_MELEE_ATTACK"
-		"AttackDamageMin"			"100"		// Damage range min.
-		"AttackDamageMax"			"100"		// Damage range max.	
+		"AttackDamageMin"			"90"		// Damage range min.
+		"AttackDamageMax"			"90"		// Damage range max.	
 		"AttackRate"				"1.1"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
 		"AttackAcquisitionRange"	"500"		// Range within a target can be acquired.
@@ -4185,13 +4197,13 @@
 		// Armor
 		//----------------------------------------------------------------
 		"ArmorPhysical"				"8"			// Physical protection.
-		"MagicalResistance"				"70"		// Magical protection.
+		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
 		//----------------------------------------------------------------
 		"AttackCapabilities"		"DOTA_UNIT_CAP_MELEE_ATTACK"
-		"AttackDamageMin"			"130"		// Damage range min.
-		"AttackDamageMax"			"130"		// Damage range max.	
+		"AttackDamageMin"			"110"		// Damage range min.
+		"AttackDamageMax"			"110"		// Damage range max.	
 		"AttackRate"				"1.0"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
 		"AttackAcquisitionRange"	"500"		// Range within a target can be acquired.
@@ -4252,13 +4264,13 @@
 		// Armor
 		//----------------------------------------------------------------
 		"ArmorPhysical"				"10"			// Physical protection.
-		"MagicalResistance"				"70"		// Magical protection.
+		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
 		//----------------------------------------------------------------
 		"AttackCapabilities"		"DOTA_UNIT_CAP_MELEE_ATTACK"
-		"AttackDamageMin"			"160"		// Damage range min.
-		"AttackDamageMax"			"160"		// Damage range max.	
+		"AttackDamageMin"			"120"		// Damage range min.
+		"AttackDamageMax"			"120"		// Damage range max.	
 		"AttackRate"				"0.9"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
 		"AttackAcquisitionRange"	"500"		// Range within a target can be acquired.
@@ -4301,7 +4313,7 @@
 		// Armor
 		//----------------------------------------------------------------
 		"ArmorPhysical"				"10"			// Physical protection.
-		"MagicalResistance"				"70"		// Magical protection.
+		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
 		//----------------------------------------------------------------
@@ -4334,7 +4346,7 @@
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"1450"		// Base health.
+		"StatusHealth"				"850"		// Base health.
 		"StatusHealthRegen"			"0.5"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0"			// Mana regeneration rate.		 

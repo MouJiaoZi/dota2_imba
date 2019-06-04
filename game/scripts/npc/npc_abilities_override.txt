@@ -13060,7 +13060,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"wolf_index"				"4"
+				"wolf_index"				"1 2 3 4"
 			}
 			"02"
 			{
@@ -13075,7 +13075,7 @@
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"wolf_damage"				"70 100 130 160"
+				"wolf_damage"				"70 90 110 120"
 			}
 			"05"
 			{
@@ -13313,7 +13313,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"cooldown_scepter"			"120.0"
+				"cooldown_scepter"			"30.0"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"

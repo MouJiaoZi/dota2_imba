@@ -42,9 +42,9 @@ function imba_templar_assassin_psionic_trap:OnSpellStart()
 	trap:SetControllableByPlayer(caster:GetPlayerID(), true)
 	trap:AddNewModifier(caster, self, "modifier_kill", {duration = self:GetSpecialValueFor("trap_duration")})
 	trap:AddNewModifier(caster, self, "modifier_imba_psionic_trap_timer", {})
-	trap:AddNewModifier(caster, self, "modifier_techies_remote_mine", {duration = self:GetSpecialValueFor("trap_duration")})
 	trap:FindAbilityByName("imba_templar_assassin_trap"):SetLevel(self:GetLevel())
 	caster:FindModifierByName("modifier_imba_psionic_trap_counter"):SetStackCount(caster:FindModifierByName("modifier_imba_psionic_trap_counter"):GetStackCount() + 1)
+	trap:DoNotBlockNeutral()
 end
 
 imba_templar_assassin_trap = class({})

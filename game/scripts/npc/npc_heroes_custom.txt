@@ -1193,7 +1193,7 @@
 		"Ability13"					"special_bonus_attack_damage_35"
 		"Ability14"					"special_bonus_lifesteal_20"
 		"Ability15"					"special_bonus_attack_speed_30"
-		"Ability16"					"special_bonus_lifesteal_25"
+		"Ability16"					"special_bonus_unique_huskar_5"
 		"Ability17"					"special_bonus_attack_range_100"
 	}
 	"npc_dota_hero_night_stalker"

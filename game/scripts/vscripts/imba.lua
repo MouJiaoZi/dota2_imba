@@ -656,10 +656,6 @@ function IMBA:ModifierAddFilter(keys)
 
 	local modifier_name = keys.name_const
 
-	if target:GetUnitName() == "npc_dota_techies_remote_mine" or target:GetUnitName() == "techies_minefield_sign" then
-		print(modifier_name)
-	end
-
 	-- volvo bugfix
 	if modifier_name == "modifier_datadriven" then
 		return false
@@ -786,12 +782,6 @@ function IMBA:HeroKillAssistGoldIncrease(hero, gold, time)
 end
 
 function IMBA:GiveHeroHeroKillGold(time)
-	for _, v in pairs(HeroKillAssistGold[time]) do
-		local high_five = v[1]:FindAbilityByName("high_five")
-		if high_five then
-			high_five:OnSpellStart()
-		end
-	end
 	if firstBlood then
 		firstBlood = false
 		return
@@ -994,7 +984,7 @@ function UpDatePlayerInfo()
 					playerTable["item_charges_"..j] = 0
 				end
 			end
-			if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:HasModifier("modifier_item_ultimate_scepter_consumed") then
+			if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:HasModifier("modifier_item_ultimate_scepter_consumed") or CDOTA_PlayerResource.IMBA_PLAYER_HERO[i + 1]:HasModifier("modifier_imba_consumable_scepter_consumed") then
 				playerTable["scepter_consumed"] = 1
 			else
 				playerTable["scepter_consumed"] = 0
