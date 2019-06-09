@@ -140,7 +140,7 @@ function modifier_imba_desolator_unique:OnAttackLanded(keys)
 	local buff = keys.target:AddNewModifier(self:GetParent(), self.ability, "modifier_item_imba_desolator_armor_debuff", {duration = self.ability:GetSpecialValueFor("duration")})
 	if not has then
 		buff:SetStackCount(self.ability:GetSpecialValueFor("base_stacks"))
-	elseif buff:GetStackCount() < self.ability:GetSpecialValueFor("max_stacks") then
+	elseif buff:GetStackCount() < self.ability:GetSpecialValueFor("max_stacks") and not keys.target:IsBuilding() then
 		buff:SetStackCount(buff:GetStackCount() + 1)
 	end
 	keys.target:EmitSound("Item_Desolator.Target")

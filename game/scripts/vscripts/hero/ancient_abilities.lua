@@ -507,14 +507,14 @@ end
 function modifier_imba_courier_buff:OnOrder(keys)
 	if IsServer() and keys.unit == self:GetParent() and self.pos then
 		if (keys.ability and (keys.ability:GetAbilityName() == "courier_go_to_secretshop" or keys.ability:GetAbilityName() == "courier_transfer_items" or keys.ability:GetAbilityName() == "courier_take_stash_and_transfer_items")) then
-			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+			--self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
 			self.pid = keys.issuer_player_index
 			self:SetStackCount(keys.issuer_player_index + 1)
 		elseif keys.new_pos ~= Vector(0,0,0) then
 			local distance = (keys.new_pos - self.pos):Length2D()
 			if distance > self.distance then
-				self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+				--self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 				self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
 				self.pid = keys.issuer_player_index
 				self:SetStackCount(keys.issuer_player_index + 1)
@@ -542,7 +542,7 @@ function modifier_imba_courier_buff:OnOrder(keys)
 				end
 			)
 		elseif keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET then
-			self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
+			--self:GetParent():SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))
 			self.pid = keys.issuer_player_index
 			self:SetStackCount(keys.issuer_player_index + 1)

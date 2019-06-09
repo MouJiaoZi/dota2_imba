@@ -100,6 +100,7 @@
 		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/barebones_notifications.xml" /> 
 		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/barebones_notifications.xml" /> 
 		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/imba_hud_hack.xml" />
+		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/imba_level_rewards.xml" />
 		<CustomUIElement type="FlyoutScoreboard" layoutfile="file://{resources}/layout/custom_game/imba_scoreboard.xml"/>
 		<CustomUIElement type="EndScreen" layoutfile="file://{resources}/layout/custom_game/imba_end_screen.xml" />
 		

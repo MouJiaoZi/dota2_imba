@@ -1,3 +1,5 @@
+imba_force_load = class({})
+
 CreateEmptyTalents("chaos_knight")
 CreateEmptyTalents("dark_seer")
 

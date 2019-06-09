@@ -7,6 +7,9 @@ end
 if CDOTA_PlayerResource.IMBA_PLAYER_HERO == nil then
 	CDOTA_PlayerResource.IMBA_PLAYER_HERO = {}
 end
+if CDOTA_PlayerResource.IMBA_PLAYER_COURIER == nil then
+	CDOTA_PlayerResource.IMBA_PLAYER_COURIER = {}
+end
 if CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK == nil then
 	CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK = {}
 end
@@ -272,14 +275,6 @@ function GameMode:OnGameRulesStateChange(keys)
 							CDOTAGamerules.IMBA_FORT[tower:GetTeamNumber()] = tower
 							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
 						end
-						---------------
-						--[[if string.find(tower:GetUnitName(), "tower") then
-							if tower:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-								tower:SetRangedProjectileName("particles/econ/world/towers/rock_golem/radiant_rock_golem_attack.vpcf")
-							else
-								tower:SetRangedProjectileName("particles/econ/world/towers/rock_golem/dire_rock_golem_attack.vpcf")
-							end
-						end]]
 					end
 				end
 				if tick >= 2 and not announce then
@@ -373,7 +368,7 @@ function GameMode:OnNPCSpawned(keys)
 	local npc = EntIndexToHScript(keys.entindex)
 
 	--Game Start Hero Set
-	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerID() and npc:GetPlayerID() and npc:GetPlayerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
+	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
 		
 		Timers:CreateTimer({useGameTime = false, endTime = FrameTime(),
 			callback = function()
@@ -382,10 +377,11 @@ function GameMode:OnNPCSpawned(keys)
 					return nil
 				end
 
-				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] == nil then
-					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1] = npc
-					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerID() + 1].order = 0
+				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
+					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] = npc
+					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1].order = 0
 				end
+				IMBALevelRewards:Test(123, {['spawn'] = true, ['PlayerID'] = npc:GetPlayerOwnerID()})
 				-- Set Talent Ability
 				for i = 0, 23 do
 					local ability = npc:GetAbilityByIndex(i)
@@ -414,12 +410,13 @@ function GameMode:OnNPCSpawned(keys)
 		npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
 
 		local chicken = npc:AddItemByName("item_courier")
-		npc:CastAbilityNoTarget(chicken, npc:GetPlayerID())
+		npc:CastAbilityNoTarget(chicken, npc:GetPlayerOwnerID())
+		CDOTA_PlayerResource.IMBA_PLAYER_COURIER[npc:GetPlayerOwnerID() + 1] = GameRules:GetGameTime()
 
-		PlayerResource:SetGold(npc:GetPlayerID(), IMBA_STARTING_GOLD, true)
+		PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD, true)
 
-		if PlayerResource:HasRandomed(npc:GetPlayerID()) then
-			PlayerResource:SetGold(npc:GetPlayerID(), IMBA_STARTING_GOLD_RANDOM, true)
+		if PlayerResource:HasRandomed(npc:GetPlayerOwnerID()) then
+			PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD_RANDOM, true)
 		end
 		
 		Timers:CreateTimer(0, function()
@@ -471,8 +468,16 @@ function GameMode:OnNPCSpawned(keys)
 	end
 
 	--Courier Setup
-	if npc:IsCourier() and npc:HasAbility("imba_courier_speed") then
-		npc:FindAbilityByName("imba_courier_speed"):SetLevel(1)
+	if npc:IsCourier() then
+		for i=1,24 do
+			if CDOTA_PlayerResource.IMBA_PLAYER_COURIER[i] == GameRules:GetGameTime() then
+				CDOTA_PlayerResource.IMBA_PLAYER_COURIER[i] = npc
+				break
+			end
+		end
+		if npc:HasAbility("imba_courier_speed") then
+			npc:FindAbilityByName("imba_courier_speed"):SetLevel(1)
+		end
 		if npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
 			npc.courier_num = courier_num_radiant
 			courier_num_radiant = courier_num_radiant + 1

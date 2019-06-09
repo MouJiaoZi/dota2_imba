@@ -54,6 +54,8 @@ require('events')
 require('events/imba_events')
 require('imba')
 
+require('libraries/imba_level_rewards')
+
 require('libraries/abilitychargecontroller')
 
 require('libraries/pseudoRandom')

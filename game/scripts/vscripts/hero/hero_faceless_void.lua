@@ -129,8 +129,16 @@ function modifier_imba_time_walk_buff:DeclareFunctions() return {MODIFIER_PROPER
 function modifier_imba_time_walk_buff:GetModifierMoveSpeedBonus_Percentage() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("move_bonus")) end
 function modifier_imba_time_walk_buff:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("attack_speed_bonus")) end
 
-modifier_imba_time_walk_damage = class({})
 modifier_imba_time_walk_damage_counter = class({})
+
+function modifier_imba_time_walk_damage_counter:IsDebuff()				return false end
+function modifier_imba_time_walk_damage_counter:IsHidden() 				return true end
+function modifier_imba_time_walk_damage_counter:IsPurgable() 			return false end
+function modifier_imba_time_walk_damage_counter:IsPurgeException() 		return false end
+function modifier_imba_time_walk_damage_counter:GetAttributes()			return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_time_walk_damage_counter:RemoveOnDeath() return false end
+
+modifier_imba_time_walk_damage = class({})
 
 function modifier_imba_time_walk_damage:IsDebuff()				return false end
 function modifier_imba_time_walk_damage:IsHidden() 				return true end
@@ -150,12 +158,6 @@ function modifier_imba_time_walk_damage:OnTakeDamage(keys)
 	local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_time_walk_damage_counter", {duration = self:GetAbility():GetSpecialValueFor("damage_time")})
 	buff:SetStackCount(keys.damage * 10)
 end
-function modifier_imba_time_walk_damage_counter:IsDebuff()				return false end
-function modifier_imba_time_walk_damage_counter:IsHidden() 				return true end
-function modifier_imba_time_walk_damage_counter:IsPurgable() 			return false end
-function modifier_imba_time_walk_damage_counter:IsPurgeException() 		return false end
-function modifier_imba_time_walk_damage_counter:GetAttributes()			return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_time_walk_damage_counter:RemoveOnDeath() return false end
 
 imba_faceless_void_time_dilation = class({})
 

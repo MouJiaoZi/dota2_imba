@@ -1,0 +1,22 @@
+.IMBALevelRewardTriggerButton
+{
+	width: 42px;
+	height: 42px;
+	wash-color: #A0A0A0FF;
+	background-image: url('s2r://panorama/images/control_icons/brackets_png.vtex');
+	background-size: 100% 100%;
+	transition-duration: 0.1s;
+	transition-property: wash-color;
+	visibility: collapse;
+}
+
+.IMBALevelRewardTriggerButton:hover
+{
+	width: 42px;
+	height: 42px;
+	wash-color: #A0A0A000;
+	background-image: url('s2r://panorama/images/control_icons/brackets_png.vtex');
+	background-size: 100% 100%;
+	transition-duration: 0.2s;
+	transition-property: wash-color;
+}

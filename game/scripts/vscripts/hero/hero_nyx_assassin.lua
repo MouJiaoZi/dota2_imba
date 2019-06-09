@@ -144,6 +144,14 @@ function modifier_impale_dmg_aura:GetAuraSearchFlags() return DOTA_UNIT_TARGET_F
 function modifier_impale_dmg_aura:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
 function modifier_impale_dmg_aura:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
 
+modifier_impale_dmg_counter = class({})
+
+function modifier_impale_dmg_counter:IsDebuff()			return false end
+function modifier_impale_dmg_counter:IsHidden() 		return true end
+function modifier_impale_dmg_counter:IsPurgable() 		return false end
+function modifier_impale_dmg_counter:IsPurgeException() return false end
+function modifier_impale_dmg_counter:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+
 modifier_impale_dmg_target = class({})
 
 function modifier_impale_dmg_target:IsDebuff()			return false end
@@ -162,14 +170,6 @@ function modifier_impale_dmg_target:OnTakeDamage(keys)
 	local buff = keys.unit:AddNewModifier(keys.unit, self:GetAbility(), "modifier_impale_dmg_counter", {duration = self:GetAbility():GetSpecialValueFor("damage_duration")})
 	buff:SetStackCount(dmg)
 end
-
-modifier_impale_dmg_counter = class({})
-
-function modifier_impale_dmg_counter:IsDebuff()			return false end
-function modifier_impale_dmg_counter:IsHidden() 		return true end
-function modifier_impale_dmg_counter:IsPurgable() 		return false end
-function modifier_impale_dmg_counter:IsPurgeException() return false end
-function modifier_impale_dmg_counter:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
 imba_nyx_assassin_mana_burn = class({})
 

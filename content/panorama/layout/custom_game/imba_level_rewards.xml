@@ -1,0 +1,18 @@
+<root> 
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_level_rewards.css" />
+	</styles> 
+	<scripts>
+		<include src="file://{resources}/scripts/imba_level_rewards.js" />
+	</scripts>
+	<Panel>
+		<Button id="IMBALevelRewardTriggerButton" class="IMBALevelRewardTriggerButton" onactivate="IMBARewardButtonClick();" onmouseover="DOTAShowTitleTextTooltip(#IMBA_HUD_RewardButton_Titile, #IMBA_HUD_RewardButton_Description);" onmouseout="DOTAHideTitleTextTooltip();">
+		</Button>
+	</Panel>
+</root>

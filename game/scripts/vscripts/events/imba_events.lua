@@ -55,7 +55,7 @@ function IMBAEvents:GiveAKAbility(npc)
 		GameRules:SetSafeToLeave(true)
 		local ak = nil
 		local ak_name = GetRandomAKAbility()
-		while npc:HasAbility(ak_name[2]) do
+		while npc:HasAbility(ak_name[2]) or (not npc:IsRangedAttacker() and (ak_name[2] == "dragon_knight_elder_dragon_form" or ak_name[2] == "terrorblade_metamorphosis")) do
 			ak_name = GetRandomAKAbility()
 		end
 		npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_loading", {})
