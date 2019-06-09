@@ -44,7 +44,6 @@ function imba_templar_assassin_psionic_trap:OnSpellStart()
 	trap:AddNewModifier(caster, self, "modifier_imba_psionic_trap_timer", {})
 	trap:FindAbilityByName("imba_templar_assassin_trap"):SetLevel(self:GetLevel())
 	caster:FindModifierByName("modifier_imba_psionic_trap_counter"):SetStackCount(caster:FindModifierByName("modifier_imba_psionic_trap_counter"):GetStackCount() + 1)
-	trap:DoNotBlockNeutral()
 end
 
 imba_templar_assassin_trap = class({})

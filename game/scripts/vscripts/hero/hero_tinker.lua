@@ -508,7 +508,6 @@ function March( keys )
 
 		-- Spawn spawner
 		local spawner = CreateUnitByName("npc_imba_tinker_mom_spawner", spawn_point, false, nil, nil, caster:GetTeamNumber())
-		spawner:DoNotBlockNeutral()
 
 		-- Apply spawner modifier (controls projectile spawning)
 		ability:ApplyDataDrivenModifier(caster, spawner, modifier_machine, {})

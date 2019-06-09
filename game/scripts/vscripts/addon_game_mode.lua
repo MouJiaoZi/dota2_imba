@@ -90,7 +90,7 @@ function Precache( context )
 	PrecacheResource("particle", "particles/units/heroes/hero_pudge/pudge_rot_radius.vpcf", context)
 	PrecacheResource("particle", "particles/units/heroes/hero_treant/treant_livingarmor.vpcf", context)
 	PrecacheResource("particle", "particles/units/heroes/hero_terrorblade/terrorblade_sunder.vpcf", context)
-	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_ui.vsndevts", context)
+	PrecacheResource("soundfile", "soundevents/game_sounds_ui_imported.vsndevts", context)
 	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_antimage.vsndevts", context)
 	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_faceless_void.vsndevts", context)
 	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_nyx_assassin.vsndevts", context)
@@ -140,12 +140,12 @@ function Precache( context )
 
   	-- Sounds can precached here like anything else
   	PrecacheResource("soundfile", "sounds/weapons/creep/roshan/slam.vsnd", context)
-  	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_items.vsndevts", context)
+  	PrecacheResource("soundfile", "soundevents/game_sounds_items.vsndevts", context)
   	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_zuus.vsndevts", context)
   	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_phantom_lancer.vsndevts", context)
   	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_spirit_breaker.vsndevts", context)
   	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_invoker.vsndevts", context)
-  	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_roshan_halloween.vsndevts", context)
+  	PrecacheResource("soundfile", "soundevents/game_sounds_roshan_halloween.vsndevts", context)
 
   	-- IMBA Runes
 	LinkLuaModifier("modifier_imba_rune_doubledamage", "modifier/modifier_runes", LUA_MODIFIER_MOTION_NONE)

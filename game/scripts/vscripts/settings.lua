@@ -1,6 +1,6 @@
-IMBA_GAME_VERSION = 87
+IMBA_GAME_VERSION = 89
 
-IMBA_WEB_SERVER = "https://www.bilibiliduang.cn/"
+IMBA_WEB_SERVER = "https://www.moujiaozi.me/"
 
 IMBA_WEB_KEY = GetDedicatedServerKeyV2("imba")
 

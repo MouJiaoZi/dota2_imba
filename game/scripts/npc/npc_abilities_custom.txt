@@ -35,27 +35,24 @@
 			"02"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"proximity_threshold"		"1000000.0"
+				"mana_multiplier"			"0"
+				"LinkedSpecialBonus"		"special_bonus_unique_pugna_3"
 			}
 			"03"
 			{
-				"var_type"					"FIELD_INTEGER"
-				"damage"					"0"
+				"var_type"					"FIELD_FLOAT"
+				"mana_regen"				"0"
 			}
 			"04"
 			{
-				"var_type"					"FIELD_FLOAT"
-				"burn_duration"				"0"
-			}	
+				"var_type"					"FIELD_INTEGER"
+				"attacks_to_destroy_tooltip"				"0"
+				"LinkedSpecialBonus"		"special_bonus_unique_pugna_6"
+			}
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"building_damage_pct"		"0"
-			}	
-			"06"
-			{
-				"var_type"					"FIELD_FLOAT"
-				"activation_delay"			"0.0"
+				"ward_duration_tooltip"				"0"
 			}
 		}
 

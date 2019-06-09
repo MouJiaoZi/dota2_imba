@@ -226,7 +226,6 @@ function imba_broodmother_spin_web:OnSpellStart()
 	web:AddNewModifier(caster, nil, "modifier_magicimmune", {})
 	web:AddNewModifier(caster, self, "modifier_imba_spin_web_enemy_aura", {})
 	web:EmitSound("Hero_Broodmother.SpinWebCast")
-	web:DoNotBlockNeutral()
 	for i=1, self:GetSpecialValueFor("count") do
 		if not self.webs[i] then
 			self.webs[i] = web

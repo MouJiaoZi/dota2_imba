@@ -656,6 +656,10 @@ function IMBA:ModifierAddFilter(keys)
 
 	local modifier_name = keys.name_const
 
+	if target:GetUnitName() == "npc_dota_warlock_golem_1" and not modifier_name == "modifier_kill" then
+		return false
+	end
+
 	-- volvo bugfix
 	if modifier_name == "modifier_datadriven" then
 		return false
