@@ -484,6 +484,7 @@ end
 
 function modifier_imba_reincarnation_scepter_wraith:OnDestroy()
 	if IsServer() then
+		self.attacker = ((self.attacker and not self.attacker:IsNull()) and self.attacker or self:GetParent())
 		TrueKill(self.attacker, self:GetParent(), self:GetAbility())
 		self.attacker = nil
 	end

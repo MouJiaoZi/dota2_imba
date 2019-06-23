@@ -12,5 +12,6 @@
 	"imba_vote",
 	"imba_lua_cursor_pos",
 	"imba_pan_cursor_pos",
+	"imba_level_rewards",
   ]
 }

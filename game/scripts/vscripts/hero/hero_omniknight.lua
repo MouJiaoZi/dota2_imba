@@ -111,7 +111,11 @@ function imba_omniknight_repel:IsNetherWardStealable()	return true end
 function imba_omniknight_repel:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
-	target:Purge(false, true, false, true, true)
+	if IsEnemy(caster, target) then
+		target:Purge(true, false, false, false, true)
+	else
+		target:Purge(false, true, false, true, true)
+	end
 	target:AddNewModifier(caster, self, "modifier_imba_repel", {duration = self:GetSpecialValueFor("duration")})
 	if target ~= caster then
 		caster:AddNewModifier(caster, self, "modifier_imba_repel", {duration = self:GetSpecialValueFor("self_duration")})

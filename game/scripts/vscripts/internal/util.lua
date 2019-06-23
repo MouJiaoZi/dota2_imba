@@ -1101,6 +1101,11 @@ function SplitString(szFullString, szSeparator)
 	return nSplitArray  
 end
 
+function HEXConvertToRGB(hex)
+    hex = hex:gsub("#","")
+    return {tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))}
+end
+
 function RGBConvertToHSV(colorRGB)
 	local r,g,b = colorRGB[1], colorRGB[2], colorRGB[3]
 	local h,s,v = 0,0,0

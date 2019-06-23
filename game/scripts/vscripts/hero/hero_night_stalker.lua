@@ -306,6 +306,9 @@ function imba_night_stalker_darkness:OnSpellStart()
 	caster:EmitSound("Hero_Nightstalker.Darkness.Team")
 	local heroes = FindUnitsInRadius(caster:GetTeam(), caster:GetAbsOrigin(), nil, 100000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_ANY_ORDER, false)
 	for _, hero in pairs(heroes) do
+		if caster:HasAbility("imba_tinker_rearm") and hero:HasModifier("modifier_imba_darkness_enemy") then
+			break
+		end
 		hero:AddNewModifier(caster, self, "modifier_imba_darkness_enemy_vision", {duration = self:GetSpecialValueFor("enemy_vision_duration")})
 	end
 	caster:AddNewModifier(caster, self, "modifier_imba_darkness_caster", {duration = self:GetSpecialValueFor("duration")})

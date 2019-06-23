@@ -34,7 +34,7 @@ function modifier_imba_juggernaut_blade_fury:GetAuraRadius() return self:GetAbil
 function modifier_imba_juggernaut_blade_fury:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_NONE end
 function modifier_imba_juggernaut_blade_fury:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
 function modifier_imba_juggernaut_blade_fury:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
-function modifier_imba_juggernaut_blade_fury:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
+function modifier_imba_juggernaut_blade_fury:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_juggernaut_blade_fury:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_1 end
 
 function modifier_imba_juggernaut_blade_fury:OnDeath(keys)

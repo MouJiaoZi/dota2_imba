@@ -8,5 +8,7 @@ function modifier_paralyzed:GetEffectName() return "particles/basic_ambient/gene
 function modifier_paralyzed:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
 function modifier_paralyzed:ShouldUseOverheadOffset() return true end
 
-function modifier_paralyzed:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT} end
-function modifier_paralyzed:GetModifierMoveSpeedBonus_Constant() return -5000 end
+function modifier_paralyzed:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT, MODIFIER_PROPERTY_MOVESPEED_MAX} end
+function modifier_paralyzed:GetModifierMoveSpeed_Absolute() return 100 end
+function modifier_paralyzed:GetModifierMoveSpeed_Limit() return 100 end
+function modifier_paralyzed:GetModifierMoveSpeed_Max() return 100 end

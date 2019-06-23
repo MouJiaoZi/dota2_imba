@@ -79,12 +79,12 @@ function modifier_imba_roshan_upgrade:GetModifierPreAttack_BonusDamage() return 
 function modifier_imba_roshan_upgrade:GetModifierPhysicalArmorBonus() return (self:GetStackCount() * 2) end
 function modifier_imba_roshan_upgrade:GetModifierSpellAmplify_Percentage() return (self:GetStackCount() * 30) end
 function modifier_imba_roshan_upgrade:GetModifierAttackRangeBonus() return (self:GetStackCount() < 3 and 0 or 180) end
-function modifier_imba_roshan_upgrade:GetPriority() return (self:GetStackCount() < 4 and MODIFIER_PRIORITY_HIGH or 100) end
+function modifier_imba_roshan_upgrade:GetPriority() return (self:GetStackCount() < 4 and MODIFIER_PRIORITY_ULTRA or 100) end
 function modifier_imba_roshan_upgrade:CheckState()
 	if self:GetStackCount() < 8 then
-		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_UNSLOWABLE] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = false}
+		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_UNSLOWABLE] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = false, [MODIFIER_STATE_SILENCED] = false}
 	else
-		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_CANNOT_MISS] = true, [MODIFIER_STATE_DISARMED] = false, [MODIFIER_STATE_ROOTED] = false, [MODIFIER_STATE_UNSLOWABLE] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = false} 
+		return {[MODIFIER_STATE_STUNNED] = false, [MODIFIER_STATE_CANNOT_MISS] = true, [MODIFIER_STATE_DISARMED] = false, [MODIFIER_STATE_SILENCED] = false, [MODIFIER_STATE_ROOTED] = false, [MODIFIER_STATE_UNSLOWABLE] = true, [MODIFIER_STATE_PASSIVES_DISABLED] = false} 
 	end
 end
 

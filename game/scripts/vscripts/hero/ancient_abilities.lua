@@ -557,6 +557,9 @@ end
 
 function modifier_imba_courier_buff:OnDeath(keys)
 	if IsServer() and keys.unit == self:GetParent() then
+		if GameRules:IsCheatMode() then
+			return
+		end
 		if GameRules:GetGameTime() >= 2400 and not IMBA_RESET_COURIER_FEEDING then
 			IMBA_RESET_COURIER_FEEDING = true
 			for i=0, 23 do

@@ -381,7 +381,7 @@ function GameMode:OnNPCSpawned(keys)
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] = npc
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1].order = 0
 				end
-				IMBALevelRewards:Test(123, {['spawn'] = true, ['PlayerID'] = npc:GetPlayerOwnerID()})
+
 				-- Set Talent Ability
 				for i = 0, 23 do
 					local ability = npc:GetAbilityByIndex(i)
@@ -1047,6 +1047,9 @@ function GameMode:OnPlayerChat(keys)
 			end
 		end
 		if IsInToolsMode() then
+			if str == "-1" then
+				wardssss()
+			end
 			if str == "-illunique" then
 				IllusionManager:PrintIllusionUnique()
 			end
@@ -1063,6 +1066,7 @@ function GameMode:OnPlayerChat(keys)
 					end
 				end
 				IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
+				--IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
 			end
 		end
 	end

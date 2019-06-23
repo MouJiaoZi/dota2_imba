@@ -62,8 +62,8 @@ function modifier_imba_bane_enfeeble:IsHidden() 			return false end
 function modifier_imba_bane_enfeeble:IsPurgable() 			return false end
 function modifier_imba_bane_enfeeble:IsPurgeException() 	return false end
 
-function modifier_imba_bane_enfeeble:GetEffectName() return "particles/units/heroes/hero_bane/bane_enfeeble.vpcf" end
-function modifier_imba_bane_enfeeble:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
+--function modifier_imba_bane_enfeeble:GetEffectName() return "particles/units/heroes/hero_bane/bane_enfeeble.vpcf" end
+--function modifier_imba_bane_enfeeble:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
 function modifier_imba_bane_enfeeble:ShouldUseOverheadOffset() return true end
 
 function modifier_imba_bane_enfeeble:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE} end

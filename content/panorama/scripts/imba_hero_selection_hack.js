@@ -366,6 +366,7 @@ FindDotaHudElement("HeroPickTeamComposition").FindChildTraverse("MeleeLabel").hi
 FindDotaHudElement("HeroPickTeamComposition").FindChildTraverse("RangedLabel").hittest = false;
 FindDotaHudElement("HeroFilters").style.width = "0%";
 FindDotaHudElement("HeroFilters").style.height = "0%";
+FindDotaHudElement("PreGame").FindChildTraverse("Header").style.visibility = "collapse";
 ////////
 FindDotaHudElement("StrategyTeamComposition").FindChildTraverse("RoleColumnContainer").style.width = "0%";
 FindDotaHudElement("StrategyTeamComposition").FindChildTraverse("RoleColumnContainer").style.height = "0%";

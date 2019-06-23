@@ -22,6 +22,7 @@ HeroItems_steamid_64[76561198319625131] = true
 HeroItems_steamid_64[76561198115082141] = true
 HeroItems_steamid_64[76561198077798616] = true
 HeroItems_steamid_64[76561198236042082] = true
+HeroItems_steamid_64[76561198049598958] = true
 
 local hero_item_table = {}
 for i=0, 23 do
@@ -145,27 +146,32 @@ HeroItems_ParticleAttachType['PATTACH_CENTER_FOLLOW'] = PATTACH_CENTER_FOLLOW
 HeroItems_ParticleAttachType['PATTACH_CUSTOM_GAME_STATE_1'] = PATTACH_CUSTOM_GAME_STATE_1
 HeroItems_ParticleAttachType['MAX_PATTACH_TYPES'] = MAX_PATTACH_TYPES
 
-local HeroItems_WardParticle = {}
-HeroItems_WardParticle[76561198097609945] = "particles/econ/courier/courier_trail_spirit/courier_trail_spirit.vpcf"
-
 function HeroItems:ApplyWardsParticle(fGameTime)
 	Timers:CreateTimer(FrameTime(), function()
 			local hWard = IMBA_WARD_TABLE[fGameTime]["ward"]
 			local pID = IMBA_WARD_TABLE[fGameTime]["player_id"]
-			if hWard then
-				IMBAEvents:PlayerSpawnsWard(hWard)
-			end
 			if not hWard or not pID then
 				return nil
 			end
-			local steamid = tonumber(tostring(PlayerResource:GetSteamID(pID)))
-			if not HeroItems_WardParticle[steamid] then
+			IMBAEvents:PlayerSpawnsWard(hWard)
+			local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(pID))
+			if not player_table['ward_pfx'] then
 				return nil
 			end
+			local pfx_id = player_table['ward_pfx']
+			if pfx_id == "0" then
+				return
+			end
 			local buff = hWard:AddNewModifier(hWard, nil, "modifier_imba_ability_layout_contoroller", {})
-			local pfx_name = HeroItems_WardParticle[steamid]
-			local pfx_operator = Hero_Items_KV['ward_particle'][pfx_name]
-			local pfx = ParticleManager:CreateParticle(HeroItems_WardParticle[steamid], PATTACH_ABSORIGIN_FOLLOW, hWard)
+			local pfx_detail = Hero_Items_KV['ward_particle'][tostring(pfx_id)]
+			local pfx_name = pfx_detail['name']
+			local pfx_operator = {}
+			for k, v in pairs(pfx_detail) do
+				if tonumber(k) then
+					pfx_operator[tonumber(k)] = v
+				end
+			end
+			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_ABSORIGIN_FOLLOW, hWard)
 			if pfx_operator then
 				local operator = {}
 				for cp, op in pairs(pfx_operator) do

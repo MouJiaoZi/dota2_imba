@@ -387,9 +387,6 @@ function imba_nevermore_requiem:OnSpellStart()
 		}
 		ProjectileManager:CreateLinearProjectile(info)
 		local particle = true
-		if lines >= 50 and math.floor(i/3) ~= i/3 then
-			particle = false
-		end
 		if particle then
 			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, EntIndexToHScript(thinker))
 			ParticleManager:SetParticleControl(pfx, 0, cast_pos)
@@ -464,9 +461,6 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 			}
 			ProjectileManager:CreateLinearProjectile(info)
 			local particle = true
-			if keys.total >= 50 and math.floor(i/3) ~= i/3 then
-				particle = false
-			end
 			if particle then
 				local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, EntIndexToHScript(thinker))
 				ParticleManager:SetParticleControl(pfx, 0, location)

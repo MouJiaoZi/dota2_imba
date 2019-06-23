@@ -246,7 +246,7 @@ function imba_storm_spirit_ball_lightning:IsStealable() 			return true end
 function imba_storm_spirit_ball_lightning:IsNetherWardStealable()	return false end
 function imba_storm_spirit_ball_lightning:GetManaCost() return (self:GetSpecialValueFor("ball_lightning_initial_mana_base") + self:GetCaster():GetMaxMana() * (self:GetSpecialValueFor("ball_lightning_initial_mana_percentage") / 100)) * (1 + self:GetCaster():GetModifierStackCount("modifier_imba_ball_lightning_mana_penalty", nil) * (self:GetSpecialValueFor("mana_penalty_pct") / 100)) end
 
-function imba_storm_spirit_ball_lightning:GetCastRange() return (IsServer() and 9999999 or self:GetSpecialValueFor("ball_lightning_aoe")) end
+function imba_storm_spirit_ball_lightning:GetCastRange() return (IsServer() and 99999 or self:GetSpecialValueFor("ball_lightning_aoe") - self:GetCaster():GetCastRangeBonus()) end
 
 function imba_storm_spirit_ball_lightning:OnSpellStart()
 	local caster = self:GetCaster()

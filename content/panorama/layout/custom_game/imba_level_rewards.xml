@@ -7,12 +7,466 @@
 		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
 		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
 		<include src="s2r://panorama/styles/imba_level_rewards.css" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
 	</styles> 
 	<scripts>
 		<include src="file://{resources}/scripts/imba_level_rewards.js" />
 	</scripts>
-	<Panel>
+	<Panel style="width:100%; height:100%;" hittest="false" >
 		<Button id="IMBALevelRewardTriggerButton" class="IMBALevelRewardTriggerButton" onactivate="IMBARewardButtonClick();" onmouseover="DOTAShowTitleTextTooltip(#IMBA_HUD_RewardButton_Titile, #IMBA_HUD_RewardButton_Description);" onmouseout="DOTAHideTitleTextTooltip();">
+		</Button>
+		<Button id="IMBALevelRewardBackground_Outer" hittest="true" onactivate="IMBARewardButtonClick();" >
+			<Button id="IMBALevelRewardBackground" hittest="true" class="TopBottomFlow" onactivate="" >
+				<Panel id="IMBALevelRewardTitles" class="LeftRightFlow">
+					<Button id="IMBALevelReward_HeroTitle" class="IMBALevelReward_HCWTitle" hittest="true" onactivate="ShowIMBARewardPage_Hero();">
+						<Label id="IMBALevelReward_HeroTitle_Text" class="IMBALevelReward_HCWTitle_Text" text="#IMBA_HUD_RewardButton_Hero"/>
+					</Button>
+					<Button id="IMBALevelReward_CourierTitle" class="IMBALevelReward_HCWTitle" hittest="true" onactivate="ShowIMBARewardPage_Courier();">
+						<Label id="IMBALevelReward_CourierTitle_Text" class="IMBALevelReward_HCWTitle_Text" text="#IMBA_HUD_RewardButton_Courier"/>
+					</Button>
+					<Button id="IMBALevelReward_WardTitle" class="IMBALevelReward_HCWTitle" hittest="true" onactivate="ShowIMBARewardPage_Ward();">
+						<Label id="IMBALevelReward_WardTitle_Text" class="IMBALevelReward_HCWTitle_Text" text="#IMBA_HUD_RewardButton_Ward"/>
+					</Button>
+					<Button id="IMBALevelReward_MaelstromTitle" class="IMBALevelReward_ItemTitle" hittest="true" onactivate="ShowIMBARewardPage_Maelstorm();">
+						<DOTAItemImage id="Maelstrom" itemname="item_imba_mjollnir" />
+					</Button>
+					<Button id="IMBALevelReward_ShivaTitle" class="IMBALevelReward_ItemTitle" hittest="true" onactivate="ShowIMBARewardPage_Shiva();">
+						<DOTAItemImage id="Shiva" itemname="item_imba_shivas_guard_2" />
+					</Button>
+					<Button id="IMBALevelReward_SheepTitle" class="IMBALevelReward_ItemTitle" hittest="true" onactivate="ShowIMBARewardPage_Sheep();">
+						<DOTAItemImage id="Sheep" itemname="item_imba_sheepstick" />
+					</Button>
+					<Button id="IMBALevelReward_RadianceTitle" class="IMBALevelReward_ItemTitle" hittest="true" onactivate="ShowIMBARewardPage_Radiance();">
+						<DOTAItemImage id="Radiance" itemname="item_imba_radiance" />
+					</Button>
+					<Button id="IMBALevelReward_BlinkTitle" class="IMBALevelReward_ItemTitle" hittest="true" onactivate="ShowIMBARewardPage_Blink();">
+						<DOTAItemImage id="Blink" itemname="item_imba_blink" />
+					</Button>
+				</Panel>
+				<Panel id="IMBALevelRewardPage_Container" class="TopBottomFlow">
+
+					<Panel id="IMBALevelRewardPage_Hero" class="TopBottomFlow IMBALevelRewardPage_Detail"  style="overflow:squish scroll;">
+						<Label id="IMBALevelRewardPage_Hero_Intro_Text" text="#IMBA_HUD_RewardPage_Hero_Intro_Title" class="IMBALevelRewardPage_Intro_Text" />
+						<Image id="IMBALevelRewardPage_Hero_Intro_IMG" src="file://{images}/custom_game/imba_level_rewards/hero_relic_img.png" />
+						<Panel id="IMBALevelRewardPage_Hero_ColorPick" class="TopBottomFlow">
+							<Panel id="IMBALevelRewardPage_Hero_ColorPick_Line1" class="LeftRightFlow IMBALevelRewardPage_Hero_ColorPick_Line">
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R1" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_L1R1_Text" class="IMBALevelReward_HCWTitle_Text" style="font-size: 20px;" text="#IMBA_HUD_RewardPage_Hero_Disable_Text"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R2" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R2');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R3" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R3');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R4" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R4');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R5" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R5');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R6" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R6');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R7" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R7');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L1R8" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-right-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L1R8');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Hero_ColorPick_Line2" class="LeftRightFlow IMBALevelRewardPage_Hero_ColorPick_Line">
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R1" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-left-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R1');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R2" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R2');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R3" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R3');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R4" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R4');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R5" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R5');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R6" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R6');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R7" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R7');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L2R8" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-right-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L2R8');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Hero_ColorPick_Line3" class="LeftRightFlow IMBALevelRewardPage_Hero_ColorPick_Line">
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R1" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-left-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R1');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R2" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R2');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R3" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R3');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R4" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R4');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R5" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R5');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R6" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R6');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R7" class="IMBALevelRewardPage_Hero_ColorPickButton" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R7');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L3R8" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-right-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L3R8');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Hero_ColorPick_Line4" class="LeftRightFlow IMBALevelRewardPage_Hero_ColorPick_Line">
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R1" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-left-width:3px;border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R1');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R2" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R2');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R3" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R3');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R4" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R4');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R5" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R5');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R6" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R6');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R7" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R7');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+								<Button id="IMBALevelRewardPage_Hero_ColorPick_L4R8" class="IMBALevelRewardPage_Hero_ColorPickButton" style="border-right-width:3px;border-bottom-width:3px;" hittest="true" onactivate="ApplyHeroEmblem('IMBALevelRewardPage_Hero_ColorPick_L4R8');">
+									<Panel id="IMBALevelRewardPage_Hero_ColorPick_Tag" class="TopBottomFlow">
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+										<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+									</Panel>
+								</Button>
+							</Panel>
+						</Panel>
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Courier" class="TopBottomFlow IMBALevelRewardPage_Detail" style="overflow:squish scroll;">
+						<Label id="IMBALevelRewardPage_Courier_Intro_Text" text="#IMBA_HUD_RewardPage_Courier_Intro_Title" class="IMBALevelRewardPage_Intro_Text" />
+						<Button id="IMBALevelRewardPage_Courier_RemoveButton" class="IMBALevelRewardPage_RemoveButton" hittest="true" onactivate="RemoveCourierPfx();">
+							<Label class="IMBALevelReward_HCWTitle_Text" style="font-size: 20px;" text="#IMBA_HUD_RewardPage_Courier_Disable"/>
+						</Button>
+						<Panel id="IMBALevelRewardPage_Courier_Pick" class="TopBottomFlow">
+							<Panel id="IMBALevelRewardPage_Courier_Pick_Line1" class="LeftRightFlow IMBALevelRewardPage_Courier_Pick_Line">
+								<Button id="IMBALevelRewardPage_Courier_Pick_L1R1" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L1R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L1R2" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L1R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L1R3" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L1R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L1R4" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L1R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Courier_Pick_Line2" class="LeftRightFlow IMBALevelRewardPage_Courier_Pick_Line">
+								<Button id="IMBALevelRewardPage_Courier_Pick_L2R1" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L2R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L2R2" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L2R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L2R3" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L2R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L2R4" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L2R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Courier_Pick_Line3" class="LeftRightFlow IMBALevelRewardPage_Courier_Pick_Line">
+								<Button id="IMBALevelRewardPage_Courier_Pick_L3R1" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L3R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L3R2" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L3R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L3R3" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L3R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L3R4" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L3R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Courier_Pick_Line4" class="LeftRightFlow IMBALevelRewardPage_Courier_Pick_Line">
+								<Button id="IMBALevelRewardPage_Courier_Pick_L4R1" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L4R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L4R2" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L4R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L4R3" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L4R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L4R4" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L4R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Courier_Pick_Line5" class="LeftRightFlow IMBALevelRewardPage_Courier_Pick_Line">
+								<Button id="IMBALevelRewardPage_Courier_Pick_L5R1" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L5R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L5R2" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L5R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L5R3" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L5R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Courier_Pick_L5R4" class="IMBALevelRewardPage_Courier_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyCourierPfx('IMBALevelRewardPage_Courier_Pick_L5R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+						</Panel>
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Ward" class="TopBottomFlow IMBALevelRewardPage_Detail" style="overflow:squish scroll;">
+						<Label id="IMBALevelRewardPage_Ward_Intro_Text" text="#IMBA_HUD_RewardPage_Ward_Intro_Title" class="IMBALevelRewardPage_Intro_Text" />
+						<Button id="IMBALevelRewardPage_Ward_RemoveButton" class="IMBALevelRewardPage_RemoveButton" hittest="true" onactivate="RemoveWardPfx();">
+							<Label class="IMBALevelReward_HCWTitle_Text" style="font-size: 20px;" text="#IMBA_HUD_RewardPage_Ward_Disable"/>
+						</Button>
+						<Panel id="IMBALevelRewardPage_Ward_Pick" class="TopBottomFlow">
+							<Panel id="IMBALevelRewardPage_Ward_Pick_Line1" class="LeftRightFlow IMBALevelRewardPage_Ward_Pick_Line">
+								<Button id="IMBALevelRewardPage_Ward_Pick_L1R1" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L1R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L1R2" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L1R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L1R3" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L1R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L1R4" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L1R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L1R5" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L1R5');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L1R6" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L1R6');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Ward_Pick_Line2" class="LeftRightFlow IMBALevelRewardPage_Ward_Pick_Line">
+								<Button id="IMBALevelRewardPage_Ward_Pick_L2R1" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L2R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L2R2" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L2R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L2R3" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L2R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L2R4" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L2R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L2R5" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L2R5');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L2R6" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L2R6');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+							<Panel id="IMBALevelRewardPage_Ward_Pick_Line3" class="LeftRightFlow IMBALevelRewardPage_Ward_Pick_Line">
+								<Button id="IMBALevelRewardPage_Ward_Pick_L3R1" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L3R1');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L3R2" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L3R2');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L3R3" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L3R3');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L3R4" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L3R4');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L3R5" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L3R5');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+								<Button id="IMBALevelRewardPage_Ward_Pick_L3R6" class="IMBALevelRewardPage_Ward_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyWardPfx('IMBALevelRewardPage_Ward_Pick_L3R6');">
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+									<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+								</Button>
+							</Panel>
+						</Panel>
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Maelstrom" class="TopBottomFlow IMBALevelRewardPage_Detail">
+					
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Shiva" class="TopBottomFlow IMBALevelRewardPage_Detail">
+					
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Sheep" class="TopBottomFlow IMBALevelRewardPage_Detail">
+					
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Radiance" class="TopBottomFlow IMBALevelRewardPage_Detail">
+					
+					</Panel>
+
+
+					<Panel id="IMBALevelRewardPage_Blink" class="TopBottomFlow IMBALevelRewardPage_Detail">
+					
+					</Panel>
+				</Panel>
+				<Panel id="IMBALevelRewardBottom" class="LeftRightFlow">
+					<Label id="IMBALevelReward_CurrentLevelText" text="#IMBA_HUD_Reward_CurrentLevel"/>
+					<Label id="IMBALevelReward_LevelIntro" text="#IMBA_HUD_Reward_LevelIntro"/>
+				</Panel>
+			</Button>
 		</Button>
 	</Panel>
 </root>

@@ -37,6 +37,8 @@ function IMBA:OnAllPlayersLoaded()
 	GameRules:GetGameModeEntity():SetRuneSpawnFilter(Dynamic_Wrap(IMBA, "RuneSpawnFilter"), self)
 	--GameRules:GetGameModeEntity():SetTrackingProjectileFilter(Dynamic_Wrap(IMBA, "TrackingProjectileFilter"), self)
 
+	IMBALevelRewards:LoadAllPlayersLevel()
+
 end
 
 function IMBA:DumpAllHero()
@@ -338,6 +340,8 @@ end
 76561198103546522
 76561198866505549
 76561198006947736
+76561198063283421
+76561198123967311
 ]]
 
 function IMBA:OrderFilter(keys)
@@ -1188,6 +1192,10 @@ function IMBA:EndGameAPI(iWinnerTeam)
 					infoTable["talent_"..index] = ability:GetAbilityName()
 					index = index + 1
 				end
+			end
+			local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(i))
+			for k,v in pairs(player_table) do
+				infoTable[k] = v
 			end
 			IMBA:SendHTTPRequest("imba_end_game_player.php", infoTable)
 		end

@@ -363,6 +363,8 @@ function modifier_imba_spin_web_debuff:IsDebuff()			return true end
 function modifier_imba_spin_web_debuff:IsHidden() 			return false end
 function modifier_imba_spin_web_debuff:IsPurgable() 		return false end
 function modifier_imba_spin_web_debuff:IsPurgeException() 	return false end
+function modifier_imba_spin_web_debuff:GetEffectName() return "particles/units/heroes/hero_broodmother/broodmother_incapacitatingbite_debuff.vpcf" end
+function modifier_imba_spin_web_debuff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_spin_web_debuff:CheckState()
 	if self:GetStackCount() == -1 then
 		return {[MODIFIER_STATE_ROOTED] = true}
@@ -381,10 +383,6 @@ function modifier_imba_spin_web_debuff:OnIntervalThink()
 		return
 	end
 	self:SetStackCount(self:GetStackCount() + 1)
-	if self:GetStackCount() / 10 == math.floor(self:GetStackCount() / 10) then
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_broodmother/broodmother_incapacitatingbite_debuff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		self:AddParticle(pfx, false, false, 15, false, false)
-	end
 	if self:GetStackCount() / 10 >= self:GetAbility():GetSpecialValueFor("root_delay") then
 		self:SetStackCount(-1)
 		AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 200, self:GetAbility():GetSpecialValueFor("root_duration"), false)
