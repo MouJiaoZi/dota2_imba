@@ -100,15 +100,15 @@ function modifier_lucky_shot_debuff_armor:GetModifierPhysicalArmorBonus() return
 
 function modifier_lucky_shot_debuff_armor:OnCreated()
 	self:SetStackCount(0)
-	if self:GetParent():GetPhysicalArmorValue() > 0 then
-		self:SetStackCount(0 - self:GetParent():GetPhysicalArmorValue() * 100)
+	if self:GetParent():GetPhysicalArmorValue(false) > 0 then
+		self:SetStackCount(0 - self:GetParent():GetPhysicalArmorValue(false) * 100)
 	end
 end
 
 function modifier_lucky_shot_debuff_armor:OnRefresh()
 	self:SetStackCount(0)
-	if self:GetParent():GetPhysicalArmorValue() > 0 then
-		self:SetStackCount(0 - self:GetParent():GetPhysicalArmorValue() * 100)
+	if self:GetParent():GetPhysicalArmorValue(false) > 0 then
+		self:SetStackCount(0 - self:GetParent():GetPhysicalArmorValue(false) * 100)
 	end
 end
 

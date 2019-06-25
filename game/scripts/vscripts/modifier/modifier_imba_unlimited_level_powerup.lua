@@ -106,3 +106,46 @@ function modifier_imba_ak_ability_controller:OnIntervalThink()
 		end
 	end
 end
+
+modifier_imba_ak_ability_controller_bear = class({})
+
+function modifier_imba_ak_ability_controller_bear:IsDebuff()			return false end
+function modifier_imba_ak_ability_controller_bear:IsHidden() 			return true end
+function modifier_imba_ak_ability_controller_bear:IsPurgable() 			return false end
+function modifier_imba_ak_ability_controller_bear:IsPurgeException() 	return false end
+function modifier_imba_ak_ability_controller_bear:RemoveOnDeath() return true end
+
+function modifier_imba_ak_ability_controller_bear:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(1.0)
+	end
+end
+
+function modifier_imba_ak_ability_controller_bear:OnIntervalThink()
+	local ability = self:GetAbility()
+	local bear = self:GetParent()
+	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[bear:GetPlayerOwnerID() + 1]
+	if not hero then
+		return
+	end
+	if ability:GetAbilityType() == 1 then
+		local level_to_set = (hero:HasAbility("lone_druid_true_form") and hero:FindAbilityByName("lone_druid_true_form"):GetLevel() or 0)
+		level_to_set = math.min(level_to_set, ability:GetMaxLevel())
+		if ability:GetLevel() ~= level_to_set then
+			ability:SetLevel(level_to_set)
+		end
+	else
+		local level_to_set =  (hero:HasAbility("lone_druid_true_form") and hero:FindAbilityByName("lone_druid_spirit_bear"):GetLevel() or 0)
+		level_to_set = math.min(level_to_set, ability:GetMaxLevel())
+		if ability:GetLevel() ~= level_to_set then
+			ability:SetLevel(level_to_set)
+		end
+	end
+end
+
+function modifier_imba_ak_ability_controller_bear:OnDestroy()
+	if IsServer() then
+		local ability = self:GetAbility()
+		ability.ak = nil
+	end
+end

@@ -4074,9 +4074,9 @@
 
 		// Bounty
 		//----------------------------------------------------------------
-		"BountyXP"					"0"		// Experience earn.
-		"BountyGoldMin"				"0"		// Gold earned min.
-		"BountyGoldMax"				"0"		// Gold earned max.
+		"BountyXP"					"50"		// Experience earn.
+		"BountyGoldMin"				"50"		// Gold earned min.
+		"BountyGoldMax"				"50"		// Gold earned max.
 
 		// Movement
 		//----------------------------------------------------------------
@@ -4123,9 +4123,9 @@
 
 		// Bounty
 		//----------------------------------------------------------------
-		"BountyXP"					"0"		// Experience earn.
-		"BountyGoldMin"				"0"		// Gold earned min.
-		"BountyGoldMax"				"0"		// Gold earned max.
+		"BountyXP"					"50"		// Experience earn.
+		"BountyGoldMin"				"50"		// Gold earned min.
+		"BountyGoldMax"				"50"		// Gold earned max.
 
 		// Movement
 		//----------------------------------------------------------------
@@ -4173,9 +4173,9 @@
 
 		// Bounty
 		//----------------------------------------------------------------
-		"BountyXP"					"0"		// Experience earn.
-		"BountyGoldMin"				"0"		// Gold earned min.
-		"BountyGoldMax"				"0"		// Gold earned max.
+		"BountyXP"					"50"		// Experience earn.
+		"BountyGoldMin"				"50"		// Gold earned min.
+		"BountyGoldMax"				"50"		// Gold earned max.
 
 		// Movement
 		//----------------------------------------------------------------
@@ -4240,9 +4240,9 @@
 
 		// Bounty
 		//----------------------------------------------------------------
-		"BountyXP"					"0"		// Experience earn.
-		"BountyGoldMin"				"0"		// Gold earned min.
-		"BountyGoldMax"				"0"		// Gold earned max.
+		"BountyXP"					"50"		// Experience earn.
+		"BountyGoldMin"				"50"		// Gold earned min.
+		"BountyGoldMax"				"50"		// Gold earned max.
 
 		// Movement
 		//----------------------------------------------------------------
@@ -4310,5 +4310,50 @@
 		"VisionDaytimeRange"		"2800"		// Range of vision during day light.
 		"VisionNighttimeRange"		"1800"		// Range of vision at night time.
 	}	
+//=================================================================================
+// Lone Druid Spirit Bears
+//=================================================================================
+	"npc_dota_lone_druid_bear1"
+	{
+		"ModelScale" 				"0.5"
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"1500"		// Base health.
+		"StatusHealthRegen"			"5"			// Health regeneration rate.
+		"StatusMana"				"2000"		// Base mana.
+		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
+		
+	}	
+	"npc_dota_lone_druid_bear2"
+	{										
+		"ModelScale" 				"0.7"
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"2000"		// Base health.
+		"StatusHealthRegen"			"6"			// Health regeneration rate.
+		"StatusMana"				"2000"		// Base mana.
+		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
+	}	
 
+	"npc_dota_lone_druid_bear3"
+	{										
+		"ModelScale" 				"0.9"
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"2500"		// Base health.
+		"StatusHealthRegen"			"7"			// Health regeneration rate.
+		"StatusMana"				"2000"			// Base mana.
+		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
+	}	
+
+	"npc_dota_lone_druid_bear4"
+	{
+		"ModelScale" 				"1.2"
+		// Status
+		//----------------------------------------------------------------
+		"StatusHealth"				"3000"		// Base health.
+		"StatusHealthRegen"			"8"			// Health regeneration rate.
+		"StatusMana"				"2000"		// Base mana.
+		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
+	}
 }

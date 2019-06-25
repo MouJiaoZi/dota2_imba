@@ -496,9 +496,6 @@ function GameMode:OnNPCSpawned(keys)
 	if not npc.firstSpawn then
 		npc.firstSpawn = true
 		npc.splitattack = true
-		--[[if npc:IsCourier() then
-			npc:SetControllableByPlayer(-1, true)
-		end]]
 	end
 
 	if npc:GetUnitName() == "npc_dota_hero_silencer" and not npc:HasModifier("modifier_imba_silencer_int_steal") then
@@ -521,6 +518,35 @@ function GameMode:OnNPCSpawned(keys)
 		end
 		IMBA_WARD_TABLE[npc:GetCreationTime()]["ward"] = npc
 		HeroItems:ApplyWardsParticle(npc:GetCreationTime())
+	end
+
+	if npc:GetName() == "npc_dota_lone_druid_bear" then
+		local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1]
+		if not hero then
+			return
+		end
+		if GetMapName() ~= "dbii_death_match" and (IMBA_AK_ENABLE or GameRules:IsCheatMode()) and npc:HasAbility("generic_hidden") and not npc:HasAbility("imba_ogre_magi_multicast") and not npc:HasAbility("imba_storm_spirit_ball_lightning") then
+			if not hero.bear_ak then
+				local ak_name = GetRandomAKAbility()
+				while npc:HasAbility(ak_name[2]) or (not npc:IsRangedAttacker() and (ak_name[2] == "dragon_knight_elder_dragon_form" or ak_name[2] == "terrorblade_metamorphosis")) do
+					ak_name = GetRandomAKAbility()
+				end
+				hero.bear_ak = ak_name[2]
+				local ak = npc:AddAbility(ak_name[2])
+				ak.ak = true
+				npc:AddNewModifier(npc, ak, "modifier_imba_ak_ability_controller_bear", {})
+				npc:SwapAbilities(ak_name[2], "generic_hidden", true, false)
+				ak:SetHidden(true)
+				PrecacheUnitByNameAsync(ak_name[1], function() ak:SetHidden(false) end, npc:GetPlayerOwnerID())
+			else
+				if not npc:HasAbility(hero.bear_ak) then
+					local ak = npc:AddAbility(hero.bear_ak)
+					ak.ak = true
+					npc:AddNewModifier(npc, ak, "modifier_imba_ak_ability_controller_bear", {})
+					npc:SwapAbilities(hero.bear_ak, "generic_hidden", true, false)
+				end
+			end
+		end
 	end
 end
 
@@ -1047,9 +1073,6 @@ function GameMode:OnPlayerChat(keys)
 			end
 		end
 		if IsInToolsMode() then
-			if str == "-1" then
-				wardssss()
-			end
 			if str == "-illunique" then
 				IllusionManager:PrintIllusionUnique()
 			end

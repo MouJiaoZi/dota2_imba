@@ -172,6 +172,7 @@ function imba_roshan_slam:OnSpellStart()
 			buff2:GetCaster():FindModifierByName("modifier_imba_gravekeepers_cloak"):SetStackCount(0)
 			buff2:GetCaster():AddNewModifierWhenPossible(buff2:GetCaster(), buff2:GetAbility(), "modifier_imba_gravekeepers_cloak_recover_timer", {duration = 10})
 		end
+		enemy[i]:RemoveModifierByName("modifier_winter_wyvern_cold_embrace")
 	end
 end
 
