@@ -556,7 +556,7 @@ if GetMapName() == "playground" then
   function PlayGround:OnNPCSpawned(keys)
     local npc = EntIndexToHScript(keys.entindex)
 
-    if npc:IsRealHero() and npc.bFirstSpawnedPG == nil then
+    if npc:IsTrueHero() and npc.bFirstSpawnedPG == nil then
       npc.bFirstSpawnedPG = true
       PlayGround:OnHeroInGame(npc)
     end

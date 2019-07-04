@@ -120,7 +120,7 @@ function imba_mirana_arrow:OnProjectileHit_ExtraData(target, location, keys)
 		EntIndexToHScript(keys.thinker):ForceKill(false)
 		return true
 	end
-	if kill_creeps and not target:IsBoss() and not target:IsAncient() and not target:IsRealHero() then
+	if kill_creeps and not target:IsBoss() and not target:IsAncient() and not target:IsTrueHero() then
 		target:Kill(self, self:GetCaster())
 		return false
 	end

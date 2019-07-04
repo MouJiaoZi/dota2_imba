@@ -232,7 +232,7 @@ function modifier_imba_invoker_Q_buff:IsPurgable() 				return false end
 function modifier_imba_invoker_Q_buff:IsPurgeException() 		return false end
 function modifier_imba_invoker_Q_buff:IsStunDebuff() 			return false end
 function modifier_imba_invoker_Q_buff:RemoveOnDeath()
-	if self:GetCaster():IsRealHero() then
+	if self:GetCaster():IsTrueHero() then
 		return false 
 	else
 		return true
@@ -252,7 +252,7 @@ function modifier_imba_invoker_W_buff:IsPurgable() 				return false end
 function modifier_imba_invoker_W_buff:IsPurgeException() 		return false end
 function modifier_imba_invoker_W_buff:IsStunDebuff() 			return false end
 function modifier_imba_invoker_W_buff:RemoveOnDeath()
-	if self:GetCaster():IsRealHero() then
+	if self:GetCaster():IsTrueHero() then
 		return false 
 	else
 		return true
@@ -279,7 +279,7 @@ function modifier_imba_invoker_E_buff:IsPurgable() 				return false end
 function modifier_imba_invoker_E_buff:IsPurgeException() 		return false end
 function modifier_imba_invoker_E_buff:IsStunDebuff() 			return false end
 function modifier_imba_invoker_E_buff:RemoveOnDeath()
-	if self:GetCaster():IsRealHero() then
+	if self:GetCaster():IsTrueHero() then
 		return false 
 	else
 		return true
@@ -321,7 +321,7 @@ function invoker_quas:OnUpgrade()
 	if not IsServer() then
 		return
 	end
-	if not self:GetCaster():IsRealHero() then
+	if not self:GetCaster():IsTrueHero() then
 		return
 	end
 	local level = self:GetLevel()
@@ -352,7 +352,7 @@ function invoker_wex:OnUpgrade()
 	if not IsServer() then
 		return
 	end
-	if not self:GetCaster():IsRealHero() then
+	if not self:GetCaster():IsTrueHero() then
 		return
 	end
 	local level = self:GetLevel()
@@ -383,7 +383,7 @@ function invoker_exort:OnUpgrade()
 	if not IsServer() then
 		return
 	end
-	if not self:GetCaster():IsRealHero() then
+	if not self:GetCaster():IsTrueHero() then
 		return
 	end
 	local level = self:GetLevel()

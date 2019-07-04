@@ -189,6 +189,25 @@ function SetDeathMatchKillGoalNum()
 
 $.Schedule(1.0, SetDeathMatchKillGoal);
 
+function SetBuffBar()
+{
+	var buffs = FindDotaHudElement("buffs");
+	var debuffs = FindDotaHudElement("debuffs");
+	if(buffs)
+	{
+		buffs.style.marginLeft = "38%";
+	}
+	if(debuffs)
+	{
+		debuffs.style.marginLeft = "38%";
+		debuffs.style.marginBottom = "198px";
+		debuffs.style.flowChildren = "right";
+		debuffs.style.horizontalAlign = "left";
+	}
+}
+
+$.Schedule(1.0, SetBuffBar);
+
 //var a = Particles.CreateParticle("particles/customgames/capturepoints/cp_earth.vpcf", ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, Players.GetPlayerHeroEntityIndex(Players.GetLocalPlayer()));
 
 FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.width = "0px";

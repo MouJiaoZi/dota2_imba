@@ -499,7 +499,7 @@ LinkLuaModifier("modifier_imba_flesh_heap_stacks", "hero/hero_pudge", LUA_MODIFI
 
 function imba_pudge_flesh_heap:GetCastRange() return self:GetSpecialValueFor("range") - self:GetCaster():GetCastRangeBonus() end
 function imba_pudge_flesh_heap:OnHeroDiedNearby(unit, attacker, keys)
-	if unit:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() and unit:IsRealHero() and not unit:IsClone() and not unit:IsTempestDouble() and (((unit:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self:GetLevelSpecialValueFor("range", 0) and self:GetCaster():IsAlive()) or attacker == self:GetCaster()) and not self:GetCaster():IsIllusion() then
+	if unit:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() and unit:IsTrueHero() and not unit:IsClone() and not unit:IsTempestDouble() and (((unit:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self:GetLevelSpecialValueFor("range", 0) and self:GetCaster():IsAlive()) or attacker == self:GetCaster()) and not self:GetCaster():IsIllusion() then
 		if self.stack == nil then
 			self.stack = 0
 		end

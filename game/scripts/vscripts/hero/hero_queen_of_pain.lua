@@ -300,7 +300,7 @@ function modifier_imba_delightful_torment:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and keys.unit:IsRealHero() then
+	if keys.attacker == self:GetParent() and keys.unit:IsTrueHero() then
 		local cooldown_reduction = self:GetAbility():GetSpecialValueFor("cooldown_reduction")
 		for i = 0, 23 do
 			local current_ability = self:GetParent():GetAbilityByIndex(i)
@@ -373,7 +373,7 @@ function imba_queenofpain_sonic_wave:OnProjectileHit_ExtraData(target, location,
 		local caster = self:GetCaster()
 		local dmg = caster:HasScepter() and self:GetSpecialValueFor("damage") or self:GetSpecialValueFor("damage_scepter")
 		local ability = caster:FindAbilityByName("imba_queenofpain_scream_of_pain")
-		if ability and ability:GetLevel() > 0 and caster:HasScepter() and target:IsRealHero() then
+		if ability and ability:GetLevel() > 0 and caster:HasScepter() and target:IsTrueHero() then
 			ability:OnSpellStart(target, nil, nil, true)
 		end
 		local damageTable = {

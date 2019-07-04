@@ -258,7 +258,7 @@ function modifier_imba_plague_ward_think:OnAttackLanded(keys)
 	end
 	if keys.target == self:GetParent() then
 		local dmg = 1
-		if keys.attacker:IsBuilding() or keys.attacker:IsRealHero() then
+		if keys.attacker:IsBuilding() or keys.attacker:IsTrueHero() then
 			dmg = 2
 		end
 		if self:GetParent():GetHealth() <= dmg then

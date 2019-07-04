@@ -245,9 +245,7 @@ function SwapToItem(caster, removed_item, added_item)
 	end
 end
 
--- 100% kills a unit. Activates death-preventing modifiers, then removes them. Does not killsteal from Reaper's Scythe.
-function TrueKill(caster, target, ability)
-	
+function KillPre(caster, target, ability)
 	-- Shallow Grave is peskier
 	target:RemoveModifierByName("modifier_imba_shallow_grave")
 
@@ -281,11 +279,20 @@ function TrueKill(caster, target, ability)
 	target:RemoveModifierByName("modifier_imba_vampiric_aura_effect")
 	target:RemoveModifierByName("modifier_imba_balde_mail_2_active")
 	target:RemoveModifierByName("modifier_imba_vampiric_aura_effect")
-	
+	target:RemoveModifierByName("modifier_legion_commander_duel")
+end
 
-
+-- 100% kills a unit. Activates death-preventing modifiers, then removes them. Does not killsteal from Reaper's Scythe.
+function TrueKill(caster, target, ability)
+	KillPre(caster, target, ability)
 	-- Kills the target
 	target:Kill(ability, caster)
+end
+
+function TrueKill2(caster, target, ability)
+	KillPre(caster, target, ability)
+	-- Kills the target
+	target:ForceKill(false)
 end
 
 -- Checks if a unit is near units of a certain class not on its team
@@ -984,9 +991,9 @@ function CDOTA_BaseNPC_Hero:GetRespawnTimeChangeNormal()
 	return respawn
 end
 
-function IsInTable(value, table)
-	for i=0, #table do
-		if table[i] == value then
+function IsInTable(value, hTable)
+	for i=0, #hTable do
+		if hTable[i] == value then
 			return true
 		end
 	end
@@ -1513,4 +1520,8 @@ end
 
 function CDOTA_BaseNPC:IsUnit()
 	return self:IsHero() or self:IsCreep() or self:IsBoss()
+end
+
+function CDOTA_BaseNPC:IsTrueHero()
+	return (not self:IsTempestDouble() and self:IsRealHero() and not self:HasModifier("modifier_imba_meepo_clone_controller"))
 end

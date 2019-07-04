@@ -332,7 +332,7 @@ function modifier_imba_nether_ward:GetModifierIncomingDamage_Percentage(keys)
 		if keys.inflictor or keys.ability then
 			return -10000
 		end
-		local dmg = keys.attacker:IsRealHero() and 4 or 1
+		local dmg = keys.attacker:IsTrueHero() and 4 or 1
 		if dmg > self:GetParent():GetHealth() then
 			self:GetParent():Kill(self:GetAbility(), keys.attacker)
 			return -10000

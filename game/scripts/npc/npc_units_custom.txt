@@ -4322,8 +4322,8 @@
 		"StatusHealthRegen"			"5"			// Health regeneration rate.
 		"StatusMana"				"2000"		// Base mana.
 		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
-		
-	}	
+	}
+	
 	"npc_dota_lone_druid_bear2"
 	{										
 		"ModelScale" 				"0.7"

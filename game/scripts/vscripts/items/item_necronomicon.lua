@@ -10,7 +10,7 @@ function Necronomicon( keys )
 	local necro_level = keys.necro_level
 
 	-- If this unit is not a real hero, do nothing
-	if not onwer:IsRealHero() then
+	if not onwer:IsTrueHero() then
 		onwer = caster:GetOwnerEntity()
 	end
 

@@ -25,7 +25,6 @@ function modifier_imba_juggernaut_blade_fury:IsDebuff()				return false end
 function modifier_imba_juggernaut_blade_fury:IsHidden() 			return false end
 function modifier_imba_juggernaut_blade_fury:IsPurgable() 			return false end
 function modifier_imba_juggernaut_blade_fury:IsPurgeException() 	return false end
-function modifier_imba_juggernaut_blade_fury:DeclareFunctions() return {MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_juggernaut_blade_fury:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = true} end
 function modifier_imba_juggernaut_blade_fury:IsAura() return true end
 function modifier_imba_juggernaut_blade_fury:GetAuraDuration() return 0.1 end
@@ -176,7 +175,7 @@ function modifier_imba_healing_ward_passive:OnAttackLanded(keys)
 		return
 	end
 	local dmg = 1
-	if keys.attacker:IsRealHero() or keys.attacker:IsBuilding() then
+	if keys.attacker:IsTrueHero() or keys.attacker:IsBuilding() then
 		dmg = 3
 	end
 	if self:GetParent():GetHealth() - dmg <= 0 then
@@ -275,7 +274,7 @@ function modifier_imba_healing_totem_passive:OnAttackLanded(keys)
 		return
 	end
 	local dmg = 1
-	if keys.attacker:IsRealHero() or keys.attacker:IsBuilding() then
+	if keys.attacker:IsTrueHero() or keys.attacker:IsBuilding() then
 		dmg = 3
 	end
 	if self:GetParent():GetHealth() - dmg <= 0 then
@@ -442,7 +441,7 @@ function modifier_imba_omni_slash_caster:OnHeroKilled(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker == self:GetParent() and keys.target:IsRealHero() then
+	if keys.attacker == self:GetParent() and keys.target:IsTrueHero() then
 		self.kills = self.kills + 1
 		if HeroItems:UnitHasItem(self:GetParent(), "juggernaut_arcana") then
 			local pfx_kill = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_trigger.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
@@ -491,7 +490,7 @@ function modifier_imba_omni_slash_caster:OnIntervalThink()
 		return
 	end
 	self.tick = self.tick + FrameTime()
-	if self.target:IsAlive() and self.target:IsRealHero() then
+	if self.target:IsAlive() and self.target:IsTrueHero() then
 		local pos = GetRandomPosition2D(self.target:GetAbsOrigin(), 128)
 		local direction = (self.target:GetAbsOrigin() - pos):Normalized()
 		local parent = self:GetParent()
@@ -535,7 +534,7 @@ function modifier_imba_omni_slash_caster:JumpAndSlash(target)
 	local target_pos = target:GetAbsOrigin() + (target:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized() * 100
 	caster:SetAbsOrigin(target_pos)
 	if not self:GetParent():IsDisarmed() then
-		if target:IsRealHero() or target:IsBoss() or target:IsAncient() or target:IsConsideredHero() then
+		if target:IsTrueHero() or target:IsBoss() or target:IsAncient() or target:IsConsideredHero() then
 			caster:PerformAttack(target, false, true, true, false, true, false, true)
 		else
 			target:Kill(self:GetAbility(), caster)

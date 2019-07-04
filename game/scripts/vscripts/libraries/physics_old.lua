@@ -1967,7 +1967,7 @@ Physics:CreateColliderProfile("blocker",
     buffer = 0,
     findClearSpace = false,
     test = function(self, collider, collided)
-      return collided.IsRealHero and collided:IsRealHero() and collider:GetTeam() ~= collided:GetTeam()
+      return collided.IsTrueHero and collided:IsTrueHero() and collider:GetTeam() ~= collided:GetTeam()
     end,
     action = function(self, unit, v)
       if self.moveSelf then
@@ -1987,7 +1987,7 @@ Physics:CreateColliderProfile("delete",
     deleteSelf = true,
     removeCollider = true,
     test = function(self, collider, collided)
-      return collided.IsRealHero and collided:IsRealHero() and collider:GetTeam() ~= collided:GetTeam()
+      return collided.IsTrueHero and collided:IsTrueHero() and collider:GetTeam() ~= collided:GetTeam()
     end,
     action = function(self, unit, v)
       if self.deleteSelf then
@@ -2013,7 +2013,7 @@ Physics:CreateColliderProfile("gravity",
     linear = false,
     force = 1000,
     test = function(self, collider, collided)
-      return collided.IsRealHero and collided:IsRealHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
+      return collided.IsTrueHero and collided:IsTrueHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
     end,
     action = function(self, unit, v)
       local pos = unit:GetAbsOrigin()
@@ -2051,7 +2051,7 @@ Physics:CreateColliderProfile("repel",
     linear = false,
     force = 1000,
     test = function(self, collider, collided)
-      return collided.IsRealHero and collided:IsRealHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
+      return collided.IsTrueHero and collided:IsTrueHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
     end,
     action = function(self, unit, v)
       local pos = unit:GetAbsOrigin()
@@ -2091,7 +2091,7 @@ Physics:CreateColliderProfile("reflect",
     moveSelf = false,
     findClearSpace = false,
     test = function(self, collider, collided)
-      return collided.IsRealHero and collided:IsRealHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
+      return collided.IsTrueHero and collided:IsTrueHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
     end,
     action = function(self, unit, v)
       local pos = unit:GetAbsOrigin()
@@ -2128,7 +2128,7 @@ Physics:CreateColliderProfile("momentum",
     findClearSpace = false,
     elasticity = 1,
     test = function(self, collider, collided)
-      return collided.IsRealHero and collided:IsRealHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
+      return collided.IsTrueHero and collided:IsTrueHero() and collider:GetTeam() ~= collided:GetTeam() and IsPhysicsUnit(collided)
     end,
     action = function(self, unit, v)
       if self.hitTime == nil or GameRules:GetGameTime() >= self.hitTime then
@@ -2178,7 +2178,7 @@ Physics:CreateColliderProfile("boxblocker",
     buffer = 0,
     findClearSpace = false,
     test = function(self, unit)
-      return unit.IsRealHero and unit:IsRealHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
+      return unit.IsTrueHero and unit:IsTrueHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
     end,
     action = function(self, box, unit)
       --PrintTable(box)
@@ -2280,7 +2280,7 @@ Physics:CreateColliderProfile("boxreflect",
     findClearSpace = false,
     multiplier = 1,
     test = function(self, unit)
-      return unit.IsRealHero and unit:IsRealHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
+      return unit.IsTrueHero and unit:IsTrueHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
     end,
     action = function(self, box, unit)
       local pos = unit:GetAbsOrigin()
@@ -2385,7 +2385,7 @@ Physics:CreateColliderProfile("aaboxblocker",
     buffer = 0,
     findClearSpace = false,
     test = function(self, unit)
-      return unit.IsRealHero and unit:IsRealHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
+      return unit.IsTrueHero and unit:IsTrueHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
     end,
     action = function(self, box, unit)
       --PrintTable(box)
@@ -2489,7 +2489,7 @@ Physics:CreateColliderProfile("aaboxreflect",
     findClearSpace = false,
     multiplier = 1,
     test = function(self, unit)
-      return unit.IsRealHero and unit:IsRealHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
+      return unit.IsTrueHero and unit:IsTrueHero() and unit:GetTeam() ~= unit:GetTeam() and IsPhysicsUnit(unit)
     end,
     action = function(self, box, unit)
       --PrintTable(box)

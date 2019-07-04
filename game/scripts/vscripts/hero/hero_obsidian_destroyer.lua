@@ -49,7 +49,7 @@ function ArcaneOrb_AttackLanded(keys)
 		local dmg_done = ApplyDamage(damageTable)
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, target, dmg_done, nil)
 	end
-	if (target:IsRealHero() or target:IsTempestDouble()) and not target:IsClone() then
+	if (target:IsTrueHero() or target:IsTempestDouble()) and not target:IsClone() then
 		for i=1, ability:GetSpecialValueFor("int_gain") do
 			caster:AddNewModifier(caster, ability, "modifier_imba_obsidian_destroyer_int_gain_counter", {duration = ability:GetSpecialValueFor("int_buff_duration")})
 			target:AddNewModifier(caster, ability, "modifier_imba_obsidian_destroyer_int_lose_counter", {duration = ability:GetSpecialValueFor("int_debuff_duration")})
@@ -140,7 +140,7 @@ function imba_obsidian_destroyer_astral_imprisonment:OnSpellStart()
 		target = caster
 	end
 	caster:EmitSound("Hero_ObsidianDestroyer.AstralImprisonment.Cast")
-	if self:GetCaster():HasAbility("imba_obsidian_destroyer_arcane_orb") and target:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() and (target:IsRealHero() or target:IsTempestDouble()) and not target:IsClone() then
+	if self:GetCaster():HasAbility("imba_obsidian_destroyer_arcane_orb") and target:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() and (target:IsTrueHero() or target:IsTempestDouble()) and not target:IsClone() then
 		local ability = self:GetCaster():FindAbilityByName("imba_obsidian_destroyer_arcane_orb")
 		for i=1, self:GetSpecialValueFor("orb_stacks") do
 			local keys = {attacker = self:GetCaster(), target = target, ability = ability, nodmg = true}

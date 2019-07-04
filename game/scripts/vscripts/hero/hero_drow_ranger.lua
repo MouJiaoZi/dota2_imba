@@ -301,7 +301,7 @@ function modifier_imba_trueshot_passive:GetAuraSearchFlags() return DOTA_UNIT_TA
 function modifier_imba_trueshot_passive:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_FRIENDLY end
 function modifier_imba_trueshot_passive:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_CREEP end
 function modifier_imba_trueshot_passive:GetAuraEntityReject(unit)
-	if unit:IsRealHero() or unit:IsIllusion() or self:GetParent():HasModifier("modifier_imba_trueshot_active") then
+	if unit:IsTrueHero() or unit:IsIllusion() or self:GetParent():HasModifier("modifier_imba_trueshot_active") then
 		return false
 	end
 	return true

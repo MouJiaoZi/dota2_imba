@@ -168,6 +168,8 @@ function Precache( context )
 	PrecacheResource("particle", "particles/items_fx/aegis_timer.vpcf", context)
 	PrecacheResource("particle", "particles/items_fx/aegis_respawn.vpcf", context)
 
+	-- Meepo
+	LinkLuaModifier("modifier_imba_meepo_clone_controller", "hero/hero_meepo.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
 -- Create the game mode when we activate

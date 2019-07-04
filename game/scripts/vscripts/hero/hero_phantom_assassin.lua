@@ -320,7 +320,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		ParticleManager:ReleaseParticleIndex(pfx)
 		caster:RemoveModifierByName("modifier_imba_coup_de_grace_check")
 	end
-	if caster:HasScepter() and caster:IsRealHero() and PseudoRandom:RollPseudoRandom(self:GetCreationTime(), self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and keys.target:IsRealHero() then
+	if caster:HasScepter() and caster:IsTrueHero() and PseudoRandom:RollPseudoRandom(self:GetCreationTime(), self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and keys.target:IsTrueHero() then
 		TrueKill(caster, keys.target, self:GetAbility())
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, keys.target, 999999, nil)
 		local blood_pfx = ParticleManager:CreateParticle("particles/hero/phantom_assassin/screen_blood_splatter.vpcf", PATTACH_EYES_FOLLOW, keys.target)

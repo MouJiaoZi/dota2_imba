@@ -66,7 +66,7 @@ function IMBAEvents:GiveAKAbility(npc)
 end
 
 function IMBAEvents:OnHeroKilled(victim, attacker)
-	if victim:IsRealHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+	if victim:IsTrueHero() and not victim:IsReincarnating() and IsInTable(victim, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
 
 		if GameRules:GetDOTATime(false, false) >= 1200 then
 			GameRules:SetSafeToLeave(true)
@@ -233,6 +233,24 @@ function IMBAEvents:PlayerSpawnsWard(hWard)
 		if string.find(trigger[i]:GetName(), campname) then
 			hWard:SetHealth(1)
 			break
+		end
+	end
+end
+
+function IMBAEvents:NormalIllusionCreated(fGameTime, hBaseUnit)
+	local all = Entities:FindAllByName(hBaseUnit:GetName())
+	for i=1, #all do
+		local unit = all[i]
+		if unit:IsIllusion() then
+			local buff = unit:FindModifierByName("modifier_illusion")
+			if buff and buff:GetCreationTime() == fGameTime then
+				if hBaseUnit:GetModifierStackCount("modifier_imba_moon_shard_consume", nil) > 0 then
+					unit:AddNewModifier(hBaseUnit, nil, "modifier_imba_moon_shard_consume", {}):SetStackCount(hBaseUnit:GetModifierStackCount("modifier_imba_moon_shard_consume", nil))
+				end
+			end
+			if hBaseUnit:HasModifier("modifier_imba_consumable_scepter_consumed") then
+				unit:AddNewModifier(hBaseUnit, nil, "modifier_imba_consumable_scepter_consumed", {})
+			end
 		end
 	end
 end

@@ -29,7 +29,7 @@ function imba_witch_doctor_paralyzing_cask:OnProjectileHit(target, vLocation)
 	local bounce_range = self:GetSpecialValueFor("bounce_range")
 	local caster = self:GetCaster()
 	if not target then return end
-	if target:IsRealHero() then
+	if target:IsTrueHero() then
 		if self.remainingBounces then self.remainingBounces = self.remainingBounces - 1 end
 		local healdmg = self:GetSpecialValueFor("hero_damage")
 		if target:GetTeamNumber() ~= caster:GetTeamNumber() then

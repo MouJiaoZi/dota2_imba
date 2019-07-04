@@ -333,8 +333,8 @@ modifier_item_imba_silver_edge_break = class({})
 
 function modifier_item_imba_silver_edge_break:IsDebuff()			return true end
 function modifier_item_imba_silver_edge_break:IsHidden() 			return false end
-function modifier_item_imba_silver_edge_break:IsPurgable() 			return true end
-function modifier_item_imba_silver_edge_break:IsPurgeException() 	return true end
+function modifier_item_imba_silver_edge_break:IsPurgable() 			return false end
+function modifier_item_imba_silver_edge_break:IsPurgeException() 	return false end
 function modifier_item_imba_silver_edge_break:CheckState() return {[MODIFIER_STATE_PASSIVES_DISABLED] = true} end
 function modifier_item_imba_silver_edge_break:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE} end
 function modifier_item_imba_silver_edge_break:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("break_slow")) end

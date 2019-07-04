@@ -7855,7 +7855,7 @@
 		"SideShop"						"0"
 		"SecretShop"					"1"
 		"ItemStackable"					"1"
-		"IsTempestDoubleClonable"		"0"
+		"IsTempestDoubleClonable"		"1"
 		"ItemInitialCharges"			"1"
 		"ItemDisassembleRule"			"DOTA_ITEM_DISASSEMBLE_NEVER"
 
@@ -8172,6 +8172,7 @@
 		"ItemKillable"					"1"
 		"ItemPurchasable"				"0"
 		"ItemSellable"					"1"
+		"IsTempestDoubleClonable"		"0"
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -9225,6 +9226,7 @@
 		"ItemInitialCharges"			"1"
 		"ItemRequiresCharges" 			"1"
 		"SideShop"						"0"
+		"IsTempestDoubleClonable"		"0"
 		"ItemDeclarations"				"DECLARE_PURCHASES_TO_TEAMMATES"
 		"ItemShareability"				"ITEM_FULLY_SHAREABLE_STACKING"
 
@@ -9593,6 +9595,7 @@
 		"ItemStackable"							"0"
 		"ItemRequiresCharges"					"0"
 		"ItemDisassembleRule"					"DOTA_ITEM_DISASSEMBLE_NEVER"
+		"IsTempestDoubleClonable"				"0"
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
@@ -9664,6 +9667,7 @@
 		"ItemStackable"							"0"
 		"ItemRequiresCharges"					"0"
 		"ItemDisassembleRule"					"DOTA_ITEM_DISASSEMBLE_NEVER"
+		"IsTempestDoubleClonable"				"0"
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
@@ -9736,6 +9740,7 @@
 		"ItemStackable"							"0"
 		"ItemRequiresCharges"					"0"
 		"ItemDisassembleRule"					"DOTA_ITEM_DISASSEMBLE_NEVER"
+		"IsTempestDoubleClonable"				"0"
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
@@ -9807,6 +9812,7 @@
 		"ItemStackable"							"0"
 		"ItemRequiresCharges"					"0"
 		"ItemDisassembleRule"					"DOTA_ITEM_DISASSEMBLE_NEVER"
+		"IsTempestDoubleClonable"				"0"
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
@@ -9878,6 +9884,7 @@
 		"ItemStackable"							"0"
 		"ItemRequiresCharges"					"0"
 		"ItemDisassembleRule"					"DOTA_ITEM_DISASSEMBLE_NEVER"
+		"IsTempestDoubleClonable"				"0"
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------

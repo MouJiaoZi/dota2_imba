@@ -224,7 +224,7 @@ function modifier_imba_sadist_stack:OnDeath(keys)
 	if self:GetParent() ~= self:GetCaster() or self:GetCaster():PassivesDisabled() or keys.attacker ~= self:GetCaster() then
 		return
 	end
-	local stack = keys.unit:IsRealHero() and self:GetAbility():GetSpecialValueFor("hero_multiplier") or 1
+	local stack = keys.unit:IsTrueHero() and self:GetAbility():GetSpecialValueFor("hero_multiplier") or 1
 	for i=1,stack do
 		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_sadist_effect", {duration = self:GetAbility():GetSpecialValueFor("regen_duration")})
 	end

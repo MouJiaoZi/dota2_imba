@@ -8,14 +8,35 @@ LinkLuaModifier("modifier_imba_moon_shard_consume", "items/item_moon_shard", LUA
 function item_imba_moon_shard:GetIntrinsicModifierName() return "modifier_imba_moon_shard_slot" end
 
 function item_imba_moon_shard:CastFilterResultTarget(target)
-	if not target:IsRealHero() or IsEnemy(self:GetCaster(), target) then
-		return UF_FAIL_CUSTOM
+	if IsServer() then
+		if not target:IsTrueHero() or IsEnemy(self:GetCaster(), target) then
+			return UF_FAIL_OTHER
+		elseif self:GetCaster():IsTempestDouble() or target:IsTempestDouble() then
+			return UF_FAIL_CUSTOM
+		else
+			return UF_SUCCESS
+		end
 	else
+		if not target:IsTrueHero() or IsEnemy(self:GetCaster(), target) then
+			return UF_FAIL_OTHER
+		else
+			return UF_SUCCESS
+		end
+	end
+end
+
+function item_imba_moon_shard:GetCustomCastErrorTarget(target) return "IMBA_HUD_ERROR_TEMPEST_DOUBLE" end
+
+function item_imba_moon_shard:CastFilterResultLocation(pos)
+	if IsServer() then
+		if self:GetCaster():IsTempestDouble() then
+			return UF_FAIL_CUSTOM
+		end
 		return UF_SUCCESS
 	end
 end
 
-function item_imba_moon_shard:GetCustomCastErrorTarget(target) return "dota_hud_error_cant_cast_on_other" end
+function item_imba_moon_shard:GetCustomCastErrorLocation(pos) return "IMBA_HUD_ERROR_TEMPEST_DOUBLE" end
 
 function item_imba_moon_shard:OnSpellStart()
 	local caster = self:GetCaster()

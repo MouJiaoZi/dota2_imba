@@ -154,7 +154,7 @@ function modifier_imba_frost_armor:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit ~= self:GetParent() or keys.attacker:IsBuilding() or keys.attacker:IsOther() then
+	if keys.unit ~= self:GetParent() or keys.attacker:IsBuilding() or keys.attacker:IsOther() or not IsEnemy(keys.unit, keys.attacker) then
 		return
 	end
 	keys.attacker:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_frost_armor_slow", {duration = self:GetAbility():GetSpecialValueFor("slow_duration")})
@@ -257,7 +257,7 @@ function imba_lich_chain_frost:OnProjectileHit_ExtraData(target, location, keys)
 	if keys.first == 1 then
 		target:TriggerSpellReflect(self)
 		target:TriggerSpellAbsorb(self)
-		target:Interrupt()
+		target:InterruptChannel()
 	end
 	target:EmitSound("Hero_Lich.ChainFrostImpact.Hero")
 	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_chain_frost", {duration = self:GetSpecialValueFor("slow_duration")})

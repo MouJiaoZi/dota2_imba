@@ -249,7 +249,7 @@ function IMBA:DamageFilter(keys)
 	-- True Hero Killed
 	------------------------------------------------------------------------------------
 
-	if target:IsRealHero() and keys.damage >= target:GetHealth() and IsInTable(target, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+	if target:IsTrueHero() and keys.damage >= target:GetHealth() and IsInTable(target, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
 		local victim = target
 		local game_time = GameRules:GetDOTATime(false, false)
 		local base_gold = victim:GetLevel() * 10
@@ -608,7 +608,7 @@ function IMBA:ItemPickFilter(keys)
 	-- IMBA Aegis Pick Up
 	------------------------------------------------------------------------------------
 
-	if item:GetAbilityName() == "item_aegis" and not picker:IsBoss() and picker:IsRealHero() then
+	if item:GetAbilityName() == "item_aegis" and not picker:IsBoss() and picker:IsTrueHero() then
 		picker:AddNewModifier(picker, nil, "modifier_imba_aegis", {duration = 300.0})
 		local stock = picker:GetItemInSlot(0)
 		if stock then
@@ -939,7 +939,7 @@ function IMBA:PlayerPickUpIllusionRune(player)
 	local enemies = FindUnitsInRadius(baseHero:GetTeamNumber(), Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_ANY_ORDER, false)
 	local delay = 0
 	for _, enemy in pairs(enemies) do
-		if enemy:IsRealHero() and not enemy:IsClone() and not enemy:IsTempestDouble() and not enemy:IsCreep() and not enemy:IsCreature() then
+		if enemy:IsTrueHero() and not enemy:IsClone() and not enemy:IsTempestDouble() and not enemy:IsCreep() and not enemy:IsCreature() then
 			Timers:CreateTimer(delay, function()
 				local illusion = IllusionManager:CreateIllusion(baseHero, (enemy:GetAbsOrigin() + enemy:GetForwardVector() * -100), enemy:GetForwardVector(), 10, 50, 0, 5.0, baseHero, nil)
 				illusion:SetForceAttackTarget(enemy)

@@ -3078,6 +3078,52 @@
 	}
 	
 	//=================================================================================================================
+	// Arc Warden: Scepter
+	//=================================================================================================================
+	"imba_arc_warden_mold_rune"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"arc_warden_scepter"
+		"MaxLevel" 						"1"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_SHOW_IN_GUIDES | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS"
+		"FightRecapLevel"				"1"
+		"MaxLevel"						"1"
+		"HasScepterUpgrade"				"1"
+		"ScriptFile"					"hero/hero_arc_warden.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.15"
+		"AbilityCastAnimation"			"ACT_DOTA_OVERRIDE_ABILITY_4"
+		"AbilityCastGestureSlot"		"DEFAULT"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"0"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"400"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"cooldown"				"120.0"
+			}
+		}
+	}
+
+
+	//=================================================================================================================
 	// Axe Berserker's Call
 	//=================================================================================================================
 	"imba_axe_berserkers_call"
@@ -6764,7 +6810,7 @@
 			"07"
 			{
 				"var_type"							"FIELD_INTEGER"
-				"pure_pct"							"10 30 50"
+				"pure_pct"							"10 20 30"
 			}
 			"08"
 			{
@@ -11704,6 +11750,34 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"global_slow"			"40"
+			}
+		}
+	}
+
+	//=================================================================================================================
+	// Meepo: Stand Divided We
+	//=================================================================================================================
+	"imba_meepo_stand_we_divided"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"meepo_imba_passive"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_AUTOCAST"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"MaxLevel"						"1"
+		"ScriptFile"					"hero/hero_meepo.lua"
+
+		"AbilityCooldown"				"1.3"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"800"
 			}
 		}
 	}

@@ -43,7 +43,7 @@ function modifier_imba_demonic_power:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or not keys.target:IsAlive() or (not keys.target:IsRealHero() and not keys.target:IsBuilding()) then
+	if keys.attacker ~= self:GetParent() or self:GetParent():IsIllusion() or not keys.target:IsAlive() or (not keys.target:IsTrueHero() and not keys.target:IsBuilding()) then
 		return
 	end
 	self:SetStackCount(math.min(self:GetStackCount() + self:GetAbility():GetSpecialValueFor("attack_gain"), self:GetAbility():GetSpecialValueFor("max_power")))
@@ -286,7 +286,7 @@ function modifier_imba_cmetamorphosis_aura:OnCreated()
 end
 
 function modifier_imba_cmetamorphosis_aura:OnIntervalThink()
-	if self:GetParent():IsRealHero() then
+	if self:GetParent():IsTrueHero() then
 		CostDemonicPower(self:GetParent(), self:GetAbility():GetSpecialValueFor("power_cost"))
 		if GetDemonicPower(self:GetParent()) <= 0 then
 			if self:GetParent():HasAbility("imba_terrorblade_demonic_power") then
@@ -369,7 +369,7 @@ function modifier_imba_metamorphosis:OnAttackLanded(keys)
 	if keys.attacker == self:GetParent() then
 		keys.target:EmitSound("Hero_Terrorblade_Morphed.projectileImpact")
 	end
-	if keys.attacker == self:GetParent() and self:GetParent():IsRealHero() and GetDemonicPower(self:GetParent()) < self:GetAbility():GetSpecialValueFor("t2_power") then
+	if keys.attacker == self:GetParent() and self:GetParent():IsTrueHero() and GetDemonicPower(self:GetParent()) < self:GetAbility():GetSpecialValueFor("t2_power") then
 		local target_type = DOTA_UNIT_TARGET_BASIC
 		if GetDemonicPower(self:GetParent()) >= self:GetAbility():GetSpecialValueFor("t1_power") then
 			target_type = target_type + DOTA_UNIT_TARGET_HERO
@@ -387,7 +387,7 @@ function modifier_imba_metamorphosis:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if not self:GetParent():IsRealHero() or keys.attacker ~= self:GetParent() or not keys.unit:IsCreep() or GetDemonicPower(self:GetParent()) > self:GetAbility():GetSpecialValueFor("t1_power") then
+	if not self:GetParent():IsTrueHero() or keys.attacker ~= self:GetParent() or not keys.unit:IsCreep() or GetDemonicPower(self:GetParent()) > self:GetAbility():GetSpecialValueFor("t1_power") then
 		return
 	end
 	CostDemonicPower(self:GetParent(), (0 - self:GetAbility():GetSpecialValueFor("creep_power_gain")))

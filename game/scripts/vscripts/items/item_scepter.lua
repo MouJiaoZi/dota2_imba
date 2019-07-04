@@ -41,16 +41,17 @@ function modifier_imba_consumable_scepter_consumed:IsHidden() 			return false en
 function modifier_imba_consumable_scepter_consumed:IsPurgable() 		return false end
 function modifier_imba_consumable_scepter_consumed:IsPurgeException() 	return false end
 function modifier_imba_consumable_scepter_consumed:GetAttributes() return MODIFIER_ATTRIBUTE_PERMANENT end
+function modifier_imba_consumable_scepter_consumed:RemoveOnDeath() return self:GetParent():IsIllusion() end
 function modifier_imba_consumable_scepter_consumed:GetTexture() return "imba_ultimate_scepter_synth" end
 
 function modifier_imba_consumable_scepter_consumed:OnCreated()
-	self:SetAbilityKV()
+	--self:SetAbilityKV()
 end
 
 function modifier_imba_consumable_scepter_consumed:DeclareFunctions() return {MODIFIER_PROPERTY_IS_SCEPTER, MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_MANA_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS} end
-function modifier_imba_consumable_scepter_consumed:GetModifierHealthBonus() return self:GetAbilityKV("bonus_health") end
-function modifier_imba_consumable_scepter_consumed:GetModifierManaBonus() return self:GetAbilityKV("bonus_mana") end
-function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Strength() return self:GetAbilityKV("bonus_all_stats") end
-function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Intellect() return self:GetAbilityKV("bonus_all_stats") end
-function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Agility() return self:GetAbilityKV("bonus_all_stats") end
+function modifier_imba_consumable_scepter_consumed:GetModifierHealthBonus() return 300 end
+function modifier_imba_consumable_scepter_consumed:GetModifierManaBonus() return 250 end
+function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Strength() return 14 end
+function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Intellect() return 14 end
+function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Agility() return 14 end
 function modifier_imba_consumable_scepter_consumed:GetModifierScepter() return 1 end

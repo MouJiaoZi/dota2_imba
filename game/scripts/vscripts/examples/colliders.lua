@@ -119,7 +119,7 @@ if testCount == 0 then
   ring = {unit = hero, radius = 400, alpha = 0, rgb = Vector(200,50,50)}
 
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
   collider.postaction = function(self, collider, collided)
     print("post: " .. collided:GetName() .. " -- " .. VectorDistance(collider:GetAbsOrigin(), collided:GetAbsOrigin()))
@@ -220,7 +220,7 @@ if testCount == 5 then
   collider.radius = 400
   collider.draw = {color = Vector(200,50,50), alpha = 0}
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -232,7 +232,7 @@ if testCount == 6 then
   collider.force = 1000
   collider.linear = false
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 if testCount == 7 then
@@ -244,7 +244,7 @@ if testCount == 7 then
   collider.force = 1000
   collider.linear = true
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -258,7 +258,7 @@ if testCount == 8 then
   collider.force = 1000
   collider.linear = true
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -270,7 +270,7 @@ if testCount == 9 then
   collider.force = 1000
   collider.linear = false
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -281,7 +281,7 @@ if testCount == 10 then
   collider.radius = 200
   collider.multiplier = 1
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -292,7 +292,7 @@ if testCount == 11 then
   collider.radius = 200
   collider.blockRadius = 100
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -304,7 +304,7 @@ if testCount == 12 then
   collider.blockRadius = 200
   collider.test = function(self, collider, collided)
   mass = 5
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -316,7 +316,7 @@ if testCount == 13 then
   collider.blockRadius = 200
   collider.elasticity = 0
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -328,7 +328,7 @@ if testCount == 14 then
   collider.blockRadius = 0
   collider.elasticity = 0
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 
@@ -342,14 +342,14 @@ if testCount == 15 then
   collider.force = 1000
   collider.linear = true
   collider.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 
   collider2 = hero:AddColliderFromProfile("blocker")
   collider.draw = {color = Vector(200,200,50), alpha = 0}
   collider2.radius = 400
   collider2.test = function(self, collider, collided)
-    return IsPhysicsUnit(collided) or (collided.IsRealHero and collided:IsRealHero())
+    return IsPhysicsUnit(collided) or (collided.IsTrueHero and collided:IsTrueHero())
   end
 end
 

@@ -276,7 +276,7 @@ function imba_axe_culling_blade:OnSpellStart()
 			ParticleManager:ReleaseParticleIndex(pfx)
 			ally:AddNewModifier(caster, self, "modifier_imba_axe_culling_blade_sprint", {duration = buff_duration})
 		end
-		if target:IsRealHero() then
+		if target:IsTrueHero() then
 			self:EndCooldown()
 		end
 	else

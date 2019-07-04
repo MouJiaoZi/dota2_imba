@@ -16,7 +16,7 @@ function modifier_imba_vanguard_passive:IsPurgeException() 	return false end
 function modifier_imba_vanguard_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_vanguard_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_CONSTANT_BLOCK, MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE} end
 function modifier_imba_vanguard_passive:GetModifierPhysical_ConstantBlock()
-	if self:GetParent():IsRealHero() then
+	if self:GetParent():IsTrueHero() then
 		return (self:GetParent():GetLevel() + self:GetAbility():GetSpecialValueFor("base_damage_block"))
 	else
 		return nil
@@ -73,7 +73,7 @@ function modifier_imba_crimson_guard_passive:IsPurgeException() return false end
 function modifier_imba_crimson_guard_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_imba_crimson_guard_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_CONSTANT_BLOCK, MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
 function modifier_imba_crimson_guard_passive:GetModifierPhysical_ConstantBlock()
-	if self:GetParent():IsRealHero() then
+	if self:GetParent():IsTrueHero() then
 		return (self:GetParent():GetLevel() + self:GetAbility():GetSpecialValueFor("base_damage_block"))
 	else
 		return nil
@@ -151,7 +151,7 @@ function modifier_imba_greatwyrm_plate_passive:IsPurgable() 		return false end
 function modifier_imba_greatwyrm_plate_passive:IsPurgeException() 	return false end
 function modifier_imba_greatwyrm_plate_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_CONSTANT_BLOCK, MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS, MODIFIER_PROPERTY_MANA_BONUS, MODIFIER_PROPERTY_STATUS_RESISTANCE, MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
 function modifier_imba_greatwyrm_plate_passive:GetModifierPhysical_ConstantBlock()
-	if self:GetParent():IsRealHero() then
+	if self:GetParent():IsTrueHero() then
 		return (self:GetParent():GetLevel() + self:GetAbility():GetSpecialValueFor("base_damage_block"))
 	else
 		return nil
@@ -203,7 +203,7 @@ function modifier_item_greatwyrm_plate_active:IsPurgeException() 	return false e
 function modifier_item_greatwyrm_plate_active:DeclareFunctions() return {MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_PHYSICAL_CONSTANT_BLOCK} end
 function modifier_item_greatwyrm_plate_active:GetModifierPhysicalArmorBonus() return self:GetAbility():GetSpecialValueFor("active_armor") end
 function modifier_item_greatwyrm_plate_active:GetModifierPhysical_ConstantBlock()
-	if self:GetParent():IsRealHero() then
+	if self:GetParent():IsTrueHero() then
 		return (self:GetParent():GetLevel() + self:GetAbility():GetSpecialValueFor("base_damage_block"))
 	else
 		return nil

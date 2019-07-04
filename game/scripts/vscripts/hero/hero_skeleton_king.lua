@@ -428,7 +428,7 @@ function modifier_imba_reincarnation_scepter_aura:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit == self:GetParent() and self.hp <= keys.damage and self:GetParent():IsRealHero() then
+	if keys.unit == self:GetParent() and self.hp <= keys.damage and self:GetParent():IsTrueHero() then
 		self:GetParent():EmitSound("Hero_SkeletonKing.Reincarnate.Ghost")
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_reincarnation_scepter_wraith", {duration = self:GetAbility():GetSpecialValueFor("wraith_duration_scepter"), attacker = keys.attacker:entindex()})
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_reincarnation_scepter_no", {duration = self:GetAbility():GetSpecialValueFor("wraith_duration_scepter") + FrameTime()})

@@ -258,12 +258,12 @@ function modifier_imba_march_of_the_machines_thinker:GetMinHealth() return 1 end
 
 function modifier_imba_march_of_the_machines_thinker:GetModifierTotalDamageOutgoing_Percentage(keys)
 	if IsServer() then
-		if keys.target:IsRealHero() then
+		if keys.target:IsTrueHero() then
 			self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_march_of_the_machines_cooldown", {duration = self:GetAbility():GetSpecialValueFor("hero_cooldown")})
 		end
 		if (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("break_distance") then
 			return (self:GetAbility():GetSpecialValueFor("break_dmg_pct") - 100)
-		elseif keys.target:IsRealHero() then
+		elseif keys.target:IsTrueHero() then
 			return (self:GetAbility():GetSpecialValueFor("break_dmg_pct") - 100)
 		else
 			return 100

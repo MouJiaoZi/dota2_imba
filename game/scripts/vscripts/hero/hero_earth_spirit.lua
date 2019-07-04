@@ -480,7 +480,7 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 			if self:GetStackCount() == 1 then
 				enemy:AddNewEarthSpiritModifier(self:GetParent(), ability, "modifier_imba_rolling_boulder_slow", {duration = ability:GetSpecialValueFor("slow_duration")})
 			end
-			if enemy:IsRealHero() then
+			if enemy:IsTrueHero() then
 				enemy:EmitSound("Hero_EarthSpirit.RollingBoulder.Target")
 				if not self:GetParent():HasTalent("special_bonus_imba_earth_spirit_1") then
 					self:SetStackCount(2)

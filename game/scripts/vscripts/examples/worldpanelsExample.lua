@@ -8,7 +8,7 @@ function WorldPanelExample:OnNPCSpawned(keys)
   --Apply a worldpanel health bar to every spawned hero unit
   local npc = EntIndexToHScript(keys.entindex)
 
-  if npc.IsRealHero and npc:IsRealHero() and not npc.worldPanel then
+  if npc.IsTrueHero and npc:IsTrueHero() and not npc.worldPanel then
     npc:AddNewModifier(npc, nil, "modifier_no_health", {})
 
     -- entityHeight could be loaded from the npc_heroes.txt "HealthBarOffset"

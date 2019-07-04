@@ -99,7 +99,7 @@ function modifier_imba_fetal_bonds_target:OnTakeDamage(keys)
 end
 
 function modifier_imba_fetal_bonds_target:OnDeath(keys)
-	if not IsServer() or keys.unit ~= self:GetParent() or not self:GetParent():IsRealHero() or self:GetCaster():HasModifier("modifier_imba_fetal_bonds_refresh_cooldown") then
+	if not IsServer() or keys.unit ~= self:GetParent() or not self:GetParent():IsTrueHero() or self:GetCaster():HasModifier("modifier_imba_fetal_bonds_refresh_cooldown") then
 		return
 	end
 	self:GetAbility():EndCooldown()
@@ -291,7 +291,7 @@ function modifier_imba_upheaval_npc:GetModifierIncomingDamage_Percentage(keys)
 		return
 	end
 	local damage = self:GetAbility():GetSpecialValueFor("hero_damage")
-	if not keys.attacker:IsRealHero() and not keys.attacker:IsTower() and not keys.attacker:IsBoss() then
+	if not keys.attacker:IsTrueHero() and not keys.attacker:IsTower() and not keys.attacker:IsBoss() then
 		damage = 1
 	end
 	local health = self:GetParent():GetHealth()

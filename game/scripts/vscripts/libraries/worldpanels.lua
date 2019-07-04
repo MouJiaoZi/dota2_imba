@@ -126,7 +126,7 @@ function WorldPanels:OnEntityKilled( keys )
 
   local panels = WorldPanels.entToPanels[killedEnt]
 
-  if not killedEnt.IsRealHero or not killedEnt:IsRealHero() then
+  if not killedEnt.IsTrueHero or not killedEnt:IsTrueHero() then
     if panels then
       for i=1,#panels do
         local panel = panels[i]

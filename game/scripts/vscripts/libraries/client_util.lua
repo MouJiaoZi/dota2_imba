@@ -118,3 +118,7 @@ end
 function C_DOTA_BaseNPC:IsUnit()
 	return self:IsHero() or self:IsCreep() or self:IsBoss()
 end
+
+function C_DOTA_BaseNPC:IsTrueHero()
+	return (not self:HasModifier("modifier_arc_warden_tempest_double") and self:IsRealHero() and not self:HasModifier("modifier_imba_meepo_clone_controller"))
+end

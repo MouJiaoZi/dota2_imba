@@ -255,6 +255,12 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 	hIllusion:SetMaxHealth(hBaseUnit:GetMaxHealth())
 	hIllusion:SetHealth(hBaseUnit:GetHealth())
 	hIllusion:SetMana(hBaseUnit:GetMana())
+	if hBaseUnit:GetModifierStackCount("modifier_imba_moon_shard_consume", nil) > 0 then
+		hIllusion:AddNewModifier(hBaseUnit, nil, "modifier_imba_moon_shard_consume", {}):SetStackCount(hBaseUnit:GetModifierStackCount("modifier_imba_moon_shard_consume", nil))
+	end
+	if hBaseUnit:HasModifier("modifier_imba_consumable_scepter_consumed") then
+		hIllusion:AddNewModifier(hBaseUnit, nil, "modifier_imba_consumable_scepter_consumed", {})
+	end
 end
 
 function IllusionManager:Wipe(hIllusion)

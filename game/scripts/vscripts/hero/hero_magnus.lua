@@ -66,7 +66,7 @@ function imba_magnus_shockwave:OnProjectileHit_ExtraData(target, location, keys)
 							ability = self, --Optional.
 							}
 		ApplyDamage(damageTable)
-		if EntIndexToHScript(keys.thinker).hitted < self:GetSpecialValueFor("max_secondary") and target:IsRealHero() then
+		if EntIndexToHScript(keys.thinker).hitted < self:GetSpecialValueFor("max_secondary") and target:IsTrueHero() then
 			EntIndexToHScript(keys.thinker).hitted = EntIndexToHScript(keys.thinker).hitted + 1
 			local angle = self:GetCaster():HasScepter() and 2 or 1
 			local secondary_angle = self:GetSpecialValueFor("secondary_angle")

@@ -29,7 +29,7 @@ item_imba_rapier = class({})
 function item_imba_rapier:GetIntrinsicModifierName() return "modifier_imba_rapier_unique" end
 
 function item_imba_rapier:OnOwnerDied()
-	if (not self:GetCaster():IsRealHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
+	if (not self:GetCaster():IsTrueHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		self:LaunchLoot(false, 250, 0.5, self:GetCaster():GetAbsOrigin() + RandomVector(100))
 		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
@@ -61,7 +61,7 @@ item_imba_rapier_2 = class({})
 function item_imba_rapier_2:GetIntrinsicModifierName() return "modifier_imba_rapier_three_unique" end
 
 function item_imba_rapier_2:OnOwnerDied()
-	if (not self:GetCaster():IsRealHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
+	if (not self:GetCaster():IsTrueHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		local pos = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100
 		pos = RotatePosition(self:GetCaster():GetAbsOrigin(), QAngle(0, RandomInt(0, 360), 0), pos)
@@ -99,7 +99,7 @@ item_imba_rapier_magic = class({})
 function item_imba_rapier_magic:GetIntrinsicModifierName() return "modifier_imba_rapier_magic_unique" end
 
 function item_imba_rapier_magic:OnOwnerDied()
-	if (not self:GetCaster():IsRealHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
+	if (not self:GetCaster():IsTrueHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		self:LaunchLoot(false, 250, 0.5, self:GetCaster():GetAbsOrigin() + RandomVector(100))
 		Notifications:BottomToAll({hero=self:GetPurchaser():GetUnitName(), duration=5.0, class="NotificationMessage"})
@@ -140,7 +140,7 @@ item_imba_rapier_magic_2 = class({})
 function item_imba_rapier_magic_2:GetIntrinsicModifierName() return "modifier_imba_rapier_magic_three_unique" end
 
 function item_imba_rapier_magic_2:OnOwnerDied()
-	if (not self:GetCaster():IsRealHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
+	if (not self:GetCaster():IsTrueHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		local pos = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100
 		pos = RotatePosition(self:GetCaster():GetAbsOrigin(), QAngle(0, RandomInt(0, 360), 0), pos)
@@ -189,7 +189,7 @@ item_imba_rapier_cursed = class({})
 function item_imba_rapier_cursed:GetIntrinsicModifierName() return "modifier_imba_rapier_super_passive" end
 
 function item_imba_rapier_cursed:OnOwnerDied()
-	if (not self:GetCaster():IsRealHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
+	if (not self:GetCaster():IsTrueHero() and not self:GetCaster():IsIllusion()) or not self:GetCaster():IsReincarnating() then
 		self:GetCaster():DropItemAtPositionImmediate(self, self:GetCaster():GetAbsOrigin())
 		local pos = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100
 		pos = RotatePosition(self:GetCaster():GetAbsOrigin(), QAngle(0, RandomInt(0, 360), 0), pos)

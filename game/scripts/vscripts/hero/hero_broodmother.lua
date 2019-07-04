@@ -568,7 +568,7 @@ function modifier_imba_insatiable_hunger:OnHeroKilled(keys)
 	if keys.target == self:GetParent() then
 		self:Destroy()
 	end
-	if keys.target:IsRealHero() and (self:GetParent():GetAbsOrigin() - keys.target:GetAbsOrigin()):Length2D() <= self:GetAbility():GetSpecialValueFor("strike_refresh_radius") then
+	if keys.target:IsTrueHero() and (self:GetParent():GetAbsOrigin() - keys.target:GetAbsOrigin()):Length2D() <= self:GetAbility():GetSpecialValueFor("strike_refresh_radius") then
 		if self:GetParent():HasAbility("imba_broodmother_spider_strikes") then
 			self:GetParent():FindAbilityByName('imba_broodmother_spider_strikes'):EndCooldown()
 		end

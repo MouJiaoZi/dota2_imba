@@ -616,6 +616,9 @@ function item_imba_manta:GetIntrinsicModifierName() return "modifier_imba_manta_
 
 function item_imba_manta:OnSpellStart()
 	local caster = self:GetCaster()
+	if not caster:IsHero() then
+		return
+	end
 	caster:AddNewModifier(caster, self, "modifier_imba_manta_active_invuln", {duration = self:GetSpecialValueFor("invuln_duration")})
 	caster:Purge(false, true, false, false, false)
 end

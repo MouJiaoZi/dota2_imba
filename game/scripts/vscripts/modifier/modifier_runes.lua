@@ -7,8 +7,14 @@ function modifier_imba_rune_doubledamage:IsPurgeException() 	return false end
 function modifier_imba_rune_doubledamage:GetTexture() return "rune_doubledamage" end
 function modifier_imba_rune_doubledamage:GetEffectName() return "particles/generic_gameplay/rune_doubledamage_owner.vpcf" end
 function modifier_imba_rune_doubledamage:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_doubledamage:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE} end
+function modifier_imba_rune_doubledamage:DeclareFunctions() return {MODIFIER_PROPERTY_BASEDAMAGEOUTGOING_PERCENTAGE, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_rune_doubledamage:GetModifierBaseDamageOutgoing_Percentage() return 100 end
+
+function modifier_imba_rune_doubledamage:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
+	end
+end
 
 function modifier_imba_rune_doubledamage:IsAura() return true end
 function modifier_imba_rune_doubledamage:GetAuraDuration() return 0.1 end
@@ -45,10 +51,16 @@ function modifier_imba_rune_haste:IsPurgeException() 	return false end
 function modifier_imba_rune_haste:GetTexture() return "rune_haste" end
 function modifier_imba_rune_haste:GetEffectName() return "particles/generic_gameplay/rune_haste_owner.vpcf" end
 function modifier_imba_rune_haste:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_rune_haste:GetIMBAMaxMovespeed() return 10000 end
 function modifier_imba_rune_haste:GetModifierMoveSpeedBonus_Percentage() return 70 end
 function modifier_imba_rune_haste:GetModifierAttackSpeedBonus_Constant() return 70 end
+
+function modifier_imba_rune_haste:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
+	end
+end
 
 function modifier_imba_rune_haste:IsAura() return true end
 function modifier_imba_rune_haste:GetAuraDuration() return 0.1 end
@@ -125,18 +137,25 @@ function modifier_imba_rune_regeneration:IsPurgeException() 	return false end
 function modifier_imba_rune_regeneration:GetTexture() return "rune_regen" end
 function modifier_imba_rune_regeneration:GetEffectName() return "particles/generic_gameplay/rune_regen_owner.vpcf" end
 function modifier_imba_rune_regeneration:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_regeneration:DeclareFunctions() return {MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE, MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE, MODIFIER_EVENT_ON_TAKEDAMAGE} end
+function modifier_imba_rune_regeneration:DeclareFunctions() return {MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE, MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE, MODIFIER_EVENT_ON_TAKEDAMAGE, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_rune_regeneration:GetModifierTotalPercentageManaRegen() return 5 end
 function modifier_imba_rune_regeneration:GetModifierHealthRegenPercentage() return 5 end
+
 function modifier_imba_rune_regeneration:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if IsEnemy(keys.attacker, self:GetParent()) and keys.unit == self:GetParent() and (keys.attacker:IsRealHero() or keys.attacker:IsBoss()) then
+	if IsEnemy(keys.attacker, self:GetParent()) and keys.unit == self:GetParent() and (keys.attacker:IsTrueHero() or keys.attacker:IsBoss()) then
 		self:DecrementStackCount()
 		if self:GetStackCount() == 0 then
 			self:Destroy()
 		end
+	end
+end
+
+function modifier_imba_rune_regeneration:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
 	end
 end
 
@@ -176,10 +195,16 @@ function modifier_imba_rune_arcane:IsPurgeException() 	return false end
 function modifier_imba_rune_arcane:GetTexture() return "rune_arcane" end
 function modifier_imba_rune_arcane:GetEffectName() return "particles/generic_gameplay/rune_arcane_owner.vpcf" end
 function modifier_imba_rune_arcane:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_arcane:DeclareFunctions() return {MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE} end
+function modifier_imba_rune_arcane:DeclareFunctions() return {MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE, MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING, MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE, MODIFIER_EVENT_ON_DEATH} end
 function modifier_imba_rune_arcane:GetModifierPercentageCooldown() return 40 end
 function modifier_imba_rune_arcane:GetModifierPercentageManacostStacking() return 40 end
 function modifier_imba_rune_arcane:GetModifierSpellAmplify_Percentage() return 40 end
+
+function modifier_imba_rune_arcane:OnDeath(keys)
+	if IsServer() and keys.unit == self:GetParent() then
+		self:Destroy()
+	end
+end
 
 function modifier_imba_rune_arcane:IsAura() return true end
 function modifier_imba_rune_arcane:GetAuraDuration() return 0.1 end

@@ -164,7 +164,7 @@ function modifier_imba_necromastery_counter:OnDeath(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.unit:GetTeamNumber() == self:GetParent():GetTeamNumber() then
 		return 
 	end
-	local souls = keys.unit:IsRealHero() and self:GetAbility():GetSpecialValueFor("hero_kill_souls") or 1
+	local souls = keys.unit:IsTrueHero() and self:GetAbility():GetSpecialValueFor("hero_kill_souls") or 1
 	local max_soul = self:GetAbility():GetSpecialValueFor("max_souls")
 	for i=1, souls do
 		if #self:GetParent():FindAllModifiersByName("modifier_imba_necromastery_perm") < max_soul then
@@ -480,7 +480,7 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 			return false
 		end
 		thinker.hitted[#thinker.hitted+1] = target
-		if target:IsRealHero() and not IsInTable(target, EntIndexToHScript(keys.thinker_sce).steal) then
+		if target:IsTrueHero() and not IsInTable(target, EntIndexToHScript(keys.thinker_sce).steal) then
 			EntIndexToHScript(keys.thinker_sce).steal[#EntIndexToHScript(keys.thinker_sce).steal+1] = target
 			local cast_pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 			local distance = (cast_pos - target:GetAbsOrigin()):Length2D()

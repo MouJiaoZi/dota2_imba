@@ -104,7 +104,7 @@ var IMBAHeroes =
 ["npc_dota_hero_nyx_assassin", 1],
 ["npc_dota_hero_keeper_of_the_light", 0],
 ["npc_dota_hero_visage", 2],
-["npc_dota_hero_meepo", 0],
+["npc_dota_hero_meepo", 2],
 ["npc_dota_hero_magnataur", 1],
 ["npc_dota_hero_centaur", 1],
 ["npc_dota_hero_slark", 2],

@@ -368,8 +368,7 @@ function GameMode:OnNPCSpawned(keys)
 	local npc = EntIndexToHScript(keys.entindex)
 
 	--Game Start Hero Set
-	if npc:IsRealHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
-		
+	if npc:IsTrueHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
 		Timers:CreateTimer({useGameTime = false, endTime = FrameTime(),
 			callback = function()
 				
@@ -382,13 +381,6 @@ function GameMode:OnNPCSpawned(keys)
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1].order = 0
 				end
 
-				-- Set Talent Ability
-				for i = 0, 23 do
-					local ability = npc:GetAbilityByIndex(i)
-					if ability and ability.IsTalentAbility and ability:IsTalentAbility() then
-						ability:SetLevel(1)
-					end
-				end
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
 				HeroItems:SetHeroItemTable(npc)
@@ -451,7 +443,7 @@ function GameMode:OnNPCSpawned(keys)
 		end
 	end
 
-	if npc:IsRealHero() and npc.firstSpawn and GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
+	if npc:IsTrueHero() and npc.firstSpawn and GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
 		IMBAEvents:DeathMatchRandomOMG(npc)
 	end
 
@@ -546,6 +538,35 @@ function GameMode:OnNPCSpawned(keys)
 					npc:SwapAbilities(hero.bear_ak, "generic_hidden", true, false)
 				end
 			end
+		end
+	end
+
+	if npc:IsTempestDouble() then
+		local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1]
+		if not hero then
+			return
+		end
+		if hero:GetModifierStackCount("modifier_imba_moon_shard_consume", nil) > 0 then
+			npc:AddNewModifier(hero, nil, "modifier_imba_moon_shard_consume", {}):SetStackCount(hero:GetModifierStackCount("modifier_imba_moon_shard_consume", nil))
+		end
+		if hero:HasModifier("modifier_imba_consumable_scepter_consumed") then
+			npc:AddNewModifier(hero, nil, "modifier_imba_consumable_scepter_consumed", {})
+		end
+	end
+
+	if npc:GetUnitName() == "npc_dota_hero_meepo" and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] ~= nil and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] ~= npc then
+		local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1]
+		npc:AddNewModifier(hero, nil, "modifier_imba_meepo_clone_controller", {})
+		if GetMapName() ~= "dbii_death_match" and (IMBA_AK_ENABLE or GameRules:IsCheatMode()) and not npc:HasModifier("modifier_imba_ak_ability_controller") and not npc:HasModifier("modifier_imba_ak_ability_adder") and not npc:HasModifier("modifier_imba_ak_ability_loading") then
+			IMBAEvents:GiveAKAbility(npc)
+		end
+	end
+
+	-- Set Talent Ability
+	for i = 0, 23 do
+		local ability = npc:GetAbilityByIndex(i)
+		if ability and ability.IsTalentAbility and ability:IsTalentAbility() then
+			ability:SetLevel(1)
 		end
 	end
 end
@@ -788,6 +809,10 @@ function GameMode:OnEntityKilled( keys )
 
 	local victim = killed_unit
 
+	--[[if victim:HasModifier("modifier_imba_meepo_clone_controller") and CDOTA_PlayerResource.IMBA_PLAYER_HERO[victim:GetPlayerOwnerID() + 1] then
+		victim = CDOTA_PlayerResource.IMBA_PLAYER_HERO[victim:GetPlayerOwnerID() + 1]
+	end]]
+
 	if noDamageFilterUnits[victim:GetName()] then
 		return
 	end
@@ -814,7 +839,7 @@ function GameMode:OnEntityKilled( keys )
 	-- IMBA: Hero Kill
 	-------------------------------------------------------------------------------------------------
 
-	if victim:IsRealHero() then
+	if victim:IsTrueHero() then
 		--IMBAEvents:OnHeroKilled(victim, attacker)
 		xpcall((IMBAEvents:OnHeroKilled(victim, attacker)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 	end
@@ -854,7 +879,7 @@ function GameMode:OnEntityKilled( keys )
 	-------------------------------------------------------------------------------------------------
 
 	local function ReapersScytheKillCredit(ability, killed_unit)
-		if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsRealHero() then
+		if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsTrueHero() then
 			local buff = killed_unit:FindModifierByName("modifier_imba_reapers_scythe_permanent")
 			if buff then
 				buff:SetStackCount(buff:GetStackCount() + 1)
@@ -877,7 +902,7 @@ function GameMode:OnEntityKilled( keys )
 		end
 	end
 
-	if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsRealHero() then
+	if ability and ability:GetName() == "imba_necrolyte_reapers_scythe" and killed_unit:IsTrueHero() then
 		--ReapersScytheKillCredit(ability, killed_unit)
 		xpcall((ReapersScytheKillCredit(ability, killed_unit)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 	end
@@ -887,12 +912,12 @@ function GameMode:OnEntityKilled( keys )
 	-------------------------------------------------------------------------------------------------
 
 	local function ManaVoidKillCredit(ability, killed_unit)
-		if ability and ability:GetAbilityName() == "imba_antimage_mana_void" and killed_unit:IsRealHero() then
+		if ability and ability:GetAbilityName() == "imba_antimage_mana_void" and killed_unit:IsTrueHero() then
 			CreateModifierThinker(killed_unit, ability, "modifier_imba_mana_void_scepter", {},  Vector(30000,30000,5000), ability:GetCaster():GetTeamNumber(), false)
 		end
 	end
 
-	if ability and ability:GetName() == "imba_antimage_mana_void" and killed_unit:IsRealHero() and ability:GetCaster():HasScepter() then
+	if ability and ability:GetName() == "imba_antimage_mana_void" and killed_unit:IsTrueHero() and ability:GetCaster():HasScepter() then
 		xpcall((ManaVoidKillCredit(ability, killed_unit)), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 	end
 
@@ -942,9 +967,10 @@ end
 function GameMode:OnIllusionsCreated(keys)
 	DebugPrint('[BAREBONES] OnIllusionsCreated')
 	DebugPrintTable(keys)
-	PrintTable(keys)
+	--PrintTable(keys)
 
-	local originalEntity = EntIndexToHScript(keys.original_entindex)
+	local base = EntIndexToHScript(keys.original_entindex)
+	IMBAEvents:NormalIllusionCreated(GameRules:GetGameTime(), base)
 end
 
 -- This function is called whenever an item is combined to create a new item

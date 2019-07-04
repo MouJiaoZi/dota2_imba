@@ -165,7 +165,7 @@ function modifier_imba_jinada_passive:OnAttackLanded(keys)
 		ParticleManager:SetParticleControlEnt(pfx, 0, keys.target, PATTACH_POINT, "attach_hitloc", keys.target:GetAbsOrigin(), true)
 		ParticleManager:ReleaseParticleIndex(pfx)
 	end
-	if keys.target:IsRealHero() then
+	if keys.target:IsTrueHero() then
 		PlayerResource:ModifyGold(keys.target:GetPlayerOwnerID(), (0 - self:GetAbility():GetSpecialValueFor("gold_steal")), false, DOTA_ModifyGold_Unspecified)
 		PopupNumbers(keys.target, "gold", Vector(255, 200, 33), 1.0, self:GetAbility():GetSpecialValueFor("gold_steal"), 1)
 		PlayerResource:ModifyGold(self:GetParent():GetPlayerOwnerID(), self:GetAbility():GetSpecialValueFor("gold_steal"), true, DOTA_ModifyGold_Unspecified)
@@ -458,7 +458,7 @@ function modifier_imba_track:OnHeroKilled(keys)
 	if keys.target ~= self:GetParent() then
 		return
 	end
-	if not keys.target:IsRealHero() or keys.reincarnate then
+	if not keys.target:IsTrueHero() or keys.reincarnate then
 		return
 	end
 	local ally_gold = self:GetAbility():GetSpecialValueFor("bonus_gold") + keys.target:GetLevel() * self:GetAbility():GetSpecialValueFor("bonus_gold_per_lvl")
@@ -475,7 +475,7 @@ function modifier_imba_track:OnHeroKilled(keys)
 									false)
 
 	for _,ally in pairs(allies) do
-		if ally ~= self:GetCaster() and ally:IsRealHero() then
+		if ally ~= self:GetCaster() and ally:IsTrueHero() then
 			ally:ModifyGold(ally_gold, true, 0)
 			SendOverheadEventMessage(ally, OVERHEAD_ALERT_GOLD, ally, ally_gold, ally:GetPlayerID())
 		end

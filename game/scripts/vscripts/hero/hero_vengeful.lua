@@ -253,7 +253,7 @@ function modifier_imba_rancor_passive:OnDeath(keys)
 	local caster = self:GetCaster()
 	local attacker = keys.attacker
 	local unit = keys.unit
-	if IsEnemy(caster, attacker) and not IsEnemy(caster, unit) and attacker:IsRealHero() and not attacker:IsTempestDouble() and unit:IsRealHero() and not unit:IsTempestDouble() then
+	if IsEnemy(caster, attacker) and not IsEnemy(caster, unit) and attacker:IsTrueHero() and not attacker:IsTempestDouble() and unit:IsTrueHero() and not unit:IsTempestDouble() then
 		if attacker:IsClone() then
 			attacker = attacker:GetCloneSource()
 		end

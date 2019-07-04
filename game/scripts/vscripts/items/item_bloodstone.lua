@@ -58,7 +58,7 @@ function modifier_imba_bloodstone_passive:OnDeath(keys)
 		end
 		)
 	end
-	if IsEnemy(keys.unit, self:GetParent()) and keys.unit:IsRealHero() and not keys.unit:IsClone() and not keys.unit:IsTempestDouble() and (self:GetParent():GetAbsOrigin() - keys.unit:GetAbsOrigin()):Length2D() <= self:GetAbility():GetSpecialValueFor("effect_radius") then
+	if IsEnemy(keys.unit, self:GetParent()) and keys.unit:IsTrueHero() and not keys.unit:IsClone() and not keys.unit:IsTempestDouble() and (self:GetParent():GetAbsOrigin() - keys.unit:GetAbsOrigin()):Length2D() <= self:GetAbility():GetSpecialValueFor("effect_radius") then
 		for i=0, 5 do
 			local item = self:GetParent():GetItemInSlot(i)
 			if item and item:GetName() == "item_imba_bloodstone" then
