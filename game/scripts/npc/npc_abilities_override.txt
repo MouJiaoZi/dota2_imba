@@ -5528,7 +5528,7 @@
 	
 		// Damage.
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityDamage"					"100 170 240 310"
+		"AbilityDamage"					"160 210 260 310"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -15441,24 +15441,24 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"outgoing_damage"			"-75 -70 -65 -60"
+				"outgoing_damage"			"-65 -50 -35 -20"
 				"LinkedSpecialBonus"		"special_bonus_unique_naga_siren_4"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"outgoing_damage_tooltip"	"25 30 35 40"
+				"outgoing_damage_tooltip"	"35 50 65 80"
 				"LinkedSpecialBonus"		"special_bonus_unique_naga_siren_4"
 			}
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"incoming_damage"			"450 400 350 300"
+				"incoming_damage"			"350 300 250 200"
 			}
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"tooltip_incoming_damage_total_pct"			"550 500 450 400"
+				"tooltip_incoming_damage_total_pct"			"450 400 350 300"
 			}
 			"06"
 			{
@@ -18461,7 +18461,7 @@
 	"abyssal_underlord_firestorm"
 	{
 		"AbilityCastRange"				"750"
-		"AbilityCastPoint"				"0.6"
+		"AbilityCastPoint"				"0.3"
 		"FightRecapLevel"				"1"
 		
 		// Time		
@@ -18500,7 +18500,7 @@
 			"05"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"wave_interval"					"1.0"
+				"wave_interval"					"0.8"
 			}
 			"06"
 			{
@@ -18911,7 +18911,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"18"
+		"AbilityCooldown"				"18 16 14 12"
 		
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -18983,7 +18983,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"26"
+		"AbilityCooldown"				"20 19 18 17"
 		"AbilityDuration"				"6.0"
 
 		// Cost
@@ -19074,7 +19074,7 @@
 		
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"23"
+		"AbilityCooldown"				"10"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -21597,7 +21597,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"40 30 20"
+		"AbilityCooldown"				"60 50 40"
 
 
 		// Special	

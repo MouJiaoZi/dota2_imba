@@ -75,6 +75,7 @@ function imba_earthshaker_fissure:OnSpellStart()
 	local enemy = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, length * 1.3, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
 		FindClearSpaceForUnit(enemy[i], enemy[i]:GetAbsOrigin(), true)
+		enemy[i]:AddNewModifier(caster, self, "modifier_phased", {duration = 0.1})
 	end
 	caster:EmitSound(sound_name)
 end

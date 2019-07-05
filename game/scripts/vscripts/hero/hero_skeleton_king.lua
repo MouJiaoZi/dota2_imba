@@ -303,7 +303,7 @@ function modifier_imba_reincarnation:GetAuraSearchFlags() return DOTA_UNIT_TARGE
 function modifier_imba_reincarnation:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_FRIENDLY end
 function modifier_imba_reincarnation:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
 function modifier_imba_reincarnation:GetAuraEntityReject(unit)
-	if unit:HasModifier("modifier_imba_reincarnation_scepter_wraith") or unit:GetModifierStackCount("modifier_imba_reincarnation", nil) == 1 or unit:HasModifier("modifier_imba_reincarnation_scepter_no") or unit:HasModifier("modifier_imba_aegis") or unit:GetUnitName() == "npc_dota_unit_undying_zombie_torso" or (unit:IsHero() and unit:IsCreep()) then
+	if unit:HasModifier("modifier_imba_reincarnation_scepter_wraith") or unit:GetModifierStackCount("modifier_imba_reincarnation", nil) == 1 or unit:HasModifier("modifier_imba_reincarnation_scepter_no") or unit:HasModifier("modifier_imba_aegis") or not unit:IsTrueHero() then
 		return true
 	else
 		return false

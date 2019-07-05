@@ -5248,7 +5248,7 @@
 			"05"
 			{
 				"var_type"						"FIELD_FLOAT"
-				"vision_duration"				"10.0"
+				"vision_duration"				"2.3"
 			}
 			"06"
 			{
@@ -5258,7 +5258,7 @@
 			"07"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"snowfield_damage"				"24 36 48 60"
+				"snowfield_damage"				"15 25 35 45"
 			}
 			"08"
 			{
@@ -6275,7 +6275,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"formation_time"			"1.0"
+				"formation_time"			"0.7"
 			}
 			"03"
 			{

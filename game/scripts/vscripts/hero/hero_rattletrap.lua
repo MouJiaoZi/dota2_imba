@@ -157,6 +157,7 @@ function imba_rattletrap_power_cogs:OnSpellStart()
 	local enemy = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("cogs_radius") * 2, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
 		FindClearSpaceForUnit(enemy[i], enemy[i]:GetAbsOrigin(), true)
+		enemy[i]:AddNewModifier(caster, self, "modifier_phased", {duration = 0.1})
 	end
 end
 
