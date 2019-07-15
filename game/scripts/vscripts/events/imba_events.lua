@@ -162,6 +162,9 @@ function modifier_imba_version_check:OnIntervalThink()
 	local new_version = -1
 	local function OnGetGameVersion(hRes)
 		new_version = tonumber(hRes.Body)
+		if not new_version then
+			return
+		end
 		if new_version > current_version then
 			print("game updated")
 			EmitGlobalSound("Loot_Drop_Stinger_Immortal")

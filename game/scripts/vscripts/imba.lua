@@ -343,6 +343,7 @@ end
 76561198063283421
 76561198123967311
 76561198306196062
+76561198100592590
 ]]
 
 function IMBA:OrderFilter(keys)
@@ -384,33 +385,47 @@ function IMBA:OrderFilter(keys)
 	------------------------------------------------------------------------------------
 	-- Courier Set
 	------------------------------------------------------------------------------------
-
-	if unit:IsCourier() and keys.entindex_ability then
-		local ability = EntIndexToHScript(keys.entindex_ability)
-		if ability and keys.order_type == DOTA_UNIT_ORDER_CAST_NO_TARGET and PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1] then
-			if unit:HasModifier("modifier_imba_courier_transfer_owning") then
+	if 1 then--not GameRules:IsCheatMode() then
+		for k, v in pairs(keys['units']) do
+			if EntIndexToHScript(v):IsCourier() then
+				keys['units'] = {['0'] = keys['units']['0']}
+				CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.issuer_player_id_const), "IMBAUseCourier", {courier = CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1] and CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1]:entindex() or -1})
+				break
+			end
+			--[[if tonumber(k) > 0 and EntIndexToHScript(v):IsCourier() then
+				CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.issuer_player_id_const), "IMBAUseCourier", {})
+				keys['units'][k] = nil
+			end]]
+		end
+		if unit:IsCourier() and CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1] then
+			if unit == CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1] then
+				return true
+			end
+			if keys.order_type == DOTA_UNIT_ORDER_CAST_NO_TARGET then
+				local ability = EntIndexToHScript(keys.entindex_ability)
+				if not ability then
+					return false
+				end
 				if ability:GetName() == "courier_shield" then
 					return true
 				end
-				if unit:FindModifierByNameAndCaster("modifier_imba_courier_transfer_owning", PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1]) then
-					return true
+				keys["units"]["0"] = CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1]:entindex()
+				local ability_name = ability:GetName()
+				if ability_name == "courier_transfer_items" then
+					ability_name = "courier_take_stash_and_transfer_items"
 				end
-				return false
-			else
-				if ability:GetName() == "courier_take_stash_and_transfer_items" or ability:GetName() == "courier_transfer_items" then
-					unit:AddNewModifier(PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1], nil, "modifier_imba_courier_transfer_owning", {duration = 60.0})
-					return true
-				end
-			end
-		end
-		if keys.order_type ~= DOTA_UNIT_ORDER_CAST_NO_TARGET and keys.order_type ~= DOTA_UNIT_ORDER_TRAIN_ABILITY and keys.order_type ~= DOTA_UNIT_ORDER_PURCHASE_ITEM and PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1] then
-			if unit:HasModifier("modifier_imba_courier_transfer_owning") then
-				if unit:FindModifierByNameAndCaster("modifier_imba_courier_transfer_owning", PlayerResource.IMBA_PLAYER_HERO[keys.issuer_player_id_const + 1]) then
-					return true
-				end
-				return false
-			else
+				keys.entindex_ability = CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1]:FindAbilityByName(ability_name):entindex()
 				return true
+			else
+				keys["units"]["0"] = CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1]:entindex()
+				return true
+			end
+			return true
+		end
+
+		if keys.order_type == DOTA_UNIT_ORDER_GIVE_ITEM and EntIndexToHScript(keys.entindex_target):IsCourier() then
+			if not CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1] or CDOTA_PlayerResource.IMBA_PLAYER_COURIER[keys.issuer_player_id_const + 1] ~= EntIndexToHScript(keys.entindex_target) then
+				return false
 			end
 		end
 	end
@@ -435,7 +450,7 @@ function IMBA:OrderFilter(keys)
 	-- Tiny Toss / Furion Sprout Disable Help
 	------------------------------------------------------------------------------------
 
-	if (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION) and (EntIndexToHScript(keys.entindex_ability):GetName() == "furion_sprout" or EntIndexToHScript(keys.entindex_ability):GetName() == "tiny_toss") then
+	if (keys.order_type == DOTA_UNIT_ORDER_CAST_TARGET or keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION) and (EntIndexToHScript(keys.entindex_ability):GetName() == "furion_sprout" or EntIndexToHScript(keys.entindex_ability):GetName() == "tiny_toss" or EntIndexToHScript(keys.entindex_ability):GetName() == "item_force_staff" or EntIndexToHScript(keys.entindex_ability):GetName() == "item_hurricane_pike") then
 		local ability = EntIndexToHScript(keys.entindex_ability)
 		if ability:GetName() == "furion_sprout" then
 			if keys.order_type == DOTA_UNIT_ORDER_CAST_POSITION then
@@ -448,12 +463,16 @@ function IMBA:OrderFilter(keys)
 			else
 				return not PlayerResource:IsDisableHelpSetForPlayerID(EntIndexToHScript(keys.entindex_target):GetPlayerOwnerID(), ability:GetCaster():GetPlayerOwnerID())
 			end
-		else
+		elseif ability:GetName() == "tiny_toss" then
 			local unit = FindUnitsInRadius(ability:GetCaster():GetTeamNumber(), ability:GetCaster():GetAbsOrigin(), nil, ability:GetSpecialValueFor("grab_radius"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 			for i=1, #unit do
 				if PlayerResource:IsDisableHelpSetForPlayerID(unit[i]:GetPlayerOwnerID(), ability:GetCaster():GetPlayerOwnerID()) then
 					return false
 				end
+			end
+		elseif ability:GetName() == "item_force_staff" or ability:GetName() == "item_hurricane_pike" then
+			if PlayerResource:IsDisableHelpSetForPlayerID(EntIndexToHScript(keys.entindex_target):GetPlayerOwnerID(), ability:GetCaster():GetPlayerOwnerID()) then
+				return false
 			end
 		end
 	end

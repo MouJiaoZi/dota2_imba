@@ -185,6 +185,7 @@ function HeroItems:ApplyWardsParticle(fGameTime)
 				end
 			end
 			buff:AddParticle(pfx, true, false, 15, false, false)
+			IMBA_WARD_TABLE[fGameTime] = nil
 			return nil
 		end
 	)

@@ -369,8 +369,12 @@ function GameMode:OnNPCSpawned(keys)
 
 	--Game Start Hero Set
 	if npc:IsTrueHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
-		Timers:CreateTimer({useGameTime = false, endTime = FrameTime(),
+		Timers:CreateTimer({useGameTime = false, endTime = 0.1,
 			callback = function()
+
+				if GameRules:State_Get() < DOTA_GAMERULES_STATE_PRE_GAME then
+					return 1.0
+				end
 				
 				if npc:HasModifier("modifier_monkey_king_fur_army_soldier_hidden") then
 					return nil
@@ -383,6 +387,7 @@ function GameMode:OnNPCSpawned(keys)
 
 				npc:AddExperience(1, 0, false, false)
 				npc:AddExperience(-1, 0, false, false)
+
 				HeroItems:SetHeroItemTable(npc)
 				for i=0, 10 do
 					AddFOWViewer(i, npc:GetAbsOrigin(), 200, FrameTime(), false)
@@ -392,6 +397,14 @@ function GameMode:OnNPCSpawned(keys)
 				elseif GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
 					IMBAEvents:DeathMatchRandomOMG(npc)
 				end
+
+				-- Monkey King Fix
+				if npc:HasAbility("imba_dummy_ability") then
+					local wkc = npc:AddAbility("monkey_king_wukongs_command")
+					npc:SwapAbilities("imba_dummy_ability", "monkey_king_wukongs_command", false, true)
+					npc:RemoveAbility("imba_dummy_ability")
+				end
+				--
 				return nil
 			end
 		})
@@ -400,7 +413,7 @@ function GameMode:OnNPCSpawned(keys)
 		npc:AddNewModifier(npc, nil, "modifier_imba_movespeed_controller", {})
 		npc:AddNewModifier(npc, nil, "modifier_imba_reapers_scythe_permanent", {})
 		npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
-
+		
 		local chicken = npc:AddItemByName("item_courier")
 		npc:CastAbilityNoTarget(chicken, npc:GetPlayerOwnerID())
 		CDOTA_PlayerResource.IMBA_PLAYER_COURIER[npc:GetPlayerOwnerID() + 1] = GameRules:GetGameTime()

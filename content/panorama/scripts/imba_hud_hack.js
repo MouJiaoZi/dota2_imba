@@ -193,6 +193,7 @@ function SetBuffBar()
 {
 	var buffs = FindDotaHudElement("buffs");
 	var debuffs = FindDotaHudElement("debuffs");
+	var chat = FindDotaHudElement("HudChat");
 	if(buffs)
 	{
 		buffs.style.marginLeft = "38%";
@@ -204,6 +205,10 @@ function SetBuffBar()
 		debuffs.style.flowChildren = "right";
 		debuffs.style.horizontalAlign = "left";
 	}
+	if(chat)
+	{
+		chat.style.y = "-280px";
+	}
 }
 
 $.Schedule(1.0, SetBuffBar);
@@ -212,3 +217,30 @@ $.Schedule(1.0, SetBuffBar);
 
 FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.width = "0px";
 FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.height = "0px";
+
+function UnselectCourier(keys)
+{
+	var selected = Players.GetSelectedEntities(Players.GetLocalPlayer());
+	if(selected.length >= 1)
+	{
+		if(Entities.IsCourier(Players.GetLocalPlayerPortraitUnit()) && keys.courier)
+		{
+			if(Players.GetLocalPlayerPortraitUnit() != keys.courier)
+				GameUI.SelectUnit(keys.courier, false);
+		}
+		else
+		{
+			for(var i in selected)
+			{
+				if(selected[i] == Players.GetLocalPlayerPortraitUnit())
+				{
+					GameUI.SelectUnit(selected[i], false);
+				}
+			}
+		}
+	}
+}
+
+GameEvents.Subscribe("IMBAUseCourier", UnselectCourier);
+
+

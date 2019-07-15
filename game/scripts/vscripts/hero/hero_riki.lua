@@ -112,6 +112,9 @@ function modifier_imba_tricks_of_the_trade_thinker:OnIntervalThink()
 		self:Destroy()
 		return
 	end
+	if self:GetParent():IsDisarmed() then
+		return
+	end
 	local abs = self:GetParent():GetAbsOrigin()
 	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_ANY_ORDER, false)
 	for i=1, #enemy do

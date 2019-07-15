@@ -4830,7 +4830,79 @@
 		}
 	}
 	
-	"special_bonus_imba_chaos_knight_1" // 3 Phantom Charges
+	//=================================================================================================================
+	// Chaos Knight: Chaos Bolt
+	//=================================================================================================================
+	"imba_chaos_knight_chaos_bolt"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"chaos_knight_chaos_bolt"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES_STRONG"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_ChaosKnight.ChaosBolt.Cast"
+		"ScriptFile"					"hero/hero_chaos_knight.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"500"
+		"AbilityCastPoint"				"0.4 0.4 0.4 0.4"
+		
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"13 12 11 10"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"110 120 130 140"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"chaos_bolt_speed"		"700"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"stun_min"				"1.0"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"stun_max"				"2.5 3.0 3.5 4.0"
+			}
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage_min"			"120 160 200 240"
+			}
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage_max"			"200 250 300 350"
+			}
+			"06"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"bounce_chance"			"20 25 30 35"
+				"LinkedSpecialBonus"	"special_bonus_imba_chaos_knight_1"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
+	}
+
+	"special_bonus_imba_chaos_knight_1" // +20% Chaos Bolt Bounce Chance
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
@@ -4840,7 +4912,7 @@
 
 		"LinkedAbility"
 		{
-			"01" 						"chaos_knight_phantasm"
+			"01" 						"imba_chaos_knight_chaos_bolt"
 		}
 
 		// Special
@@ -4850,12 +4922,88 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"value"						"3"
+				"value"						"20"
 			}
 		}
 	}
 	
-	"special_bonus_imba_chaos_knight_2" // Random Attack Damage
+	//=================================================================================================================
+	// Chaos Knight: Reality Rift
+	//=================================================================================================================
+	"imba_chaos_knight_reality_rift"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"chaos_knight_reality_rift"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_ChaosKnight.RealityRift"
+		"ScriptFile"					"hero/hero_chaos_knight.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastAnimation"			"ACT_DOTA_OVERRIDE_ABILITY_2"
+		"AbilityCastGestureSlot"		"DEFAULT"
+		"AbilityCastRange"				"475 550 625 700"
+		"AbilityCastPoint"				"0.3"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"11 9 7 5"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"50"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"cast_range"				"550 600 650 700"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"movement_slow"				"10 20 30 40"
+			}		
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"attack_slow"				"30 50 70 90"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"armor_min"					"1 2 3 4"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"armor_max"					"5 7 9 11"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"pull_chance"				"10 20 30 40"
+			}
+			"07"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"3"
+			}
+		}
+	}
+
+	"special_bonus_imba_chaos_knight_2" // Reality Rift Ignores Spell Immune
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
@@ -4863,6 +5011,11 @@
 		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 
+		"LinkedAbility"
+		{
+			"01" 						"imba_chaos_knight_reality_rift"
+		}
+
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilitySpecial"
@@ -4870,16 +5023,179 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"max"						"555"
-			}
-			"02"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"min"						"-333"
+				"value"						"1"
 			}
 		}
 	}
 	
+	//=================================================================================================================
+	// Chaos Knight: Chaos Strike
+	//=================================================================================================================
+	"imba_chaos_knight_chaos_strike"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"chaos_knight_chaos_strike"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"AbilitySound"					"Hero_ChaosKnight.ChaosStrike"
+		"ScriptFile"					"hero/hero_chaos_knight.lua"
+		
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"4"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"crit_min"					"150"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"crit_max"					"180 210 240 270"
+			}	
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"lifesteal"					"20 40 60 80"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"extra_chance"				"25"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"max_effects"				"1"
+				"LinkedSpecialBonus"		"special_bonus_imba_chaos_knight_4"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"1.0"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+
+	"special_bonus_imba_chaos_knight_3" // -2 Chaos Strike CD
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_chaos_knight_chaos_strike"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"value"						"-2.0"
+			}
+		}
+	}
+	
+	"special_bonus_imba_chaos_knight_4" // +2 Chaos Strike Debuffs
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_chaos_knight_chaos_strike"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"2"
+			}
+		}
+	}
+	
+	//=================================================================================================================
+	// Chaos Knight: Phantasm
+	//=================================================================================================================
+	"imba_chaos_knight_phantasm"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"chaos_knight_phantasm"
+		"MaxLevel" 						"3"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
+		"FightRecapLevel"				"2"
+
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO | DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS"
+		"HasScepterUpgrade"				"1"
+		"AbilitySound"					"Hero_ChaosKnight.Phantasm"
+		"ScriptFile"					"hero/hero_chaos_knight.lua"
+		
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.4 0.4 0.4"
+		"AbilityCastRange"				"1400"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"140 120 100"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"125 200 275"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"attack_count"				"3"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"30"
+			}	
+			"03"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"attack_cooldown"			"1.7 1.4 1.1"
+			}
+		}
+	}
+
 	//=================================================================================================================
 	// Clinkz's Strafe
 	//=================================================================================================================
@@ -14750,6 +15066,251 @@
 				"crit_chance_scepter"		"2"
 			}
 		}
+	}
+
+	//=================================================================================================================
+	// Puck: Illusory Orb
+	//=================================================================================================================
+	"imba_puck_illusory_orb"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"puck_illusory_orb"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_Puck.Illusory_Orb"
+		"ScriptFile"					"hero/hero_puck.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.1 0.1 0.1 0.1"
+		"AbilityCastRange"				"50000"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"13 12 11 10"
+	
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"80 100 120 140"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"radius"					"225"		
+			}
+			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"max_distance"				"1950"
+				"LinkedSpecialBonus"		"special_bonus_imba_puck_1"
+				"LinkedSpecialBonusOperation"	"SPECIAL_BONUS_MULTIPLY"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"orb_speed"					"650"
+				"LinkedSpecialBonus"		"special_bonus_imba_puck_1"
+				"LinkedSpecialBonusOperation"	"SPECIAL_BONUS_MULTIPLY"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"orb_vision"				"450"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"vision_duration"			"3.34 3.34 3.34 3.34"
+			}
+			"06"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"damage"					"120 180 240 300"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
+	}
+	
+	"special_bonus_imba_puck_1" // 3x Illusory Orb Speed and Distance
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_puck_illusory_orb"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"3"
+			}
+		}
+	}
+	
+	//=================================================================================================================
+	// Puck: Ethereal Jaunt
+	//=================================================================================================================
+	"imba_puck_ethereal_jaunt"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"puck_ethereal_jaunt"
+		"MaxLevel" 						"1"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+		"AbilitySound"					"Hero_Puck.EtherealJaunt"
+		"ScriptFile"					"hero/hero_puck.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.0"
+		"AbilityCastAnimation"			"ACT_INVALID"
+		"AbilityCooldown"				"0.5"
+	}
+
+	//=================================================================================================================
+	// Puck: Waning Rift
+	//=================================================================================================================
+	"imba_puck_waning_rift"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"puck_waning_rift"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+		"FightRecapLevel"				"1"
+		"AbilitySound"					"Hero_Puck.Waning_Rift"
+		"ScriptFile"					"hero/hero_puck.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"13 12 11 10"
+
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"100"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"radius"					"500"
+			}
+			"02"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"silence_duration"			"2.0 2.5 3.0 3.5"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"damage"					"140 200 260 320"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
+	}
+
+	"special_bonus_imba_puck_2" // -8s Waning Rift Cooldown
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_puck_waning_rift"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"value"						"-8.0"
+			}
+		}
+	}
+	
+	//=================================================================================================================
+	// Puck: Phase Shift
+	//=================================================================================================================
+	"imba_puck_phase_shift"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"             		"ability_lua"
+		"AbilityTextureName"			"puck_phase_shift"
+		"MaxLevel" 						"4"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+		"SpellImmunityType"				"SPELL_IMMUNITY_ALLIES_YES"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		"AbilitySound"					"Hero_Puck.Phase_Shift"
+		"ScriptFile"					"hero/hero_puck.lua"
+
+		// Casting
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0"
+
+		// Time		
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCooldown"				"5"
+
+		// Cost
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"1"
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"0.75 1.50 2.25 3.25"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
 	}
 
 	//=================================================================================================================

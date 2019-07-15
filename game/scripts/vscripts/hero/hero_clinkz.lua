@@ -367,16 +367,10 @@ function modifier_imba_death_pact_caster_agi:GetModifierBonusStats_Agility() ret
 
 modifier_imba_death_pact_caster_permanent = class({})
 
-function modifier_imba_death_pact_caster_permanent:IsDebuff()				return false end
-function modifier_imba_death_pact_caster_permanent:IsPurgable() 			return false end
-function modifier_imba_death_pact_caster_permanent:IsPurgeException() 		return false end
-function modifier_imba_death_pact_caster_permanent:IsHidden()
-	if self:GetCaster():HasScepter() then
-		return false
-	else
-		return true
-	end
-end
+function modifier_imba_death_pact_caster_permanent:IsDebuff()			return false end
+function modifier_imba_death_pact_caster_permanent:IsPurgable() 		return false end
+function modifier_imba_death_pact_caster_permanent:IsPurgeException() 	return false end
+function modifier_imba_death_pact_caster_permanent:IsHidden()			return false end
 
 function modifier_imba_death_pact_caster_permanent:DeclareFunctions()
 	return {MODIFIER_EVENT_ON_HERO_KILLED, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS}

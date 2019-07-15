@@ -3088,6 +3088,23 @@
 		}
 	}
 
+	"special_bonus_gold_income_imba_900"
+	{
+		"BaseClass"						"special_bonus_gold_income_70"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"value"					"150"
+			}
+		}
+	}
+
 	"special_bonus_gold_income_imba_1200"
 	{
 		"BaseClass"						"special_bonus_gold_income_70"
@@ -4212,6 +4229,11 @@
 				"var_type"				"FIELD_INTEGER"
 				"regen_rate"			"90000"
 			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"900"
+			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
 	}
@@ -5217,8 +5239,6 @@
 	//=================================================================================================================
 	"morphling_replicate"
 	{
-		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
-
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCooldown"				"80 60 40"
@@ -7957,7 +7977,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"17.0 14.0 11.0 8.0"
+		"AbilityCooldown"				"17.0 16.0 15.0 14.0"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -8056,7 +8076,12 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"attack_spill_width"		"150"
+				"attack_spill_width"		"75"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"attack_spill_pct"			"100"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -15463,7 +15488,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"images_count"				"3 4 5 6"
+				"images_count"				"3"
 				"LinkedSpecialBonus"		"special_bonus_unique_naga_siren"
 			}
 			"07"
@@ -16713,7 +16738,7 @@
 			"04"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"split_shot_bonus_range"		"300"
+				"split_shot_bonus_range"		"200"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -20719,11 +20744,6 @@
 				"creep_duration_pct"		"50.0"
 			}
 			"07"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"movement_slow"				"15 30 45"
-			}
-			"08"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"cast_range_tooltip"		"700 800 900"

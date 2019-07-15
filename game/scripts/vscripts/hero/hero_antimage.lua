@@ -425,7 +425,7 @@ function modifier_imba_mana_void_scepter_debuff:OnIntervalThink()
 		return
 	end
 	if not self:GetParent():IsAlive() then
-		self:SetDuration(self:GetDuration() + FrameTime(), true)
+		self:SetDuration(self:GetRemainingTime() + FrameTime(), true)
 	end
 	self:GetAbility():EndCooldown()
 	self:GetAbility():StartCooldown(self:GetRemainingTime())

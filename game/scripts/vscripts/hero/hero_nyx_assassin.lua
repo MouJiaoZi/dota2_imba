@@ -163,7 +163,7 @@ function modifier_impale_dmg_target:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit ~= self:GetParent() then
+	if keys.unit ~= self:GetParent() or not self:GetParent():IsAlive() then
 		return
 	end
 	local dmg = math.floor(keys.damage + 0.5)

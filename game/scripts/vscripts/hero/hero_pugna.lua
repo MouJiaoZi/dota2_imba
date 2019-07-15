@@ -19,7 +19,13 @@ function imba_pugna_nether_blast:OnSpellStart()
 	local blasts = self:GetSpecialValueFor("secondary_blasts")
 	local radius = self:GetSpecialValueFor("radius")
 	local delay = self:GetSpecialValueFor("secondary_delay")
-	local pfx_main = ParticleManager:CreateParticle("particles/units/heroes/hero_pugna/pugna_netherblast.vpcf", PATTACH_CUSTOMORIGIN, nil)
+	local pfx_pre_name = "particles/units/heroes/hero_pugna/pugna_netherblast_pre.vpcf"
+	local pfx_main_name = "particles/units/heroes/hero_pugna/pugna_netherblast.vpcf"
+	if HeroItems:UnitHasItem(caster, "pugna_ti9_immortal_weapon") then
+		pfx_pre_name = "particles/econ/items/pugna/pugna_ti9_immortal/pugna_ti9_immortal_netherblast_pre.vpcf"
+		pfx_main_name = "particles/econ/items/pugna/pugna_ti9_immortal/pugna_ti9_immortal_netherblast.vpcf"
+	end
+	local pfx_main = ParticleManager:CreateParticle(pfx_main_name, PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx_main, 0, Vector(pos.x, pos.y, pos.z + 128))
 	ParticleManager:SetParticleControl(pfx_main, 1, Vector(radius, 1, 1))
 	ParticleManager:ReleaseParticleIndex(pfx_main)
@@ -47,14 +53,14 @@ function imba_pugna_nether_blast:OnSpellStart()
 	local new_pos = pos + (pos - caster:GetAbsOrigin()):Normalized() * (radius - self:GetSpecialValueFor("center_radius"))
 	for i=1, blasts do
 		local blast_pos = GetGroundPosition(RotatePosition(pos, QAngle(0, 360 / blasts * i, 0), new_pos), nil)
-		local pfx_min = ParticleManager:CreateParticle("particles/units/heroes/hero_pugna/pugna_netherblast_pre.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		local pfx_min = ParticleManager:CreateParticle(pfx_pre_name, PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx_min, 0, Vector(blast_pos.x, blast_pos.y, blast_pos.z + 128))
 		ParticleManager:SetParticleControl(pfx_min, 1, Vector(radius, 1, 1))
 		ParticleManager:ReleaseParticleIndex(pfx_min)
 		local sound = CreateModifierThinker(caster, self, "modifier_imba_nether_blast_debuff", {duration = 0.1}, blast_pos, caster:GetTeamNumber(), false)
 		sound:EmitSound("Hero_Pugna.NetherBlastPreCast")
 		Timers:CreateTimer(delay, function()
-			local pfx_balst = ParticleManager:CreateParticle("particles/units/heroes/hero_pugna/pugna_netherblast.vpcf", PATTACH_CUSTOMORIGIN, nil)
+			local pfx_balst = ParticleManager:CreateParticle(pfx_main_name, PATTACH_CUSTOMORIGIN, nil)
 			ParticleManager:SetParticleControl(pfx_balst, 0, Vector(blast_pos.x, blast_pos.y, blast_pos.z + 128))
 			ParticleManager:SetParticleControl(pfx_balst, 1, Vector(radius, 1, 1))
 			ParticleManager:ReleaseParticleIndex(pfx_balst)

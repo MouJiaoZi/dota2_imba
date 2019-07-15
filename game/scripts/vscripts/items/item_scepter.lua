@@ -27,12 +27,13 @@ function modifier_imba_consumable_scepter_passive:IsHidden() 			return true end
 function modifier_imba_consumable_scepter_passive:IsPurgable() 			return false end
 function modifier_imba_consumable_scepter_passive:IsPurgeException() 	return false end
 function modifier_imba_consumable_scepter_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_consumable_scepter_passive:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_MANA_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS} end
+function modifier_imba_consumable_scepter_passive:DeclareFunctions() return {MODIFIER_PROPERTY_IS_SCEPTER, MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_MANA_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS} end
 function modifier_imba_consumable_scepter_passive:GetModifierHealthBonus() return self:GetAbility():GetSpecialValueFor("bonus_health") end
 function modifier_imba_consumable_scepter_passive:GetModifierManaBonus() return self:GetAbility():GetSpecialValueFor("bonus_mana") end
 function modifier_imba_consumable_scepter_passive:GetModifierBonusStats_Strength() return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
 function modifier_imba_consumable_scepter_passive:GetModifierBonusStats_Intellect() return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
 function modifier_imba_consumable_scepter_passive:GetModifierBonusStats_Agility() return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
+function modifier_imba_consumable_scepter_passive:GetModifierScepter() return 1 end
 
 modifier_imba_consumable_scepter_consumed = class({})
 

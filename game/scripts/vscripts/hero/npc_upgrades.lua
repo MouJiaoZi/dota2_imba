@@ -169,7 +169,6 @@ function modifier_imba_fountain_buff:OnIntervalThink()
 	end
 	local pfx = ParticleManager:CreateParticle("particles/ambient/fountain_danger_circle.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 	ParticleManager:ReleaseParticleIndex(pfx)
-	AddFOWViewer(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self:GetParent():Script_GetAttackRange(), 0.5, false)
 end
 
 modifier_imba_fountain_disabled = class({})

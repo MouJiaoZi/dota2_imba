@@ -9207,7 +9207,7 @@
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS | DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
 		"AbilityTextureName" 			"imba_ultimate_scepter_synth"
-		"Model"							"models/props_gameplay/red_box.vmdl"
+		"Model"							"models/props_gameplay/aghanim_scepter.vmdl"
 		"ScriptFile"					"items/item_scepter.lua"
 
 		// Stats

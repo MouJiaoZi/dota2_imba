@@ -1387,3 +1387,39 @@
 		}
 	}
 }
+
+"Imba.Hero_Puck.Illusory_Orb"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_default"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/weapons/hero/puck/illusory_orb.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.00000"  }
+					"pitch_rand_min"	{   "value"     "-0.00000"  }
+					"pitch_rand_max"	{   "value"     "0.000000"  }
+					"pitch"				{   "value"     "1.100000"  }
+					"soundlevel"		{   "value"     "81.00000" }
+					"distance_max"		{   "value"     "1600.000"  }
+					"event_type"		{   "value"     "1.000000"  }
+					"use_entity_position" {	"value"		"1.000000" 	}
+					"volume_fade_out"	{	"value"		"0.500000"	}
+					"spread_radius"		{	"value"		"600.0000"	}
+					"volume_use_FOW"	{	"value"		"1.000000"	}
+				}
+			}
+		}
+	}
+}

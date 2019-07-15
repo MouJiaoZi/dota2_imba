@@ -274,10 +274,21 @@ function imba_dazzle_shadow_wave:OnSpellStart()
 		table.insert(units, 1, caster)
 	end
 
+	local pfx_wave = "particles/units/heroes/hero_dazzle/dazzle_shadow_wave.vpcf"
+	local pfx_damage = "particles/units/heroes/hero_dazzle/dazzle_shadow_wave_impact_damage.vpcf"
+	if HeroItems:UnitHasItem(caster, "dazzle_ti9_immortal_back") then
+		pfx_wave = "particles/econ/items/dazzle/dazzle_ti9/dazzle_shadow_wave_ti9.vpcf"
+		pfx_damage = "particles/econ/items/dazzle/dazzle_ti9/dazzle_shadow_wave_ti9_impact_damage.vpcf"
+	end
+
 	for k, unit in pairs(units) do
 		local i = (k == #units) and k or (k + 1)
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_dazzle/dazzle_shadow_wave.vpcf", PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControlEnt(pfx, 0, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true)
+		local pfx = ParticleManager:CreateParticle(pfx_wave, PATTACH_CUSTOMORIGIN, nil)
+		if unit == caster then
+			ParticleManager:SetParticleControlEnt(pfx, 0, unit, PATTACH_POINT_FOLLOW, "attach_attack1", unit:GetAbsOrigin(), true)
+		else
+			ParticleManager:SetParticleControlEnt(pfx, 0, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true)
+		end
 		ParticleManager:SetParticleControlEnt(pfx, 1, units[i], PATTACH_POINT_FOLLOW, "attach_hitloc", units[i]:GetAbsOrigin(), true)
 		ParticleManager:ReleaseParticleIndex(pfx)
 		local health = (unit:GetMaxHealth() - unit:GetHealth()) * (self:GetSpecialValueFor("bonus_healing") / 100) + self:GetSpecialValueFor("damage")
@@ -298,7 +309,7 @@ function imba_dazzle_shadow_wave:OnSpellStart()
 								}
 			ApplyDamage(damageTable)
 			enemy:AddNewModifier(caster, self, "modifier_imba_shadow_wave_armor_reduction", {duration = self:GetSpecialValueFor("duration")})
-			local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_dazzle/dazzle_shadow_wave_impact_damage.vpcf", PATTACH_CUSTOMORIGIN, enemy)
+			local pfx2 = ParticleManager:CreateParticle(pfx_damage, PATTACH_CUSTOMORIGIN, enemy)
 			ParticleManager:SetParticleControlEnt(pfx2, 0, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
 			ParticleManager:SetParticleControl(pfx2, 1, enemy:GetAbsOrigin() + (enemy:GetAbsOrigin() - unit:GetAbsOrigin()):Normalized() * 100)
 			ParticleManager:ReleaseParticleIndex(pfx2)

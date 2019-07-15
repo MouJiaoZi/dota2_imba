@@ -150,6 +150,7 @@ local NoMultiCastItems = {
 "shredder_timber_chain",
 "shredder_chakram",
 "shredder_chakram_2",
+"imba_chaos_knight_reality_rift",
 }
 
 function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)

@@ -1,6 +1,5 @@
 imba_force_load = class({})
 
-CreateEmptyTalents("chaos_knight")
 CreateEmptyTalents("dark_seer")
 
 LinkLuaModifier("modifier_imba_silencer_int_steal", "hero/hero_force_load", LUA_MODIFIER_MOTION_NONE)
