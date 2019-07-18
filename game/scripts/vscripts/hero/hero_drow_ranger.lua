@@ -71,22 +71,10 @@ function modifier_imba_frost_arrows_frozen:CheckState() return {[MODIFIER_STATE_
 
 imba_drow_ranger_gust = class({})
 
-LinkLuaModifier("modifier_imba_drow_ranger_gust_cast", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_drow_ranger_gust_debuff", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_drow_ranger_gust_enemy_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_drow_ranger_gust_self_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
-
-modifier_imba_drow_ranger_gust_cast = class({})						----- Use this as a "hitted units mark"
-
-function modifier_imba_drow_ranger_gust_cast:OnCreated()
-	self.self_knockbacked = false
-	self.hitted = {}
-end
-
-function modifier_imba_drow_ranger_gust_cast:OnDestroy()
-	self.self_knockbacked = nil
-	self.hitted = nil
-end
+LinkLuaModifier("modifier_imba_drow_ranger_gust_enemy_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_drow_ranger_gust_self_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_drow_ranger_gust_cast", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
 
 function imba_drow_ranger_gust:IsHiddenWhenStolen() 	return false end
 function imba_drow_ranger_gust:IsRefreshable() 			return true  end
@@ -100,8 +88,8 @@ function imba_drow_ranger_gust:OnSpellStart()
 	local pos = self:GetCursorPosition()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
 	direction.z = 0.0
-	local buff = CreateModifierThinker(caster, self, "modifier_imba_drow_ranger_gust_cast", {duration = 10.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false):entindex()
-	EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_DrowRanger.Silence", caster)
+	local buff = CreateModifierThinker(caster, self, "modifier_imba_drow_ranger_gust_cast", {duration = 10.0, direction_x = direction.x, direction_y = direction.y}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
+	caster:EmitSound("Hero_DrowRanger.Silence")
 	local info = {Ability = self,
 					EffectName = "particles/units/heroes/hero_drow/drow_silence_wave.vpcf",
 					vSpawnOrigin = caster:GetAbsOrigin() + caster:GetForwardVector() * self:GetSpecialValueFor("wave_width"),
@@ -119,43 +107,40 @@ function imba_drow_ranger_gust:OnSpellStart()
 					bDeleteOnHit = true,
 					vVelocity = direction * self:GetSpecialValueFor("wave_speed"),
 					bProvidesVision = false,
-					ExtraData = {buffid = buff},
+					ExtraData = {buffid = buff:entindex()},
 				}
 	ProjectileManager:CreateLinearProjectile(info)
 end
 
-function imba_drow_ranger_gust:OnProjectileThink_ExtraData(pos, extra_data)
-	local caster = self:GetCaster()
-	local buff = EntIndexToHScript(extra_data.buffid):FindModifierByName("modifier_imba_drow_ranger_gust_cast")
-	local targets = {}
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("wave_width"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_NONE, FIND_FARTHEST, false)
-	for _, enemy in pairs(enemies) do
-		local had = false
-		for _, unit in pairs(buff.hitted) do
-			if enemy == unit then
-				had = true
-			end
-		end
-		if not had then
-			targets[#targets + 1] = enemy
-			buff.hitted[#buff.hitted + 1] = enemy
-			local damageTable = {
-								victim = enemy,
-								attacker = caster,
-								damage = self:GetSpecialValueFor("damage"),
-								damage_type = self:GetAbilityDamageType(),
-								damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
-								ability = self, --Optional.
-								}
-			ApplyDamage(damageTable)
-			enemy:AddNewModifier(caster, self, "modifier_imba_drow_ranger_gust_debuff", {duration = self:GetSpecialValueFor("silence_duration")})
-			local knockback_distance = (caster:GetAbsOrigin() - enemy:GetAbsOrigin()):Length2D() < caster:Script_GetAttackRange() and ((caster:Script_GetAttackRange() - (caster:GetAbsOrigin() - enemy:GetAbsOrigin()):Length2D()) / 2) or 50
-			enemy:AddNewModifier(caster, self, "modifier_imba_drow_ranger_gust_enemy_motion", {duration = self:GetSpecialValueFor("knockback_duration"), knockback_distance = knockback_distance, center_point_x = EntIndexToHScript(extra_data.buffid):GetAbsOrigin().x, center_point_y = EntIndexToHScript(extra_data.buffid):GetAbsOrigin().y, center_point_z = EntIndexToHScript(extra_data.buffid):GetAbsOrigin().z})
-			if not buff.self_knockbacked then
-				buff.self_knockbacked = true
-				caster:AddNewModifier(caster, self, "modifier_imba_drow_ranger_gust_self_motion", {duration = self:GetSpecialValueFor("self_knockback_duration"), knockback_distance = knockback_distance, center_point_x = enemy:GetAbsOrigin().x, center_point_y = enemy:GetAbsOrigin().y, center_point_z = enemy:GetAbsOrigin().z})
-			end
-		end
+function imba_drow_ranger_gust:OnProjectileHit_ExtraData(target, pos, keys)
+	local direction = EntIndexToHScript(keys.buffid):FindModifierByName("modifier_imba_drow_ranger_gust_cast").direction
+	local hitted = EntIndexToHScript(keys.buffid):FindModifierByName("modifier_imba_drow_ranger_gust_cast").hitted
+	if not target then
+		return
+	end
+	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_drow_ranger_gust_debuff", {duration = self:GetSpecialValueFor("silence_duration")})
+	target:RemoveModifierByName("modifier_imba_drow_ranger_gust_enemy_motion")
+	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_drow_ranger_gust_enemy_motion", {duration = self:GetSpecialValueFor("knockback_duration"), direction = direction})
+	ApplyDamage({victim = target, attacker = self:GetCaster(), ability = self, damage = self:GetSpecialValueFor("damage"), damage_type = self:GetAbilityDamageType()})
+	if not hitted then
+		EntIndexToHScript(keys.buffid):FindModifierByName("modifier_imba_drow_ranger_gust_cast").hitted = true
+		self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_drow_ranger_gust_self_motion", {duration = self:GetSpecialValueFor("self_knockback_duration"), direction = direction, target = target:entindex()})
+	end
+end
+
+modifier_imba_drow_ranger_gust_cast = class({})
+
+function modifier_imba_drow_ranger_gust_cast:OnCreated(keys)
+	if IsServer() then
+		self.hitted = false
+		self.direction = Vector(keys.direction_x, keys.direction_y, 0)
+	end
+end
+
+function modifier_imba_drow_ranger_gust_cast:OnDestroy()
+	if IsServer() then
+		self.hitted = nil
+		self.direction = nil
 	end
 end
 
@@ -165,35 +150,33 @@ function modifier_imba_drow_ranger_gust_debuff:IsDebuff()				return true end
 function modifier_imba_drow_ranger_gust_debuff:IsHidden() 				return false end
 function modifier_imba_drow_ranger_gust_debuff:IsPurgable() 			return true end
 function modifier_imba_drow_ranger_gust_debuff:IsPurgeException() 		return true end
-
-function modifier_imba_drow_ranger_gust_debuff:DeclareFunctions()
-	return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT}
-end
-
+function modifier_imba_drow_ranger_gust_debuff:DeclareFunctions()return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_imba_drow_ranger_gust_debuff:CheckState() return {[MODIFIER_STATE_SILENCED] = true} end
-
 function modifier_imba_drow_ranger_gust_debuff:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("move_slow")) end
 function modifier_imba_drow_ranger_gust_debuff:GetModifierAttackSpeedBonus_Constant() return (0 - self:GetAbility():GetSpecialValueFor("attack_slow")) end
 
 modifier_imba_drow_ranger_gust_enemy_motion = class({})
 
-function modifier_imba_drow_ranger_gust_enemy_motion:IsMotionController()	return true end
 function modifier_imba_drow_ranger_gust_enemy_motion:IsDebuff()				return false end
 function modifier_imba_drow_ranger_gust_enemy_motion:IsHidden() 			return true end
 function modifier_imba_drow_ranger_gust_enemy_motion:IsPurgable() 			return true end
 function modifier_imba_drow_ranger_gust_enemy_motion:IsPurgeException() 	return true end
-function modifier_imba_drow_ranger_gust_enemy_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 function modifier_imba_drow_ranger_gust_enemy_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
 function modifier_imba_drow_ranger_gust_enemy_motion:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
 function modifier_imba_drow_ranger_gust_enemy_motion:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
 function modifier_imba_drow_ranger_gust_enemy_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_drow_ranger_gust_enemy_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_drow_ranger_gust_enemy_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_drow_ranger_gust_enemy_motion:OnCreated(keys)
 	if IsServer() then
-		if self:CheckMotionControllers() then
-			self.center_point = Vector(keys.center_point_x, keys.center_point_y, keys.center_point_z)
-			self.knockback_distance = keys.knockback_distance
-			self:OnIntervalThink()
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if not self:ApplyHorizontalMotionController() or not self:ApplyVerticalMotionController() then
+			self:Destroy()
+		else
+			self.direction = StringToVector(keys.direction)
+			self.knockback_distance = math.max((self:GetCaster():Script_GetAttackRange() - (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D()) / 2, 0)
+			self.knockback_height = self:GetAbility():GetSpecialValueFor("knockback_height")
 			self:StartIntervalThink(FrameTime())
 		end
 	end
@@ -203,8 +186,8 @@ function modifier_imba_drow_ranger_gust_enemy_motion:OnIntervalThink()
 	local total_ticks = self:GetDuration() / FrameTime()
 	local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
 	local distance = self.knockback_distance / total_ticks
-	local height = self:GetAbility():GetSpecialValueFor("knockback_height")
-	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self:GetParent():GetAbsOrigin() - self.center_point):Normalized() * distance, nil)
+	local height = self.knockback_height
+	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + self.direction * distance, nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
 	self:GetParent():SetAbsOrigin(next_pos)
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 100, false)
@@ -212,30 +195,36 @@ end
 
 function modifier_imba_drow_ranger_gust_enemy_motion:OnDestroy()
 	if IsServer() then
-		self.center_point = nil
-		self.knockback_distance = nil
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		self.direction = nil
+		self.knockback_distance = nil
+		self.knockback_height = nil
 	end
 end
 
 modifier_imba_drow_ranger_gust_self_motion = class({})
 
-function modifier_imba_drow_ranger_gust_self_motion:IsMotionController()	return true end
 function modifier_imba_drow_ranger_gust_self_motion:IsDebuff()				return false end
 function modifier_imba_drow_ranger_gust_self_motion:IsHidden() 				return true end
 function modifier_imba_drow_ranger_gust_self_motion:IsPurgable() 			return false end
 function modifier_imba_drow_ranger_gust_self_motion:IsPurgeException() 		return false end
-function modifier_imba_drow_ranger_gust_self_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 function modifier_imba_drow_ranger_gust_self_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
 function modifier_imba_drow_ranger_gust_self_motion:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
 function modifier_imba_drow_ranger_gust_self_motion:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
+function modifier_imba_drow_ranger_gust_self_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_drow_ranger_gust_self_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_drow_ranger_gust_self_motion:OnCreated(keys)
 	if IsServer() then
-		if self:CheckMotionControllers() then
-			self.center_point = Vector(keys.center_point_x, keys.center_point_y, keys.center_point_z)
-			self.knockback_distance = keys.knockback_distance
-			self:OnIntervalThink()
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if not self:ApplyHorizontalMotionController() or not self:ApplyVerticalMotionController() then
+			self:Destroy()
+		else
+			self.direction = StringToVector(keys.direction)
+			self.knockback_distance = 0 - math.max((self:GetCaster():Script_GetAttackRange() - (EntIndexToHScript(keys.target):GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D()) / 2, 0)
+			self.knockback_height = self:GetAbility():GetSpecialValueFor("knockback_height")
 			self:StartIntervalThink(FrameTime())
 		end
 	end
@@ -245,8 +234,8 @@ function modifier_imba_drow_ranger_gust_self_motion:OnIntervalThink()
 	local total_ticks = self:GetDuration() / FrameTime()
 	local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
 	local distance = self.knockback_distance / total_ticks
-	local height = self:GetAbility():GetSpecialValueFor("knockback_height")
-	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self:GetParent():GetAbsOrigin() - self.center_point):Normalized() * distance, nil)
+	local height = self.knockback_height
+	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self.direction * distance), nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
 	self:GetParent():SetAbsOrigin(next_pos)
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 100, false)
@@ -254,9 +243,12 @@ end
 
 function modifier_imba_drow_ranger_gust_self_motion:OnDestroy()
 	if IsServer() then
-		self.center_point = nil
-		self.knockback_distance = nil
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		self.direction = nil
+		self.knockback_distance = nil
+		self.knockback_height = nil
 	end
 end
 

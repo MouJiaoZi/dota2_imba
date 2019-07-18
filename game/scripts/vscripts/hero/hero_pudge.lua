@@ -96,8 +96,8 @@ imba_pudge_meat_hook = class({})
 LinkLuaModifier("modifier_imba_meat_hook_self_root", "hero/hero_pudge", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_meat_hook_hook_check", "hero/hero_pudge", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_meat_hook_stack_check", "hero/hero_pudge", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_hook_target_enemy", "hero/hero_pudge", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_hook_target_ally", "hero/hero_pudge", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_hook_target_enemy", "hero/hero_pudge", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_hook_target_ally", "hero/hero_pudge", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_pudge_meat_hook:IsHiddenWhenStolen() 		return false end
 function imba_pudge_meat_hook:IsRefreshable() 			return true end
@@ -308,7 +308,6 @@ end
 
 modifier_imba_hook_target_enemy = class({})
 
-function modifier_imba_hook_target_enemy:IsMotionController()	return true end
 function modifier_imba_hook_target_enemy:IsDebuff()				return true end
 function modifier_imba_hook_target_enemy:IsHidden() 			return false end
 function modifier_imba_hook_target_enemy:IsPurgable() 			return false end
@@ -316,15 +315,19 @@ function modifier_imba_hook_target_enemy:IsPurgeException() 	return false end
 function modifier_imba_hook_target_enemy:RemoveOnDeath() 		return false end
 function modifier_imba_hook_target_enemy:IsStunDebuff()			return true end
 function modifier_imba_hook_target_enemy:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
-function modifier_imba_hook_target_enemy:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_imba_hook_target_enemy:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_hook_target_enemy:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_hook_target_enemy:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_hook_target_enemy:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
-		self.thinker = EntIndexToHScript(keys.thinker)
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyHorizontalMotionController() then
+			self.thinker = EntIndexToHScript(keys.thinker)
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -338,6 +341,7 @@ end
 
 function modifier_imba_hook_target_enemy:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		self.thinker = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
@@ -345,7 +349,6 @@ end
 
 modifier_imba_hook_target_ally = class({})
 
-function modifier_imba_hook_target_ally:IsMotionController()	return true end
 function modifier_imba_hook_target_ally:IsDebuff()				return false end
 function modifier_imba_hook_target_ally:IsHidden() 				return false end
 function modifier_imba_hook_target_ally:IsPurgable() 			return false end
@@ -353,15 +356,18 @@ function modifier_imba_hook_target_ally:IsPurgeException() 		return false end
 function modifier_imba_hook_target_ally:RemoveOnDeath() 		return false end
 function modifier_imba_hook_target_ally:IsStunDebuff()			return false end
 function modifier_imba_hook_target_ally:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
-function modifier_imba_hook_target_ally:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_imba_hook_target_ally:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_hook_target_ally:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 
 function modifier_imba_hook_target_ally:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
-		self.thinker = EntIndexToHScript(keys.thinker)
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyHorizontalMotionController() then
+			self.thinker = EntIndexToHScript(keys.thinker)
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -375,6 +381,7 @@ end
 
 function modifier_imba_hook_target_ally:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		self.thinker = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end

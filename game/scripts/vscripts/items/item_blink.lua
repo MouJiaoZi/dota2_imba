@@ -3,7 +3,7 @@
 item_imba_blink = class({})
 
 LinkLuaModifier("modifier_imba_blink_disable", "items/item_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_blink_break_motion", "items/item_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_blink_break_motion", "items/item_blink", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function item_imba_blink:GetIntrinsicModifierName() return "modifier_imba_blink_disable" end
 
@@ -127,11 +127,12 @@ function modifier_imba_blink_disable:GetModifierMoveSpeedBonus_Special_Boots() r
 modifier_imba_blink_break_motion = class({})
 
 function modifier_imba_blink_break_motion:IsHidden() return true end
-function modifier_imba_blink_break_motion:IsMotionController() return true end
-function modifier_imba_blink_break_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
-function modifier_imba_blink_break_motion:IsStunDebuff() return true end
+
 function modifier_imba_blink_break_motion:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		self:ApplyHorizontalMotionController()
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:Destroy()
 	end
 end

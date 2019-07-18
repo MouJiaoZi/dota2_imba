@@ -2,7 +2,7 @@ CreateEmptyTalents("lion")
 
 imba_lion_earth_spike = class({})
 
-LinkLuaModifier("modifier_earth_spike_motion", "hero/hero_lion", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_earth_spike_motion", "hero/hero_lion", LUA_MODIFIER_MOTION_VERTICAL)
 
 function imba_lion_earth_spike:IsHiddenWhenStolen() 	return false end
 function imba_lion_earth_spike:IsRefreshable() 			return true end
@@ -128,23 +128,28 @@ end
 
 modifier_earth_spike_motion = class({})
 
-function modifier_earth_spike_motion:IsMotionController()	return true end
 function modifier_earth_spike_motion:IsDebuff()				return true end
 function modifier_earth_spike_motion:IsHidden() 			return true end
 function modifier_earth_spike_motion:IsPurgable() 			return false end
 function modifier_earth_spike_motion:IsPurgeException() 	return true end
 function modifier_earth_spike_motion:IsStunDebuff() 		return true end
-function modifier_earth_spike_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_earth_spike_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_earth_spike_motion:GetModifierMoveSpeed_Absolute() return 1 end
 function modifier_earth_spike_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_earth_spike_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
+function modifier_earth_spike_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
+function modifier_earth_spike_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_earth_spike_motion:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		self:SetMotionPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyVerticalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			if self:GetParent():GetName() ~= "npc_dota_thinker" then
+				self:Destroy()
+			end
+		end
 	end
 end
 
@@ -159,6 +164,7 @@ end
 
 function modifier_earth_spike_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		if self:GetParent():GetName() ~= "npc_dota_thinker" then
 			self:GetParent():EmitSound("Hero_Lion.ImpaleTargetLand")

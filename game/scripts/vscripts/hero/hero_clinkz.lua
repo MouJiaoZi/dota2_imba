@@ -365,6 +365,9 @@ function modifier_imba_death_pact_caster_agi:DeclareFunctions() return {MODIFIER
 function modifier_imba_death_pact_caster_str:GetModifierBonusStats_Strength() return self:GetStackCount() end
 function modifier_imba_death_pact_caster_agi:GetModifierBonusStats_Agility() return self:GetStackCount() end
 
+function modifier_imba_death_pact_caster_str:OnDestroy() if IsServer() then self:GetParent():CalculateStatBonus() end end
+function modifier_imba_death_pact_caster_agi:OnDestroy() if IsServer() then self:GetParent():CalculateStatBonus() end end
+
 modifier_imba_death_pact_caster_permanent = class({})
 
 function modifier_imba_death_pact_caster_permanent:IsDebuff()			return false end

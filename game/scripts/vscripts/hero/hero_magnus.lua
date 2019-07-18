@@ -223,7 +223,7 @@ function modifier_imba_supercharged:GetTexture() return "magnus_supercharge" end
 imba_magnus_skewer = class({})
 
 LinkLuaModifier("modifier_imba_skewer_debuff", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_skewer_caster_motion", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_skewer_caster_motion", "hero/hero_magnus", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_skewer_target_stun", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
 
 function imba_magnus_skewer:IsHiddenWhenStolen() 	return false end
@@ -246,27 +246,32 @@ end
 
 modifier_imba_skewer_caster_motion = class({})
 
-function modifier_imba_skewer_caster_motion:IsMotionController()return true end
-function modifier_imba_skewer_caster_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_imba_skewer_caster_motion:IsDebuff()			return false end
 function modifier_imba_skewer_caster_motion:IsHidden() 			return true end
 function modifier_imba_skewer_caster_motion:IsPurgable() 		return false end
 function modifier_imba_skewer_caster_motion:IsPurgeException() 	return false end
 function modifier_imba_skewer_caster_motion:IsStunDebuff()		return true end
-function modifier_imba_skewer_caster_motion:CheckState() return {[MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_MAGIC_IMMUNE] = true} end
-function modifier_imba_skewer_caster_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
+function modifier_imba_skewer_caster_motion:CheckState() return {[MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_MAGIC_IMMUNE] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
+function modifier_imba_skewer_caster_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_DISABLE_TURNING} end
+function modifier_imba_skewer_caster_motion:GetModifierDisableTurning() return 1 end
 function modifier_imba_skewer_caster_motion:GetOverrideAnimation() return ACT_DOTA_CAST_ABILITY_3 end
+function modifier_imba_skewer_caster_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+
 function modifier_imba_skewer_caster_motion:OnCreated(keys)
 	if IsServer() then
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.hitted = {}
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.speed = self:GetAbility():GetSpecialValueFor("skewer_speed") + self:GetParent():GetTalentValue("special_bonus_imba_magnus_1")
-		self:CheckMotionControllers()
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_magnataur/magnataur_skewer.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_horn", self:GetParent():GetAbsOrigin(), true)
-		self:AddParticle(pfx, false, false, 15, false, false)
+		if self:ApplyHorizontalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_magnataur/magnataur_skewer.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_horn", self:GetParent():GetAbsOrigin(), true)
+			self:AddParticle(pfx, false, false, 15, false, false)
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -276,7 +281,6 @@ function modifier_imba_skewer_caster_motion:OnIntervalThink()
 	local direction = (self.pos - current_pos):Normalized()
 	direction.z = 0
 	local next_pos = GetGroundPosition((current_pos + direction * distacne), nil)
-	self:GetParent():SetForwardVector((self.pos - current_pos):Normalized())
 	self:GetParent():SetAbsOrigin(next_pos)
 	local horn_pos = self:GetParent():GetAttachmentOrigin(self:GetParent():ScriptLookupAttachment("attach_horn"))
 	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("skewer_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_DAMAGE_FLAG_NONE, FIND_ANY_ORDER, false)
@@ -298,6 +302,7 @@ end
 
 function modifier_imba_skewer_caster_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		for _, enemy in pairs(self.hitted) do
 			if enemy then
@@ -442,7 +447,7 @@ function modifier_imba_magnetize_aura_counter:GetModifierMoveSpeedBonus_Percenta
 
 imba_magnus_reverse_polarity = class({})
 
-LinkLuaModifier("modifier_imba_reverse_polarity_slow", "hero/hero_magnus", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_reverse_polarity_slow", "hero/hero_magnus", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_magnus_reverse_polarity:IsHiddenWhenStolen() 		return false end
 function imba_magnus_reverse_polarity:IsRefreshable() 			return true  end
@@ -486,8 +491,6 @@ end
 
 modifier_imba_reverse_polarity_slow = class({})
 
-function modifier_imba_reverse_polarity_slow:IsMotionController()	return true end
-function modifier_imba_reverse_polarity_slow:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_imba_reverse_polarity_slow:IsDebuff()				return true end
 function modifier_imba_reverse_polarity_slow:IsHidden() 			return false end
 function modifier_imba_reverse_polarity_slow:IsPurgable() 			return true end
@@ -496,15 +499,18 @@ function modifier_imba_reverse_polarity_slow:DeclareFunctions() return {MODIFIER
 function modifier_imba_reverse_polarity_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("global_slow")) end
 function modifier_imba_reverse_polarity_slow:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		local direction = (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
-		direction.z = 0.0
-		local distance = self:GetParent():HasModifier("modifier_imba_magnus_magnetize_debuff") and self:GetAbility():GetSpecialValueFor("magnetize_pull") or self:GetAbility():GetSpecialValueFor("normal_pull")
-		local length = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D()
-		distance =  length <= distance and length or distance
-		local new_pos = self:GetParent():GetAbsOrigin() + direction * distance
-		FindClearSpaceForUnit(self:GetParent(), new_pos, true)
-		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("tree_radius"), false)
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if self:ApplyHorizontalMotionController() then
+			local direction = (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
+			direction.z = 0.0
+			local distance = self:GetParent():HasModifier("modifier_imba_magnus_magnetize_debuff") and self:GetAbility():GetSpecialValueFor("magnetize_pull") or self:GetAbility():GetSpecialValueFor("normal_pull")
+			local length = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D()
+			distance =  length <= distance and length or distance
+			local new_pos = self:GetParent():GetAbsOrigin() + direction * distance
+			FindClearSpaceForUnit(self:GetParent(), new_pos, true)
+			GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("tree_radius"), false)
+			self:GetParent():RemoveHorizontalMotionController(self)
+		end
 	end
 end
 function modifier_imba_reverse_polarity_slow:OnRefresh() self:OnCreated() end

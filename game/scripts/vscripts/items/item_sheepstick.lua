@@ -64,7 +64,7 @@ function modifier_imba_sheepstick_debuff:GetModifierMagicalResistanceBonus() ret
 function modifier_imba_sheepstick_debuff:GetModifierPhysicalArmorBonus() return self.ar end
 
 function modifier_imba_sheepstick_debuff:OnCreated()
-	self.ar = 0 - math.min(self:GetAbility():GetSpecialValueFor("armor_reduction"), self:GetParent():GetPhysicalArmorValue())
+	self.ar = 0 - math.min(self:GetAbility():GetSpecialValueFor("armor_reduction"), self:GetParent():GetPhysicalArmorValue(false))
 	self.mr = 0 - self:GetParent():GetMagicalArmorValue() * 100
 end
 

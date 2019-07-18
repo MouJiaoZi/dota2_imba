@@ -118,7 +118,7 @@ imba_disruptor_glimpse = class({})
 
 LinkLuaModifier("modifier_imba_glimpse_built_in", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_glimpse_record", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_glimpse_target", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_glimpse_target", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_disruptor_glimpse:IsHiddenWhenStolen() 	return false end
 function imba_disruptor_glimpse:IsRefreshable() 		return true end
@@ -220,10 +220,9 @@ function modifier_imba_glimpse_target:IsHidden() 			return false end
 function modifier_imba_glimpse_target:IsPurgable() 			return true end
 function modifier_imba_glimpse_target:IsPurgeException() 	return true end
 function modifier_imba_glimpse_target:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
-function modifier_imba_glimpse_target:IsMotionController()	return true end
-function modifier_imba_glimpse_target:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 function modifier_imba_glimpse_target:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_glimpse_target:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_glimpse_target:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_glimpse_target:OnCreated(keys)
 	if IsServer() then
@@ -241,8 +240,11 @@ function modifier_imba_glimpse_target:OnCreated(keys)
 		ParticleManager:SetParticleControl(pfx2, 7, self.pos)
 		ParticleManager:SetParticleControl(pfx2, 2, Vector(travel_time, 0, 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
-		if self:CheckMotionControllers() then
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyHorizontalMotionController() then
 			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
 		end
 	end
 end
@@ -277,6 +279,7 @@ function modifier_imba_glimpse_target:OnDestroy()
 		self.pos = nil
 		self:GetParent():StopSound("Hero_Disruptor.Glimpse.Target")
 		self:GetParent():EmitSound("Hero_Disruptor.Glimpse.End")
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

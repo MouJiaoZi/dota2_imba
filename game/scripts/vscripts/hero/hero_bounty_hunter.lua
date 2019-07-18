@@ -458,7 +458,7 @@ function modifier_imba_track:OnHeroKilled(keys)
 	if keys.target ~= self:GetParent() then
 		return
 	end
-	if not keys.target:IsTrueHero() or keys.reincarnate then
+	if not keys.target:IsRealHero() or keys.reincarnate then
 		return
 	end
 	local ally_gold = self:GetAbility():GetSpecialValueFor("bonus_gold") + keys.target:GetLevel() * self:GetAbility():GetSpecialValueFor("bonus_gold_per_lvl")

@@ -5,9 +5,10 @@ imba_faceless_void_time_walk = class({})
 
 LinkLuaModifier("modifier_imba_time_walk_slow", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_time_walk_buff", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_time_walk_motion", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_time_walk_motion", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_time_walk_damage", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_time_walk_damage_counter", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
+
 
 function imba_faceless_void_time_walk:IsHiddenWhenStolen() 		return false end
 function imba_faceless_void_time_walk:IsRefreshable() 			return true  end
@@ -23,13 +24,9 @@ function imba_faceless_void_time_walk:OnSpellStart()
 	local direction = (pos - caster:GetAbsOrigin()):Normalized()
 	direction.z = 0
 	local max_distance = self:GetSpecialValueFor("range") + caster:GetCastRangeBonus()
-	if max_distance < (pos - caster:GetAbsOrigin()):Length2D() then
-		pos = caster:GetAbsOrigin() + direction * max_distance
-	else
-		max_distance = (caster:GetAbsOrigin() - pos):Length2D()
-	end
-	local tralve_duration = max_distance / self:GetSpecialValueFor("speed")
-	caster:AddNewModifier(caster, self, "modifier_imba_time_walk_motion", {duration = tralve_duration, target_x = pos.x, target_y = pos.y, target_z = pos.z, distance = max_distance})
+	local distance = math.min(max_distance, (caster:GetAbsOrigin() - pos):Length2D())
+	local tralve_duration = distance / self:GetSpecialValueFor("speed")
+	caster:AddNewModifier(caster, self, "modifier_imba_time_walk_motion", {duration = tralve_duration, direction = direction})
 	local buffs = caster:FindAllModifiersByName("modifier_imba_time_walk_damage_counter")
 	local heal = 0 
 	for _, buff in pairs(buffs) do
@@ -41,64 +38,53 @@ end
 
 modifier_imba_time_walk_motion = class({})
 
-function modifier_imba_time_walk_motion:IsMotionController()	return true end
-function modifier_imba_time_walk_motion:IsDebuff()				return false end
-function modifier_imba_time_walk_motion:IsHidden() 				return true end
-function modifier_imba_time_walk_motion:IsPurgable() 			return false end
-function modifier_imba_time_walk_motion:IsPurgeException() 		return false end
-function modifier_imba_time_walk_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
+function modifier_imba_time_walk_motion:IsDebuff()			return false end
+function modifier_imba_time_walk_motion:IsHidden() 			return true end
+function modifier_imba_time_walk_motion:IsPurgable() 		return false end
+function modifier_imba_time_walk_motion:IsPurgeException() 	return false end
 function modifier_imba_time_walk_motion:GetEffectName() return "particles/units/heroes/hero_faceless_void/faceless_void_time_walk.vpcf" end
 function modifier_imba_time_walk_motion:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_time_walk_motion:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
+function modifier_imba_time_walk_motion:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_STUNNED] = true} end
 
 function modifier_imba_time_walk_motion:OnCreated(keys)
 	if IsServer() then
-		if self:CheckMotionControllers() then
-			self.target_point = Vector(keys.target_x, keys.target_y, keys.target_z)
-			self.distance = keys.distance
-			self.effected_enemies = {}
-			self:OnIntervalThink()
+		self.direction = StringToVector(keys.direction)
+		self.speed = self:GetAbility():GetSpecialValueFor("speed")
+		self.effected_enemies = {}
+		if not self:ApplyHorizontalMotionController() then
+			self:Destroy()
+		else
 			self:StartIntervalThink(FrameTime())
 		end
 	end
 end
 
 function modifier_imba_time_walk_motion:OnIntervalThink()
-	local caster = self:GetCaster()
-	local distance = self.distance / (self:GetDuration() / FrameTime())
-	local direction = (self.target_point - caster:GetAbsOrigin()):Normalized()
-	direction.z = 0.0
-	local next_pos = GetGroundPosition(caster:GetAbsOrigin() + direction * distance, caster)
-	caster:SetAbsOrigin(next_pos)
-	CreateChronosphere(caster, self:GetAbility(), caster:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("chrono_radius"), self:GetAbility():GetSpecialValueFor("chrono_linger"), 6)
-	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("chrono_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-	for _, enemy in pairs(enemies) do
-		local has = false
-		for _, unit in pairs(self.effected_enemies) do
-			if unit == enemy then
-				has = true
-				break
-			end
-		end
-		if not has then
-			self.effected_enemies[#self.effected_enemies+1] = enemy
+	local me = self:GetParent()
+	local dt = FrameTime()
+	local new_pos = me:GetAbsOrigin() + self.direction * (self.speed / (1.0 / dt))
+	new_pos = GetGroundPosition(new_pos, nil)
+	me:SetAbsOrigin(new_pos)
+	CreateChronosphere(me, self:GetAbility(), me:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("chrono_radius"), self:GetAbility():GetSpecialValueFor("chrono_linger"), 6)
+	local enemy = FindUnitsInRadius(me:GetTeamNumber(), me:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("chrono_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	for i=1, #enemy do
+		if not IsInTable(enemy[i], self.effected_enemies) then
+			self.effected_enemies[#self.effected_enemies + 1] = enemy[i]
 		end
 	end
 end
 
+function modifier_imba_time_walk_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+
 function modifier_imba_time_walk_motion:OnDestroy()
 	if IsServer() then
-		for _, enemy in pairs(self.effected_enemies) do
-			enemy:AddNewModifier(caster, self:GetAbility(), "modifier_imba_time_walk_slow", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-		end
+		self:GetParent():RemoveHorizontalMotionController(self)
+		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		self.direction = nil
+		self.speed = nil
 		if #self.effected_enemies > 0 then
-			local buff = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_time_walk_buff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-			buff:SetStackCount(#self.effected_enemies)
+			self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_time_walk_buff", {duration = self:GetAbility():GetSpecialValueFor("duration")}):SetStackCount(#self.effected_enemies)
 		end
-		FindClearSpaceForUnit(self:GetCaster(), self:GetCaster():GetAbsOrigin(), true)
-		self.target_point = nil
-		self.effected_enemies = nil
-		self.distance = nil
 	end
 end
 
@@ -108,10 +94,8 @@ function modifier_imba_time_walk_slow:IsDebuff()				return true end
 function modifier_imba_time_walk_slow:IsHidden() 				return false end
 function modifier_imba_time_walk_slow:IsPurgable() 				return true end
 function modifier_imba_time_walk_slow:IsPurgeException() 		return true end
-
 function modifier_imba_time_walk_slow:GetEffectName()	return "particles/units/heroes/hero_faceless_void/faceless_void_time_walk_debuff.vpcf" end
 function modifier_imba_time_walk_slow:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-
 function modifier_imba_time_walk_slow:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
 function modifier_imba_time_walk_slow:GetModifierMoveSpeedBonus_Percentage() return (0 - self:GetAbility():GetSpecialValueFor("slow")) end
 
@@ -121,10 +105,8 @@ function modifier_imba_time_walk_buff:IsDebuff()				return false end
 function modifier_imba_time_walk_buff:IsHidden() 				return false end
 function modifier_imba_time_walk_buff:IsPurgable() 				return true end
 function modifier_imba_time_walk_buff:IsPurgeException() 		return true end
-
 function modifier_imba_time_walk_buff:GetEffectName()	return "particles/units/heroes/hero_faceless_void/faceless_void_time_walk.vpcf" end
 function modifier_imba_time_walk_buff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-
 function modifier_imba_time_walk_buff:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_imba_time_walk_buff:GetModifierMoveSpeedBonus_Percentage() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("move_bonus")) end
 function modifier_imba_time_walk_buff:GetModifierAttackSpeedBonus_Constant() return (self:GetStackCount() * self:GetAbility():GetSpecialValueFor("attack_speed_bonus")) end
@@ -488,39 +470,33 @@ function modifier_imba_faceless_void_chronosphere_debuff:OnCreated()
 		self.buff_type = Chronosphere_Enemy
 	end
 	self.ms = self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed(), false) * (1 - (self:GetAbility():GetSpecialValueFor("slow_scepter") / 100))
-	if IsServer() then
-		local a = self:IsMotionController() and self:StartIntervalThink(0.03) or 1
+	if IsServer() and self:IsMotionController() then
+		self:GetParent():InterruptMotionControllers(false)
+		self.abs = self:GetParent():GetAbsOrigin()
+		self:StartIntervalThink(FrameTime())
 	end
 end
 
 function modifier_imba_faceless_void_chronosphere_debuff:OnIntervalThink()
-	self:CheckMotionControllers()
+	self:GetParent():InterruptMotionControllers(false)
+	self:GetParent():SetAbsOrigin(self.abs)
+end
+
+function modifier_imba_faceless_void_chronosphere_debuff:OnDestroy()
+	if IsServer() and self:IsMotionController() then
+		self.abs = nil
+		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+	end
+	self.buff_type = nil
 end
 
 function modifier_imba_faceless_void_chronosphere_debuff:IsHidden() 			return false end
 function modifier_imba_faceless_void_chronosphere_debuff:IsPurgable() 			return false end
 function modifier_imba_faceless_void_chronosphere_debuff:IsPurgeException() 	return false end
-function modifier_imba_faceless_void_chronosphere_debuff:GetPriority() return MODIFIER_PRIORITY_HIGH end
-function modifier_imba_faceless_void_chronosphere_debuff:IsDebuff()
-	if self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Enemy_Ability then
-		return false
-	else
-		return true
-	end
-end
-
+function modifier_imba_faceless_void_chronosphere_debuff:GetPriority() return MODIFIER_PRIORITY_SUPER_ULTRA end
+function modifier_imba_faceless_void_chronosphere_debuff:IsDebuff() return not (self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Enemy_Ability) end
 function modifier_imba_faceless_void_chronosphere_debuff:IsStunDebuff()	return self:IsDebuff() end
-
-function modifier_imba_faceless_void_chronosphere_debuff:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGHEST end
-
-function modifier_imba_faceless_void_chronosphere_debuff:IsMotionController()
-	if self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Ally_Scepter or self.buff_type == Chronosphere_Enemy_Ability then
-		return false
-	else
-		return true
-	end
-end
-
+function modifier_imba_faceless_void_chronosphere_debuff:IsMotionController() return not (self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Ally_Scepter or self.buff_type == Chronosphere_Enemy_Ability) end
 function modifier_imba_faceless_void_chronosphere_debuff:GetStatusEffectName() return "particles/status_fx/status_effect_faceless_chronosphere.vpcf" end
 function modifier_imba_faceless_void_chronosphere_debuff:StatusEffectPriority() return 16 end
 function modifier_imba_faceless_void_chronosphere_debuff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end

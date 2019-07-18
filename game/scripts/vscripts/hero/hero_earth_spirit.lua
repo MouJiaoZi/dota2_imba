@@ -41,7 +41,7 @@ function modifier_imba_stone_remnant_status:IsDebuff()				return false end
 function modifier_imba_stone_remnant_status:IsHidden() 				return false end
 function modifier_imba_stone_remnant_status:IsPurgable() 			return false end
 function modifier_imba_stone_remnant_status:IsPurgeException() 		return false end
-function modifier_imba_stone_remnant_status:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_UNSELECTABLE] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FROZEN] = true} end
+function modifier_imba_stone_remnant_status:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_UNSELECTABLE] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FROZEN] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 function modifier_imba_stone_remnant_status:GetStatusEffectName() return "particles/status_fx/status_effect_earth_spirit_petrify.vpcf" end
 function modifier_imba_stone_remnant_status:StatusEffectPriority() return 20 end
 function modifier_imba_stone_remnant_status:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_VISION_PERCENTAGE} end
@@ -92,7 +92,7 @@ imba_earth_spirit_boulder_smash = class({})
 LinkLuaModifier("modifier_imba_boulder_smash_move_to_cast", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_silent", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_boulder_smash_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_boulder_smash_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_earth_spirit_boulder_smash:IsHiddenWhenStolen() 		return false end
 function imba_earth_spirit_boulder_smash:IsRefreshable() 			return true end
@@ -180,6 +180,9 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
 		target:SetAbsOrigin(pos)
 	end
+	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_bouldersmash_caster.vpcf", PATTACH_CUSTOMORIGIN, nil)
+	ParticleManager:SetParticleControl(pfx, 1, target:GetAbsOrigin())
+	ParticleManager:ReleaseParticleIndex(pfx)
 	if not target:HasModifier("modifier_imba_stone_remnant_status") and IsEnemy(caster, target) then
 		ApplyDamage({victim = target, attacker = caster, damage = self:GetSpecialValueFor("rock_damage"), ability = self, damage_type = self:GetAbilityDamageType()})
 	end
@@ -188,31 +191,9 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 	local distance = target:HasModifier("modifier_imba_stone_remnant_status") and self:GetSpecialValueFor("rock_distance") or self:GetSpecialValueFor("unit_distance")
 	distance = distance + caster:GetCastRangeBonus()
 	local duration = distance / speed
-	local time = 0
-	local remnant_buff_ability
-	local re_apply = false
-	if target:IsHero() and target:HasModifier("modifier_imba_stone_remnant_status") then
-		time = target:FindModifierByName("modifier_imba_stone_remnant_status"):GetRemainingTime()
-		remnant_buff_ability = target:FindModifierByName("modifier_imba_stone_remnant_status"):GetAbility()
-		re_apply = true
-		target:RemoveModifierByName("modifier_imba_stone_remnant_status")
-	end
 	target:RemoveModifierByName("modifier_imba_geomagnetic_grip_motion")
-	local buff = target:AddNewModifier(caster, self, "modifier_imba_boulder_smash_motion", {duration = duration})
-	if buff:CheckMotionControllers() then
-		buff.direction = direction
-		if not target:HasModifier("modifier_imba_stone_remnant_status") and not re_apply then
-			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_bouldersmash_target_trail.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
-			ParticleManager:SetParticleControl(pfx, 1, direction)
-			buff:AddParticle(pfx, false, false, 15, false, false)
-		end
-		buff.pos = target:GetAbsOrigin()
-		buff.hitted = {}
-		buff:StartIntervalThink(FrameTime())
-		if re_apply then
-			target:AddNewModifier(self:GetCaster(), remnant_buff_ability, "modifier_imba_stone_remnant_status", {duration = time})
-		end
-	end
+	target:RemoveModifierByName("modifier_imba_boulder_smash_motion")
+	target:AddNewModifier(target, self, "modifier_imba_boulder_smash_motion", {duration = duration, direction = direction})
 end
 
 modifier_imba_boulder_smash_move_to_cast = class({})
@@ -273,54 +254,71 @@ function modifier_imba_boulder_smash_motion:IsHidden() 			return false end
 function modifier_imba_boulder_smash_motion:IsPurgable() 		return false end
 function modifier_imba_boulder_smash_motion:IsPurgeException() 	return false end
 function modifier_imba_boulder_smash_motion:GetAttributes() return MODIFIER_ATTRIBUTE_IGNORE_INVULNERABLE end
-function modifier_imba_boulder_smash_motion:IsMotionController() return true end
-function modifier_imba_boulder_smash_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
-function modifier_imba_boulder_smash_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
+function modifier_imba_boulder_smash_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_ROOTED] = true} end
+function modifier_imba_boulder_smash_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
-function modifier_imba_boulder_smash_motion:OnCreated()
+function modifier_imba_boulder_smash_motion:OnCreated(keys)
 	if IsServer() then
-		if self:GetParent():HasModifier("modifier_imba_stone_remnant_status") then
-			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_bouldersmash_pushrocks.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-			self:AddParticle(pfx, false, false, 15, false, false)
+		self.hitted = {}
+		self.direction = StringToVector(keys.direction)
+		self.distance = self:GetAbility():GetSpecialValueFor("speed") / (1.0 / FrameTime())
+		self.radius = self:GetAbility():GetSpecialValueFor("radius")
+		self.ability = self:GetAbility()
+		self.caster = self.ability:GetCaster()
+		self.parent = self:GetParent()
+		self:StartIntervalThink(FrameTime())
+		if not self:ApplyHorizontalMotionController() then
+			self:Destroy()
+		else
+			if self.parent:HasModifier("modifier_imba_stone_remnant_status") then
+				local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_bouldersmash_pushrocks.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+				self:AddParticle(pfx, false, false, 15, false, false)
+			end
+			local pfx2 = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_bouldersmash_target.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+			ParticleManager:SetParticleControlForward(pfx2, 1, self.direction)
+			ParticleManager:SetParticleControl(pfx2, 2, Vector(self:GetDuration(), 0, 0))
+			ParticleManager:ReleaseParticleIndex(pfx2)
 		end
-		local pfx_smoke = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_boouldersmash_groundsmoketrail.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		self:AddParticle(pfx_smoke, false, false, 15, false, false)
 	end
 end
 
 function modifier_imba_boulder_smash_motion:OnIntervalThink()
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self.pos, nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		if not IsInTable(enemy, self.hitted) then
 			self.hitted[#self.hitted+1] = enemy
 			if self:GetParent():HasModifier("modifier_imba_stone_remnant_status") then
 				if not enemy:IsMagicImmune() then
-					enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
+					enemy:AddNewModifier(self.caster, self.ability, "modifier_imba_stunned", {duration = self.ability:GetSpecialValueFor("stun_duration")})
 				else
-					enemy:AddNewEarthSpiritModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_boulder_smash_slow", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
+					enemy:AddNewEarthSpiritModifier(self.caster, self.ability, "modifier_imba_boulder_smash_slow", {duration = self.ability:GetSpecialValueFor("stun_duration")})
 				end
 				if enemy:IsAttackImmune() then
-					enemy:AddNewEarthSpiritModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_boulder_smash_silent", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
+					enemy:AddNewEarthSpiritModifier(self.caster, self.ability, "modifier_imba_boulder_smash_silent", {duration = self.ability:GetSpecialValueFor("stun_duration")})
 				end
 			end
-			ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("rock_damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
+			ApplyDamage({victim = enemy, attacker = self.caster, damage = self.ability:GetSpecialValueFor("rock_damage"), ability = self.ability, damage_type = self.ability:GetAbilityDamageType()})
 			enemy:EmitSound("Hero_EarthSpirit.BoulderSmash.Damage")
 		end
 	end
-	GridNav:DestroyTreesAroundPoint(self.pos, 80, true)
-	local distance = self:GetAbility():GetSpecialValueFor("speed") / (1.0 / FrameTime())
-	local next_pos = self.pos + self.direction * distance
+	GridNav:DestroyTreesAroundPoint(self.parent:GetAbsOrigin(), 80, true)
+	local distance = self.distance
+	local next_pos = self.parent:GetAbsOrigin() + self.direction * distance
 	next_pos = GetGroundPosition(next_pos, nil)
-	self.pos = next_pos
-	self:GetParent():SetAbsOrigin(self.pos)
+	self:GetParent():SetAbsOrigin(next_pos)
 end
 
 function modifier_imba_boulder_smash_motion:OnDestroy()
-	if IsServer() and not self:GetParent():HasModifier("modifier_imba_stone_remnant_status") then
+	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
-		self.pos = nil
+		self.hitted = {}
 		self.direction = nil
-		self.hitted = nil
+		self.distance = nil
+		self.radius = nil
+		self.ability = nil
+		self.caster = nil
+		self.parent = nil
 	end
 end
 
@@ -348,7 +346,7 @@ function modifier_imba_boulder_smash_silent:CheckState() return {[MODIFIER_STATE
 
 imba_earth_spirit_rolling_boulder = class({})
 
-LinkLuaModifier("modifier_imba_rolling_boulder_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_rolling_boulder_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_rolling_boulder_motion_delay", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rolling_boulder_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rolling_boulder_extra_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
@@ -368,15 +366,7 @@ function imba_earth_spirit_rolling_boulder:OnSpellStart()
 	local distance = self:GetSpecialValueFor("distance") + caster:GetCastRangeBonus()
 	local speed_rock = self:GetSpecialValueFor("rock_speed") + caster:GetCastRangeBonus()
 	local distance_rock = self:GetSpecialValueFor("rock_distance")
-	local buff = caster:AddNewModifier(caster, self, "modifier_imba_rolling_boulder_motion", {duration = 10.0})
-	buff.total = 0
-	buff.direction = direction
-	buff.speed = speed
-	buff.distance = distance
-	buff.speed_rock = speed_rock
-	buff.distance_rock = distance_rock
-	buff.hitted = {}
-	caster:AddNewModifier(caster, self, "modifier_imba_rolling_boulder_motion_delay", {duration = delay})
+	caster:AddNewModifier(caster, self, "modifier_imba_rolling_boulder_motion_delay", {duration = delay, direction = direction, speed = speed, distance = distance, speed_rock = speed_rock, distance_rock = distance_rock})
 	caster:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_2_ES_ROLL_START, 1.0 / delay)
 	caster:EmitSound("Hero_EarthSpirit.RollingBoulder.Cast")
 end
@@ -387,27 +377,27 @@ function modifier_imba_rolling_boulder_motion_delay:IsDebuff()			return false en
 function modifier_imba_rolling_boulder_motion_delay:IsHidden() 			return true end
 function modifier_imba_rolling_boulder_motion_delay:IsPurgable() 		return false end
 function modifier_imba_rolling_boulder_motion_delay:IsPurgeException() 	return false end
+function modifier_imba_rolling_boulder_motion_delay:DestroyOnExpire()   return false end
+function modifier_imba_rolling_boulder_motion_delay:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 
-function modifier_imba_rolling_boulder_motion_delay:OnCreated()
+function modifier_imba_rolling_boulder_motion_delay:OnCreated(keys)
 	if IsServer() then
+		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_rollingboulder.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:SetParticleControlEnt(pfx, 3, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+		self:AddParticle(pfx, false, false, 15, false, false)
+		self.keys = keys
+		self.keys['creationtime'] = nil
 		self:StartIntervalThink(FrameTime())
 	end
 end
 
 function modifier_imba_rolling_boulder_motion_delay:OnIntervalThink()
 	if self:GetParent():IsStunned() or self:GetParent():IsNightmared() or self:GetParent():IsHexed() then
-		self:GetParent():RemoveModifierByName("modifier_imba_rolling_boulder_motion")
 		self:Destroy()
 	end
-end
-
-function modifier_imba_rolling_boulder_motion_delay:OnDestroy()
-	if IsServer() and self:GetParent():HasModifier("modifier_imba_rolling_boulder_motion") then
-		local buff = self:GetParent():FindModifierByName("modifier_imba_rolling_boulder_motion")
-		if buff:CheckMotionControllers() then
-			buff:StartIntervalThink(FrameTime())
-			self:GetParent():EmitSound("Hero_EarthSpirit.RollingBoulder.Loop")
-		end
+	if self:GetDuration() <= self:GetElapsedTime() then
+		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_rolling_boulder_motion", self.keys)
+		self:StartIntervalThink(-1)
 	end
 end
 
@@ -417,31 +407,44 @@ function modifier_imba_rolling_boulder_motion:IsDebuff()			return false end
 function modifier_imba_rolling_boulder_motion:IsHidden() 			return true end
 function modifier_imba_rolling_boulder_motion:IsPurgable() 			return false end
 function modifier_imba_rolling_boulder_motion:IsPurgeException() 	return false end
-function modifier_imba_rolling_boulder_motion:IsMotionController() return true end
-function modifier_imba_rolling_boulder_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
-function modifier_imba_rolling_boulder_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true} end
+function modifier_imba_rolling_boulder_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 function modifier_imba_rolling_boulder_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_rolling_boulder_motion:GetOverrideAnimation() return ACT_DOTA_CAST_ABILITY_2_ES_ROLL end
+function modifier_imba_rolling_boulder_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
-function modifier_imba_rolling_boulder_motion:OnCreated()
+function modifier_imba_rolling_boulder_motion:OnCreated(keys)
 	if IsServer() then
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_rollingboulder.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		ParticleManager:SetParticleControlEnt(pfx, 3, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		self:AddParticle(pfx, false, false, 15, false, false)
+		if not self:ApplyHorizontalMotionController() then
+			self:Destroy()
+		else
+			self:SetDuration(-1, true)
+			self.total = 0
+			self.parent = self:GetParent()
+			self.caster = self:GetCaster()
+			self.radius = self:GetAbility():GetSpecialValueFor("radius")
+			self.ability = self:GetAbility()
+			self.direction = StringToVector(keys.direction)
+			self.speed = keys.speed
+			self.distance = keys.distance
+			self.speed_rock = keys.speed_rock
+			self.distance_rock = keys.distance_rock
+			self.hitted = {}
+			self:StartIntervalThink(FrameTime())
+		end
 	end
 end
 
 function modifier_imba_rolling_boulder_motion:OnIntervalThink()
-	if self:GetParent():IsStunned() then
+	if self.parent:IsStunned() then
 		self:Destroy()
 		return
 	end
-	local ability = self:GetAbility()
+	local ability = self.ability
 	if self:GetStackCount() == 0 then
-		local stone = FindStoneRemnant(self:GetParent():GetAbsOrigin(), ability:GetSpecialValueFor("radius"))
+		local stone = FindStoneRemnant(self.parent:GetAbsOrigin(), self.radius)
 		if stone then
 			self:SetStackCount(1)
-			self:GetParent():EmitSound("Hero_EarthSpirit.RollingBoulder.Stone")
+			self.parent:EmitSound("Hero_EarthSpirit.RollingBoulder.Stone")
 			stone:RemoveModifierByName("modifier_imba_stone_remnant_status")
 			stone:RemoveModifierByName("modifier_kill")
 		end
@@ -454,9 +457,9 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 		if self.distance - self.total < distance then
 			distance = self.distance - self.total
 		end
-		local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + self.direction * distance, nil)
+		local next_pos = GetGroundPosition(self.parent:GetAbsOrigin() + self.direction * distance, nil)
 		self.total = self.total + distance
-		self:GetParent():SetAbsOrigin(next_pos)
+		self.parent:SetAbsOrigin(next_pos)
 	end
 	if self:GetStackCount() == 1 then
 		if self.total >= self.distance_rock then
@@ -467,25 +470,25 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 		if self.distance_rock - self.total < distance then
 			distance = self.distance_rock - self.total
 		end
-		local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + self.direction * distance, nil)
+		local next_pos = GetGroundPosition(self.parent:GetAbsOrigin() + self.direction * distance, nil)
 		self.total = self.total + distance
-		self:GetParent():SetAbsOrigin(next_pos)
+		self.parent:SetAbsOrigin(next_pos)
 	end
-	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 80, true)
-	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	GridNav:DestroyTreesAroundPoint(self.parent:GetAbsOrigin(), 80, true)
+	local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		if not IsInTable(enemy, self.hitted) then
 			self.hitted[#self.hitted+1] = enemy
-			ApplyDamage({victim = enemy, attacker = self:GetParent(), ability = ability, damage = ability:GetSpecialValueFor("damage"), damage_type = ability:GetAbilityDamageType()})
+			ApplyDamage({victim = enemy, attacker = self.caster, ability = ability, damage = ability:GetSpecialValueFor("damage"), damage_type = ability:GetAbilityDamageType()})
 			if self:GetStackCount() == 1 then
-				enemy:AddNewEarthSpiritModifier(self:GetParent(), ability, "modifier_imba_rolling_boulder_slow", {duration = ability:GetSpecialValueFor("slow_duration")})
+				enemy:AddNewEarthSpiritModifier(self.caster, ability, "modifier_imba_rolling_boulder_slow", {duration = ability:GetSpecialValueFor("slow_duration")})
 			end
 			if enemy:IsTrueHero() then
 				enemy:EmitSound("Hero_EarthSpirit.RollingBoulder.Target")
-				if not self:GetParent():HasTalent("special_bonus_imba_earth_spirit_1") then
+				if not self.caster:HasTalent("special_bonus_imba_earth_spirit_1") then
 					self:SetStackCount(2)
-					local direction = (enemy:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
-					self:GetParent():SetAbsOrigin(enemy:GetAbsOrigin() + direction * 100)
+					local direction = (enemy:GetAbsOrigin() - self.parent:GetAbsOrigin()):Normalized()
+					self.parent:SetAbsOrigin(enemy:GetAbsOrigin() + direction * 100)
 					self:Destroy()
 				end
 			end
@@ -497,6 +500,19 @@ function modifier_imba_rolling_boulder_motion:OnDestroy()
 	if IsServer() then
 		self:GetParent():EmitSound("Hero_EarthSpirit.RollingBoulder.Destroy")
 		self:GetParent():StopSound("Hero_EarthSpirit.RollingBoulder.Loop")
+		self:GetParent():RemoveModifierByName("modifier_imba_rolling_boulder_motion_delay")
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self.total = nil
+		self.parent = nil
+		self.caster = nil
+		self.radius = nil
+		self.ability = nil
+		self.direction = nil
+		self.speed = nil
+		self.distance = nil
+		self.speed_rock = nil
+		self.distance_rock = nil
+		self.hitted = nil
 	end
 end
 
@@ -541,7 +557,7 @@ function modifier_imba_rolling_boulder_extra_slow:GetModifierMoveSpeedBonus_Perc
 
 imba_earth_spirit_geomagnetic_grip = class({})
 
-LinkLuaModifier("modifier_imba_geomagnetic_grip_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_geomagnetic_grip_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_geomagnetic_grip_debuff", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_earth_spirit_geomagnetic_grip:IsHiddenWhenStolen() 	return false end
@@ -552,9 +568,6 @@ function imba_earth_spirit_geomagnetic_grip:IsNetherWardStealable()	return false
 function imba_earth_spirit_geomagnetic_grip:CastFilterResultTarget(target)
 	if IsEnemy(target, self:GetCaster()) then
 		return UF_FAIL_ENEMY
-	end
-	if target:IsInvulnerable() then
-		return UF_FAIL_INVULNERABLE
 	end
 	if IsServer() and PlayerResource:IsDisableHelpSetForPlayerID(target:GetPlayerOwnerID(), self:GetCaster():GetPlayerOwnerID()) then
 		return UF_FAIL_DISABLE_HELP
@@ -584,13 +597,11 @@ end
 function imba_earth_spirit_geomagnetic_grip:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget() or FindStoneRemnant(self:GetCursorPosition(), self:GetSpecialValueFor("radius"))
-
 	if not target then
 		self:EndCooldown()
 		self:RefundManaCost()
 		return
 	end
-
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_geomagentic_grip_caster.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
 	ParticleManager:SetParticleControl(pfx, 10, caster:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(pfx)
@@ -599,20 +610,7 @@ function imba_earth_spirit_geomagnetic_grip:OnSpellStart()
 	local direction = (caster:GetAbsOrigin() - target:GetAbsOrigin()):Normalized()
 	direction.z = 0.0
 	target:RemoveModifierByName("modifier_imba_boulder_smash_motion")
-	local re_apply = false
-	local buff_dura
-	local remnant_buff_ability
-	local buff = target:FindModifierByName("modifier_imba_stone_remnant_status")
-	if target:IsHero() and buff then
-		re_apply = true
-		buff_dura = buff:GetRemainingTime()
-		remnant_buff_ability = buff:GetAbility()
-		buff:Destroy()
-	end
-	target:AddNewModifier(caster, self, "modifier_imba_geomagnetic_grip_motion", {duration = (target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() / self:GetSpecialValueFor("speed"), direction_x = direction.x, direction_y = direction.y})
-	if re_apply then
-		target:AddNewModifier(caster, remnant_buff_ability, "modifier_imba_stone_remnant_status", {duration = buff_dura})
-	end
+	target:AddNewModifier(target, self, "modifier_imba_geomagnetic_grip_motion", {duration = (target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() / self:GetSpecialValueFor("speed"), direction = direction})
 end
 
 modifier_imba_geomagnetic_grip_motion = class({})
@@ -622,8 +620,6 @@ function modifier_imba_geomagnetic_grip_motion:IsHidden() 			return true end
 function modifier_imba_geomagnetic_grip_motion:IsPurgable() 		return false end
 function modifier_imba_geomagnetic_grip_motion:IsPurgeException() 	return false end
 function modifier_imba_geomagnetic_grip_motion:GetAttributes() return MODIFIER_ATTRIBUTE_IGNORE_INVULNERABLE end
-function modifier_imba_geomagnetic_grip_motion:IsMotionController() return true end
-function modifier_imba_geomagnetic_grip_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 function modifier_imba_geomagnetic_grip_motion:CheckState()
 	if not IsEnemy(self:GetCaster(), self:GetParent()) then
 		return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_STUNNED] = true}
@@ -632,44 +628,59 @@ function modifier_imba_geomagnetic_grip_motion:CheckState()
 end
 function modifier_imba_geomagnetic_grip_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_geomagnetic_grip_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_geomagnetic_grip_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_geomagnetic_grip_motion:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
-		self.hitted = {}
-		self.direction = Vector(keys.direction_x, keys.direction_y, 0)
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_geomagentic_grip_target.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
-		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-		ParticleManager:SetParticleControl(pfx, 1, self:GetParent():GetAbsOrigin() - self.direction * 170)
-		ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetDuration(),0,0))
-		self:AddParticle(pfx, false, false, 15, false, false)
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if not self:ApplyHorizontalMotionController() then
+			self:Destroy()
+		else
+			self.caster = self:GetAbility():GetCaster()
+			self.parent = self:GetParent()
+			self.ability = self:GetAbility()
+			self.radius = self:GetAbility():GetSpecialValueFor("radius")
+			self.hitted = {}
+			self.direction = StringToVector(keys.direction)
+			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_geomagentic_grip_target.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+			ParticleManager:SetParticleControl(pfx, 1, self:GetParent():GetAbsOrigin() - self.direction * 170)
+			ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetDuration(),0,0))
+			self:AddParticle(pfx, false, false, 15, false, false)
+			self:StartIntervalThink(FrameTime())
+		end
 	end
 end
 
 function modifier_imba_geomagnetic_grip_motion:OnIntervalThink()
 	if self:GetParent():HasModifier("modifier_imba_stone_remnant_status") then
-		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+		local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 		for _, enemy in pairs(enemies) do
 			if not self.hitted[enemy:entindex()] then
 				self.hitted[enemy:entindex()] = true
-				ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = self:GetAbility():GetSpecialValueFor("rock_damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
+				ApplyDamage({victim = enemy, attacker = self.caster, damage = self.ability:GetSpecialValueFor("rock_damage"), ability = self.ability, damage_type = self.ability:GetAbilityDamageType()})
 				enemy:EmitSound("Hero_EarthSpirit.GeomagneticGrip.Damage")
 				enemy:EmitSound("Hero_EarthSpirit.GeomagneticGrip.Stun")
-				enemy:AddNewEarthSpiritModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_geomagnetic_grip_debuff", {duration = self:GetAbility():GetSpecialValueFor("miss_duration")})
+				enemy:AddNewEarthSpiritModifier(self.caster, self:GetAbility(), "modifier_imba_geomagnetic_grip_debuff", {duration = self.ability:GetSpecialValueFor("miss_duration")})
 			end
 		end
 	end
 	----------
-	local distance = self:GetAbility():GetSpecialValueFor("speed") / (1.0 / FrameTime())
-	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + self.direction * distance, self:GetParent())
-	self:GetParent():SetAbsOrigin(next_pos)
+	local distance = self.ability:GetSpecialValueFor("speed") / (1.0 / FrameTime())
+	local next_pos = GetGroundPosition(self.parent:GetAbsOrigin() + self.direction * distance, self.parent)
+	self.parent:SetAbsOrigin(next_pos)
 end
 
 function modifier_imba_geomagnetic_grip_motion:OnDestroy()
 	if IsServer() then
-		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		FindClearSpaceForUnit(self.parent, self.parent:GetAbsOrigin(), true)
 		self.direction = nil
+		self.hitted = nil
+		self.caster = nil
+		self.parent = nil
+		self.ability = nil
+		self.radius = nil
+		self:GetParent():RemoveHorizontalMotionController(self)
 	end
 end
 
@@ -689,6 +700,7 @@ function modifier_imba_geomagnetic_grip_debuff:GetModifierMiss_Percentage() retu
 imba_earth_spirit_petrify = class({})
 
 LinkLuaModifier("modifier_imba_petrify_controller", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_petrify_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_earth_spirit_petrify:IsHiddenWhenStolen() 	return false end
 function imba_earth_spirit_petrify:IsRefreshable() 			return true end
@@ -756,12 +768,39 @@ function modifier_imba_petrify_controller:OnTakeDamage(keys)
 		if enemy then  -- 1: blue, go 2: red, come
 			if self:GetStackCount() == 1 then
 				local direction = (keys.unit:GetAbsOrigin() - enemy:GetAbsOrigin()):Normalized()
-				FindClearSpaceForUnit(keys.unit, keys.unit:GetAbsOrigin() + direction * ability:GetSpecialValueFor("pull_distance"), true)
+				local pos = keys.unit:GetAbsOrigin() + direction * ability:GetSpecialValueFor("pull_distance")
+				keys.unit:AddNewModifier(keys.unit, nil, "modifier_imba_petrify_motion", {duration = 0, pos = pos})
 			elseif self:GetStackCount() == 2 then
 				local direction = (enemy:GetAbsOrigin() - keys.unit:GetAbsOrigin()):Normalized()
-				FindClearSpaceForUnit(keys.unit, keys.unit:GetAbsOrigin() + direction * ability:GetSpecialValueFor("pull_distance"), true)
+				local pos = keys.unit:GetAbsOrigin() + direction * ability:GetSpecialValueFor("pull_distance")
+				keys.unit:AddNewModifier(keys.unit, nil, "modifier_imba_petrify_motion", {duration = 0, pos = pos})
 			end
 		end
+	end
+end
+
+modifier_imba_petrify_motion = class({})
+
+function modifier_imba_petrify_motion:IsDebuff()			return false end
+function modifier_imba_petrify_motion:IsHidden() 			return true end
+function modifier_imba_petrify_motion:IsPurgable() 			return false end
+function modifier_imba_petrify_motion:IsPurgeException() 	return false end
+function modifier_imba_petrify_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+
+function modifier_imba_petrify_motion:OnCreated(keys)
+	if IsServer() then
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if not self:ApplyHorizontalMotionController() then
+			self:Destroy()
+		else
+			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)
+		end
+	end
+end
+
+function modifier_imba_petrify_motion:OnDestroy()
+	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 	end
 end
 

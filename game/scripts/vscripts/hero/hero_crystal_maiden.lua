@@ -233,7 +233,7 @@ function modifier_imba_frostbite_passive:OnTakeDamage(keys)
 	if keys.unit ~= self:GetParent() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_frostbite_passive_cooldown") or self:GetParent():IsIllusion() or keys.attacker:IsMagicImmune() or keys.attacker:IsBuilding() or keys.attacker:IsOther() or self:GetParent():PassivesDisabled() then
+	if self:GetParent():HasModifier("modifier_imba_frostbite_passive_cooldown") or self:GetParent():IsIllusion() or keys.attacker:IsMagicImmune() or keys.attacker:IsBuilding() or keys.attacker:IsOther() or self:GetParent():PassivesDisabled() or not IsEnemy(keys.attacker, self:GetParent()) then
 		return
 	end
 	if keys.attacker:IsHero() then

@@ -4,7 +4,7 @@ imba_broodmother_spider_strikes = class({})
 
 LinkLuaModifier("modifier_imba_spider_strikes", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_spider_strikes_caster", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_spider_strikes_motion", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_spider_strikes_motion", "hero/hero_broodmother", LUA_MODIFIER_MOTION_BOTH)
 
 function imba_broodmother_spider_strikes:IsHiddenWhenStolen() 		return false end
 function imba_broodmother_spider_strikes:IsRefreshable() 			return true end
@@ -26,21 +26,24 @@ function modifier_imba_spider_strikes_motion:IsDebuff()			return false end
 function modifier_imba_spider_strikes_motion:IsHidden() 		return true end
 function modifier_imba_spider_strikes_motion:IsPurgable() 		return false end
 function modifier_imba_spider_strikes_motion:IsPurgeException() return false end
-function modifier_imba_spider_strikes_motion:IsMotionController() return true end
-function modifier_imba_spider_strikes_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 function modifier_imba_spider_strikes_motion:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = self:GetCaster():HasScepter()} end
 function modifier_imba_spider_strikes_motion:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_SCALE} end
 function modifier_imba_spider_strikes_motion:GetModifierModelScale() return self:GetParent():HasScepter() and (0 - self:GetAbility():GetSpecialValueFor("model_scale_scepter")) or 0 end
 
 function modifier_imba_spider_strikes_motion:OnCreated(keys)
 	if IsServer() then
-		if self:CheckMotionControllers() then
+		if not self:ApplyHorizontalMotionController() or not self:ApplyVerticalMotionController() then
+			self:Destroy()
+		else
 			self:GetAbility():SetActivated(false)
 			self.target = EntIndexToHScript(keys.target)
 			self:StartIntervalThink(FrameTime())
 		end
 	end
 end
+
+function modifier_imba_spider_strikes_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_spider_strikes_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_spider_strikes_motion:OnIntervalThink()
 	local caster = self:GetParent()
@@ -63,7 +66,8 @@ function modifier_imba_spider_strikes_motion:OnIntervalThink()
 		local height = 300
 		next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
 		caster:SetAbsOrigin(next_pos)
-		caster:SetForwardVector(direction)
+		caster:MoveToNPC(target)
+		--caster:SetForwardVector(direction)
 	end
 end
 
@@ -88,6 +92,8 @@ function modifier_imba_spider_strikes_motion:OnDestroy()
 		else
 			FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		end
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:GetParent():RemoveVerticalMotionController(self)
 		self.target = nil
 	end
 end
@@ -192,6 +198,7 @@ LinkLuaModifier("modifier_imba_spin_web_caster_aura", "hero/hero_broodmother", L
 LinkLuaModifier("modifier_imba_spin_web_buff", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_spin_web_enemy_aura", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_spin_web_debuff", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_spin_web_scepter", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
 
 function imba_broodmother_spin_web:IsHiddenWhenStolen() 	return false end
 function imba_broodmother_spin_web:IsRefreshable() 			return true end
@@ -200,6 +207,7 @@ function imba_broodmother_spin_web:IsNetherWardStealable()	return false end
 function imba_broodmother_spin_web:GetAOERadius() return self:GetSpecialValueFor("radius") end
 function imba_broodmother_spin_web:GetCooldown(iLevel) return self:GetSpecialValueFor("charge_restore_time") end
 function imba_broodmother_spin_web:OnUpgrade() AbilityChargeController:AbilityChargeInitialize(self, self:GetSpecialValueFor("charge_restore_time"), self:GetSpecialValueFor("max_charges"), 1, true, true) end
+function imba_broodmother_spin_web:GetIntrinsicModifierName() return "modifier_imba_spin_web_scepter" end
 
 function imba_broodmother_spin_web:GetCastRange(pos, target)
 	if not self.range then
@@ -252,6 +260,27 @@ function imba_broodmother_spin_web:OnSpellStart()
 	ParticleManager:SetParticleControl(pfx, 1, pos)
 	ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetSpecialValueFor("radius"), 0, 0))
 	ParticleManager:ReleaseParticleIndex(pfx)
+end
+
+modifier_imba_spin_web_scepter = class({})
+
+function modifier_imba_spin_web_scepter:IsDebuff()			return false end
+function modifier_imba_spin_web_scepter:IsHidden() 			return true end
+function modifier_imba_spin_web_scepter:IsPurgable() 		return false end
+function modifier_imba_spin_web_scepter:IsPurgeException() 	return false end
+
+function modifier_imba_spin_web_scepter:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(1.0)
+	end
+end
+
+function modifier_imba_spin_web_scepter:OnIntervalThink()
+	if self:GetParent():HasScepter() then
+		AbilityChargeController:ChangeChargeAbilityConfig(self:GetAbility(), nil, self:GetAbility():GetSpecialValueFor("max_charges_scepter"), nil, nil, nil)
+	else
+		AbilityChargeController:ChangeChargeAbilityConfig(self:GetAbility(), nil, self:GetAbility():GetSpecialValueFor("max_charges"), nil, nil, nil)
+	end
 end
 
 modifier_imba_spin_web_caster_aura = class({})

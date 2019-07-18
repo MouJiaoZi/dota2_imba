@@ -152,7 +152,7 @@
 			"reference_operator"
 			{
 				"operator"				"sos_reference_stack"
-				"reference_stack"		"dota_update_default"
+				"reference_stack"		"dota_update_vo_announcer"
 				"operator_variables"
 				{
 					"vsnd_files"

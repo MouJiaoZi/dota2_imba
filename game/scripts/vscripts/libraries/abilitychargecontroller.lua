@@ -202,10 +202,6 @@ function AbilityChargeController:ChangeChargeAbilityConfig(hAbility, fChargeTime
 		return
 	end
 	local buff = AbilityChargeController:GetChargeModifier(hAbility)
-	if iChargeCost < 0 or iMaxCharges <= 0 or fChargeTime <= 0 then
-		print("Number error, what are you doing?")
-		return
-	end
 
 	buff.chargetime = fChargeTime or buff.chargetime 
 	buff.maxcharges = iMaxCharges or buff.maxcharges 

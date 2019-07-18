@@ -3,6 +3,7 @@ CreateEmptyTalents("enigma")
 imba_enigma_malefice = class({})
 
 LinkLuaModifier("modifier_imba_enigma_malefice", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_enigma_malefice_motion", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_enigma_malefice:IsHiddenWhenStolen() 		return false end
 function imba_enigma_malefice:IsRefreshable() 			return true  end
@@ -40,7 +41,7 @@ function modifier_imba_enigma_malefice:OnCreated()
 end
 
 function modifier_imba_enigma_malefice:OnIntervalThink()
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("glitch_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("glitch_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	local all = Entities:FindAllByNameWithin("npc_dota_thinker", self:GetParent():GetAbsOrigin(), 5000)
 	local distance = 5000
 	local pulse = nil
@@ -51,13 +52,10 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 		end
 	end
 	local pull_delay = self:GetAbility():GetSpecialValueFor("pull_delay")
-	local particle_start = "particles/hero/enigma/malefice_targetstart.vpcf"
-	local particle_travel = "particles/hero/enigma/malefice_travel.vpcf"
-	local particle_end = "particles/hero/enigma/malefice_targetend.vpcf"
-	for _, enemy in pairs(enemies) do
-		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
+	for i=1, #enemy do
+		enemy[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_stunned", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
 		local damageTable = {
-							victim = enemy,
+							victim = enemy[i],
 							attacker = self:GetCaster(),
 							damage = self:GetAbility():GetSpecialValueFor("tick_damage"),
 							damage_type = self:GetAbility():GetAbilityDamageType(),
@@ -65,7 +63,7 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 							ability = self:GetAbility(), --Optional.
 							}
 		ApplyDamage(damageTable)
-		enemy:EmitSound("Hero_Enigma.MaleficeTick")
+		enemy[i]:EmitSound("Hero_Enigma.MaleficeTick")
 
 		local target_pos
 		local black_hole = self:GetCaster():FindAbilityByName("imba_enigma_black_hole")
@@ -76,42 +74,61 @@ function modifier_imba_enigma_malefice:OnIntervalThink()
 		else
 			target_pos = self:GetCaster():GetAbsOrigin()
 		end
-		local direction = (target_pos - enemy:GetAbsOrigin()):Normalized()
+		local direction = (target_pos - enemy[i]:GetAbsOrigin()):Normalized()
 		direction.z = 0
-		target_pos = enemy:GetAbsOrigin() + direction * self:GetAbility():GetSpecialValueFor("glitch_pull")
-		
-		-- Draw startpoint particle
-		local start_pfx = ParticleManager:CreateParticle(particle_start, PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControl(start_pfx, 0, enemy:GetAbsOrigin())
+		target_pos = enemy[i]:GetAbsOrigin() + direction * self:GetAbility():GetSpecialValueFor("glitch_pull")
+
+		enemy[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_enigma_malefice_motion", {pos = target_pos})
+	end
+end
+
+modifier_imba_enigma_malefice_motion = class({})
+
+function modifier_imba_enigma_malefice_motion:IsDebuff()			return true end
+function modifier_imba_enigma_malefice_motion:IsHidden() 			return true end
+function modifier_imba_enigma_malefice_motion:IsPurgable() 			return true end
+function modifier_imba_enigma_malefice_motion:IsPurgeException() 	return true end
+function modifier_imba_enigma_malefice_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_enigma_malefice_motion:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+
+function modifier_imba_enigma_malefice_motion:OnCreated(keys)
+	if IsServer() then
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		self.pos = StringToVector(keys.pos)
+		local pull_delay = self:GetAbility():GetSpecialValueFor("pull_delay")
+		self:StartIntervalThink(pull_delay)
+
+		local start_pfx = ParticleManager:CreateParticle("particles/hero/enigma/malefice_targetstart.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(start_pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(start_pfx, 2, Vector(pull_delay, 0, 0))
-		Timers:CreateTimer(pull_delay, function()
-			ParticleManager:DestroyParticle(start_pfx, false)
-			ParticleManager:ReleaseParticleIndex(start_pfx)
-		end)
 
-		-- Draw traveling particle
-		local travel_pfx = ParticleManager:CreateParticle(particle_travel, PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControl(travel_pfx, 0, enemy:GetAbsOrigin())
+		local travel_pfx = ParticleManager:CreateParticle("particles/hero/enigma/malefice_travel.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(travel_pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(travel_pfx, 2, Vector(pull_delay, 0, 0))
-		ParticleManager:SetParticleControl(travel_pfx, 1, target_pos)
-		ParticleManager:ReleaseParticleIndex(travel_pfx)
-		Timers:CreateTimer(pull_delay, function()
-			ParticleManager:DestroyParticle(travel_pfx, false)
-			ParticleManager:ReleaseParticleIndex(travel_pfx)
-		end)
+		ParticleManager:SetParticleControl(travel_pfx, 1, self.pos)
 
-		-- Draw endpoint particle
-		local end_pfx = ParticleManager:CreateParticle(particle_end, PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControl(end_pfx, 1, target_pos)
+		local end_pfx = ParticleManager:CreateParticle("particles/hero/enigma/malefice_targetend.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(end_pfx, 1, self.pos)
 		ParticleManager:SetParticleControl(end_pfx, 2, Vector(pull_delay, 0, 0))
-		ParticleManager:ReleaseParticleIndex(end_pfx)
-		Timers:CreateTimer(pull_delay, function()
-			ParticleManager:DestroyParticle(end_pfx, false)
-			ParticleManager:ReleaseParticleIndex(end_pfx)
-			if not enemy:HasModifier("modifier_batrider_flaming_lasso") then
-				FindClearSpaceForUnit(enemy, target_pos, true)
-			end
-		end)
+
+		self:AddParticle(start_pfx, false, false, 15, false, false)
+		self:AddParticle(travel_pfx, false, false, 15, false, false)
+		self:AddParticle(end_pfx, false, false, 15, false, false)
+	end
+end
+
+function modifier_imba_enigma_malefice_motion:OnIntervalThink()
+	if self:ApplyHorizontalMotionController() then
+		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
+	end
+	self:StartIntervalThink(-1)
+	self:Destroy()
+end
+
+function modifier_imba_enigma_malefice_motion:OnDestroy()
+	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self.pos = nil
 	end
 end
 
@@ -131,7 +148,7 @@ function imba_enigma_demonic_conversion:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
-	EmitSoundOnLocationWithCaster(target:GetAbsOrigin(), "Hero_Enigma.Demonic_Conversion", target)
+	target:EmitSound("Hero_Enigma.Demonic_Conversion")
 	for i=1,self:GetSpecialValueFor("eidolon_count") do
 		local unit = CreateUnitByName("npc_imba_enigma_eidolon_"..self:GetLevel(), target:GetAbsOrigin(), true, caster, caster, caster:GetTeamNumber())
 		unit:SetControllableByPlayer(caster:GetPlayerID(), false)
@@ -194,6 +211,7 @@ function modifier_imba_enigma_demonic_conversion_buff:GetModifierPreAttack_Bonus
 imba_enigma_midnight_pulse = class({})
 
 LinkLuaModifier("modifier_imba_enigma_midnight_pulse_thinker", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_enigma_midnight_pulse_motion", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_enigma_midnight_pulse:IsHiddenWhenStolen() 	return false end
 function imba_enigma_midnight_pulse:IsRefreshable() 		return true  end
@@ -214,7 +232,7 @@ function modifier_imba_enigma_midnight_pulse_thinker:RemoveOnDeath() return true
 
 function modifier_imba_enigma_midnight_pulse_thinker:OnCreated()
 	if IsServer() then
-		EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_Enigma.Midnight_Pulse", self:GetParent())
+		self:GetParent():EmitSound("Hero_Enigma.Midnight_Pulse")
 		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), self:GetAbility():GetAOERadius(), false)
 		self:StartIntervalThink(1.0)
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_enigma/enigma_midnight_pulse.vpcf", PATTACH_CUSTOMORIGIN, nil)
@@ -225,26 +243,46 @@ function modifier_imba_enigma_midnight_pulse_thinker:OnCreated()
 end
 
 function modifier_imba_enigma_midnight_pulse_thinker:OnIntervalThink()
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetAOERadius(), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ANCIENTS, FIND_ANY_ORDER, false)
-	for _, enemy in pairs(enemies) do
-		if not enemy:IsBoss() then
-			local dmg = enemy:GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("damage_per_tick") / 100)
-			local damageTable = {
-								victim = enemy,
-								attacker = self:GetCaster(),
-								damage = dmg,
-								damage_type = self:GetAbility():GetAbilityDamageType(),
-								damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
-								ability = self:GetAbility(), --Optional.
-								}
-			ApplyDamage(damageTable)
-			if not enemy:HasModifier("modifier_imba_enigma_black_hole_aura") and not enemy:HasModifier("modifier_imba_enigma_black_hole_out_pull") and not enemy:HasModifier("modifier_batrider_flaming_lasso") then
-				local direction = (self:GetParent():GetAbsOrigin() - enemy:GetAbsOrigin()):Normalized()
-				direction.z = 0.0
-				local new_pos = enemy:GetAbsOrigin() + direction * self:GetAbility():GetSpecialValueFor("pull_distance")
-				FindClearSpaceForUnit(enemy, new_pos, true)
-			end
+	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetAOERadius(), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ANCIENTS, FIND_ANY_ORDER, false)
+	for i=1, #enemy do
+		local dmg = enemy[i]:GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("damage_per_tick") / 100)
+		local damageTable = {
+							victim = enemy[i],
+							attacker = self:GetCaster(),
+							damage = dmg,
+							damage_type = self:GetAbility():GetAbilityDamageType(),
+							damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, --Optional.
+							ability = self:GetAbility(), --Optional.
+							}
+		ApplyDamage(damageTable)
+		local direction = (self:GetParent():GetAbsOrigin() - enemy[i]:GetAbsOrigin()):Normalized()
+		direction.z = 0.0
+		local new_pos = enemy[i]:GetAbsOrigin() + direction * self:GetAbility():GetSpecialValueFor("pull_distance")
+		enemy[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_enigma_midnight_pulse_motion", {pos = new_pos})
+	end
+end
+
+modifier_imba_enigma_midnight_pulse_motion = class({})
+
+function modifier_imba_enigma_midnight_pulse_motion:IsDebuff()			return true end
+function modifier_imba_enigma_midnight_pulse_motion:IsHidden() 			return true end
+function modifier_imba_enigma_midnight_pulse_motion:IsPurgable() 		return false end
+function modifier_imba_enigma_midnight_pulse_motion:IsPurgeException() 	return false end
+function modifier_imba_enigma_midnight_pulse_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+
+function modifier_imba_enigma_midnight_pulse_motion:OnCreated(keys)
+	if IsServer() then
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if self:ApplyHorizontalMotionController() then
+			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)
+			self:Destroy()
 		end
+	end
+end
+
+function modifier_imba_enigma_midnight_pulse_motion:OnDestroy()
+	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 	end
 end
 
@@ -264,13 +302,7 @@ function modifier_imba_enigma_gravity_passive:IsHidden() 			return true end
 function modifier_imba_enigma_gravity_passive:IsPurgable() 			return false end
 function modifier_imba_enigma_gravity_passive:IsPurgeException() 	return false end
 
-function modifier_imba_enigma_gravity_passive:IsAura()
-	if self:GetParent():PassivesDisabled() or self:GetParent():IsIllusion() then
-		return false
-	else
-		return true
-	end
-end
+function modifier_imba_enigma_gravity_passive:IsAura() return not (self:GetParent():PassivesDisabled() or self:GetParent():IsIllusion()) end
 function modifier_imba_enigma_gravity_passive:GetAuraDuration() return 0.1 + self:GetCaster():GetTalentValue("special_bonus_imba_enigma_2") end
 function modifier_imba_enigma_gravity_passive:GetModifierAura() return "modifier_imba_enigma_gravity_aura" end
 function modifier_imba_enigma_gravity_passive:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("radius") end
@@ -289,8 +321,8 @@ imba_enigma_black_hole = class({})
 
 LinkLuaModifier("modifier_imba_enigma_black_hole_singularity", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_enigma_black_hole_thinker", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_enigma_black_hole_out_pull", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_enigma_black_hole_aura", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_enigma_black_hole_out_pull", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_enigma_black_hole_aura", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 modifier_imba_enigma_black_hole_singularity = class({})
 function modifier_imba_enigma_black_hole_singularity:IsDebuff()			return false end
@@ -347,7 +379,7 @@ function modifier_imba_enigma_black_hole_thinker:OnCreated()
 		local hole_pfx = "particles/units/heroes/hero_enigma/enigma_blackhole.vpcf"
 		if #enemies >= #enemies2 / 2 and enemies2 ~= 0 then
 			hole_pfx = "particles/econ/items/enigma/enigma_world_chasm/enigma_blackhole_ti5.vpcf"
-			EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Imba.EnigmaBlackHoleTobi0"..math.random(1, 5), self:GetParent())
+			self:GetParent():EmitSound("Imba.EnigmaBlackHoleTobi0"..math.random(1, 5))
 			self:SetStackCount(1)
 		end
 		local pos = self:GetParent():GetAbsOrigin()
@@ -361,11 +393,11 @@ function modifier_imba_enigma_black_hole_thinker:OnCreated()
 end
 
 function modifier_imba_enigma_black_hole_thinker:OnIntervalThink()
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetAOERadius(), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetAOERadius(), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	local dmg = self:GetAbility():GetSpecialValueFor("damage") / (1.0 / 0.2)
-	for _, enemy in pairs(enemies) do
+	for i=1, #enemy do
 		local damageTable = {
-							victim = enemy,
+							victim = enemy[i],
 							attacker = self:GetCaster(),
 							damage = dmg,
 							damage_type = self:GetAbility():GetAbilityDamageType(),
@@ -374,9 +406,9 @@ function modifier_imba_enigma_black_hole_thinker:OnIntervalThink()
 							}
 		ApplyDamage(damageTable)
 		if self:GetCaster():HasScepter() then
-			local dmg2 = enemy:GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("damage_scepter") / 100) / (1.0 / 0.2)
+			local dmg2 = enemy[i]:GetMaxHealth() * (self:GetAbility():GetSpecialValueFor("damage_scepter") / 100) / (1.0 / 0.2)
 			local damageTable = {
-								victim = enemy,
+								victim = enemy[i],
 								attacker = self:GetCaster(),
 								damage = dmg2,
 								damage_type = self:GetAbility():GetAbilityDamageType(),
@@ -390,9 +422,9 @@ function modifier_imba_enigma_black_hole_thinker:OnIntervalThink()
 
 	local out_distance = self:GetAbility():GetSpecialValueFor("base_pull_distance") + self:GetCaster():GetModifierStackCount("modifier_imba_enigma_black_hole_singularity", self:GetCaster()) * self:GetAbility():GetSpecialValueFor("stack_pull_distance")
 	local enemies2 = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, out_distance, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-	for _, enemy in pairs(enemies2) do
-		if not enemy:HasModifier("modifier_imba_enigma_black_hole_aura") then
-			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_enigma_black_hole_out_pull", {})
+	for i=1, #enemies2 do
+		if not enemies2[i]:HasModifier("modifier_imba_enigma_black_hole_aura") then
+			enemies2[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_enigma_black_hole_out_pull", {})
 		end
 	end
 end
@@ -421,22 +453,28 @@ function modifier_imba_enigma_black_hole_aura:IsHidden() 			return false end
 function modifier_imba_enigma_black_hole_aura:IsPurgable() 			return false end
 function modifier_imba_enigma_black_hole_aura:IsPurgeException() 	return false end
 function modifier_imba_enigma_black_hole_aura:IsStunDebuff()		return true end
-function modifier_imba_enigma_black_hole_aura:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGHEST end
-function modifier_imba_enigma_black_hole_aura:IsMotionController()	return true end
+function modifier_imba_enigma_black_hole_aura:CheckState() return {[MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_INVISIBLE] = false, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
+function modifier_imba_enigma_black_hole_aura:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
+function modifier_imba_enigma_black_hole_aura:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_enigma_black_hole_aura:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_enigma_black_hole_aura:OnCreated()
 	if IsServer() then
-		local a = self:CheckMotionControllers() and self:StartIntervalThink(FrameTime()) or 0
-		local pfx = ParticleManager:CreateParticleForPlayer("particles/hero/enigma/screen_blackhole_indicator.vpcf", PATTACH_EYES_FOLLOW, self:GetParent(), PlayerResource:GetPlayer(self:GetParent():GetPlayerID()))
-		self:AddParticle(pfx, false, false, 15, false, false)
-		if self:GetParent():IsTrueHero() then
-			PlayerResource:SetCameraTarget(self:GetParent():GetPlayerOwnerID(), self:GetParent())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyHorizontalMotionController() then
+			local pfx = ParticleManager:CreateParticleForPlayer("particles/hero/enigma/screen_blackhole_indicator.vpcf", PATTACH_EYES_FOLLOW, self:GetParent(), PlayerResource:GetPlayer(self:GetParent():GetPlayerID()))
+			self:AddParticle(pfx, false, false, 15, false, false)
+			if self:GetParent():IsTrueHero() then
+				PlayerResource:SetCameraTarget(self:GetParent():GetPlayerOwnerID(), self:GetParent())
+			end
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
 		end
 	end
 end
 
 function modifier_imba_enigma_black_hole_aura:OnIntervalThink()
-	self:CheckMotionControllers()
 	local radius = self:GetAbility():GetSpecialValueFor("radius")
 	local ability = self:GetAbility()
 	local distance = (self:GetParent():GetAbsOrigin() - ability.pos):Length2D()
@@ -450,19 +488,9 @@ function modifier_imba_enigma_black_hole_aura:OnIntervalThink()
 	self:GetParent():SetAbsOrigin(new_pos)
 end
 
-function modifier_imba_enigma_black_hole_aura:CheckState()
-	return {[MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_INVISIBLE] = false}
-end
-
-function modifier_imba_enigma_black_hole_aura:DeclareFunctions()
-	return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION}
-end
-
-function modifier_imba_enigma_black_hole_aura:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-
 function modifier_imba_enigma_black_hole_aura:OnDestroy()
 	if IsServer() then
-		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		self:GetParent():RemoveHorizontalMotionController(self)
 		PlayerResource:SetCameraTarget(self:GetParent():GetPlayerID(), nil)
 	end
 end
@@ -473,14 +501,16 @@ function modifier_imba_enigma_black_hole_out_pull:IsDebuff()			return false end
 function modifier_imba_enigma_black_hole_out_pull:IsHidden() 			return false end
 function modifier_imba_enigma_black_hole_out_pull:IsPurgable() 			return false end
 function modifier_imba_enigma_black_hole_out_pull:IsPurgeException() 	return false end
-function modifier_imba_enigma_black_hole_out_pull:IsStunDebuff()		return false end
-function modifier_imba_enigma_black_hole_out_pull:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
-function modifier_imba_enigma_black_hole_out_pull:IsMotionController()	return true end
+function modifier_imba_enigma_black_hole_out_pull:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_enigma_black_hole_out_pull:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if self:ApplyHorizontalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -506,6 +536,7 @@ end
 
 function modifier_imba_enigma_black_hole_out_pull:OnDestroy()
 	if IsServer() and not self:GetParent():HasModifier("modifier_imba_enigma_black_hole_aura") then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

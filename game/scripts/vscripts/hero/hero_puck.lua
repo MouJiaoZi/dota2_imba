@@ -245,7 +245,7 @@ function imba_puck_phase_shift:OnSpellStart()
 		end
 		caster:AddNewModifier(caster, self, "modifier_imba_phase_shift", {duration = self:GetSpecialValueFor("duration")})
 		self:EndCooldown()
-		self:StartCooldown(0.1)
+		self:StartCooldown(0.3)
 		ProjectileManager:ProjectileDodge(caster)
 	else
 		caster:RemoveModifierByName("modifier_imba_phase_shift")

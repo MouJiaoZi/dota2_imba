@@ -68,8 +68,8 @@ imba_rubick_telekinesis = class({})
 LinkLuaModifier("modifier_imba_telekinesis_range", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_telekinesis_ally_lift", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_telekinesis_enemy_lift", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_telekinesis_start_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_telekinesis_end_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_telekinesis_start_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_VERTICAL)
+LinkLuaModifier("modifier_imba_telekinesis_end_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_BOTH)
 
 function imba_rubick_telekinesis:IsHiddenWhenStolen() 		return false end
 function imba_rubick_telekinesis:IsRefreshable() 			return true end
@@ -116,18 +116,20 @@ function modifier_imba_telekinesis_range:IsPurgeException() 	return false end
 
 modifier_imba_telekinesis_start_motion = class({})
 
-function modifier_imba_telekinesis_start_motion:IsMotionController()return true end
 function modifier_imba_telekinesis_start_motion:IsDebuff()			return false end
 function modifier_imba_telekinesis_start_motion:IsHidden() 			return true end
 function modifier_imba_telekinesis_start_motion:IsPurgable() 		return false end
 function modifier_imba_telekinesis_start_motion:IsPurgeException() 	return false end
-function modifier_imba_telekinesis_start_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
+function modifier_imba_telekinesis_start_motion:DestroyOnExpire() return false end
 function modifier_imba_telekinesis_start_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_telekinesis_start_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_telekinesis_start_motion:OnVerticalMotionInterrupted() self:Destroy() end
+
 function modifier_imba_telekinesis_start_motion:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		self:StartIntervalThink(FrameTime())
+		if self:ApplyVerticalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		end
 	end
 end
 
@@ -139,23 +141,34 @@ function modifier_imba_telekinesis_start_motion:OnIntervalThink()
 	self:GetParent():SetAbsOrigin(next_pos)
 end
 
+function modifier_imba_telekinesis_start_motion:OnDestroy()
+	if IsServer() then
+		self:GetParent():RemoveVerticalMotionController(self)
+	end
+end
+
 modifier_imba_telekinesis_end_motion = class({})
 
-function modifier_imba_telekinesis_end_motion:IsMotionController()	return true end
 function modifier_imba_telekinesis_end_motion:IsDebuff()			return false end
 function modifier_imba_telekinesis_end_motion:IsHidden() 			return true end
 function modifier_imba_telekinesis_end_motion:IsPurgable() 			return false end
 function modifier_imba_telekinesis_end_motion:IsPurgeException() 	return false end
-function modifier_imba_telekinesis_end_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 function modifier_imba_telekinesis_end_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_telekinesis_end_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_telekinesis_end_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_telekinesis_end_motion:OnVerticalMotionInterrupted() self:Destroy() end
+
 function modifier_imba_telekinesis_end_motion:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
 		self.startpos = self:GetParent():GetAbsOrigin()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		self:GetParent():RemoveModifierByName("modifier_imba_telekinesis_start_motion")
+		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -173,6 +186,8 @@ end
 
 function modifier_imba_telekinesis_end_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:GetParent():RemoveVerticalMotionController(self)
 		self:GetParent():EmitSound("Hero_Rubick.Telekinesis.Target.Land")
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_rubick/rubick_telekinesis_land.vpcf", PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self.pos)

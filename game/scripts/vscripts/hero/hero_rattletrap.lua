@@ -122,7 +122,7 @@ imba_rattletrap_power_cogs = class({})
 LinkLuaModifier("modifier_imba_power_cog", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_power_cog_block", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_power_cog_flying", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_power_cog_knocback", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_power_cog_knocback", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_rattletrap_power_cogs:IsHiddenWhenStolen() 		return false end
 function imba_rattletrap_power_cogs:IsRefreshable() 			return true end
@@ -237,20 +237,24 @@ function modifier_imba_power_cog_knocback:IsHidden() 			return false end
 function modifier_imba_power_cog_knocback:IsPurgable() 			return false end
 function modifier_imba_power_cog_knocback:IsPurgeException() 	return false end
 function modifier_imba_power_cog_knocback:IsStunDebuff()		return true end
-function modifier_imba_power_cog_knocback:IsMotionController()	return true end
-function modifier_imba_power_cog_knocback:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_imba_power_cog_knocback:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_power_cog_knocback:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_power_cog_knocback:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_power_cog_knocback:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_power_cog_knocback:OnCreated(keys)
-	if IsServer() and self:CheckMotionControllers() then
+	if IsServer() then
 		self.pos = Vector(keys.center_x, keys.center_y, keys.center_z)
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_rattletrap/rattletrap_cog_attack.vpcf", PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControlEnt(pfx, 0, EntIndexToHScript(keys.cog), PATTACH_POINT_FOLLOW, "attach_attack1", EntIndexToHScript(keys.cog):GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true)
 		self:AddParticle(pfx, false, false, 15, false, false)
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyHorizontalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -268,6 +272,7 @@ function modifier_imba_power_cog_knocback:OnDestroy()
 		self.pos = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 180, false)
+		self:GetParent():RemoveHorizontalMotionController(self)
 		ApplyDamage({attacker = self:GetCaster(), victim = self:GetParent(), damage = self:GetAbility():GetSpecialValueFor("damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
 		self:GetParent():SetMana(math.max(0, self:GetParent():GetMana() - self:GetAbility():GetSpecialValueFor("mana_burn")))
 	end
@@ -408,7 +413,7 @@ end
 imba_rattletrap_hookshot = class({})
 
 LinkLuaModifier("modifier_imba_hookshot_hookcheck", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_hookshot_motion", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_hookshot_motion", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_hookshot_stunned", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 
 function imba_rattletrap_hookshot:IsHiddenWhenStolen() 		return false end
@@ -526,21 +531,25 @@ function modifier_imba_hookshot_motion:IsPurgable() 		return false end
 function modifier_imba_hookshot_motion:IsPurgeException() 	return false end
 function modifier_imba_hookshot_motion:RemoveOnDeath()		return false end
 function modifier_imba_hookshot_motion:IsStunDebuff()		return true end
-function modifier_imba_hookshot_motion:IsMotionController()	return true end
-function modifier_imba_hookshot_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
-function modifier_imba_hookshot_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_STUNNED] = true} end
+function modifier_imba_hookshot_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 function modifier_imba_hookshot_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_hookshot_motion:GetOverrideAnimation() return ACT_DOTA_RATTLETRAP_HOOKSHOT_LOOP end
+function modifier_imba_hookshot_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_hookshot_motion:OnCreated(keys)
-	if IsServer() and self:CheckMotionControllers() then
+	if IsServer() then
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.pfx = keys.pfx
 		self.hitted = {}
 		self.target = EntIndexToHScript(keys.target)
 		if keys.thinker == 1 then
 			self:SetStackCount(1)
 		end
-		self:StartIntervalThink(FrameTime())
+		if self:ApplyHorizontalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -564,7 +573,6 @@ function modifier_imba_hookshot_motion:OnIntervalThink()
 		end
 	end
 	direction.z = 0
-	caster:SetForwardVector(direction)
 	local distance = ability:GetSpecialValueFor("speed") / (1.0 / FrameTime())
 	if (self.target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() < distance then
 		distance = (self.target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D()
@@ -575,6 +583,7 @@ end
 
 function modifier_imba_hookshot_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		ParticleManager:DestroyParticle(self.pfx, false)
 		ParticleManager:ReleaseParticleIndex(self.pfx)
 		local buff = self.target:FindModifierByNameAndCaster("modifier_imba_hookshot_stunned", caster)

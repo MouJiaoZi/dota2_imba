@@ -8,8 +8,8 @@ CreateEmptyTalents("sandking")
 
 imba_sandking_burrowstrike = class({})
 
-LinkLuaModifier("modifier_burrowstrike_caster_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_burrowstrike_target_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_burrowstrike_caster_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_burrowstrike_target_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_BOTH)
 
 function imba_sandking_burrowstrike:IsHiddenWhenStolen() 	return false end
 function imba_sandking_burrowstrike:IsRefreshable() 		return true end
@@ -33,17 +33,16 @@ end
 
 modifier_burrowstrike_caster_motion = class({})
 
-function modifier_burrowstrike_caster_motion:IsMotionController()		return true end
 function modifier_burrowstrike_caster_motion:IsDebuff()					return false end
 function modifier_burrowstrike_caster_motion:IsHidden() 				return true end
 function modifier_burrowstrike_caster_motion:IsPurgable() 				return false end
 function modifier_burrowstrike_caster_motion:IsPurgeException() 		return false end
-function modifier_burrowstrike_caster_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 function modifier_burrowstrike_caster_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
+function modifier_burrowstrike_caster_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_burrowstrike_caster_motion:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.direction = Vector(keys.direction_x, keys.direction_y, 0)
 		self.hitted = {}
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
@@ -53,8 +52,10 @@ function modifier_burrowstrike_caster_motion:OnCreated(keys)
 		self.speed = self:GetAbility():GetSpecialValueFor("burrow_speed")
 		self.ability = self:GetAbility()
 		self.caster = self:GetCaster()
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		if self:ApplyHorizontalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		end
 	end
 end
 
@@ -86,10 +87,11 @@ end
 
 function modifier_burrowstrike_caster_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
 		self.pos = nil
-		self:GetCaster():RemoveGesture(ACT_DOTA_SAND_KING_BURROW_IN)
-		self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_SAND_KING_BURROW_OUT, 3.0)
+		self:GetParent():RemoveGesture(ACT_DOTA_SAND_KING_BURROW_IN)
+		self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_SAND_KING_BURROW_OUT, 3.0)
 		self.hitted = nil
 		self.width = nil
 		self.air_time = nil
@@ -102,25 +104,31 @@ end
 
 modifier_burrowstrike_target_motion = class({})
 
-function modifier_burrowstrike_target_motion:IsMotionController()	return true end
 function modifier_burrowstrike_target_motion:IsDebuff()				return true end
 function modifier_burrowstrike_target_motion:IsHidden() 			return true end
 function modifier_burrowstrike_target_motion:IsPurgable() 			return false end
 function modifier_burrowstrike_target_motion:IsPurgeException() 	return true end
 function modifier_burrowstrike_target_motion:IsStunDebuff() 		return true end
-function modifier_burrowstrike_target_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_burrowstrike_target_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_burrowstrike_target_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 function modifier_burrowstrike_target_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
 function modifier_burrowstrike_target_motion:OnRefresh(keys) self:OnCreated(keys) end
+function modifier_burrowstrike_target_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_burrowstrike_target_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_burrowstrike_target_motion:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.distance = (self.pos - self:GetParent():GetAbsOrigin()):Length2D()
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyVerticalMotionController() and self:ApplyHorizontalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			if self:GetParent():GetName() ~= "npc_dota_thinker" then
+				self:Destroy()
+			end
+		end
 	end
 end
 
@@ -138,6 +146,8 @@ end
 
 function modifier_burrowstrike_target_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveVerticalMotionController(self)
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.pos = nil
 		self.distance = nil 
@@ -149,7 +159,7 @@ end
 imba_sandking_sand_storm = class({})
 
 LinkLuaModifier("modifier_sand_storm_caster", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_sand_storm_sound", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 
 function imba_sandking_sand_storm:IsHiddenWhenStolen() 		return false end
@@ -244,31 +254,33 @@ end
 
 modifier_sand_storm_motion = class({})
 
-function modifier_sand_storm_motion:IsMotionController()	return true end
 function modifier_sand_storm_motion:IsDebuff()				return false end
 function modifier_sand_storm_motion:IsHidden() 				return true end
 function modifier_sand_storm_motion:IsPurgable() 			return false end
 function modifier_sand_storm_motion:IsPurgeException() 		return false end
-function modifier_sand_storm_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
+function modifier_sand_storm_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_sand_storm_motion:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if self:ApplyHorizontalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
 function modifier_sand_storm_motion:OnIntervalThink()
-	if self:CheckMotionControllers() then
-		local distance = self:GetAbility():GetSpecialValueFor("wind_force_tooltip")
-		distance = distance / (self:GetDuration() / FrameTime())
-		local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
-		self:GetParent():SetAbsOrigin(next_pos)
-	end
+	local distance = self:GetAbility():GetSpecialValueFor("wind_force_tooltip")
+	distance = distance / (self:GetDuration() / FrameTime())
+	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
+	self:GetParent():SetAbsOrigin(next_pos)
 end
 
 function modifier_sand_storm_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end
@@ -380,7 +392,7 @@ imba_sandking_epicenter = class({})
 
 LinkLuaModifier("modifier_imba_epicenter", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_epicenter_slow", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_epicenter_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_epicenter_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_sandking_epicenter:IsHiddenWhenStolen() 		return false end
 function imba_sandking_epicenter:IsRefreshable() 			return true end
@@ -488,31 +500,33 @@ function modifier_imba_epicenter_slow:GetModifierAttackSpeedBonus_Constant() ret
 
 modifier_imba_epicenter_motion = class({})
 
-function modifier_imba_epicenter_motion:IsMotionController()	return true end
 function modifier_imba_epicenter_motion:IsDebuff()				return false end
 function modifier_imba_epicenter_motion:IsHidden() 				return true end
 function modifier_imba_epicenter_motion:IsPurgable() 			return false end
 function modifier_imba_epicenter_motion:IsPurgeException() 		return false end
-function modifier_imba_epicenter_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
+function modifier_imba_epicenter_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_epicenter_motion:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
+		if self:ApplyHorizontalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
 function modifier_imba_epicenter_motion:OnIntervalThink()
-	if self:CheckMotionControllers() then
-		local distance = self:GetAbility():GetSpecialValueFor("pull_strength")
-		distance = distance / (self:GetDuration() / FrameTime())
-		local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
-		self:GetParent():SetAbsOrigin(next_pos)
-	end
+	local distance = self:GetAbility():GetSpecialValueFor("pull_strength")
+	distance = distance / (self:GetDuration() / FrameTime())
+	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
+	self:GetParent():SetAbsOrigin(next_pos)
 end
 
 function modifier_imba_epicenter_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

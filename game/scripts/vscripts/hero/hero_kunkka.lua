@@ -28,7 +28,7 @@ imba_kunkka_torrent = class({})
 
 LinkLuaModifier("modifier_imba_torrent_delay", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_torrent_slow", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_torrent_stun", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_torrent_stun", "hero/hero_kunkka", LUA_MODIFIER_MOTION_BOTH)
 
 function imba_kunkka_torrent:IsHiddenWhenStolen() 		return false end
 function imba_kunkka_torrent:IsRefreshable() 			return true  end
@@ -81,8 +81,6 @@ end
 
 modifier_imba_torrent_stun = class({})
 
-function modifier_imba_torrent_stun:IsMotionController()	return true end
-function modifier_imba_torrent_stun:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 function modifier_imba_torrent_stun:IsStunDebuff() 		return true end
 function modifier_imba_torrent_stun:IsDebuff()			return true end
 function modifier_imba_torrent_stun:IsHidden() 			return false end
@@ -91,6 +89,8 @@ function modifier_imba_torrent_stun:IsPurgeException() 	return true end
 function modifier_imba_torrent_stun:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_torrent_stun:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_torrent_stun:GetOverrideAnimation() return ACT_DOTA_FLAIL end
+function modifier_imba_torrent_stun:OnHorizontalMotionInterrupted() self:Destroy() end
+
 function modifier_imba_torrent_stun:OnCreated(keys)
 	if IsServer() then
 		local dmg = self:GetAbility():GetSpecialValueFor("damage") + (bit.band(keys.tide, KUNKKA_TIDEBRINGER_TSUNAMI) == KUNKKA_TIDEBRINGER_TSUNAMI and self:GetAbility():GetSpecialValueFor("tsunami_damage") or 0)
@@ -103,14 +103,18 @@ function modifier_imba_torrent_stun:OnCreated(keys)
 							ability = self:GetAbility(), --Optional.
 							}
 		ApplyDamage(damageTable)
-		self:CheckMotionControllers()
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.tide = keys.tide
 		if bit.band(keys.tide, KUNKKA_TIDEBRINGER_TSUNAMI) == KUNKKA_TIDEBRINGER_TSUNAMI then
 			self.distance = (self:GetParent():GetAbsOrigin() - self.pos):Length2D()
 		end
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -128,6 +132,8 @@ end
 function modifier_imba_torrent_stun:OnDestroy()
 	if IsServer() then
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:GetParent():RemoveVerticalMotionController(self)
 		self.pos = nil
 		self.tide = nil
 		if self.distance then
@@ -290,7 +296,7 @@ function modifier_imba_tidebringer_tsunami:IsPurgable() return false end
 
 imba_kunkka_x_marks_the_spot = class({})
 
-LinkLuaModifier("modifier_imba_kunkka_x_marks_the_spot_target", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_kunkka_x_marks_the_spot_target", "hero/hero_kunkka", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_kunkka_x_marks_the_spot_cooldown", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 
 function imba_kunkka_x_marks_the_spot:IsHiddenWhenStolen() 		return false end
@@ -344,7 +350,10 @@ function modifier_imba_kunkka_x_marks_the_spot_target:OnDestroy()
 		end
 		self:GetParent():EmitSound("Ability.XMarksTheSpot.Return")
 		self:GetParent():StopSound("Ability.XMark.Target_Movement")
-		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
+		if self:ApplyHorizontalMotionController() then
+			FindClearSpaceForUnit(self:GetParent(), self.pos, true)
+			self:GetParent():RemoveHorizontalMotionController(self)
+		end
 		self.pos = nil
 	end
 end
@@ -382,7 +391,7 @@ end
 
 imba_kunkka_ghostship = class({})
 
-LinkLuaModifier("modifier_imba_ghostship_debuff", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_ghostship_debuff", "hero/hero_kunkka", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_imba_ghostship_rum", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_ghostship_rum_damage", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_ghostship_mark", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
@@ -433,7 +442,7 @@ function imba_kunkka_ghostship:OnSpellStart()
 			if i ~= 0 then
 				local angle = caster:HasScepter() and 10 or 20
 				local new_pos = RotatePosition(spawn_pos, QAngle(0,angle * i,0), pos)
-				local new_spawn_pos = new_pos + (spawn_pos - pos):Normalized() * (distance + 300)
+				local new_spawn_pos = new_pos + dircetion * (0 - (distance + 0))
 				local new_mark = CreateModifierThinker(caster, self, "modifier_imba_ghostship_mark", {}, new_pos, caster:GetTeamNumber(), false):entindex()
 				local new_ship = CreateModifierThinker(caster, self, "modifier_imba_ghostship_ship", {mark = mark, speed = speed}, spawn_pos, caster:GetTeamNumber(), false)
 				new_ship:EmitSound("Ability.Ghostship")
@@ -483,21 +492,27 @@ end
 
 modifier_imba_ghostship_debuff = class({})
 
-function modifier_imba_ghostship_debuff:IsMotionController()		return true end
-function modifier_imba_ghostship_debuff:IsDebuff()					return true end
-function modifier_imba_ghostship_debuff:IsHidden() 					return false end
-function modifier_imba_ghostship_debuff:IsPurgable() 				return true end
-function modifier_imba_ghostship_debuff:IsPurgeException() 			return true end
-function modifier_imba_ghostship_debuff:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
+function modifier_imba_ghostship_debuff:IsDebuff()			return true end
+function modifier_imba_ghostship_debuff:IsHidden() 			return false end
+function modifier_imba_ghostship_debuff:IsPurgable() 		return true end
+function modifier_imba_ghostship_debuff:IsPurgeException() 	return true end
+function modifier_imba_ghostship_debuff:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
+function modifier_imba_ghostship_debuff:DeclareFunctions()	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
+function modifier_imba_ghostship_debuff:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
+function modifier_imba_ghostship_debuff:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
+function modifier_imba_ghostship_debuff:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_ghostship_debuff:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
 		self.mark = EntIndexToHScript(keys.mark)
 		self.ship = EntIndexToHScript(keys.ship)
 		self.speed = keys.speed
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		if self:ApplyHorizontalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -509,6 +524,7 @@ function modifier_imba_ghostship_debuff:OnIntervalThink()
 	local target_pos = self.mark:GetAbsOrigin()
 	local distance = self.speed * FrameTime()
 	local next_pos= self:GetParent():GetAbsOrigin() + (target_pos - self:GetParent():GetAbsOrigin()):Normalized() * distance
+	next_pos = GetGroundPosition(next_pos, self:GetParent())
 	self:GetParent():SetAbsOrigin(self.ship:GetAbsOrigin())
 end
 
@@ -516,7 +532,7 @@ function modifier_imba_ghostship_debuff:OnDestroy()
 	if IsServer() then
 		self.mark = nil
 		self.speed = nil
-		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
+		self:GetParent():RemoveHorizontalMotionController(self)
 	end
 end
 

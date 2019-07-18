@@ -8,7 +8,7 @@ imba_sniper_headshot = class({})
 LinkLuaModifier("modifier_imba_headshot", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_headshot_normal_debuff", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_headshot_far_debuff", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_headshot_far_motion", "hero/hero_sniper", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_headshot_far_motion", "hero/hero_sniper", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function imba_sniper_headshot:GetIntrinsicModifierName() return "modifier_imba_headshot" end
 
@@ -120,12 +120,11 @@ function modifier_imba_headshot_normal_debuff:GetModifierAttackSpeedBonus_Consta
 
 modifier_imba_headshot_far_motion = class({})
 
-function modifier_imba_headshot_far_motion:IsMotionController()		return true end
 function modifier_imba_headshot_far_motion:IsDebuff()				return false end
 function modifier_imba_headshot_far_motion:IsHidden() 				return true end
 function modifier_imba_headshot_far_motion:IsPurgable() 			return false end
 function modifier_imba_headshot_far_motion:IsPurgeException() 		return false end
-function modifier_imba_headshot_far_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
+function modifier_imba_headshot_far_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_headshot_far_motion:OnCreated()
 	if IsServer() then
@@ -133,9 +132,11 @@ function modifier_imba_headshot_far_motion:OnCreated()
 			self:Destroy()
 			return
 		end
-		self:CheckMotionControllers()
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOW)
 		self.direction = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Normalized()
-		self:StartIntervalThink(FrameTime())
+		if self:ApplyHorizontalMotionController() then
+			self:StartIntervalThink(FrameTime())
+		end
 	end
 end
 
@@ -148,6 +149,7 @@ end
 function modifier_imba_headshot_far_motion:OnDestroy()
 	if IsServer() then
 		self.direction = nil
+		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 100, false)
 	end

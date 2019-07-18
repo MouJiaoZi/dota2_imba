@@ -120,7 +120,7 @@ function imba_mirana_arrow:OnProjectileHit_ExtraData(target, location, keys)
 		EntIndexToHScript(keys.thinker):ForceKill(false)
 		return true
 	end
-	if kill_creeps and not target:IsBoss() and not target:IsAncient() and not target:IsTrueHero() then
+	if kill_creeps and not target:IsBoss() and not target:IsAncient() and not target:IsRealHero() then
 		target:Kill(self, self:GetCaster())
 		return false
 	end
@@ -159,7 +159,7 @@ function modifier_imba_mirana_arrow_thinker:GetEffectAttachType() return PATTACH
 imba_mirana_leap = class({})
 
 LinkLuaModifier("modifier_imba_leap", "hero/hero_mirana", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_leap_motion", "hero/hero_mirana", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_leap_motion", "hero/hero_mirana", LUA_MODIFIER_MOTION_BOTH)
 LinkLuaModifier("modifier_imba_leap_day", "hero/hero_mirana", LUA_MODIFIER_MOTION_NONE)
 
 function imba_mirana_leap:IsHiddenWhenStolen() 		return false end
@@ -204,23 +204,27 @@ end
 
 modifier_imba_leap_motion = class({})
 
-function modifier_imba_leap_motion:IsMotionController()	return true end
 function modifier_imba_leap_motion:IsDebuff()			return false end
 function modifier_imba_leap_motion:IsHidden() 			return true end
 function modifier_imba_leap_motion:IsPurgable() 		return false end
 function modifier_imba_leap_motion:IsPurgeException() 	return false end
-function modifier_imba_leap_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 function modifier_imba_leap_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_leap_motion:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_3 end
 function modifier_imba_leap_motion:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
+function modifier_imba_leap_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_leap_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_leap_motion:OnCreated(keys)
 	if IsServer() then
-		self:CheckMotionControllers()
-		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
-		self.height = keys.height
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOW)
+		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+			self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
+			self.height = keys.height
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
+		end
 	end
 end
 
@@ -242,6 +246,10 @@ end
 
 function modifier_imba_leap_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveHorizontalMotionController(self)
+		self:GetParent():RemoveVerticalMotionController(self)
+		self.pos = nil
+		self.height = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

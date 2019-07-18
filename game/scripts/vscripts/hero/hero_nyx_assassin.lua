@@ -4,7 +4,7 @@ CreateEmptyTalents("nyx_assassin")
 
 imba_nyx_assassin_impale = class({})
 
-LinkLuaModifier("modifier_impale_motion", "hero/hero_nyx_assassin", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_impale_motion", "hero/hero_nyx_assassin", LUA_MODIFIER_MOTION_VERTICAL)
 LinkLuaModifier("modifier_impale_dmg_aura", "hero/hero_nyx_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_impale_dmg_target", "hero/hero_nyx_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_impale_dmg_counter", "hero/hero_nyx_assassin", LUA_MODIFIER_MOTION_NONE)
@@ -92,22 +92,27 @@ end
 
 modifier_impale_motion = class({})
 
-function modifier_impale_motion:IsMotionController()	return true end
 function modifier_impale_motion:IsDebuff()				return true end
 function modifier_impale_motion:IsHidden() 				return true end
 function modifier_impale_motion:IsPurgable() 			return false end
 function modifier_impale_motion:IsPurgeException() 		return true end
 function modifier_impale_motion:IsStunDebuff() 			return true end
-function modifier_impale_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 function modifier_impale_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_impale_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 function modifier_impale_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
+function modifier_impale_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_impale_motion:OnCreated()
 	if IsServer() then
-		self:CheckMotionControllers()
-		self:OnIntervalThink()
-		self:StartIntervalThink(FrameTime())
+		self:SetMotionPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
+		if self:ApplyVerticalMotionController() then
+			self:OnIntervalThink()
+			self:StartIntervalThink(FrameTime())
+		else
+			if self:GetParent():GetName() ~= "npc_dota_thinker" then
+				self:Destroy()
+			end
+		end
 	end
 end
 
@@ -122,6 +127,7 @@ end
 
 function modifier_impale_motion:OnDestroy()
 	if IsServer() then
+		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		if self:GetParent():GetName() ~= "npc_dota_thinker" then
 			self:GetParent():EmitSound("Hero_NyxAssassin.Impale.TargetLand")
