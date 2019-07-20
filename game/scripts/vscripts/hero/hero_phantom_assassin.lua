@@ -262,17 +262,9 @@ end
 imba_phantom_assassin_coup_de_grace = class({})
 
 LinkLuaModifier("modifier_imba_coup_de_grace", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_coup_de_grace_check", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_coup_de_grace_stacks", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 
 function imba_phantom_assassin_coup_de_grace:GetIntrinsicModifierName() return "modifier_imba_coup_de_grace" end
-
-modifier_imba_coup_de_grace_check = class({})
-
-function modifier_imba_coup_de_grace_check:IsHidden()			return true end
-function modifier_imba_coup_de_grace_check:IsDebuff()			return false end
-function modifier_imba_coup_de_grace_check:IsPurgable() 		return false end
-function modifier_imba_coup_de_grace_check:IsPurgeException() 	return false end
 
 modifier_imba_coup_de_grace = class({})
 
@@ -291,10 +283,9 @@ function modifier_imba_coup_de_grace:GetModifierPreAttack_CriticalStrike(keys)
 			else
 				self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
 			end
-			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_coup_de_grace_check", {})
+			self.attack = keys.record
 			return self:GetAbility():GetSpecialValueFor("crit_bonus")
 		else
-			self:GetParent():RemoveModifierByName("modifier_imba_coup_de_grace_check")
 			return 0
 		end
 	end
@@ -308,7 +299,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		return
 	end
 	local caster = self:GetParent()
-	if caster:HasModifier("modifier_imba_coup_de_grace_check") then
+	if keys.record == self.attack then
 		local pfx_name = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_crit_impact.vpcf"
 		if HeroItems:UnitHasItem(caster, "pa_arcana") then
 			pfx_name = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/phantom_assassin_crit_arcana_swoop.vpcf"
@@ -318,7 +309,6 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		ParticleManager:SetParticleControl(pfx, 1, keys.target:GetAbsOrigin())
 		ParticleManager:SetParticleControlOrientation(pfx, 1, caster:GetForwardVector() * -1, caster:GetRightVector(), caster:GetUpVector())
 		ParticleManager:ReleaseParticleIndex(pfx)
-		caster:RemoveModifierByName("modifier_imba_coup_de_grace_check")
 	end
 	if caster:HasScepter() and caster:IsTrueHero() and PseudoRandom:RollPseudoRandom(self:GetCreationTime(), self:GetAbility():GetSpecialValueFor("crit_chance_scepter")) and keys.target:IsTrueHero() then
 		TrueKill(caster, keys.target, self:GetAbility())

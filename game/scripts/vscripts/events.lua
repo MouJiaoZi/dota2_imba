@@ -582,6 +582,7 @@ function GameMode:OnNPCSpawned(keys)
 			ability:SetLevel(1)
 		end
 	end
+
 end
 
 -- An entity somewhere has been hurt.  This event fires very often with many units so don't do too many expensive

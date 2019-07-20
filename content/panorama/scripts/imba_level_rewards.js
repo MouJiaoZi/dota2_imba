@@ -141,6 +141,7 @@ HeroColor[15] = ["#FF00DCFF", 1300];
 HeroColor[16] = ["#FF69B4FF", 0];
 HeroColor[17] = ["#FF4004FF", 0];
 HeroColor[18] = ["#B03060FF", 0];
+HeroColor[19] = ["#FFDAB9FF", 0];
 
 function SetHeroEmEmblem()
 {
@@ -148,7 +149,7 @@ function SetHeroEmEmblem()
 	var total = 15;
 	if(Game.GetLocalPlayerInfo().player_steamid == "76561198097609945" || Game.GetLocalPlayerInfo().player_steamid == "76561198100269546" || Game.GetLocalPlayerInfo().player_steamid == "76561198361355161")
 	{
-		total = 18;
+		total = 19;
 	}
 	for(var i=1;i<=4;i++)
 	{

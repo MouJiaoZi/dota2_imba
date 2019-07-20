@@ -196,7 +196,6 @@ end
 imba_wraith_king_mortal_strike = class({})
 
 LinkLuaModifier("modifier_imba_mortal_strike", "hero/hero_skeleton_king", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_mortal_strike_check", "hero/hero_skeleton_king", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_mortal_strike_counter", "hero/hero_skeleton_king", LUA_MODIFIER_MOTION_NONE)
 
 function imba_wraith_king_mortal_strike:GetIntrinsicModifierName() return "modifier_imba_mortal_strike" end
@@ -221,10 +220,9 @@ function modifier_imba_mortal_strike:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("crit_chance")) then
 			self:GetParent():EmitSound("Hero_SkeletonKing.CriticalStrike")
-			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_mortal_strike_check", {})
+			self.attack = keys.record
 			return self:GetAbility():GetSpecialValueFor("crit_power")
 		else
-			self:GetParent():RemoveModifierByName("modifier_imba_mortal_strike_check")
 			return 0
 		end
 	end
@@ -234,13 +232,12 @@ function modifier_imba_mortal_strike:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_mortal_strike_check") then
+	if self.attack == keys.record then
 		if not keys.target:IsConsideredHero() and not keys.target:IsOther() and not keys.target:IsBoss() then
 			keys.target:Kill(self:GetAbility(), self:GetParent())
 		end
 		local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_mortal_strike_counter", {duration = self:GetAbility():GetSpecialValueFor("drain_duration")})
 		buff:SetStackCount(keys.damage * (self:GetAbility():GetSpecialValueFor("str_drain_pct") / 100))
-		self:GetParent():RemoveModifierByName("modifier_imba_mortal_strike_check")
 	end
 end
 

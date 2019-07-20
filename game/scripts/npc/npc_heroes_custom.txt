@@ -942,7 +942,7 @@
 		"AttackRange"				"200"
 
 		"Ability1"					"templar_assassin_refraction"
-		"Ability2"					"templar_assassin_meld"
+		"Ability2"					"imba_templar_assassin_meld"
 		"Ability3"					"templar_assassin_psi_blades"
 		"Ability4"					"imba_templar_assassin_trap"
 		"Ability5"					"imba_templar_assassin_psionic_projection"
@@ -952,10 +952,10 @@
 		"Ability11"					"special_bonus_mp_regen_3"
 		"Ability12"					"special_bonus_armor_7"
 		"Ability13"					"special_bonus_attack_damage_20"
-		"Ability14"					"special_bonus_unique_templar_assassin_4"
-		"Ability15"					"special_bonus_unique_templar_assassin_2"
-		"Ability16"					"special_bonus_unique_templar_assassin_5"
-		"Ability17"					"special_bonus_unique_templar_assassin_7"
+		"Ability14"					"special_bonus_imba_templar_assassin_2"
+		"Ability15"					"special_bonus_hp_200"
+		"Ability16"					"special_bonus_attack_range_50"
+		"Ability17"					"special_bonus_imba_templar_assassin_1"
 	
 	}
 	"npc_dota_hero_viper"
@@ -1635,7 +1635,7 @@
 	}
 	"npc_dota_hero_lone_druid"
 	{
-		"Ability1"		"lone_druid_spirit_bear"
+		"Ability1"		"imba_lone_druid_spirit_bear"
 		"Ability2"		"lone_druid_spirit_link"
 		"Ability3"		"lone_druid_savage_roar"
 		"Ability4"		"lone_druid_true_form_battle_cry"
@@ -1726,6 +1726,8 @@
 		"Ability15"					"special_bonus_attack_speed_60"
 		"Ability16"					"special_bonus_unique_treant_5"
 		"Ability17"					"special_bonus_unique_treant_7"
+
+		"Ability18"					"imba_treant_eye_duration"
 
 	}
 	"npc_dota_hero_ogre_magi"

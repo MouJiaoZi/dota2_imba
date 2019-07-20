@@ -24,7 +24,7 @@ function imba_nyx_assassin_impale:OnSpellStart()
 	local direction = (pos - start_pos):Normalized()
 	direction.z = 0.0
 	local end_pos = start_pos + direction * (self:GetCastRange(pos, caster) + caster:GetCastRangeBonus())
-	local marker = CreateModifierThinker(caster, self, "modifier_impale_motion", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
+	local marker = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(marker).hitted = {}
 	caster:EmitSound("Hero_NyxAssassin.Impale")
 	local info = 

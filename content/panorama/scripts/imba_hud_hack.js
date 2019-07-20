@@ -243,4 +243,19 @@ function UnselectCourier(keys)
 
 GameEvents.Subscribe("IMBAUseCourier", UnselectCourier);
 
+function SetShopWindow()
+{
+	var shop1 = FindDotaHudElement("GridBasicItems");
+	var shop2 = FindDotaHudElement("GridUpgradeItems");
+	if(!shop1 || !shop2)
+	{
+		$.Schedule(1.0, SetShopWindow);
+		return;
+	}
+	shop1.style.overflow = "squish scroll";
+	shop1.style.height = "560px";
+	shop2.style.overflow = "squish scroll";
+	shop2.style.height = "560px";
+}
 
+$.Schedule(1.0, SetShopWindow);

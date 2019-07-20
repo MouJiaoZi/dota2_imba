@@ -258,7 +258,6 @@ function modifier_imba_glimpse_target:OnIntervalThink()
 			break
 		end
 	end
-	parent:RemoveModifierByName("modifier_eul_cyclone")
 	local direction = (self.pos - parent:GetAbsOrigin()):Normalized()
 	direction.z = 0
 	local distance = (self.pos - parent:GetAbsOrigin()):Length2D()

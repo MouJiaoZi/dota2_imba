@@ -7977,7 +7977,7 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"17.0 16.0 15.0 14.0"
+		"AbilityCooldown"				"17.0 15.5 14.0 12.5"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -7996,7 +7996,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_damage"				"30 60 90 120"
+				"bonus_damage"				"20 40 60 80"
 			}
 			"03"
 			{
@@ -8066,7 +8066,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_attack_range"		"120 180 240 300"
+				"bonus_attack_range"		"60 120 180 240"
 			}
 			"02"
 			{
@@ -8076,7 +8076,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"attack_spill_width"		"75"
+				"attack_spill_width"		"150"
 			}
 			"04"
 			{
@@ -14079,7 +14079,7 @@
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityDuration"				"2.5 2.5 2.5 2.5"
-		"AbilityCooldown"				"20 15 10 5"
+		"AbilityCooldown"				"16 13 10 7"
 
 		// Casting
 		//-------------------------------------------------------------------------------------------------------------
@@ -14118,17 +14118,17 @@
 			"05"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"illusion_incoming_damage"	"-50"
+				"illusion_incoming_damage"	"0"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"tooltip_total_illusion_incoming_damage"	"50"
+				"tooltip_total_illusion_incoming_damage"	"100"
 			}			
 			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"charge_restore_time"	"20 15 10 5"
+				"charge_restore_time"	"16 13 10 7"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"

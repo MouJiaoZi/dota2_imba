@@ -98,6 +98,16 @@ function HeroItems:SetHeroItemTable(hUnit)
 				ParticleManager:SetParticleControlEnt(pfx_head, 7, head, PATTACH_POINT_FOLLOW, "attach_front", hUnit:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControl(pfx_head, 11, Vector(1000, 0, 0))
 			end
+			if k == "invoker_kid" then
+				hUnit:SetOriginalModel("models/heroes/invoker_kid/invoker_kid.vmdl")
+				hUnit:SetModel("models/heroes/invoker_kid/invoker_kid.vmdl")
+				local hair = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/heroes/invoker_kid/invoker_kid_hair.vmdl"})
+				hair:SetParent(hUnit, nil)
+				hair:FollowEntity(hUnit, true)
+				local cloth = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/heroes/invoker_kid/invoker_kid_cape.vmdl"})
+				cloth:SetParent(hUnit, nil)
+				cloth:FollowEntity(hUnit, true)
+			end
 		end
 		hUnit:AddNewModifier(hUnit, nil, "modifier_imba_heroitems_arcana", {})
 	else

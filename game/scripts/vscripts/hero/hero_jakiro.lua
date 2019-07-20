@@ -23,8 +23,9 @@ function imba_jakiro_dual_breath:OnChannelFinish(bInterrupted)
 		return
 	end
 	caster:StartGesture(ACT_DOTA_CAST_ABILITY_1)
-	local distance = self:GetSpecialValueFor("base_range") + (self:GetSpecialValueFor("max_range") - self:GetSpecialValueFor("base_range")) * math.min(1.0, (GameRules:GetGameTime() - self:GetChannelStartTime()) / self:GetChannelTime())
-	local speed = self:GetSpecialValueFor("base_speed") + (self:GetSpecialValueFor("max_speed") - self:GetSpecialValueFor("base_speed")) * math.min(1.0, (GameRules:GetGameTime() - self:GetChannelStartTime()) / self:GetChannelTime())
+	caster:EmitSound("Hero_Jakiro.DualBreath.Cast")
+	local distance = self:GetSpecialValueFor("base_range") + caster:GetCastRangeBonus() + (self:GetSpecialValueFor("max_range") - self:GetSpecialValueFor("base_range")) * math.min(1.0, (GameRules:GetGameTime() - self:GetChannelStartTime()) / self:GetChannelTime())
+	local speed = self:GetSpecialValueFor("base_speed") + caster:GetCastRangeBonus() + (self:GetSpecialValueFor("max_speed") - self:GetSpecialValueFor("base_speed")) * math.min(1.0, (GameRules:GetGameTime() - self:GetChannelStartTime()) / self:GetChannelTime())
 	local info = 
 	{
 		Ability = self,
@@ -73,8 +74,8 @@ function imba_jakiro_dual_breath:OnProjectileHit(target, pos)
 	if not target then
 		return
 	end
-	target:InterruptChannel()
 	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_dual_breath_debuff", {duration = self:GetSpecialValueFor("duration")})
+	target:AddNewModifier(self:GetCaster(), self, "modifier_imba_stunned", {duration = self:GetSpecialValueFor("stun_duration")})
 end
 
 modifier_imba_dual_breath_debuff = class({})
@@ -99,7 +100,7 @@ function modifier_imba_dual_breath_debuff:OnIntervalThink()
 	local parent = self:GetParent()
 	local caster = self:GetCaster()
 	local dmg = ability:GetSpecialValueFor("damage_per_second") / (1.0 / ability:GetSpecialValueFor("damage_interval"))
-	if not parent:IsHero() and (parent:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() > ability:GetSpecialValueFor("base_range") then
+	if not parent:IsHero() and (parent:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() > ability:GetSpecialValueFor("base_range") + caster:GetCastRangeBonus() then
 		dmg = dmg * (1 - ((parent:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() / ability:GetSpecialValueFor("max_range")))
 	end
 	ApplyDamage({victim = parent, attacker = caster, ability = ability, damage = dmg, damage_type = ability:GetAbilityDamageType()})

@@ -17,8 +17,8 @@ function imba_lion_earth_spike:OnSpellStart()
 	local direction = (pos - start_pos):Normalized()
 	direction.z = 0.0
 	local end_pos = start_pos + direction * (self:GetCastRange(pos, caster) + caster:GetCastRangeBonus() + caster:GetTalentValue("special_bonus_imba_lion_1"))
-	local marker = CreateModifierThinker(caster, self, "modifier_earth_spike_motion", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
-	local sound = CreateModifierThinker(caster, self, "modifier_earth_spike_motion", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
+	local marker = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
+	local sound = CreateModifierThinker(caster, self, "modifier_dummy_thinker", {duration = 20.0}, start_pos, caster:GetTeamNumber(), false):entindex()
 	EntIndexToHScript(sound):EmitSound("Hero_Lion.Impale")
 	local info = 
 	{

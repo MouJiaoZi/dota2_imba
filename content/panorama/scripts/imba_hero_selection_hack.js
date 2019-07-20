@@ -220,17 +220,16 @@ if(!Players.IsSpectator(Players.GetLocalPlayer()))
 	}
 }
 
-$.Schedule(0.1, PickButtonHitCheck);
-
 function PickButtonHitCheck()
 {
 	if(Game.GameStateIs(3) && enable31 == 1)
 	{
-		var txt = FindDotaHudElement("HeroInspectHeroName").text
+		var localPlayerInfo = Game.GetLocalPlayerInfo();
+		var hero = "npc_dota_hero_"+localPlayerInfo.possible_hero_selection;
 		var button = FindDotaHudElement("LockInButton");
-		for(var i=0; i<player_heroes.length; i++)
+		for(var i in player_heroes)
 		{
-			if($.Localize(player_heroes[i]).search(txt) != -1)
+			if(player_heroes[i] == hero)
 			{
 				button.style.washColor = "#FFFFFF00";
 				button.hittest = true;
@@ -240,13 +239,14 @@ function PickButtonHitCheck()
 			else
 			{
 				button.style.washColor = "#000000E7";
-				button.hittest = (Game.GetAllPlayerIDs().length <= 2);
-				button.enabled = (Game.GetAllPlayerIDs().length <= 2);
+				button.hittest =false;// (Game.GetAllPlayerIDs().length <= 2);
+				button.enabled =false;// (Game.GetAllPlayerIDs().length <= 2);
 			}
 		}
-		$.Schedule(0.01, PickButtonHitCheck);
 	}
 }
+
+GameEvents.Subscribe( "dota_player_hero_selection_dirty", PickButtonHitCheck );
 
 var total;
 var current = 0;

@@ -311,17 +311,9 @@ end
 imba_juggernaut_blade_dance = class({})
 
 LinkLuaModifier("modifier_imba_blade_dance_passive", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_blade_dance_check", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_blade_dance_stacks", "hero/hero_juggernaut", LUA_MODIFIER_MOTION_NONE)
 
 function imba_juggernaut_blade_dance:GetIntrinsicModifierName() return "modifier_imba_blade_dance_passive" end
-
-modifier_imba_blade_dance_check = class({})
-
-function modifier_imba_blade_dance_check:IsHidden()			return true end
-function modifier_imba_blade_dance_check:IsDebuff()			return false end
-function modifier_imba_blade_dance_check:IsPurgable() 		return false end
-function modifier_imba_blade_dance_check:IsPurgeException() return false end
 
 modifier_imba_blade_dance_passive = class({})
 
@@ -340,10 +332,9 @@ function modifier_imba_blade_dance_passive:GetModifierPreAttack_CriticalStrike(k
 			else
 				self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
 			end
-			self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_check", {})
+			self.attack = keys.record
 			return self:GetAbility():GetSpecialValueFor("crit_damage")
 		else
-			self:GetParent():RemoveModifierByName("modifier_imba_blade_dance_check")
 			return 0
 		end
 	end
@@ -356,8 +347,7 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
-	if self:GetParent():HasModifier("modifier_imba_blade_dance_check") then
-		self:GetParent():RemoveModifierByName("modifier_imba_blade_dance_check")
+	if keys.record == self.attack then
 		self:GetParent():AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_stacks", {duration = self:GetAbility():GetSpecialValueFor("bonus_duration")}, 1, false, true)
 		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
 			local pfx_crit = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_crit_tgt.vpcf", PATTACH_ABSORIGIN_FOLLOW, keys.target)
