@@ -267,7 +267,7 @@ function modifier_imba_glimpse_target:OnIntervalThink()
 	end
 	local new_pos = GetGroundPosition(parent:GetAbsOrigin() + direction * dis, parent)
 	parent:InterruptChannel()
-	parent:SetAbsOrigin(new_pos)
+	parent:SetOrigin(new_pos)
 	if (new_pos - self.pos):Length2D() <= 100 then
 		self:Destroy()
 	end
@@ -278,7 +278,6 @@ function modifier_imba_glimpse_target:OnDestroy()
 		self.pos = nil
 		self:GetParent():StopSound("Hero_Disruptor.Glimpse.Target")
 		self:GetParent():EmitSound("Hero_Disruptor.Glimpse.End")
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

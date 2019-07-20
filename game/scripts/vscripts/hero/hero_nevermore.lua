@@ -404,7 +404,7 @@ function imba_nevermore_requiem:OnProjectileThink_ExtraData(location, keys)
 	if EntIndexToHScript(keys.thinker) then
 		local pos = location
 		pos.z = pos.z - 1000
-		EntIndexToHScript(keys.thinker):SetAbsOrigin(pos)
+		EntIndexToHScript(keys.thinker):SetOrigin(pos)
 	end
 end
 

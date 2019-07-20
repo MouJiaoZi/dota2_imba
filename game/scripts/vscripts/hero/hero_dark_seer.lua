@@ -60,7 +60,7 @@ function modifier_imba_wall_of_scan_start:OnIntervalThink()
 	pos.z = self.center.z
 	local rorate_speed = self:GetAbility():GetSpecialValueFor("rotate_speed") / (1.0 / FrameTime())
 	local new_pos = RotatePosition(self.center, QAngle(0, rorate_speed, 0), pos)
-	self:GetParent():SetAbsOrigin(new_pos)
+	self:GetParent():SetOrigin(new_pos)
 end
 
 function modifier_imba_wall_of_scan_start:OnDestroy()
@@ -96,7 +96,7 @@ function modifier_imba_wall_of_scan_end:OnIntervalThink()
 	local rorate_speed = self:GetAbility():GetSpecialValueFor("rotate_speed") / (1.0 / FrameTime())
 	local new_pos = RotatePosition(self.center, QAngle(0, rorate_speed, 0), pos)
 	local caster = self:GetAbility():GetCaster()
-	self:GetParent():SetAbsOrigin(new_pos)
+	self:GetParent():SetOrigin(new_pos)
 	local length = (self.head:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D()
 	local direction = (self.head:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
 	direction.z = 0.0

@@ -75,14 +75,14 @@ end
 
 function imba_techies_land_mines:OnProjectileThink_ExtraData(location, keys)
 	if EntIndexToHScript(keys.mine) then
-		EntIndexToHScript(keys.mine):SetAbsOrigin(location)
+		EntIndexToHScript(keys.mine):SetOrigin(location)
 	end
 end
 
 function imba_techies_land_mines:OnProjectileHit_ExtraData(target, location, keys)
 	if EntIndexToHScript(keys.mine) then
 		local mine = EntIndexToHScript(keys.mine)
-		mine:SetAbsOrigin(GetGroundPosition(location, nil))
+		mine:SetOrigin(GetGroundPosition(location, nil))
 		mine:RemoveModifierByName("modifier_imba_land_mines_throw_motion")
 	end
 end
@@ -128,7 +128,7 @@ function modifier_imba_land_mines:OnIntervalThink()
 	local enemies2 = FindUnitsInRadius(self.caster:GetTeamNumber(), self.mine:GetAbsOrigin(), nil, self.big_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false)
 	if #enemies2 > 0 and not self.mine:HasModifier("modifier_imba_land_mines_throw_motion") then
 		local target = enemies2[1]
-		self.mine:SetAbsOrigin(GetGroundPosition(self.mine:GetAbsOrigin() + (target:GetAbsOrigin() - self.mine:GetAbsOrigin()):Normalized() * 1, nil))
+		self.mine:SetOrigin(GetGroundPosition(self.mine:GetAbsOrigin() + (target:GetAbsOrigin() - self.mine:GetAbsOrigin()):Normalized() * 1, nil))
 	end
 end
 
@@ -429,7 +429,7 @@ function modifier_imba_suicide_motion:OnIntervalThink()
 	local height = 300
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self.pos - self:GetParent():GetAbsOrigin()):Normalized() * self.distance, nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_imba_suicide_motion:OnDestroy()
@@ -485,8 +485,6 @@ function modifier_imba_suicide_motion:OnDestroy()
 				end
 			end
 		end
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

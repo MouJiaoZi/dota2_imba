@@ -178,7 +178,7 @@ function imba_earth_spirit_boulder_smash:OnSpellStart()
 	local pos = caster:GetAbsOrigin() + direction * 100
 	pos = GetGroundPosition(pos, nil)
 	if target:HasModifier("modifier_imba_stone_remnant_status") then
-		target:SetAbsOrigin(pos)
+		target:SetOrigin(pos)
 	end
 	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_earth_spirit/espirit_bouldersmash_caster.vpcf", PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControl(pfx, 1, target:GetAbsOrigin())
@@ -305,12 +305,11 @@ function modifier_imba_boulder_smash_motion:OnIntervalThink()
 	local distance = self.distance
 	local next_pos = self.parent:GetAbsOrigin() + self.direction * distance
 	next_pos = GetGroundPosition(next_pos, nil)
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_imba_boulder_smash_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.hitted = {}
 		self.direction = nil
@@ -396,6 +395,7 @@ function modifier_imba_rolling_boulder_motion_delay:OnIntervalThink()
 		self:Destroy()
 	end
 	if self:GetDuration() <= self:GetElapsedTime() then
+		self.keys['duration'] = -1
 		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_rolling_boulder_motion", self.keys)
 		self:StartIntervalThink(-1)
 	end
@@ -417,7 +417,6 @@ function modifier_imba_rolling_boulder_motion:OnCreated(keys)
 		if not self:ApplyHorizontalMotionController() then
 			self:Destroy()
 		else
-			self:SetDuration(-1, true)
 			self.total = 0
 			self.parent = self:GetParent()
 			self.caster = self:GetCaster()
@@ -459,7 +458,7 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 		end
 		local next_pos = GetGroundPosition(self.parent:GetAbsOrigin() + self.direction * distance, nil)
 		self.total = self.total + distance
-		self.parent:SetAbsOrigin(next_pos)
+		self.parent:SetOrigin(next_pos)
 	end
 	if self:GetStackCount() == 1 then
 		if self.total >= self.distance_rock then
@@ -472,7 +471,7 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 		end
 		local next_pos = GetGroundPosition(self.parent:GetAbsOrigin() + self.direction * distance, nil)
 		self.total = self.total + distance
-		self.parent:SetAbsOrigin(next_pos)
+		self.parent:SetOrigin(next_pos)
 	end
 	GridNav:DestroyTreesAroundPoint(self.parent:GetAbsOrigin(), 80, true)
 	local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
@@ -488,7 +487,7 @@ function modifier_imba_rolling_boulder_motion:OnIntervalThink()
 				if not self.caster:HasTalent("special_bonus_imba_earth_spirit_1") then
 					self:SetStackCount(2)
 					local direction = (enemy:GetAbsOrigin() - self.parent:GetAbsOrigin()):Normalized()
-					self.parent:SetAbsOrigin(enemy:GetAbsOrigin() + direction * 100)
+					self.parent:SetOrigin(enemy:GetAbsOrigin() + direction * 100)
 					self:Destroy()
 				end
 			end
@@ -498,10 +497,10 @@ end
 
 function modifier_imba_rolling_boulder_motion:OnDestroy()
 	if IsServer() then
+		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetOrigin(), true)
 		self:GetParent():EmitSound("Hero_EarthSpirit.RollingBoulder.Destroy")
 		self:GetParent():StopSound("Hero_EarthSpirit.RollingBoulder.Loop")
 		self:GetParent():RemoveModifierByName("modifier_imba_rolling_boulder_motion_delay")
-		self:GetParent():RemoveHorizontalMotionController(self)
 		self.total = nil
 		self.parent = nil
 		self.caster = nil
@@ -668,7 +667,7 @@ function modifier_imba_geomagnetic_grip_motion:OnIntervalThink()
 	----------
 	local distance = self.ability:GetSpecialValueFor("speed") / (1.0 / FrameTime())
 	local next_pos = GetGroundPosition(self.parent:GetAbsOrigin() + self.direction * distance, self.parent)
-	self.parent:SetAbsOrigin(next_pos)
+	self.parent:SetOrigin(next_pos)
 end
 
 function modifier_imba_geomagnetic_grip_motion:OnDestroy()
@@ -680,7 +679,6 @@ function modifier_imba_geomagnetic_grip_motion:OnDestroy()
 		self.parent = nil
 		self.ability = nil
 		self.radius = nil
-		self:GetParent():RemoveHorizontalMotionController(self)
 	end
 end
 
@@ -794,13 +792,8 @@ function modifier_imba_petrify_motion:OnCreated(keys)
 			self:Destroy()
 		else
 			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)
+			self:Destroy()
 		end
-	end
-end
-
-function modifier_imba_petrify_motion:OnDestroy()
-	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 	end
 end
 

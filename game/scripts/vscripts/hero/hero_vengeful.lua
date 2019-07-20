@@ -116,7 +116,7 @@ end
 
 function imba_vengeful_wave_of_terror:OnProjectileThink_ExtraData(location, keys)
 	if EntIndexToHScript(keys.thinker) then
-		EntIndexToHScript(keys.thinker):SetAbsOrigin(location)
+		EntIndexToHScript(keys.thinker):SetOrigin(location)
 	end
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), location, self:GetSpecialValueFor("width"), self:GetSpecialValueFor("vision_duration"), false)
 end

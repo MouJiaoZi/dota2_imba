@@ -64,7 +64,7 @@ function modifier_imba_time_walk_motion:OnIntervalThink()
 	local dt = FrameTime()
 	local new_pos = me:GetAbsOrigin() + self.direction * (self.speed / (1.0 / dt))
 	new_pos = GetGroundPosition(new_pos, nil)
-	me:SetAbsOrigin(new_pos)
+	me:SetOrigin(new_pos)
 	CreateChronosphere(me, self:GetAbility(), me:GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("chrono_radius"), self:GetAbility():GetSpecialValueFor("chrono_linger"), 6)
 	local enemy = FindUnitsInRadius(me:GetTeamNumber(), me:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("chrono_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
@@ -78,7 +78,6 @@ function modifier_imba_time_walk_motion:OnHorizontalMotionInterrupted() self:Des
 
 function modifier_imba_time_walk_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.direction = nil
 		self.speed = nil
@@ -479,7 +478,7 @@ end
 
 function modifier_imba_faceless_void_chronosphere_debuff:OnIntervalThink()
 	self:GetParent():InterruptMotionControllers(false)
-	self:GetParent():SetAbsOrigin(self.abs)
+	self:GetParent():SetOrigin(self.abs)
 end
 
 function modifier_imba_faceless_void_chronosphere_debuff:OnDestroy()

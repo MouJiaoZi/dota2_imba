@@ -12,7 +12,7 @@ function modifier_imba_suicide:OnDestroy()
 	if IsServer() and self:GetElapsedTime() >= self:GetDuration() then
 		self:GetParent():RemoveAllModifiers()
 		local pos = GetGroundPosition(Vector(0,0,0), self:GetParent())
-		self:GetParent():SetAbsOrigin(pos)
+		self:GetParent():SetOrigin(pos)
 		TrueKill(self:GetParent(), self:GetParent(), nil)
 	end
 end

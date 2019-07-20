@@ -111,7 +111,7 @@ end
 function imba_mirana_arrow:OnProjectileThink_ExtraData(location, keys)
 	AddFOWViewer(self:GetCaster():GetTeam(), location, self:GetSpecialValueFor("arrow_vision"), 0.03, false)
 	local pos = GetGroundPosition(location, nil)
-	EntIndexToHScript(keys.thinker):SetAbsOrigin(Vector(pos.x,pos.y,pos.z+200))
+	EntIndexToHScript(keys.thinker):SetOrigin(Vector(pos.x,pos.y,pos.z+200))
 end
 
 function imba_mirana_arrow:OnProjectileHit_ExtraData(target, location, keys)
@@ -179,7 +179,7 @@ function imba_mirana_leap:OnSpellStart()
 	self:EndCooldown()
 	self:StartCooldown((self:GetCooldown(self:GetLevel() - 1) + extra_cd) * (1 - caster:GetCooldownReduction() / 100))
 	caster:AddNewModifier(caster, self, "modifier_imba_leap_motion", {duration = time, pos_x = pos.x, pos_y = pos.y, pos_z = pos.z, height = height})
-	caster:StartGesture(ACT_DOTA_CAST3_STATUE)
+	--caster:StartGesture(ACT_DOTA_CAST3_STATUE)
 	caster:EmitSound("Ability.Leap")
 end
 
@@ -237,7 +237,7 @@ function modifier_imba_leap_motion:OnIntervalThink()
 	direction.z = 0.0
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + direction * distance, nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	local allies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), next_pos, nil, self:GetAbility():GetSpecialValueFor("buff_radius"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, ally in pairs(allies) do
 		ally:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_leap", {duration = self:GetAbility():GetSpecialValueFor("buff_duration")})
@@ -246,8 +246,6 @@ end
 
 function modifier_imba_leap_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		self.pos = nil
 		self.height = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)

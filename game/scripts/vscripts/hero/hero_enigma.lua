@@ -127,7 +127,7 @@ end
 
 function modifier_imba_enigma_malefice_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
+		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
 		self.pos = nil
 	end
 end
@@ -276,13 +276,15 @@ function modifier_imba_enigma_midnight_pulse_motion:OnCreated(keys)
 		if self:ApplyHorizontalMotionController() then
 			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)
 			self:Destroy()
+		else
+			self:Destroy()
 		end
 	end
 end
 
 function modifier_imba_enigma_midnight_pulse_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
+		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetOrigin(), true)
 	end
 end
 
@@ -485,12 +487,12 @@ function modifier_imba_enigma_black_hole_aura:OnIntervalThink()
 		direction.z = 0.0
 		new_pos = new_pos + direction * in_pull / (1.0 / FrameTime())
 	end
-	self:GetParent():SetAbsOrigin(new_pos)
+	self:GetParent():SetOrigin(new_pos)
 end
 
 function modifier_imba_enigma_black_hole_aura:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
+		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetOrigin(), true)
 		PlayerResource:SetCameraTarget(self:GetParent():GetPlayerID(), nil)
 	end
 end
@@ -531,12 +533,11 @@ function modifier_imba_enigma_black_hole_out_pull:OnIntervalThink()
 	local direction = (ability.pos - self:GetParent():GetAbsOrigin()):Normalized()
 	direction.z = 0.0
 	local new_pos = self:GetParent():GetAbsOrigin() + direction * (out_pull / (1.0 / FrameTime()))
-	self:GetParent():SetAbsOrigin(new_pos)
+	self:GetParent():SetOrigin(new_pos)
 end
 
 function modifier_imba_enigma_black_hole_out_pull:OnDestroy()
 	if IsServer() and not self:GetParent():HasModifier("modifier_imba_enigma_black_hole_aura") then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

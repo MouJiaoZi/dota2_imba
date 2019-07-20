@@ -55,6 +55,8 @@ function modifier_burrowstrike_caster_motion:OnCreated(keys)
 		if self:ApplyHorizontalMotionController() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
 		end
 	end
 end
@@ -64,7 +66,7 @@ function modifier_burrowstrike_caster_motion:OnIntervalThink()
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + self.direction * distance, nil)
 	local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(), self.caster:GetAbsOrigin(), nil, self.width, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	next_pos.z = next_pos.z - 100
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	for _, enemy in pairs(enemies) do
 		if not IsInTable(enemy, self.hitted) then
 			table.insert(self.hitted, enemy)
@@ -87,7 +89,6 @@ end
 
 function modifier_burrowstrike_caster_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
 		self.pos = nil
 		self:GetParent():RemoveGesture(ACT_DOTA_SAND_KING_BURROW_IN)
@@ -140,14 +141,12 @@ function modifier_burrowstrike_target_motion:OnIntervalThink()
 		local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil)
 		next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
 		next_pos = next_pos + (self.pos - self:GetParent():GetAbsOrigin()):Normalized() * (self.distance / total_ticks)
-		self:GetParent():SetAbsOrigin(next_pos)
+		self:GetParent():SetOrigin(next_pos)
 	end
 end
 
 function modifier_burrowstrike_target_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveVerticalMotionController(self)
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.pos = nil
 		self.distance = nil 
@@ -200,7 +199,7 @@ function modifier_sand_storm_sound:OnCreated()
 end
 
 function modifier_sand_storm_sound:OnIntervalThink()
-	self:GetParent():SetAbsOrigin(self:GetCaster():GetAbsOrigin())
+	self:GetParent():SetOrigin(self:GetCaster():GetAbsOrigin())
 	if not self:GetAbility():IsChanneling() then
 		self:Destroy()
 	end
@@ -275,12 +274,11 @@ function modifier_sand_storm_motion:OnIntervalThink()
 	local distance = self:GetAbility():GetSpecialValueFor("wind_force_tooltip")
 	distance = distance / (self:GetDuration() / FrameTime())
 	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_sand_storm_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end
@@ -521,12 +519,11 @@ function modifier_imba_epicenter_motion:OnIntervalThink()
 	local distance = self:GetAbility():GetSpecialValueFor("pull_strength")
 	distance = distance / (self:GetDuration() / FrameTime())
 	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_imba_epicenter_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
 end

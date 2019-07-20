@@ -65,8 +65,8 @@ function imba_riki_tott_true:OnChannelThink(flInterval)
 	if not self.thinker or self.thinker:IsNull() then
 		return
 	end
-	self.thinker:SetAbsOrigin(self.target:GetAbsOrigin())
-	self:GetCaster():SetAbsOrigin(self.thinker:GetAbsOrigin())
+	self.thinker:SetOrigin(self.target:GetAbsOrigin())
+	self:GetCaster():SetOrigin(self.thinker:GetAbsOrigin())
 end
 
 function imba_riki_tott_true:OnChannelFinish(bInterrupted)
@@ -118,9 +118,9 @@ function modifier_imba_tricks_of_the_trade_thinker:OnIntervalThink()
 	local abs = self:GetParent():GetAbsOrigin()
 	local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("range") + self:GetCaster():GetTalentValue("special_bonus_imba_riki_1"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
-		self:GetCaster():SetAbsOrigin(enemy[i]:GetAbsOrigin() + enemy[i]:GetForwardVector() * -120)
+		self:GetCaster():SetOrigin(enemy[i]:GetAbsOrigin() + enemy[i]:GetForwardVector() * -120)
 		self:GetCaster():PerformAttack(enemy[i], false, true, true, false, true, false, false)
-		self:GetCaster():SetAbsOrigin(abs)
+		self:GetCaster():SetOrigin(abs)
 	end
 end
 

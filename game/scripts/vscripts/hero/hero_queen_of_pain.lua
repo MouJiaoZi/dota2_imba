@@ -363,7 +363,7 @@ end
 
 function imba_queenofpain_sonic_wave:OnProjectileThink_ExtraData(location, keys)
 	if EntIndexToHScript(keys.thinker) then
-		EntIndexToHScript(keys.thinker):SetAbsOrigin(location)
+		EntIndexToHScript(keys.thinker):SetOrigin(location)
 	end
 end
 

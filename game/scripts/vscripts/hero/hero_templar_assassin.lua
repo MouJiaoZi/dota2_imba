@@ -289,7 +289,7 @@ function imba_templar_assassin_psionic_projection:OnChannelThink(flInterval)
 	for _, trap in pairs(traps) do
 		if trap:GetUnitName() == "npc_dota_templar_assassin_psionic_trap" and trap:GetPlayerOwnerID() == self:GetCaster():GetPlayerOwnerID() then
 			if self.thinker and not self.thinker:IsNull() then
-				self.thinker:SetAbsOrigin(trap:GetAbsOrigin())
+				self.thinker:SetOrigin(trap:GetAbsOrigin())
 			end
 			return
 		end

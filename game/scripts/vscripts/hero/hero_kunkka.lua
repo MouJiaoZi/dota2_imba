@@ -126,14 +126,12 @@ function modifier_imba_torrent_stun:OnIntervalThink()
 		next_pos = GetGroundPosition(self.pos + (self:GetParent():GetAbsOrigin() - self.pos):Normalized() * (self.distance * (1 - motion_progress)), nil)
 	end
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)	
+	self:GetParent():SetOrigin(next_pos)	
 end
 
 function modifier_imba_torrent_stun:OnDestroy()
 	if IsServer() then
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		self.pos = nil
 		self.tide = nil
 		if self.distance then
@@ -352,7 +350,6 @@ function modifier_imba_kunkka_x_marks_the_spot_target:OnDestroy()
 		self:GetParent():StopSound("Ability.XMark.Target_Movement")
 		if self:ApplyHorizontalMotionController() then
 			FindClearSpaceForUnit(self:GetParent(), self.pos, true)
-			self:GetParent():RemoveHorizontalMotionController(self)
 		end
 		self.pos = nil
 	end
@@ -476,7 +473,7 @@ end
 
 function imba_kunkka_ghostship:OnProjectileThink_ExtraData(location, data)
 	local target_pos = EntIndexToHScript(data.mark):GetAbsOrigin()
-	EntIndexToHScript(data.ship):SetAbsOrigin(location)
+	EntIndexToHScript(data.ship):SetOrigin(location)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), location, 300, FrameTime(), false)
 end
 
@@ -525,7 +522,7 @@ function modifier_imba_ghostship_debuff:OnIntervalThink()
 	local distance = self.speed * FrameTime()
 	local next_pos= self:GetParent():GetAbsOrigin() + (target_pos - self:GetParent():GetAbsOrigin()):Normalized() * distance
 	next_pos = GetGroundPosition(next_pos, self:GetParent())
-	self:GetParent():SetAbsOrigin(self.ship:GetAbsOrigin())
+	self:GetParent():SetOrigin(self.ship:GetAbsOrigin())
 end
 
 function modifier_imba_ghostship_debuff:OnDestroy()

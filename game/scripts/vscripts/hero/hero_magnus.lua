@@ -43,7 +43,7 @@ function imba_magnus_shockwave:OnSpellStart()
 end
 
 function imba_magnus_shockwave:OnProjectileThink_ExtraData(location, keys)
-	EntIndexToHScript(keys.thinker):SetAbsOrigin(location)
+	EntIndexToHScript(keys.thinker):SetOrigin(location)
 end
 
 function imba_magnus_shockwave:OnProjectileHit_ExtraData(target, location, keys)
@@ -281,7 +281,7 @@ function modifier_imba_skewer_caster_motion:OnIntervalThink()
 	local direction = (self.pos - current_pos):Normalized()
 	direction.z = 0
 	local next_pos = GetGroundPosition((current_pos + direction * distacne), nil)
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	local horn_pos = self:GetParent():GetAttachmentOrigin(self:GetParent():ScriptLookupAttachment("attach_horn"))
 	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("skewer_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_DAMAGE_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
@@ -292,7 +292,7 @@ function modifier_imba_skewer_caster_motion:OnIntervalThink()
 	end
 	for i, enemy in pairs(self.hitted) do
 		if enemy and enemy:IsAlive() then
-			enemy:SetAbsOrigin(GetGroundPosition(horn_pos, nil))
+			enemy:SetOrigin(GetGroundPosition(horn_pos, nil))
 		else
 			self.hitted[i] = nil
 		end
@@ -302,7 +302,6 @@ end
 
 function modifier_imba_skewer_caster_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		for _, enemy in pairs(self.hitted) do
 			if enemy then
@@ -473,6 +472,7 @@ function imba_magnus_reverse_polarity:OnSpellStart()
 	local enemies = FindUnitsInRadius(caster:GetTeam(), caster:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	local horn_pos = caster:GetAttachmentOrigin(caster:ScriptLookupAttachment("attach_attack1"))
 	for _, enemy in pairs(enemies) do
+		enemy:InterruptMotionControllers(true)
 		FindClearSpaceForUnit(enemy, horn_pos, true)
 		enemy:AddNewModifier(caster, self, "modifier_imba_stunned", {duration = self:GetSpecialValueFor("stun_duration")})
 		ApplyDamage({victim = enemy, attacker = caster, damage = self:GetSpecialValueFor("damage"), damage_type = self:GetAbilityDamageType(), ability = self})
@@ -509,7 +509,6 @@ function modifier_imba_reverse_polarity_slow:OnCreated()
 			local new_pos = self:GetParent():GetAbsOrigin() + direction * distance
 			FindClearSpaceForUnit(self:GetParent(), new_pos, true)
 			GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), self:GetAbility():GetSpecialValueFor("tree_radius"), false)
-			self:GetParent():RemoveHorizontalMotionController(self)
 		end
 	end
 end

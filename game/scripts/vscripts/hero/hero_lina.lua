@@ -58,7 +58,7 @@ end
 function imba_lina_dragon_slave:OnProjectileThink_ExtraData(location, keys)
 	local thinker = EntIndexToHScript(keys.thinker)
 	local super = keys.super
-	thinker:SetAbsOrigin(location)
+	thinker:SetOrigin(location)
 end
 
 function imba_lina_dragon_slave:OnProjectileHit_ExtraData(target, location, keys)

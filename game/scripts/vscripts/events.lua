@@ -464,7 +464,7 @@ function GameMode:OnNPCSpawned(keys)
 	if npc:GetName() == "npc_dota_roshan" and not roshan_spawn then
 		roshan_spawn = true
 		npc:AddNewModifier(npc, nil, "modifier_imba_storm_bolt_caster", {})
-		npc:SetAbsOrigin(Vector(40000,40000,-40000))
+		npc:SetOrigin(Vector(40000,40000,-40000))
 		Timers:CreateTimer(2.0, function()
 			IMBA:SpawnRoshan()
 			return nil

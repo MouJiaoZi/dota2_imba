@@ -264,7 +264,7 @@ function modifier_imba_power_cog_knocback:OnIntervalThink()
 	local distance = ability:GetSpecialValueFor("push_length") / (ability:GetSpecialValueFor("push_duration") / FrameTime())
 	local direction = (parent:GetAbsOrigin() - self.pos):Normalized()
 	direction.z = 0
-	parent:SetAbsOrigin(parent:GetAbsOrigin() + direction * distance)
+	parent:SetOrigin(parent:GetAbsOrigin() + direction * distance)
 end
 
 function modifier_imba_power_cog_knocback:OnDestroy()
@@ -272,7 +272,6 @@ function modifier_imba_power_cog_knocback:OnDestroy()
 		self.pos = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 180, false)
-		self:GetParent():RemoveHorizontalMotionController(self)
 		ApplyDamage({attacker = self:GetCaster(), victim = self:GetParent(), damage = self:GetAbility():GetSpecialValueFor("damage"), ability = self:GetAbility(), damage_type = self:GetAbility():GetAbilityDamageType()})
 		self:GetParent():SetMana(math.max(0, self:GetParent():GetMana() - self:GetAbility():GetSpecialValueFor("mana_burn")))
 	end
@@ -360,7 +359,7 @@ end
 function imba_rattletrap_rocket_flare:OnProjectileThink_ExtraData(pos, keys)
 	local caster = self:GetCaster()
 	local rocket = EntIndexToHScript(keys.rocket)
-	rocket:SetAbsOrigin(pos)
+	rocket:SetOrigin(pos)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), pos, self:GetSpecialValueFor("radius"), FrameTime(), false)
 	local enemy = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
@@ -479,7 +478,7 @@ end
 function imba_rattletrap_hookshot:OnProjectileThink_ExtraData(pos, keys)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), pos, self:GetSpecialValueFor("latch_radius"), FrameTime(), false)
 	local sound = EntIndexToHScript(keys.sound)
-	sound:SetAbsOrigin(pos)
+	sound:SetOrigin(pos)
 end
 
 function imba_rattletrap_hookshot:OnProjectileHit_ExtraData(target, pos, keys)
@@ -578,14 +577,14 @@ function modifier_imba_hookshot_motion:OnIntervalThink()
 		distance = (self.target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D()
 	end
 	local pos = GetGroundPosition(caster:GetAbsOrigin() + direction * distance, nil)
-	caster:SetAbsOrigin(pos)
+	caster:SetOrigin(pos)
 end
 
 function modifier_imba_hookshot_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		ParticleManager:DestroyParticle(self.pfx, false)
 		ParticleManager:ReleaseParticleIndex(self.pfx)
+		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		local buff = self.target:FindModifierByNameAndCaster("modifier_imba_hookshot_stunned", caster)
 		if buff then
 			buff:Destroy()

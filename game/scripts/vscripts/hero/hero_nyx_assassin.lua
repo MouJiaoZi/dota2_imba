@@ -122,12 +122,11 @@ function modifier_impale_motion:OnIntervalThink()
 	local height = self:GetAbility():GetSpecialValueFor("knock_up_height")
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_impale_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		if self:GetParent():GetName() ~= "npc_dota_thinker" then
 			self:GetParent():EmitSound("Hero_NyxAssassin.Impale.TargetLand")

@@ -1134,11 +1134,11 @@ function Physics:Unit(unit)
               end
               --DebugDrawCircle(newPos, Vector(150,0,255), 1, 15, true, 1.1)
               
-              unit:SetAbsOrigin(newPos)
+              unit:SetOrigin(newPos)
               dontSet = true
               dontSetGround = true
               ground = ng
-              --unit:SetAbsOrigin(position)
+              --unit:SetOrigin(position)
             --elseif (ground - position):Normalized().z > unit.fNavGroundAngle then
               --unit.lastGoodGround = ground
             end
@@ -1179,7 +1179,7 @@ function Physics:Unit(unit)
             if position.z >= ground.z + 340 then
               newVelocity.z = math.max(0, newVelocity.z)
               staticSum.z = math.max(0, staticSum.z)
-              --unit:SetAbsOrigin(newPos + Vector(0,0,ground.z + 340 - newPos.z))
+              --unit:SetOrigin(newPos + Vector(0,0,ground.z + 340 - newPos.z))
               newPos = Vector(newPos.x, newPos.y, ground.z + 340)
               --print('treetop')
             else
@@ -1242,7 +1242,7 @@ function Physics:Unit(unit)
                   unit.nSkipSlide = 1
                   newPos = vec + Vector(scalar*off.x, scalar*off.y, new.z - vec.z)
                 end
-                --unit:SetAbsOrigin(new)
+                --unit:SetOrigin(new)
               end
             end
           end
@@ -1674,7 +1674,7 @@ function Physics:Unit(unit)
       end
 
       if not dontSet then
-        unit:SetAbsOrigin(newPos)
+        unit:SetOrigin(newPos)
       end
       
       unit.nRebounceFrames = unit.nRebounceFrames - 1
@@ -1711,12 +1711,12 @@ function Physics:Unit(unit)
             --print(normal)
             --print('----------')
 
-            unit:SetAbsOrigin(position + normal * 64)
+            unit:SetOrigin(position + normal * 64)
           else
-            unit:SetAbsOrigin(unit.vLastGoodPosition)
+            unit:SetOrigin(unit.vLastGoodPosition)
           end
         else
-          unit:SetAbsOrigin(unit.vLastGoodPosition)
+          unit:SetOrigin(unit.vLastGoodPosition)
         end
       end
       
@@ -2172,7 +2172,7 @@ function Physics:BlockInSphere(unit, unitToRepel, radius, findClearSpace)
   if findClearSpace then
     FindClearSpaceForUnit(unitToRepel, pos + (dir:Normalized() * move), true)
   else
-    unitToRepel:SetAbsOrigin(pos + (dir:Normalized() * move))
+    unitToRepel:SetOrigin(pos + (dir:Normalized() * move))
   end
 end
 
@@ -2186,7 +2186,7 @@ function Physics:BlockInBox(unit, dist, normal, buffer, findClearSpace)
   if findClearSpace then
     FindClearSpaceForUnit(unit, unit:GetAbsOrigin() + toside, true)
   else
-    unit:SetAbsOrigin(unit:GetAbsOrigin() + toside)
+    unit:SetOrigin(unit:GetAbsOrigin() + toside)
   end
 end
 
@@ -2206,7 +2206,7 @@ function Physics:BlockInAABox(unit, xblock, value, buffer, findClearSpace)
   if findClearSpace then
     FindClearSpaceForUnit(unit, pos, true)
   else
-    unit:SetAbsOrigin(pos)
+    unit:SetOrigin(pos)
   end
 end
 

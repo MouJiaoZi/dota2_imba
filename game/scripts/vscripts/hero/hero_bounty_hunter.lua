@@ -93,7 +93,7 @@ function modifier_imba_shuriken_toss_chain:OnCreated()
 	end
 	local target_position = self:GetParent():GetAbsOrigin()
 	self.dummy = CreateUnitByName("npc_dummy_unit", target_position, false, nil, nil, self:GetCaster():GetTeamNumber())
-	self.dummy:SetAbsOrigin(target_position)
+	self.dummy:SetOrigin(target_position)
 	self.dummy:AddNewModifier(self.dummy, nil, "modifier_kill", {duration = self:GetDuration() + 1.0})
 	local pfx = ParticleManager:CreateParticle("particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook_chain.vpcf", PATTACH_CUSTOMORIGIN, nil)
 	ParticleManager:SetParticleControlEnt(pfx, 6, self.dummy, PATTACH_POINT_FOLLOW, "attach_hitloc", target_position, false)

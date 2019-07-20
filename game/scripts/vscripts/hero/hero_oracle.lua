@@ -58,7 +58,7 @@ function imba_oracle_fortunes_end:OnChannelFinish(bInterrupted)
 end
 
 function imba_oracle_fortunes_end:OnProjectileThink_ExtraData(pos, keys)
-	EntIndexToHScript(keys.sound):SetAbsOrigin(pos)
+	EntIndexToHScript(keys.sound):SetOrigin(pos)
 end
 
 function imba_oracle_fortunes_end:OnProjectileHit_ExtraData(target, pos, keys)

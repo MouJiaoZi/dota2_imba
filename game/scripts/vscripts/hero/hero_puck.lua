@@ -64,7 +64,7 @@ end
 function imba_puck_illusory_orb:OnProjectileThink_ExtraData(pos, keys)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), pos, self:GetSpecialValueFor("orb_vision"), self:GetSpecialValueFor("vision_duration"), false)
 	if keys.sound then
-		EntIndexToHScript(keys.sound):SetAbsOrigin(pos)
+		EntIndexToHScript(keys.sound):SetOrigin(pos)
 	end
 end
 
@@ -155,7 +155,7 @@ function imba_puck_ethereal_jaunt:OnSpellStart()
 		caster:EmitSound("puck_puck_ability_orb_0"..RandomInt(1, 8))
 	end
 	caster:EmitSound("Hero_Puck.EtherealJaunt")
-	caster:SetAbsOrigin(GetGroundPosition(ProjectileManager:GetLinearProjectileLocation(ability.projectile), nil))
+	caster:SetOrigin(GetGroundPosition(ProjectileManager:GetLinearProjectileLocation(ability.projectile), nil))
 	FindClearSpaceForUnit(caster, caster:GetAbsOrigin(), false)
 	local pfx = ParticleManager:CreateParticle("particles/hero/puck/puck_ethereal_jaunt.vpcf", PATTACH_ABSORIGIN, caster)
 	ParticleManager:SetParticleControl(pfx, 3, caster:GetAbsOrigin())
@@ -340,7 +340,7 @@ function modifier_imba_dream_coil_thinker:OnIntervalThink()
 		local range_pos = RotatePosition(self:GetParent():GetAbsOrigin(), QAngle(0, 90 * i, 0), new_pos)
 		range_pos = GetGroundPosition(range_pos, nil)
 		range_pos.z = range_pos.z + 128
-		--[[self.range[i]:SetAbsOrigin(range_pos)]]
+		--[[self.range[i]:SetOrigin(range_pos)]]
 		ParticleManager:SetParticleControl(self.range[i], 0, range_pos)
 	end
 	self:GetParent():SetForwardVector(new_direction)

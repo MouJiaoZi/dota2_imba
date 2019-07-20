@@ -189,14 +189,12 @@ function modifier_imba_drow_ranger_gust_enemy_motion:OnIntervalThink()
 	local height = self.knockback_height
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + self.direction * distance, nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 100, false)
 end
 
 function modifier_imba_drow_ranger_gust_enemy_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.direction = nil
 		self.knockback_distance = nil
@@ -237,14 +235,12 @@ function modifier_imba_drow_ranger_gust_self_motion:OnIntervalThink()
 	local height = self.knockback_height
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self.direction * distance), nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 100, false)
 end
 
 function modifier_imba_drow_ranger_gust_self_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.direction = nil
 		self.knockback_distance = nil

@@ -65,7 +65,7 @@ function modifier_imba_spider_strikes_motion:OnIntervalThink()
 		local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
 		local height = 300
 		next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-		caster:SetAbsOrigin(next_pos)
+		caster:SetOrigin(next_pos)
 		caster:MoveToNPC(target)
 		--caster:SetForwardVector(direction)
 	end
@@ -92,8 +92,6 @@ function modifier_imba_spider_strikes_motion:OnDestroy()
 		else
 			FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		end
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		self.target = nil
 	end
 end
@@ -179,7 +177,7 @@ function modifier_imba_spider_strikes:OnIntervalThink()
 	local pos = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")) - target:GetForwardVector() * (100 * target:GetModelScale())
 	local direction = target:GetForwardVector()
 	direction.z = 0
-	caster:SetAbsOrigin(pos)
+	caster:SetOrigin(pos)
 	caster:SetForwardVector(direction)
 end
 

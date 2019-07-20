@@ -3,7 +3,6 @@
 item_imba_blink = class({})
 
 LinkLuaModifier("modifier_imba_blink_disable", "items/item_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_blink_break_motion", "items/item_blink", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 function item_imba_blink:GetIntrinsicModifierName() return "modifier_imba_blink_disable" end
 
@@ -102,7 +101,7 @@ function item_imba_blink_boots:OnSpellStart()
 	end
 	FindClearSpaceForUnit(caster, pos, true)
 	caster:StartGesture(ACT_DOTA_BLINK_DAGGER_END)
-	caster:AddNewModifier(caster, self, "modifier_imba_blink_break_motion", {duration = FrameTime()})
+	caster:InterruptMotionControllers(false)
 end
 
 modifier_imba_blink_disable = class({})
@@ -123,16 +122,3 @@ function modifier_imba_blink_disable:OnTakeDamage(keys)
 end
 
 function modifier_imba_blink_disable:GetModifierMoveSpeedBonus_Special_Boots() return self:GetAbility():GetSpecialValueFor("bonus_movement_speed") end
-
-modifier_imba_blink_break_motion = class({})
-
-function modifier_imba_blink_break_motion:IsHidden() return true end
-
-function modifier_imba_blink_break_motion:OnCreated()
-	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
-		self:ApplyHorizontalMotionController()
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:Destroy()
-	end
-end

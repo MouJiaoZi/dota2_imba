@@ -116,7 +116,7 @@ end
 
 function modifier_imba_shadow_dance_active:OnIntervalThink()
 	if self.pfx_dummy and not self.pfx_dummy:IsNull() then
-		self.pfx_dummy:SetAbsOrigin(self:GetParent():GetAbsOrigin())
+		self.pfx_dummy:SetOrigin(self:GetParent():GetAbsOrigin())
 	end
 end
 

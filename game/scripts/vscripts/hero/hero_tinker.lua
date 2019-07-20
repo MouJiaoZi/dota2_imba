@@ -320,7 +320,7 @@ function modifier_imba_march_of_the_machines_thinker:OnIntervalThink()
 
 	if self:GetStackCount() == 0 then
 		if (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > 550 then
-			self.parent:SetAbsOrigin(GetRandomPosition2D(self.caster:GetAbsOrigin(), 300))
+			self.parent:SetOrigin(GetRandomPosition2D(self.caster:GetAbsOrigin(), 300))
 		else
 			self.parent:MoveToNPC(self.caster)
 		end

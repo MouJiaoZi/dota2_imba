@@ -43,7 +43,7 @@ if testCount == nil then
   end
 
   Timers:CreateTimer(function()
-    enigma:SetAbsOrigin(Vector(0,0,400))
+    enigma:SetOrigin(Vector(0,0,400))
 
     enigma:RemoveCollider()
     collider = enigma:AddColliderFromProfile("gravity")
@@ -55,9 +55,9 @@ if testCount == nil then
       return IsPhysicsUnit(collided) and collided.GetUnitName and collided:GetUnitName() == "npc_dummy_unit"
     end
 
-    planet1:SetAbsOrigin(Vector(-500,0,400))
-    planet2:SetAbsOrigin(Vector(300,0,400))
-    planet3:SetAbsOrigin(Vector(0,100,400))
+    planet1:SetOrigin(Vector(-500,0,400))
+    planet2:SetOrigin(Vector(300,0,400))
+    planet3:SetOrigin(Vector(0,100,400))
 
     planet1:SetPhysicsVelocity(Vector(0,600,0))
     planet2:SetPhysicsVelocity(Vector(0,0,1000))

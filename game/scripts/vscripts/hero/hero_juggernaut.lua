@@ -484,7 +484,7 @@ function modifier_imba_omni_slash_caster:OnIntervalThink()
 		local pos = GetRandomPosition2D(self.target:GetAbsOrigin(), 128)
 		local direction = (self.target:GetAbsOrigin() - pos):Normalized()
 		local parent = self:GetParent()
-		self:GetParent():SetAbsOrigin(pos)
+		self:GetParent():SetOrigin(pos)
 		self:GetParent():SetForwardVector(direction)
 		self:GetParent():SetAttacking(self.target)
 		self:GetParent():SetForceAttackTarget(self.target)
@@ -522,7 +522,7 @@ function modifier_imba_omni_slash_caster:JumpAndSlash(target)
 		ParticleManager:ReleaseParticleIndex(pfx2)
 	end
 	local target_pos = target:GetAbsOrigin() + (target:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized() * 100
-	caster:SetAbsOrigin(target_pos)
+	caster:SetOrigin(target_pos)
 	if not self:GetParent():IsDisarmed() then
 		if target:IsTrueHero() or target:IsBoss() or target:IsAncient() or target:IsConsideredHero() then
 			caster:PerformAttack(target, false, true, true, false, true, false, true)

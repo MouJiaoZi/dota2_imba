@@ -183,7 +183,7 @@ end
 
 function imba_pudge_meat_hook:OnProjectileThink_ExtraData(location, keys)
 	if EntIndexToHScript(keys.thinker) then
-		EntIndexToHScript(keys.thinker):SetAbsOrigin(location)
+		EntIndexToHScript(keys.thinker):SetOrigin(location)
 	end
 end
 
@@ -333,7 +333,7 @@ end
 
 function modifier_imba_hook_target_enemy:OnIntervalThink()
 	if not self.thinker:IsNull() and self.thinker and not self:GetParent():HasModifier("modifier_imba_illusion_hidden") then
-		self:GetParent():SetAbsOrigin(GetGroundPosition(self.thinker:GetAbsOrigin(), self:GetParent()))
+		self:GetParent():SetOrigin(GetGroundPosition(self.thinker:GetAbsOrigin(), self:GetParent()))
 	else
 		self:Destroy()
 	end
@@ -341,7 +341,6 @@ end
 
 function modifier_imba_hook_target_enemy:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		self.thinker = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
@@ -373,7 +372,7 @@ end
 
 function modifier_imba_hook_target_ally:OnIntervalThink()
 	if not self.thinker:IsNull() and self.thinker and not self:GetParent():HasModifier("modifier_imba_illusion_hidden") then
-		self:GetParent():SetAbsOrigin(GetGroundPosition(self.thinker:GetAbsOrigin(), self:GetParent()))
+		self:GetParent():SetOrigin(GetGroundPosition(self.thinker:GetAbsOrigin(), self:GetParent()))
 	else
 		self:Destroy()
 	end
@@ -381,7 +380,6 @@ end
 
 function modifier_imba_hook_target_ally:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		self.thinker = nil
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end
@@ -620,7 +618,7 @@ function modifier_imba_dismember:OnIntervalThink()
 		self:Destroy()
 		return
 	end
-	self:GetParent():SetAbsOrigin(self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100)
+	self:GetParent():SetOrigin(self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 100)
 	local dmg = (self:GetCaster():GetStrength() * (self:GetAbility():GetSpecialValueFor("strength_damage") / 100) + self:GetAbility():GetSpecialValueFor("dismember_damage")) / (1.0 / 0.5)
 	local damageTable = {
 						victim = self:GetParent(),

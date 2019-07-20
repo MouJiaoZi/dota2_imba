@@ -135,7 +135,7 @@ function imba_ember_spirit_sleight_of_fist:OnSpellStart()
 		Timers:CreateTimer((self:GetSpecialValueFor("attack_interval") * (i - 1)), function()
 			local pos0 = GetRandomPosition2D(enemy:GetAbsOrigin(), 128)
 			local direction = (enemy:GetAbsOrigin() - pos0):Normalized()
-			caster:SetAbsOrigin(pos0)
+			caster:SetOrigin(pos0)
 			caster:SetForwardVector(Vector(direction[1], direction[2], 0))
 			if not caster:IsDisarmed() then
 				caster:SetAttacking(enemy)
@@ -363,13 +363,13 @@ end
 
 function imba_ember_spirit_fire_remnant:OnProjectileThink_ExtraData(pos, keys)
 	if keys.dummy and EntIndexToHScript(keys.dummy) then
-		EntIndexToHScript(keys.dummy):SetAbsOrigin(GetGroundPosition(pos, nil))
+		EntIndexToHScript(keys.dummy):SetOrigin(GetGroundPosition(pos, nil))
 	end
 end
 
 function imba_ember_spirit_fire_remnant:OnProjectileHit_ExtraData(hTarget, pos, keys)
 	if keys.dummy and EntIndexToHScript(keys.dummy) then
-		EntIndexToHScript(keys.dummy):SetAbsOrigin(GetGroundPosition(pos, nil))
+		EntIndexToHScript(keys.dummy):SetOrigin(GetGroundPosition(pos, nil))
 		local dummy = EntIndexToHScript(keys.dummy)
 		if dummy:FindModifierByName("modifier_imba_fire_remnant_state") then
 			dummy:FindModifierByName("modifier_imba_fire_remnant_state"):CreatePfx()
@@ -558,7 +558,7 @@ function modifier_imba_fire_remnant_active_caster:OnIntervalThink()
 	direction.z = 0.0
 	--self:GetParent():SetForwardVector(Vector(direction[1], direction[2], 0))
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + direction * distance, nil)
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	if (self:GetParent():GetAbsOrigin() - self.target:GetAbsOrigin()):Length2D() <= 30 then
 		self:Destroy()
 	end
@@ -567,7 +567,6 @@ end
 
 function modifier_imba_fire_remnant_active_caster:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		self:GetParent():StopSound("Hero_EmberSpirit.FireRemnant.Activate")
 		self:GetParent():EmitSound("Hero_EmberSpirit.FireRemnant.Stop")
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)

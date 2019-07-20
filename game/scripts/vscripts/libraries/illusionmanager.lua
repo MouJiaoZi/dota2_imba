@@ -83,7 +83,7 @@ end
 function modifier_imba_illusion_hidden:OnIntervalThink()
 	--local pos = self:GetCaster():GetAbsOrigin()
 	if self:GetElapsedTime() >= 1.5 then
-		self:GetParent():SetAbsOrigin(self.pos)
+		self:GetParent():SetOrigin(self.pos)
 	end
 	self:GetParent():FindModifierByName("modifier_illusion"):SetDuration(2.0, true)
 	self:GetParent():Stop()

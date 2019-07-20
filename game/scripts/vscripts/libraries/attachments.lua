@@ -541,7 +541,7 @@ function Attachments:AttachProp(unit, attachPoint, model, scale, properties)
     --attach_pos = attach_pos + RotatePosition(Vector(0,0,0), QAngle(angles.x,angles.y,angles.z), offset)
     attach_pos = attach_pos + RotatePosition(Vector(0,0,0), angles, offset)
 
-    prop:SetAbsOrigin(attach_pos)
+    prop:SetOrigin(attach_pos)
     prop:SetAngles(angles.x,angles.y,angles.z)
 
     -- Attach and store it

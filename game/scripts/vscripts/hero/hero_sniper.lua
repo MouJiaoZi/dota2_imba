@@ -136,6 +136,8 @@ function modifier_imba_headshot_far_motion:OnCreated()
 		self.direction = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Normalized()
 		if self:ApplyHorizontalMotionController() then
 			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
 		end
 	end
 end
@@ -143,13 +145,12 @@ end
 function modifier_imba_headshot_far_motion:OnIntervalThink()
 	local distance = self:GetAbility():GetSpecialValueFor("knockback_speed") * FrameTime()
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + (self.direction * distance), nil)
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_imba_headshot_far_motion:OnDestroy()
 	if IsServer() then
 		self.direction = nil
-		self:GetParent():RemoveHorizontalMotionController(self)
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 100, false)
 	end

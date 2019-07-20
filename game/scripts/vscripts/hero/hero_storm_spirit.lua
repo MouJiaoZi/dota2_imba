@@ -150,12 +150,11 @@ function modifier_imba_electric_vortex_motion:OnIntervalThink()
 	local distance = self:GetAbility():GetSpecialValueFor("electric_vortex_pull_units_per_second") / (1.0 / FrameTime())
 	local direction = (self.pos - self:GetParent():GetAbsOrigin()):Normalized()
 	local pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + direction * distance, nil)
-	self:GetParent():SetAbsOrigin(pos)
+	self:GetParent():SetOrigin(pos)
 end
 
 function modifier_imba_electric_vortex_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		self:GetParent():StopSound("Hero_StormSpirit.ElectricVortex")
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 		self.pos = nil
@@ -317,13 +316,12 @@ function modifier_imba_ball_lightning_travel:OnIntervalThink()
 		distance = (self.current_pos - self.pos):Length2D()
 	end
 	local next_pos = GetGroundPosition(self.current_pos + direction * distance, nil)
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 180, true)
 end
 
 function modifier_imba_ball_lightning_travel:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
 		local damage = self:GetStackCount() / 100 * self.ability:GetSpecialValueFor("travel_damage")
 		SendOverheadEventMessage(nil, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE, self:GetParent(), damage, nil)
 		local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("ball_lightning_aoe"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)

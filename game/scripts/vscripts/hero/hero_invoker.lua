@@ -507,10 +507,10 @@ function modifier_special_bonus_imba_invoker_1:OnAbilityExecuted(keys)
 		for i = 1, extra_metors do
 			Timers:CreateTimer(i * interval, function()
 					local caster = self:GetParent():GetAbsOrigin()
-					self:GetParent():SetAbsOrigin(caster_pos)
+					self:GetParent():SetOrigin(caster_pos)
 					self:GetParent():SetCursorPosition(sou_pos)
 					ability:OnSpellStart()
-					self:GetParent():SetAbsOrigin(caster)
+					self:GetParent():SetOrigin(caster)
 					return nil
 				end
 			)

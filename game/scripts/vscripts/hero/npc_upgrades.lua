@@ -33,7 +33,7 @@ function NecrowarriorTrample( keys )
 
 	-- Move the caster
 	Timers:CreateTimer(0, function()
-		caster:SetAbsOrigin(caster:GetAbsOrigin() + distance_tick)
+		caster:SetOrigin(caster:GetAbsOrigin() + distance_tick)
 		current_distance = current_distance + speed * tick_rate
 		
 		-- If the movement has ended, find a legal position and exit

@@ -129,6 +129,8 @@ function modifier_imba_telekinesis_start_motion:OnCreated()
 	if IsServer() then
 		if self:ApplyVerticalMotionController() then
 			self:StartIntervalThink(FrameTime())
+		else
+			self:Destroy()
 		end
 	end
 end
@@ -138,13 +140,7 @@ function modifier_imba_telekinesis_start_motion:OnIntervalThink()
 	local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0) / 2
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
-end
-
-function modifier_imba_telekinesis_start_motion:OnDestroy()
-	if IsServer() then
-		self:GetParent():RemoveVerticalMotionController(self)
-	end
+	self:GetParent():SetOrigin(next_pos)
 end
 
 modifier_imba_telekinesis_end_motion = class({})
@@ -181,13 +177,11 @@ function modifier_imba_telekinesis_end_motion:OnIntervalThink()
 	local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0) / 2 + 0.5
 	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin() + direction * len, nil)
 	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-	self:GetParent():SetAbsOrigin(next_pos)
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_imba_telekinesis_end_motion:OnDestroy()
 	if IsServer() then
-		self:GetParent():RemoveHorizontalMotionController(self)
-		self:GetParent():RemoveVerticalMotionController(self)
 		self:GetParent():EmitSound("Hero_Rubick.Telekinesis.Target.Land")
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_rubick/rubick_telekinesis_land.vpcf", PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self.pos)

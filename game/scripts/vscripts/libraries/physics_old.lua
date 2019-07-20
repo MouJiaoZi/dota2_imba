@@ -968,7 +968,7 @@ function Physics:Unit(unit)
         if unit.bFollowNavMesh then
           local diff = unit.vVelocity:Normalized()
           --FindClearSpaceForUnit(unit, newPos, true)
-          unit:SetAbsOrigin(newPos)
+          unit:SetOrigin(newPos)
 
           local bound = 1
           if unit.GetPaddedCollisionRadius then
@@ -1142,7 +1142,7 @@ function Physics:Unit(unit)
             local scalar = math.min((32+bound) / math.abs(ndir.x), (32+bound) / math.abs(ndir.y))
 
             unit.nSkipSlide = 1
-            unit:SetAbsOrigin(navPos + Vector(scalar*ndir.x, scalar*ndir.y, position.z))
+            unit:SetOrigin(navPos + Vector(scalar*ndir.x, scalar*ndir.y, position.z))
             
             if unit.PhysicsOnSlide then
               local status, nextCall = pcall(unit.PhysicsOnSlide, unit, normal)
@@ -1298,7 +1298,7 @@ function Physics:Unit(unit)
             end
           end
         else
-          unit:SetAbsOrigin(newPos)
+          unit:SetOrigin(newPos)
         end
       end
       
@@ -1335,12 +1335,12 @@ function Physics:Unit(unit)
             --print(normal)
             --print('----------')
 
-            unit:SetAbsOrigin(position + normal * 64)
+            unit:SetOrigin(position + normal * 64)
           else
-            unit:SetAbsOrigin(unit.vLastGoodPosition)
+            unit:SetOrigin(unit.vLastGoodPosition)
           end
         else
-          unit:SetAbsOrigin(unit.vLastGoodPosition)
+          unit:SetOrigin(unit.vLastGoodPosition)
         end
       end
       
@@ -1791,7 +1791,7 @@ function Physics:BlockInSphere(unit, unitToRepel, radius, findClearSpace)
   if findClearSpace then
     FindClearSpaceForUnit(unitToRepel, pos + (dir:Normalized() * move), true)
   else
-    unitToRepel:SetAbsOrigin(pos + (dir:Normalized() * move))
+    unitToRepel:SetOrigin(pos + (dir:Normalized() * move))
   end
 end
 
@@ -1805,7 +1805,7 @@ function Physics:BlockInBox(unit, dist, normal, buffer, findClearSpace)
   if findClearSpace then
     FindClearSpaceForUnit(unit, unit:GetAbsOrigin() + toside, true)
   else
-    unit:SetAbsOrigin(unit:GetAbsOrigin() + toside)
+    unit:SetOrigin(unit:GetAbsOrigin() + toside)
   end
 end
 
@@ -1825,7 +1825,7 @@ function Physics:BlockInAABox(unit, xblock, value, buffer, findClearSpace)
   if findClearSpace then
     FindClearSpaceForUnit(unit, pos, true)
   else
-    unit:SetAbsOrigin(pos)
+    unit:SetOrigin(pos)
   end
 end
 
