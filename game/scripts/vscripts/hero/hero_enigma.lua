@@ -3,7 +3,7 @@ CreateEmptyTalents("enigma")
 imba_enigma_malefice = class({})
 
 LinkLuaModifier("modifier_imba_enigma_malefice", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_enigma_malefice_motion", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_enigma_malefice_motion", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
 
 function imba_enigma_malefice:IsHiddenWhenStolen() 		return false end
 function imba_enigma_malefice:IsRefreshable() 			return true  end
@@ -88,12 +88,12 @@ function modifier_imba_enigma_malefice_motion:IsDebuff()			return true end
 function modifier_imba_enigma_malefice_motion:IsHidden() 			return true end
 function modifier_imba_enigma_malefice_motion:IsPurgable() 			return true end
 function modifier_imba_enigma_malefice_motion:IsPurgeException() 	return true end
-function modifier_imba_enigma_malefice_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 function modifier_imba_enigma_malefice_motion:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_enigma_malefice_motion:IsMotionController() return true end
+function modifier_imba_enigma_malefice_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_enigma_malefice_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.pos = StringToVector(keys.pos)
 		local pull_delay = self:GetAbility():GetSpecialValueFor("pull_delay")
 		self:StartIntervalThink(pull_delay)
@@ -118,7 +118,7 @@ function modifier_imba_enigma_malefice_motion:OnCreated(keys)
 end
 
 function modifier_imba_enigma_malefice_motion:OnIntervalThink()
-	if self:ApplyHorizontalMotionController() then
+	if self:CheckMotionControllers() then
 		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
 	end
 	self:StartIntervalThink(-1)
@@ -211,7 +211,7 @@ function modifier_imba_enigma_demonic_conversion_buff:GetModifierPreAttack_Bonus
 imba_enigma_midnight_pulse = class({})
 
 LinkLuaModifier("modifier_imba_enigma_midnight_pulse_thinker", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_enigma_midnight_pulse_motion", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_enigma_midnight_pulse_motion", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
 
 function imba_enigma_midnight_pulse:IsHiddenWhenStolen() 	return false end
 function imba_enigma_midnight_pulse:IsRefreshable() 		return true  end
@@ -268,12 +268,12 @@ function modifier_imba_enigma_midnight_pulse_motion:IsDebuff()			return true end
 function modifier_imba_enigma_midnight_pulse_motion:IsHidden() 			return true end
 function modifier_imba_enigma_midnight_pulse_motion:IsPurgable() 		return false end
 function modifier_imba_enigma_midnight_pulse_motion:IsPurgeException() 	return false end
-function modifier_imba_enigma_midnight_pulse_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_enigma_midnight_pulse_motion:IsMotionController() return true end
+function modifier_imba_enigma_midnight_pulse_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_imba_enigma_midnight_pulse_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)
 			self:Destroy()
 		else
@@ -323,8 +323,8 @@ imba_enigma_black_hole = class({})
 
 LinkLuaModifier("modifier_imba_enigma_black_hole_singularity", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_enigma_black_hole_thinker", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_enigma_black_hole_out_pull", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
-LinkLuaModifier("modifier_imba_enigma_black_hole_aura", "hero/hero_enigma", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_enigma_black_hole_out_pull", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_enigma_black_hole_aura", "hero/hero_enigma", LUA_MODIFIER_MOTION_NONE)
 
 modifier_imba_enigma_black_hole_singularity = class({})
 function modifier_imba_enigma_black_hole_singularity:IsDebuff()			return false end
@@ -458,12 +458,12 @@ function modifier_imba_enigma_black_hole_aura:IsStunDebuff()		return true end
 function modifier_imba_enigma_black_hole_aura:CheckState() return {[MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_INVISIBLE] = false, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 function modifier_imba_enigma_black_hole_aura:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_enigma_black_hole_aura:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_enigma_black_hole_aura:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_enigma_black_hole_aura:IsMotionController() return true end
+function modifier_imba_enigma_black_hole_aura:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_enigma_black_hole_aura:OnCreated()
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			local pfx = ParticleManager:CreateParticleForPlayer("particles/hero/enigma/screen_blackhole_indicator.vpcf", PATTACH_EYES_FOLLOW, self:GetParent(), PlayerResource:GetPlayer(self:GetParent():GetPlayerID()))
 			self:AddParticle(pfx, false, false, 15, false, false)
 			if self:GetParent():IsTrueHero() then
@@ -503,12 +503,12 @@ function modifier_imba_enigma_black_hole_out_pull:IsDebuff()			return false end
 function modifier_imba_enigma_black_hole_out_pull:IsHidden() 			return false end
 function modifier_imba_enigma_black_hole_out_pull:IsPurgable() 			return false end
 function modifier_imba_enigma_black_hole_out_pull:IsPurgeException() 	return false end
-function modifier_imba_enigma_black_hole_out_pull:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_enigma_black_hole_out_pull:IsMotionController() return true end
+function modifier_imba_enigma_black_hole_out_pull:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_imba_enigma_black_hole_out_pull:OnCreated()
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()

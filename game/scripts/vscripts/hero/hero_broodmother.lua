@@ -4,7 +4,7 @@ imba_broodmother_spider_strikes = class({})
 
 LinkLuaModifier("modifier_imba_spider_strikes", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_spider_strikes_caster", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_spider_strikes_motion", "hero/hero_broodmother", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_spider_strikes_motion", "hero/hero_broodmother", LUA_MODIFIER_MOTION_NONE)
 
 function imba_broodmother_spider_strikes:IsHiddenWhenStolen() 		return false end
 function imba_broodmother_spider_strikes:IsRefreshable() 			return true end
@@ -29,21 +29,18 @@ function modifier_imba_spider_strikes_motion:IsPurgeException() return false end
 function modifier_imba_spider_strikes_motion:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = self:GetCaster():HasScepter()} end
 function modifier_imba_spider_strikes_motion:DeclareFunctions() return {MODIFIER_PROPERTY_MODEL_SCALE} end
 function modifier_imba_spider_strikes_motion:GetModifierModelScale() return self:GetParent():HasScepter() and (0 - self:GetAbility():GetSpecialValueFor("model_scale_scepter")) or 0 end
+function modifier_imba_spider_strikes_motion:IsMotionController() return true end
+function modifier_imba_spider_strikes_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_spider_strikes_motion:OnCreated(keys)
 	if IsServer() then
-		if not self:ApplyHorizontalMotionController() or not self:ApplyVerticalMotionController() then
-			self:Destroy()
-		else
+		if self:CheckMotionControllers() then
 			self:GetAbility():SetActivated(false)
 			self.target = EntIndexToHScript(keys.target)
 			self:StartIntervalThink(FrameTime())
 		end
 	end
 end
-
-function modifier_imba_spider_strikes_motion:OnHorizontalMotionInterrupted() self:Destroy() end
-function modifier_imba_spider_strikes_motion:OnVerticalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_spider_strikes_motion:OnIntervalThink()
 	local caster = self:GetParent()
@@ -65,9 +62,8 @@ function modifier_imba_spider_strikes_motion:OnIntervalThink()
 		local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
 		local height = 300
 		next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-		caster:SetOrigin(next_pos)
-		caster:MoveToNPC(target)
-		--caster:SetForwardVector(direction)
+		caster:SetAbsOrigin(next_pos)
+		caster:SetForwardVector(direction)
 	end
 end
 

@@ -8,8 +8,8 @@ CreateEmptyTalents("sandking")
 
 imba_sandking_burrowstrike = class({})
 
-LinkLuaModifier("modifier_burrowstrike_caster_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_HORIZONTAL)
-LinkLuaModifier("modifier_burrowstrike_target_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_burrowstrike_caster_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_burrowstrike_target_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 
 function imba_sandking_burrowstrike:IsHiddenWhenStolen() 	return false end
 function imba_sandking_burrowstrike:IsRefreshable() 		return true end
@@ -38,11 +38,11 @@ function modifier_burrowstrike_caster_motion:IsHidden() 				return true end
 function modifier_burrowstrike_caster_motion:IsPurgable() 				return false end
 function modifier_burrowstrike_caster_motion:IsPurgeException() 		return false end
 function modifier_burrowstrike_caster_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
-function modifier_burrowstrike_caster_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_burrowstrike_caster_motion:IsMotionController() return true end
+function modifier_burrowstrike_caster_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_burrowstrike_caster_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.direction = Vector(keys.direction_x, keys.direction_y, 0)
 		self.hitted = {}
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
@@ -52,7 +52,7 @@ function modifier_burrowstrike_caster_motion:OnCreated(keys)
 		self.speed = self:GetAbility():GetSpecialValueFor("burrow_speed")
 		self.ability = self:GetAbility()
 		self.caster = self:GetCaster()
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else
@@ -114,15 +114,14 @@ function modifier_burrowstrike_target_motion:DeclareFunctions() return {MODIFIER
 function modifier_burrowstrike_target_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 function modifier_burrowstrike_target_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true} end
 function modifier_burrowstrike_target_motion:OnRefresh(keys) self:OnCreated(keys) end
-function modifier_burrowstrike_target_motion:OnVerticalMotionInterrupted() self:Destroy() end
-function modifier_burrowstrike_target_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_burrowstrike_target_motion:IsMotionController() return true end
+function modifier_burrowstrike_target_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_burrowstrike_target_motion:OnCreated(keys)
 	if IsServer() then
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.distance = (self.pos - self:GetParent():GetAbsOrigin()):Length2D()
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
-		if self:ApplyVerticalMotionController() and self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else
@@ -134,15 +133,15 @@ function modifier_burrowstrike_target_motion:OnCreated(keys)
 end
 
 function modifier_burrowstrike_target_motion:OnIntervalThink()
+	local total_ticks = self:GetDuration() / FrameTime()
+	local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
+	local height = self:GetAbility():GetSpecialValueFor("air_height")
+	local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil)
+	next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
 	if self:GetCaster():HasAbility("imba_sandking_treacherous_sands") and self:GetCaster():FindAbilityByName("imba_sandking_treacherous_sands"):GetToggleState() then
-		local total_ticks = self:GetDuration() / FrameTime()
-		local motion_progress = math.min(self:GetElapsedTime() / self:GetDuration(), 1.0)
-		local height = self:GetAbility():GetSpecialValueFor("air_height")
-		local next_pos = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil)
-		next_pos.z = next_pos.z - 4 * height * motion_progress ^ 2 + 4 * height * motion_progress
-		next_pos = next_pos + (self.pos - self:GetParent():GetAbsOrigin()):Normalized() * (self.distance / total_ticks)
-		self:GetParent():SetOrigin(next_pos)
+		next_pos = next_pos + GetDirection2D(self.pos, self:GetParent():GetAbsOrigin()) * (self.distance / total_ticks)
 	end
+	self:GetParent():SetOrigin(next_pos)
 end
 
 function modifier_burrowstrike_target_motion:OnDestroy()
@@ -158,7 +157,7 @@ end
 imba_sandking_sand_storm = class({})
 
 LinkLuaModifier("modifier_sand_storm_caster", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sand_storm_sound", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 
 function imba_sandking_sand_storm:IsHiddenWhenStolen() 		return false end
@@ -257,12 +256,12 @@ function modifier_sand_storm_motion:IsDebuff()				return false end
 function modifier_sand_storm_motion:IsHidden() 				return true end
 function modifier_sand_storm_motion:IsPurgable() 			return false end
 function modifier_sand_storm_motion:IsPurgeException() 		return false end
-function modifier_sand_storm_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_sand_storm_motion:IsMotionController() return true end
+function modifier_sand_storm_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_sand_storm_motion:OnCreated()
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()
@@ -390,7 +389,7 @@ imba_sandking_epicenter = class({})
 
 LinkLuaModifier("modifier_imba_epicenter", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_epicenter_slow", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_epicenter_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_epicenter_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 
 function imba_sandking_epicenter:IsHiddenWhenStolen() 		return false end
 function imba_sandking_epicenter:IsRefreshable() 			return true end
@@ -502,12 +501,12 @@ function modifier_imba_epicenter_motion:IsDebuff()				return false end
 function modifier_imba_epicenter_motion:IsHidden() 				return true end
 function modifier_imba_epicenter_motion:IsPurgable() 			return false end
 function modifier_imba_epicenter_motion:IsPurgeException() 		return false end
-function modifier_imba_epicenter_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_epicenter_motion:IsMotionController() return true end
+function modifier_imba_epicenter_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_imba_epicenter_motion:OnCreated()
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()

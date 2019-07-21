@@ -159,7 +159,7 @@ function modifier_imba_mirana_arrow_thinker:GetEffectAttachType() return PATTACH
 imba_mirana_leap = class({})
 
 LinkLuaModifier("modifier_imba_leap", "hero/hero_mirana", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_leap_motion", "hero/hero_mirana", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_leap_motion", "hero/hero_mirana", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_leap_day", "hero/hero_mirana", LUA_MODIFIER_MOTION_NONE)
 
 function imba_mirana_leap:IsHiddenWhenStolen() 		return false end
@@ -211,13 +211,12 @@ function modifier_imba_leap_motion:IsPurgeException() 	return false end
 function modifier_imba_leap_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_leap_motion:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_3 end
 function modifier_imba_leap_motion:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
-function modifier_imba_leap_motion:OnHorizontalMotionInterrupted() self:Destroy() end
-function modifier_imba_leap_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_imba_leap_motion:IsMotionController() return true end
+function modifier_imba_leap_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_leap_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOW)
-		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+		if self:CheckMotionControllers() then
 			self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 			self.height = keys.height
 			self:OnIntervalThink()

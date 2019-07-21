@@ -67,7 +67,7 @@ end
 
 imba_storm_spirit_electric_vortex = class({})
 
-LinkLuaModifier("modifier_imba_electric_vortex_motion", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_electric_vortex_motion", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_storm_spirit_electric_vortex:IsHiddenWhenStolen() 	return false end
 function imba_storm_spirit_electric_vortex:IsRefreshable() 			return true end
@@ -128,17 +128,17 @@ function modifier_imba_electric_vortex_motion:IsStunDebuff() return true end
 function modifier_imba_electric_vortex_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_electric_vortex_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_electric_vortex_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_electric_vortex_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_electric_vortex_motion:IsMotionController() return true end
+function modifier_imba_electric_vortex_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_electric_vortex_motion:OnCreated()
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.pos = self:GetCaster():GetAbsOrigin()
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_stormspirit/stormspirit_electric_vortex.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
 		ParticleManager:SetParticleControl(pfx, 0, self:GetCaster():GetAbsOrigin())
 		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 		self:AddParticle(pfx, false, false, 15, false, false)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()
@@ -240,7 +240,7 @@ function modifier_imba_overload_slow:GetModifierAttackSpeedBonus_Constant() retu
 
 imba_storm_spirit_ball_lightning = class({})
 
-LinkLuaModifier("modifier_imba_ball_lightning_travel", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_ball_lightning_travel", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_ball_lightning_mana_penalty", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_storm_spirit_ball_lightning:IsHiddenWhenStolen() 		return false end
@@ -271,7 +271,8 @@ function modifier_imba_ball_lightning_travel:IsPurgeException() return false end
 function modifier_imba_ball_lightning_travel:CheckState() return {[MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_ball_lightning_travel:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_ball_lightning_travel:GetOverrideAnimation() return ACT_DOTA_OVERRIDE_ABILITY_4 end
-function modifier_imba_ball_lightning_travel:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_ball_lightning_travel:IsMotionController() return true end
+function modifier_imba_ball_lightning_travel:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_ball_lightning_travel:OnCreated(keys)
 	if IsServer() then
@@ -294,7 +295,7 @@ function modifier_imba_ball_lightning_travel:OnCreated(keys)
 			ParticleManager:SetParticleControl(pfx_range, 15, Vector(0, 0, 255))
 			self:AddParticle(pfx_range, true, false, 15, false, false)
 		end
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()

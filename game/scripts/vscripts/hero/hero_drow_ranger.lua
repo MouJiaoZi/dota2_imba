@@ -72,8 +72,8 @@ function modifier_imba_frost_arrows_frozen:CheckState() return {[MODIFIER_STATE_
 imba_drow_ranger_gust = class({})
 
 LinkLuaModifier("modifier_imba_drow_ranger_gust_debuff", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_drow_ranger_gust_enemy_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_BOTH)
-LinkLuaModifier("modifier_imba_drow_ranger_gust_self_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_drow_ranger_gust_enemy_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_drow_ranger_gust_self_motion", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_drow_ranger_gust_cast", "hero/hero_drow_ranger", LUA_MODIFIER_MOTION_NONE)
 
 function imba_drow_ranger_gust:IsHiddenWhenStolen() 	return false end
@@ -165,13 +165,12 @@ function modifier_imba_drow_ranger_gust_enemy_motion:DeclareFunctions() return {
 function modifier_imba_drow_ranger_gust_enemy_motion:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
 function modifier_imba_drow_ranger_gust_enemy_motion:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
 function modifier_imba_drow_ranger_gust_enemy_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_drow_ranger_gust_enemy_motion:OnHorizontalMotionInterrupted() self:Destroy() end
-function modifier_imba_drow_ranger_gust_enemy_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_imba_drow_ranger_gust_enemy_motion:IsMotionController()	return true end
+function modifier_imba_drow_ranger_gust_enemy_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_imba_drow_ranger_gust_enemy_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if not self:ApplyHorizontalMotionController() or not self:ApplyVerticalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			self.direction = StringToVector(keys.direction)
@@ -211,13 +210,12 @@ function modifier_imba_drow_ranger_gust_self_motion:IsPurgeException() 		return 
 function modifier_imba_drow_ranger_gust_self_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
 function modifier_imba_drow_ranger_gust_self_motion:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
 function modifier_imba_drow_ranger_gust_self_motion:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
-function modifier_imba_drow_ranger_gust_self_motion:OnHorizontalMotionInterrupted() self:Destroy() end
-function modifier_imba_drow_ranger_gust_self_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_imba_drow_ranger_gust_self_motion:IsMotionController()	return true end
+function modifier_imba_drow_ranger_gust_self_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_imba_drow_ranger_gust_self_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if not self:ApplyHorizontalMotionController() or not self:ApplyVerticalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			self.direction = StringToVector(keys.direction)

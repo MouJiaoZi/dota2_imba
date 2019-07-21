@@ -5,7 +5,7 @@ imba_faceless_void_time_walk = class({})
 
 LinkLuaModifier("modifier_imba_time_walk_slow", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_time_walk_buff", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_time_walk_motion", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_time_walk_motion", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_time_walk_damage", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_time_walk_damage_counter", "hero/hero_faceless_void", LUA_MODIFIER_MOTION_NONE)
 
@@ -45,13 +45,15 @@ function modifier_imba_time_walk_motion:IsPurgeException() 	return false end
 function modifier_imba_time_walk_motion:GetEffectName() return "particles/units/heroes/hero_faceless_void/faceless_void_time_walk.vpcf" end
 function modifier_imba_time_walk_motion:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_time_walk_motion:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_STUNNED] = true} end
+function modifier_imba_time_walk_motion:IsMotionController() return true end
+function modifier_imba_time_walk_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_time_walk_motion:OnCreated(keys)
 	if IsServer() then
 		self.direction = StringToVector(keys.direction)
 		self.speed = self:GetAbility():GetSpecialValueFor("speed")
 		self.effected_enemies = {}
-		if not self:ApplyHorizontalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			self:StartIntervalThink(FrameTime())
@@ -73,8 +75,6 @@ function modifier_imba_time_walk_motion:OnIntervalThink()
 		end
 	end
 end
-
-function modifier_imba_time_walk_motion:OnHorizontalMotionInterrupted() self:Destroy() end
 
 function modifier_imba_time_walk_motion:OnDestroy()
 	if IsServer() then
@@ -477,6 +477,7 @@ function modifier_imba_faceless_void_chronosphere_debuff:OnCreated()
 end
 
 function modifier_imba_faceless_void_chronosphere_debuff:OnIntervalThink()
+	self:CheckMotionControllers()
 	self:GetParent():InterruptMotionControllers(false)
 	self:GetParent():SetOrigin(self.abs)
 end
@@ -496,6 +497,7 @@ function modifier_imba_faceless_void_chronosphere_debuff:GetPriority() return MO
 function modifier_imba_faceless_void_chronosphere_debuff:IsDebuff() return not (self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Enemy_Ability) end
 function modifier_imba_faceless_void_chronosphere_debuff:IsStunDebuff()	return self:IsDebuff() end
 function modifier_imba_faceless_void_chronosphere_debuff:IsMotionController() return not (self.buff_type == Chronosphere_Caster or self.buff_type == Chronosphere_Ally_Scepter or self.buff_type == Chronosphere_Enemy_Ability) end
+function modifier_imba_faceless_void_chronosphere_debuff:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGHEST end
 function modifier_imba_faceless_void_chronosphere_debuff:GetStatusEffectName() return "particles/status_fx/status_effect_faceless_chronosphere.vpcf" end
 function modifier_imba_faceless_void_chronosphere_debuff:StatusEffectPriority() return 16 end
 function modifier_imba_faceless_void_chronosphere_debuff:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end

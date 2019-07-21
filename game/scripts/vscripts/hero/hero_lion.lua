@@ -2,7 +2,7 @@ CreateEmptyTalents("lion")
 
 imba_lion_earth_spike = class({})
 
-LinkLuaModifier("modifier_earth_spike_motion", "hero/hero_lion", LUA_MODIFIER_MOTION_VERTICAL)
+LinkLuaModifier("modifier_earth_spike_motion", "hero/hero_lion", LUA_MODIFIER_MOTION_NONE)
 
 function imba_lion_earth_spike:IsHiddenWhenStolen() 	return false end
 function imba_lion_earth_spike:IsRefreshable() 			return true end
@@ -137,12 +137,12 @@ function modifier_earth_spike_motion:DeclareFunctions() return {MODIFIER_PROPERT
 function modifier_earth_spike_motion:GetModifierMoveSpeed_Absolute() return 1 end
 function modifier_earth_spike_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
 function modifier_earth_spike_motion:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
-function modifier_earth_spike_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_earth_spike_motion:IsMotionController() return true end
+function modifier_earth_spike_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_earth_spike_motion:OnCreated()
 	if IsServer() then
-		self:SetMotionPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
-		if self:ApplyVerticalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else

@@ -92,7 +92,7 @@ imba_earth_spirit_boulder_smash = class({})
 LinkLuaModifier("modifier_imba_boulder_smash_move_to_cast", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_boulder_smash_silent", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_boulder_smash_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_boulder_smash_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_earth_spirit_boulder_smash:IsHiddenWhenStolen() 		return false end
 function imba_earth_spirit_boulder_smash:IsRefreshable() 			return true end
@@ -255,7 +255,8 @@ function modifier_imba_boulder_smash_motion:IsPurgable() 		return false end
 function modifier_imba_boulder_smash_motion:IsPurgeException() 	return false end
 function modifier_imba_boulder_smash_motion:GetAttributes() return MODIFIER_ATTRIBUTE_IGNORE_INVULNERABLE end
 function modifier_imba_boulder_smash_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_ROOTED] = true} end
-function modifier_imba_boulder_smash_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_boulder_smash_motion:IsMotionController() return true end
+function modifier_imba_boulder_smash_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_boulder_smash_motion:OnCreated(keys)
 	if IsServer() then
@@ -267,7 +268,7 @@ function modifier_imba_boulder_smash_motion:OnCreated(keys)
 		self.caster = self.ability:GetCaster()
 		self.parent = self:GetParent()
 		self:StartIntervalThink(FrameTime())
-		if not self:ApplyHorizontalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			if self.parent:HasModifier("modifier_imba_stone_remnant_status") then
@@ -345,7 +346,7 @@ function modifier_imba_boulder_smash_silent:CheckState() return {[MODIFIER_STATE
 
 imba_earth_spirit_rolling_boulder = class({})
 
-LinkLuaModifier("modifier_imba_rolling_boulder_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_rolling_boulder_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rolling_boulder_motion_delay", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rolling_boulder_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_rolling_boulder_extra_slow", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
@@ -410,11 +411,12 @@ function modifier_imba_rolling_boulder_motion:IsPurgeException() 	return false e
 function modifier_imba_rolling_boulder_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_ROOTED] = true, [MODIFIER_STATE_DISARMED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 function modifier_imba_rolling_boulder_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_rolling_boulder_motion:GetOverrideAnimation() return ACT_DOTA_CAST_ABILITY_2_ES_ROLL end
-function modifier_imba_rolling_boulder_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_rolling_boulder_motion:IsMotionController() return true end
+function modifier_imba_rolling_boulder_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_rolling_boulder_motion:OnCreated(keys)
 	if IsServer() then
-		if not self:ApplyHorizontalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			self.total = 0
@@ -556,7 +558,7 @@ function modifier_imba_rolling_boulder_extra_slow:GetModifierMoveSpeedBonus_Perc
 
 imba_earth_spirit_geomagnetic_grip = class({})
 
-LinkLuaModifier("modifier_imba_geomagnetic_grip_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_geomagnetic_grip_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_geomagnetic_grip_debuff", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_earth_spirit_geomagnetic_grip:IsHiddenWhenStolen() 	return false end
@@ -627,12 +629,12 @@ function modifier_imba_geomagnetic_grip_motion:CheckState()
 end
 function modifier_imba_geomagnetic_grip_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_geomagnetic_grip_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_geomagnetic_grip_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_geomagnetic_grip_motion:IsMotionController() return true end
+function modifier_imba_geomagnetic_grip_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 
 function modifier_imba_geomagnetic_grip_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if not self:ApplyHorizontalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			self.caster = self:GetAbility():GetCaster()
@@ -698,7 +700,7 @@ function modifier_imba_geomagnetic_grip_debuff:GetModifierMiss_Percentage() retu
 imba_earth_spirit_petrify = class({})
 
 LinkLuaModifier("modifier_imba_petrify_controller", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_petrify_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_petrify_motion", "hero/hero_earth_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_earth_spirit_petrify:IsHiddenWhenStolen() 	return false end
 function imba_earth_spirit_petrify:IsRefreshable() 			return true end
@@ -783,12 +785,12 @@ function modifier_imba_petrify_motion:IsDebuff()			return false end
 function modifier_imba_petrify_motion:IsHidden() 			return true end
 function modifier_imba_petrify_motion:IsPurgable() 			return false end
 function modifier_imba_petrify_motion:IsPurgeException() 	return false end
-function modifier_imba_petrify_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_petrify_motion:IsMotionController() return true end
+function modifier_imba_petrify_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
 
 function modifier_imba_petrify_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST)
-		if not self:ApplyHorizontalMotionController() then
+		if not self:CheckMotionControllers() then
 			self:Destroy()
 		else
 			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)

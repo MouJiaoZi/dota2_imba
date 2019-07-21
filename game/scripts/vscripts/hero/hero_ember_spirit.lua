@@ -488,7 +488,7 @@ function modifier_imba_fire_remnant_timer:OnDestroy() self.target = nil end
 
 imba_ember_spirit_activate_fire_remnant = class({})
 
-LinkLuaModifier("modifier_imba_fire_remnant_active_caster", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_fire_remnant_active_caster", "hero/hero_ember_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_ember_spirit_activate_fire_remnant:IsHiddenWhenStolen() 		return false end
 function imba_ember_spirit_activate_fire_remnant:IsRefreshable() 			return true end
@@ -525,12 +525,11 @@ function modifier_imba_fire_remnant_active_caster:IsHidden() 			return true end
 function modifier_imba_fire_remnant_active_caster:IsPurgable() 			return false end
 function modifier_imba_fire_remnant_active_caster:IsPurgeException() 	return false end
 function modifier_imba_fire_remnant_active_caster:CheckState() return {[MODIFIER_STATE_NO_HEALTH_BAR] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_UNSELECTABLE] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
-function modifier_imba_fire_remnant_active_caster:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_fire_remnant_active_caster:IsMotionController() return true end
+function modifier_imba_fire_remnant_active_caster:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_fire_remnant_active_caster:OnCreated(keys)
 	if IsServer() then
-		self:GetParent():InterruptMotionControllers(false)
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self:GetParent():EmitSound("Hero_EmberSpirit.FireRemnant.Activate")
 		self.target = EntIndexToHScript(keys.target)
 		self.pos = self.target:GetAbsOrigin()
@@ -538,7 +537,7 @@ function modifier_imba_fire_remnant_active_caster:OnCreated(keys)
 		if self:GetParent():HasScepter() then
 			self.speed = self.speed * self:GetAbility():GetSpecialValueFor("multiplier_scepter")
 		end
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 			local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_ember_spirit/ember_spirit_remnant_dash.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())

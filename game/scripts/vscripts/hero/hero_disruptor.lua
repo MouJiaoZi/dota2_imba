@@ -118,7 +118,7 @@ imba_disruptor_glimpse = class({})
 
 LinkLuaModifier("modifier_imba_glimpse_built_in", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_glimpse_record", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_glimpse_target", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_glimpse_target", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
 
 function imba_disruptor_glimpse:IsHiddenWhenStolen() 	return false end
 function imba_disruptor_glimpse:IsRefreshable() 		return true end
@@ -222,7 +222,8 @@ function modifier_imba_glimpse_target:IsPurgeException() 	return true end
 function modifier_imba_glimpse_target:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
 function modifier_imba_glimpse_target:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_glimpse_target:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_glimpse_target:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_glimpse_target:IsMotionController()	return true end
+function modifier_imba_glimpse_target:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_glimpse_target:OnCreated(keys)
 	if IsServer() then
@@ -240,11 +241,8 @@ function modifier_imba_glimpse_target:OnCreated(keys)
 		ParticleManager:SetParticleControl(pfx2, 7, self.pos)
 		ParticleManager:SetParticleControl(pfx2, 2, Vector(travel_time, 0, 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
-		else
-			self:Destroy()
 		end
 	end
 end
@@ -258,6 +256,7 @@ function modifier_imba_glimpse_target:OnIntervalThink()
 			break
 		end
 	end
+	parent:RemoveModifierByName("modifier_eul_cyclone")
 	local direction = (self.pos - parent:GetAbsOrigin()):Normalized()
 	direction.z = 0
 	local distance = (self.pos - parent:GetAbsOrigin()):Length2D()
@@ -267,7 +266,7 @@ function modifier_imba_glimpse_target:OnIntervalThink()
 	end
 	local new_pos = GetGroundPosition(parent:GetAbsOrigin() + direction * dis, parent)
 	parent:InterruptChannel()
-	parent:SetOrigin(new_pos)
+	parent:SetAbsOrigin(new_pos)
 	if (new_pos - self.pos):Length2D() <= 100 then
 		self:Destroy()
 	end
@@ -408,6 +407,7 @@ imba_disruptor_static_storm = class({})
 
 LinkLuaModifier("modifier_imba_static_storm_thinker", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_static_storm_debuff", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_static_storm_motion", "hero/hero_disruptor.lua", LUA_MODIFIER_MOTION_NONE)
 
 function imba_disruptor_static_storm:IsHiddenWhenStolen() 		return false end
 function imba_disruptor_static_storm:IsRefreshable() 			return true end
@@ -439,7 +439,7 @@ function modifier_imba_static_storm_thinker:OnCreated()
 		local enemy = FindUnitsInRadius(caster:GetTeamNumber(), thinker:GetAbsOrigin(), nil, ability:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 		for i=1, #enemy do
 			if enemy[i]:HasModifier("modifier_imba_kinetic_field") then
-				FindClearSpaceForUnit(enemy[i], thinker:GetAbsOrigin(), true)
+				enemy[i]:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_static_storm_motion", {duration = FrameTime(), pos = self:GetParent():GetAbsOrigin()})
 			end
 		end
 	end
@@ -478,3 +478,21 @@ function modifier_imba_static_storm_debuff:IsHidden() 			return false end
 function modifier_imba_static_storm_debuff:IsPurgable() 		return true end
 function modifier_imba_static_storm_debuff:IsPurgeException() 	return true end
 function modifier_imba_static_storm_debuff:CheckState() return {[MODIFIER_STATE_SILENCED] = true, [MODIFIER_STATE_MUTED] = self:GetCaster():HasScepter(), [MODIFIER_STATE_PASSIVES_DISABLED] = self:GetCaster():HasTalent("special_bonus_imba_disruptor_6")} end
+
+modifier_imba_static_storm_motion = class({})
+
+function modifier_imba_static_storm_motion:IsDebuff()			return true end
+function modifier_imba_static_storm_motion:IsHidden() 			return true end
+function modifier_imba_static_storm_motion:IsPurgable() 		return false end
+function modifier_imba_static_storm_motion:IsPurgeException() 	return false end
+function modifier_imba_static_storm_motion:IsMotionController() return true end
+function modifier_imba_static_storm_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
+
+function modifier_imba_static_storm_motion:OnCreated(keys)
+	if IsServer() then
+		if self:CheckMotionControllers() then
+			FindClearSpaceForUnit(self:GetParent(), StringToVector(keys.pos), true)
+		end
+		self:Destroy()
+	end
+end

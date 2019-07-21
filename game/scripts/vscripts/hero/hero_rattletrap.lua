@@ -122,7 +122,7 @@ imba_rattletrap_power_cogs = class({})
 LinkLuaModifier("modifier_imba_power_cog", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_power_cog_block", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_power_cog_flying", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_power_cog_knocback", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_power_cog_knocback", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 
 function imba_rattletrap_power_cogs:IsHiddenWhenStolen() 		return false end
 function imba_rattletrap_power_cogs:IsRefreshable() 			return true end
@@ -240,7 +240,8 @@ function modifier_imba_power_cog_knocback:IsStunDebuff()		return true end
 function modifier_imba_power_cog_knocback:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_power_cog_knocback:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_power_cog_knocback:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_power_cog_knocback:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_power_cog_knocback:IsMotionController() return true end
+function modifier_imba_power_cog_knocback:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_power_cog_knocback:OnCreated(keys)
 	if IsServer() then
@@ -249,8 +250,7 @@ function modifier_imba_power_cog_knocback:OnCreated(keys)
 		ParticleManager:SetParticleControlEnt(pfx, 0, EntIndexToHScript(keys.cog), PATTACH_POINT_FOLLOW, "attach_attack1", EntIndexToHScript(keys.cog):GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true)
 		self:AddParticle(pfx, false, false, 15, false, false)
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()
@@ -412,7 +412,7 @@ end
 imba_rattletrap_hookshot = class({})
 
 LinkLuaModifier("modifier_imba_hookshot_hookcheck", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_hookshot_motion", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_hookshot_motion", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_hookshot_stunned", "hero/hero_rattletrap.lua", LUA_MODIFIER_MOTION_NONE)
 
 function imba_rattletrap_hookshot:IsHiddenWhenStolen() 		return false end
@@ -533,18 +533,18 @@ function modifier_imba_hookshot_motion:IsStunDebuff()		return true end
 function modifier_imba_hookshot_motion:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true, [MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true} end
 function modifier_imba_hookshot_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_hookshot_motion:GetOverrideAnimation() return ACT_DOTA_RATTLETRAP_HOOKSHOT_LOOP end
-function modifier_imba_hookshot_motion:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_hookshot_motion:IsMotionController() return true end
+function modifier_imba_hookshot_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_hookshot_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.pfx = keys.pfx
 		self.hitted = {}
 		self.target = EntIndexToHScript(keys.target)
 		if keys.thinker == 1 then
 			self:SetStackCount(1)
 		end
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()
@@ -554,6 +554,10 @@ end
 
 function modifier_imba_hookshot_motion:OnIntervalThink()
 	local caster = self:GetParent()
+	if not self.target or self.target:IsNull() then
+		self:Destroy()
+		return
+	end
 	if (self.target:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() <= caster:GetHullRadius() and self:GetStackCount() ~= 1 then
 		self:SetStackCount(2)
 		self:Destroy()

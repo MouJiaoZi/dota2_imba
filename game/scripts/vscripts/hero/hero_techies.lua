@@ -369,7 +369,7 @@ function modifier_imba_stasis_trap_root_pfx:GetEffectName() return "particles/un
 imba_techies_suicide = class({})
 
 LinkLuaModifier("modifier_imba_suicide_cast_point", "hero/hero_techies", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_suicide_motion", "hero/hero_techies", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_suicide_motion", "hero/hero_techies", LUA_MODIFIER_MOTION_NONE)
 
 function imba_techies_suicide:IsHiddenWhenStolen() 		return false end
 function imba_techies_suicide:IsRefreshable() 			return true end
@@ -407,15 +407,14 @@ function modifier_imba_suicide_motion:IsPurgeException() 	return false end
 function modifier_imba_suicide_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION, MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
 function modifier_imba_suicide_motion:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
 function modifier_imba_suicide_motion:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
-function modifier_imba_suicide_motion:OnHorizontalMotionInterrupted() self:Destroy() end
-function modifier_imba_suicide_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_imba_suicide_motion:IsMotionController() return true end
+function modifier_imba_suicide_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOW end
 
 function modifier_imba_suicide_motion:OnCreated(keys)
 	if IsServer() then
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_LOW)
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.distance = (self.pos - self:GetParent():GetAbsOrigin()):Length() / (self:GetDuration() / FrameTime() - 2)
-		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else

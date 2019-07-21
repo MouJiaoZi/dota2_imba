@@ -68,8 +68,8 @@ imba_rubick_telekinesis = class({})
 LinkLuaModifier("modifier_imba_telekinesis_range", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_telekinesis_ally_lift", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_telekinesis_enemy_lift", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_telekinesis_start_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_VERTICAL)
-LinkLuaModifier("modifier_imba_telekinesis_end_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_telekinesis_start_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_telekinesis_end_motion", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
 
 function imba_rubick_telekinesis:IsHiddenWhenStolen() 		return false end
 function imba_rubick_telekinesis:IsRefreshable() 			return true end
@@ -123,11 +123,12 @@ function modifier_imba_telekinesis_start_motion:IsPurgeException() 	return false
 function modifier_imba_telekinesis_start_motion:DestroyOnExpire() return false end
 function modifier_imba_telekinesis_start_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_telekinesis_start_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_telekinesis_start_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_imba_telekinesis_start_motion:IsMotionController() return true end
+function modifier_imba_telekinesis_start_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_telekinesis_start_motion:OnCreated()
 	if IsServer() then
-		if self:ApplyVerticalMotionController() then
+		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
 		else
 			self:Destroy()
@@ -151,15 +152,15 @@ function modifier_imba_telekinesis_end_motion:IsPurgable() 			return false end
 function modifier_imba_telekinesis_end_motion:IsPurgeException() 	return false end
 function modifier_imba_telekinesis_end_motion:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_telekinesis_end_motion:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_telekinesis_end_motion:OnHorizontalMotionInterrupted() self:Destroy() end
-function modifier_imba_telekinesis_end_motion:OnVerticalMotionInterrupted() self:Destroy() end
+function modifier_imba_telekinesis_end_motion:IsMotionController() return true end
+function modifier_imba_telekinesis_end_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_telekinesis_end_motion:OnCreated(keys)
 	if IsServer() then
 		self.startpos = self:GetParent():GetAbsOrigin()
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self:GetParent():RemoveModifierByName("modifier_imba_telekinesis_start_motion")
-		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else

@@ -28,7 +28,7 @@ imba_kunkka_torrent = class({})
 
 LinkLuaModifier("modifier_imba_torrent_delay", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_torrent_slow", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_imba_torrent_stun", "hero/hero_kunkka", LUA_MODIFIER_MOTION_BOTH)
+LinkLuaModifier("modifier_imba_torrent_stun", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 
 function imba_kunkka_torrent:IsHiddenWhenStolen() 		return false end
 function imba_kunkka_torrent:IsRefreshable() 			return true  end
@@ -89,7 +89,8 @@ function modifier_imba_torrent_stun:IsPurgeException() 	return true end
 function modifier_imba_torrent_stun:CheckState() return {[MODIFIER_STATE_STUNNED] = true, [MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_torrent_stun:DeclareFunctions() return {MODIFIER_PROPERTY_OVERRIDE_ANIMATION} end
 function modifier_imba_torrent_stun:GetOverrideAnimation() return ACT_DOTA_FLAIL end
-function modifier_imba_torrent_stun:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_torrent_stun:IsMotionController() return true end
+function modifier_imba_torrent_stun:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH end
 
 function modifier_imba_torrent_stun:OnCreated(keys)
 	if IsServer() then
@@ -103,13 +104,12 @@ function modifier_imba_torrent_stun:OnCreated(keys)
 							ability = self:GetAbility(), --Optional.
 							}
 		ApplyDamage(damageTable)
-		self:SetPriority(DOTA_MOTION_CONTROLLER_PRIORITY_HIGH)
 		self.pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
 		self.tide = keys.tide
 		if bit.band(keys.tide, KUNKKA_TIDEBRINGER_TSUNAMI) == KUNKKA_TIDEBRINGER_TSUNAMI then
 			self.distance = (self:GetParent():GetAbsOrigin() - self.pos):Length2D()
 		end
-		if self:ApplyHorizontalMotionController() and self:ApplyVerticalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else
@@ -294,7 +294,7 @@ function modifier_imba_tidebringer_tsunami:IsPurgable() return false end
 
 imba_kunkka_x_marks_the_spot = class({})
 
-LinkLuaModifier("modifier_imba_kunkka_x_marks_the_spot_target", "hero/hero_kunkka", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_kunkka_x_marks_the_spot_target", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_kunkka_x_marks_the_spot_cooldown", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 
 function imba_kunkka_x_marks_the_spot:IsHiddenWhenStolen() 		return false end
@@ -329,6 +329,8 @@ function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgable() 			return (se
 function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgeException() 	return (self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber()) end
 function modifier_imba_kunkka_x_marks_the_spot_target:GetEffectName() return "particles/units/heroes/hero_kunkka/kunkka_spell_x_spot.vpcf" end
 function modifier_imba_kunkka_x_marks_the_spot_target:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+function modifier_imba_kunkka_x_marks_the_spot_target:IsMotionController() return true end
+function modifier_imba_kunkka_x_marks_the_spot_target:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_kunkka_x_marks_the_spot_target:OnCreated()
 	if IsServer() then
@@ -348,7 +350,7 @@ function modifier_imba_kunkka_x_marks_the_spot_target:OnDestroy()
 		end
 		self:GetParent():EmitSound("Ability.XMarksTheSpot.Return")
 		self:GetParent():StopSound("Ability.XMark.Target_Movement")
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			FindClearSpaceForUnit(self:GetParent(), self.pos, true)
 		end
 		self.pos = nil
@@ -388,7 +390,7 @@ end
 
 imba_kunkka_ghostship = class({})
 
-LinkLuaModifier("modifier_imba_ghostship_debuff", "hero/hero_kunkka", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_imba_ghostship_debuff", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_ghostship_rum", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_ghostship_rum_damage", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_ghostship_mark", "hero/hero_kunkka", LUA_MODIFIER_MOTION_NONE)
@@ -497,14 +499,15 @@ function modifier_imba_ghostship_debuff:CheckState() return {[MODIFIER_STATE_NO_
 function modifier_imba_ghostship_debuff:DeclareFunctions()	return {MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
 function modifier_imba_ghostship_debuff:GetModifierMoveSpeed_Absolute() if IsServer() then return 1 end end
 function modifier_imba_ghostship_debuff:GetModifierMoveSpeed_Limit() if IsServer() then return 1 end end
-function modifier_imba_ghostship_debuff:OnHorizontalMotionInterrupted() self:Destroy() end
+function modifier_imba_ghostship_debuff:IsMotionController() return true end
+function modifier_imba_ghostship_debuff:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_ghostship_debuff:OnCreated(keys)
 	if IsServer() then
 		self.mark = EntIndexToHScript(keys.mark)
 		self.ship = EntIndexToHScript(keys.ship)
 		self.speed = keys.speed
-		if self:ApplyHorizontalMotionController() then
+		if self:CheckMotionControllers() then
 			self:OnIntervalThink()
 			self:StartIntervalThink(FrameTime())
 		else
