@@ -3,6 +3,8 @@ CreateEmptyTalents("storm_spirit")
 imba_storm_spirit_static_remnant = class({})
 
 LinkLuaModifier("modifier_imba_static_remnant_thinker", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_static_remnant_trigger", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_static_remnant_target", "hero/hero_storm_spirit", LUA_MODIFIER_MOTION_NONE)
 
 function imba_storm_spirit_static_remnant:IsHiddenWhenStolen() 		return false end
 function imba_storm_spirit_static_remnant:IsRefreshable() 			return true end
@@ -32,21 +34,23 @@ function modifier_imba_static_remnant_thinker:OnCreated()
 		end
 		ParticleManager:SetParticleControl(pfx, 2, Vector(gesture, self:GetCaster():GetModelScale(), 0))
 		self:AddParticle(pfx, false, false, 15, false, false)
-		self:StartIntervalThink(0.2)
+		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("static_remnant_delay"))
 	end
 end
 
 function modifier_imba_static_remnant_thinker:OnIntervalThink()
-	local ability = self:GetAbility()
-	if self:GetElapsedTime() < ability:GetSpecialValueFor("static_remnant_delay") then
-		return
+	if self:GetStackCount() == 0 then
+		self:StartIntervalThink(0.2)
+		self:SetStackCount(1)
+		CreateModifierThinker(self:GetParent(), self:GetAbility(), "modifier_imba_static_remnant_trigger", {duration = self:GetDuration()}, self:GetParent():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
 	end
+	local ability = self:GetAbility()
 	local caster = self:GetCaster()
 	local pos = self:GetParent():GetAbsOrigin()
-	local checks = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, ability:GetSpecialValueFor("static_remnant_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	--[[local checks = FindUnitsInRadius(caster:GetTeamNumber(), pos, nil, ability:GetSpecialValueFor("static_remnant_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 	if #checks > 0 then
 		self:Destroy()
-	end
+	end]]
 	AddFOWViewer(caster:GetTeamNumber(), self:GetParent():GetAbsOrigin(), ability:GetSpecialValueFor("static_remnant_radius"), 0.3, false)
 end
 
@@ -62,6 +66,25 @@ function modifier_imba_static_remnant_thinker:OnDestroy()
 	for _, enemy in pairs(enemies) do
 		enemy:AddNewModifier(caster, ability, "modifier_paralyzed", {duration = ability:GetSpecialValueFor("slow_duration") + caster:GetTalentValue("special_bonus_imba_storm_spirit_1")})
 		ApplyDamage({victim = enemy, attacker = caster, ability = ability, damage_type = ability:GetAbilityDamageType(), damage = ability:GetSpecialValueFor("static_remnant_damage")})
+	end
+end
+
+modifier_imba_static_remnant_trigger = class({})
+
+function modifier_imba_static_remnant_trigger:IsAura() return true end
+function modifier_imba_static_remnant_trigger:GetAuraDuration() return FrameTime() end
+function modifier_imba_static_remnant_trigger:GetModifierAura() return "modifier_imba_static_remnant_target" end
+function modifier_imba_static_remnant_trigger:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("static_remnant_radius") end
+function modifier_imba_static_remnant_trigger:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES end
+function modifier_imba_static_remnant_trigger:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
+function modifier_imba_static_remnant_trigger:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
+
+modifier_imba_static_remnant_target = class({})
+
+function modifier_imba_static_remnant_target:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_static_remnant_target:OnCreated()
+	if IsServer() then
+		self:GetCaster():AddNewModifier(self:GetCaster(), nil, "modifier_kill", {duration = 0.1})
 	end
 end
 
@@ -280,6 +303,7 @@ function modifier_imba_ball_lightning_travel:OnCreated(keys)
 		self.start_pos = self:GetParent():GetAbsOrigin()
 		self.current_pos = self:GetParent():GetAbsOrigin()
 		self.ability = self:GetAbility()
+		self.talent_travel = 0
 		self:GetParent():EmitSound("Hero_StormSpirit.BallLightning")
 		self:GetParent():EmitSound("Hero_StormSpirit.BallLightning.Loop")
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_stormspirit/stormspirit_ball_lightning.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
@@ -317,6 +341,16 @@ function modifier_imba_ball_lightning_travel:OnIntervalThink()
 		distance = (self.current_pos - self.pos):Length2D()
 	end
 	local next_pos = GetGroundPosition(self.current_pos + direction * distance, nil)
+	if self:GetParent():HasTalent("special_bonus_imba_storm_spirit_4") and self:GetParent():HasAbility("imba_storm_spirit_static_remnant") then
+		self.talent_travel = self.talent_travel + (next_pos - self.current_pos):Length2D()
+		if self.talent_travel >= self:GetParent():GetTalentValue("special_bonus_imba_storm_spirit_4") then
+			self.talent_travel = self.talent_travel - self:GetParent():GetTalentValue("special_bonus_imba_storm_spirit_4")
+			local ability = self:GetParent():FindAbilityByName("imba_storm_spirit_static_remnant")
+			if ability:GetLevel() > 0 then
+				ability:OnSpellStart()
+			end
+		end
+	end
 	self:GetParent():SetOrigin(next_pos)
 	GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 180, true)
 end

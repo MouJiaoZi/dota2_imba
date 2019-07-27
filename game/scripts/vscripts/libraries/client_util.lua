@@ -2,7 +2,6 @@ if IsClient() then
 	print("Client UTIL Loaded")
 end
 
-
 function C_DOTA_BaseNPC:HasTalent(sTalentName)
 	if self:HasModifier("modifier_"..sTalentName) then
 		return true 
@@ -121,4 +120,17 @@ end
 
 function C_DOTA_BaseNPC:IsTrueHero()
 	return (not self:HasModifier("modifier_arc_warden_tempest_double") and self:IsRealHero() and not self:HasModifier("modifier_imba_meepo_clone_controller"))
+end
+
+function C_DOTA_Ability_Lua:SetAbilityIcon()
+	--print(self:entindex())
+	local info = CustomNetTables:GetTableValue("imba_ability_icon", tostring(self:entindex()))
+	for k,v in pairs(info) do
+		if self.GetAbilityTextureName ~= self.BaseClass.GetAbilityTextureName then
+			return
+		end
+		self.imba_ability_icon = v
+		self.GetAbilityTextureName = function() return self.imba_ability_icon end
+		break
+	end
 end

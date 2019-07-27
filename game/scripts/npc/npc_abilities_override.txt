@@ -13101,7 +13101,7 @@
 			"02"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"wolf_duration"				"55.0 55.0 55.0 55.0"
+				"wolf_duration"				"-1"
 			}
 			"03"
 			{

@@ -578,8 +578,11 @@ function GameMode:OnNPCSpawned(keys)
 	-- Set Talent Ability
 	for i = 0, 23 do
 		local ability = npc:GetAbilityByIndex(i)
-		if ability and ability.IsTalentAbility and ability:IsTalentAbility() then
+		if ability and ability.IsTalentAbility and ability:IsTalentAbility() and ability:GetLevel() == 0 then
 			ability:SetLevel(1)
+		end
+		if ability then
+			xpcall((HeroItems:SetHeroAbilityIcon(npc, ability:GetAbilityName())), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 		end
 	end
 
@@ -632,6 +635,21 @@ function GameMode:OnPlayerReconnect(keys)
 	local playerHero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[keys.PlayerID + 1]
 
 	
+end
+
+function GameMode:OnPlayerSwapHero(keys)
+	--PrintTable(keys)
+	for k,v in pairs(keys) do
+		GameRules:SendCustomMessage(k.." : "..v, 0, 0)
+	end
+	local a = keys.playerid1
+	local b = keys.playerid2
+	local temp = nil
+	if CDOTA_PlayerResource.IMBA_PLAYER_HERO[a + 1] and CDOTA_PlayerResource.IMBA_PLAYER_HERO[b + 1] then
+		temp = CDOTA_PlayerResource.IMBA_PLAYER_HERO[a + 1]
+		CDOTA_PlayerResource.IMBA_PLAYER_HERO[a + 1] = CDOTA_PlayerResource.IMBA_PLAYER_HERO[b + 1]
+		CDOTA_PlayerResource.IMBA_PLAYER_HERO[b + 1] = temp
+	end
 end
 
 -- An item was purchased by a player
@@ -697,6 +715,9 @@ function GameMode:OnPlayerLearnedAbility( keys)
 	local pID = keys.PlayerID
 	local abilityname = keys.abilityname
 	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[pID + 1]
+	if hero and abilityname then
+		--HeroItems:SetHeroAbilityIcon(hero, abilityname)
+	end
 end
 
 -- A channelled ability finished by either completing or being interrupted
@@ -1121,6 +1142,9 @@ function GameMode:OnPlayerChat(keys)
 			end
 			if str == "-checkak" then
 				CheckRandomAbilityKV()
+			end
+			if str == "-icon" then
+				DumpAllHeroCustomAbilityIcons()
 			end
 			if str == "-api" then
 				local function httpprint(res)

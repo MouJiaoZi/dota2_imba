@@ -167,6 +167,9 @@ function GameMode:InitGameMode()
 	HeroKVBase = LoadKeyValues("scripts/npc/npc_heroes.txt")
 	UnitKVBase = LoadKeyValues("scripts/npc/npc_units.txt")
 
+	AbilityKV = LoadKeyValues("scripts/npc/npc_abilities_custom.txt")
+	ItemKV = LoadKeyValues("scripts/npc/npc_items_custom.txt")
+
 	local heroes = LoadKeyValues("scripts/npc/herolist.txt")
 	
 	for k, v in pairs(heroes) do

@@ -397,7 +397,7 @@
 		"Ability14"					"special_bonus_imba_storm_spirit_1"
 		"Ability15"					"special_bonus_imba_storm_spirit_2"
 		"Ability16"					"special_bonus_imba_storm_spirit_3"
-		"Ability17"					"special_bonus_attack_speed_50"
+		"Ability17"					"special_bonus_imba_storm_spirit_4"
 	}
 	"npc_dota_hero_sven"
 	{
@@ -1635,22 +1635,24 @@
 	}
 	"npc_dota_hero_lone_druid"
 	{
+		//"AbilityLayout"		"5"
+
 		"Ability1"		"imba_lone_druid_spirit_bear"
-		"Ability2"		"lone_druid_spirit_link"
-		"Ability3"		"lone_druid_savage_roar"
-		"Ability4"		"lone_druid_true_form_battle_cry"
+		"Ability2"		"imba_lone_druid_spirit_link"
+		"Ability3"		"imba_lone_druid_savage_roar"
+		"Ability4"		"imba_lone_druid_true_form_battle_cry"
 		"Ability5"		"generic_hidden"
-		"Ability6"		"lone_druid_true_form"
-		"Ability7"		"lone_druid_true_form_druid"
+		"Ability6"		"imba_lone_druid_true_form"
+		"Ability7"		"REMOVE"
 		
 		"Ability10"		"special_bonus_hp_250"
 		"Ability11"		"special_bonus_attack_range_175"
-		"Ability12"		"special_bonus_unique_lone_druid_4"
+		"Ability12"		"special_bonus_imba_lone_druid_2"
 		"Ability13"		"special_bonus_attack_damage_90"
-		"Ability14"		"special_bonus_unique_lone_druid_8"
+		"Ability14"		"special_bonus_imba_lone_druid_3"
 		"Ability15"		"special_bonus_all_stats_12"
-		"Ability16"		"special_bonus_unique_lone_druid_10"
-		"Ability17"		"special_bonus_unique_lone_druid_7"
+		"Ability16"		"special_bonus_imba_lone_druid_1"
+		"Ability17"		"special_bonus_imba_lone_druid_4"
 		
 		"AttackRate"		"1.5500000"
 		

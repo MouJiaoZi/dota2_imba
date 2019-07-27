@@ -171,7 +171,7 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 	for i=0, 23 do
 		local ability = hBaseUnit:GetAbilityByIndex(i)
 		if ability then
-			abilityTable[i] = {ability:GetAbilityName(), ability:GetLevel()}
+			abilityTable[i] = {ability:GetAbilityName(), ability:GetLevel(), ability:GetToggleState()}
 		end
 	end
 	for i=0, 23 do
@@ -179,6 +179,9 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 			local ability = hIllusion:AddAbility(abilityTable[i][1])
 			if abilityTable[i][2] > 0 then
 				ability:SetLevel(abilityTable[i][2])
+			end
+			if abilityTable[i][3] then
+				ability:ToggleAbility()
 			end
 		else
 			--hIllusion:AddAbility(dummyAbilityName)

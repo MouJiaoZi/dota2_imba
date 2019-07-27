@@ -86,7 +86,7 @@ var IMBAHeroes =
 ["npc_dota_hero_obsidian_destroyer", 1],
 ["npc_dota_hero_shadow_demon", 0],
 ["npc_dota_hero_lycan", 0],
-["npc_dota_hero_lone_druid", 3],
+["npc_dota_hero_lone_druid", 1],
 ["npc_dota_hero_brewmaster", 0],
 ["npc_dota_hero_phantom_lancer", 0],
 ["npc_dota_hero_treant", 0],

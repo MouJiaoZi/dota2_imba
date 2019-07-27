@@ -304,7 +304,7 @@ function modifier_imba_caustic_finale_passive:OnTakeDamage(keys)
 		return
 	end
 	if not self:GetParent():IsIllusion() and not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not keys.unit:IsBuilding() and not keys.unit:IsOther() and not keys.unit:IsCourier() and not keys.unit:HasModifier("modifier_imba_caustic_finale") and not keys.unit:IsMagicImmune() and IsEnemy(keys.attacker, keys.unit) then
-		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "item_imba_nether_wand" or keys.inflictor:GetName() == "item_imba_elder_staff") then
+		if keys.inflictor and (keys.inflictor:GetName() == "imba_sandking_caustic_finale" or keys.inflictor:GetName() == "item_imba_nether_wand" or keys.inflictor:GetName() == "item_imba_elder_staff" or keys.inflictor:GetName() == "batrider_sticky_napalm") then
 			return
 		end
 		if keys.unit:IsAlive() then

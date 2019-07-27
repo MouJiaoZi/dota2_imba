@@ -1,6 +1,10 @@
 HeroItems = class({})
 
+Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
+Hero_Icons_KV = LoadKeyValues("scripts/npc/kv/hero_ability_icon.kv")
+
 LinkLuaModifier("modifier_imba_heroitems_arcana", "libraries/dota_hero_items.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_heroitems_set_ability_icon", "libraries/dota_hero_items.lua", LUA_MODIFIER_MOTION_NONE)
 
 modifier_imba_heroitems_arcana = class({})
 
@@ -12,7 +16,19 @@ function modifier_imba_heroitems_arcana:RemoveOnDeath() return self:GetParent():
 function modifier_imba_heroitems_arcana:DeclareFunctions() return {MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
 function modifier_imba_heroitems_arcana:GetActivityTranslationModifiers() return "arcana" end
 
-Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
+modifier_imba_heroitems_set_ability_icon = class({})
+
+function modifier_imba_heroitems_set_ability_icon:IsDebuff()			return false end
+function modifier_imba_heroitems_set_ability_icon:IsHidden() 			return true end
+function modifier_imba_heroitems_set_ability_icon:IsPurgable() 			return false end
+function modifier_imba_heroitems_set_ability_icon:IsPurgeException() 	return false end
+
+function modifier_imba_heroitems_set_ability_icon:OnCreated(keys)
+	if IsClient() then
+		self:GetAbility():SetAbilityIcon()
+	end
+end
+
 
 local HeroItems_steamid_64 = {}
 HeroItems_steamid_64[76561198097609945] = true
@@ -22,6 +38,7 @@ HeroItems_steamid_64[76561198319625131] = true
 HeroItems_steamid_64[76561198115082141] = true
 HeroItems_steamid_64[76561198077798616] = true
 HeroItems_steamid_64[76561198236042082] = true
+HeroItems_steamid_64[76561198361355161] = true
 HeroItems_steamid_64[76561198049598958] = true
 
 local hero_item_table = {}
@@ -137,6 +154,50 @@ function HeroItems:UnitHasItem(hUnit, sItemKeyword)
 	return hero_item_table[hUnit:GetPlayerOwnerID()][sItemKeyword]
 end
 
+function HeroItems:UnitHasItem2(hUnit, sItemKeyword)
+	local pID = hUnit:GetPlayerOwnerID()
+	local steamid = tonumber(tostring(PlayerResource:GetSteamID(pID)))
+	if HeroItems_steamid_64[steamid] then
+		return true
+	end
+	local temp = hUnit:GetChildren()
+	local items = {}
+	for i=1, #temp do
+		if temp[i]:GetClassname() == "dota_item_wearable" and string.find(temp[i]:GetModelName(), sItemKeyword) then
+			return true
+		end
+	end
+	return false
+end
+
+function HeroItems:SetHeroAbilityIcon(hUnit, sAbilityName)
+	if not hUnit:HasAbility(sAbilityName) then
+		return
+	end
+	local ability = hUnit:FindAbilityByName(sAbilityName)
+	local ability_id = ability:entindex()
+	if not ability or not ability_id or ability:GetClassname() ~= "ability_lua" or not AbilityKV[ability:GetAbilityName()] or not AbilityKV[ability:GetAbilityName()]['AbilityTextureName'] then
+		return
+	end
+	for base_name, info in pairs(Hero_Icons_KV) do
+		if string.find(sAbilityName, base_name) or string.find(AbilityKV[ability:GetAbilityName()]['AbilityTextureName'], base_name) then
+			for item_name, icon in pairs(info) do
+				if HeroItems:UnitHasItem2(hUnit, item_name) then
+					--print(sAbilityName, base_name, icon)
+					local ability_icon = icon
+					if not ability or not ability_icon then
+						return
+					end
+					--PrintTable({ability_id = ability_id, ability_icon = ability_icon})
+					--CustomGameEventManager:Send_ServerToAllClients("imba_set_ability_icon", {ability_id = ability_id, ability_icon = ability_icon})
+					CustomNetTables:SetTableValue("imba_ability_icon", tostring(ability_id), {icon_name = ability_icon})
+					CreateModifierThinker(hUnit, ability, "modifier_imba_heroitems_set_ability_icon", {duration = 0.1, ability_id = ability_id, ability_icon = ability_icon}, hUnit:GetAbsOrigin(), hUnit:GetTeamNumber(), false)
+				end
+			end
+		end
+	end
+end
+
 local HeroItems_ParticleAttachType = {}
 HeroItems_ParticleAttachType['PATTACH_INVALID'] = PATTACH_INVALID
 HeroItems_ParticleAttachType['PATTACH_ABSORIGIN'] = PATTACH_ABSORIGIN
@@ -200,3 +261,24 @@ function HeroItems:ApplyWardsParticle(fGameTime)
 		end
 	)
 end
+
+
+--[[
+nil	undying_tombstone	undying_tombstone_alt_gold
+nil	juggernaut_healing_ward	juggernaut/fortunes_tout_gold/juggernaut_healing_ward
+nil	visage_summon_familiars_stone_form	visage_summon_familiars_stone_form_alt1
+nil	visage_summon_familiars	visage_summon_familiars_alt1
+nil	juggernaut_healing_ward	juggernaut/fortunes_tout/juggernaut_healing_ward
+nil	venomancer_plague_ward	venomancer_plague_ward_alt
+nil	warlock_golem_permanent_immolation	warlock/tools_hellsworn_icons/warlock_golem_permanent_immolation
+nil	warlock_rain_of_chaos	warlock/tools_hellsworn_icons/warlock_rain_of_chaos
+nil	warlock_golem_flaming_fists	warlock/tools_hellsworn_icons/warlock_golem_flaming_fists
+nil	undying_tombstone	undying_tombstone_alt
+nil	dragon_knight_elder_dragon_form	dragon_knight_elder_dragon_form_iron_dragon
+nil	techies_minefield_sign	techies_minefield_sign_swine
+nil	broodmother_spawn_spiderlings	broodmother_spawn_spiderlings_immortal
+nil	witch_doctor_death_ward	witch_doctor/ribbitar_icon/witch_doctor_death_ward
+nil	broodmother_spawn_spiderlings	broodmother/virulent_matriarch/broodmother_spawn_spiderlings
+nil	juggernaut_healing_ward	juggernaut/bladekeeper/juggernaut_healing_ward
+nil	enigma_demonic_conversion	enigma_demonic_conversion_alt
+]]

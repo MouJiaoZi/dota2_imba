@@ -350,21 +350,18 @@ function imba_nevermore_requiem:OnSpellStart()
 		pfx_name_2 = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls.vpcf"
 		sound_name = "Hero_Nevermore.ROS.Arcana"
 	end
-	local thinker_sce = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, Vector(0, 0, -1000), caster:GetTeamNumber(), false):entindex()
+	local thinker_sce = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 20.0}, caster:GetAbsOrigin() + Vector(0,0,-10000), caster:GetTeamNumber(), false):entindex()
+	EntIndexToHScript(thinker_sce):SetModel("models/heroes/shadow_fiend/fx_shadow_fiend_arcana_hand.vmdl")
 	EntIndexToHScript(thinker_sce).dmg = 0
 	EntIndexToHScript(thinker_sce).steal = {}
+	EntIndexToHScript(thinker_sce):GiveVisionForBothTeam(20.0)
+	EntIndexToHScript(thinker_sce):EmitSound(sound_name)
 	for i=0, lines-1 do
 		local pos = GetGroundPosition(RotatePosition(cast_pos, QAngle(0,i * (360 / lines),0), end_pos), nil)
 		local direction = (pos - cast_pos):Normalized()
 		direction.z = 0
 		local duration = length / speed
 		local velocity = direction * speed
-		local thinker = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, cast_pos, caster:GetTeamNumber(), false):entindex()
-		EntIndexToHScript(thinker):SetModel("models/heroes/shadow_fiend/fx_shadow_fiend_arcana_hand.vmdl")
-		EntIndexToHScript(thinker).hitted = {}
-		if math.floor(i/10) == i/10 then
-			EntIndexToHScript(thinker):EmitSound(sound_name)
-		end
 		local info = 
 		{
 			Ability = self,
@@ -383,29 +380,18 @@ function imba_nevermore_requiem:OnSpellStart()
 			bDeleteOnHit = true,
 			vVelocity = direction * speed,
 			bProvidesVision = false,
-			ExtraData = {thinker = thinker, go = 1, pos_x = cast_pos.x, pos_y = cast_pos.y, pos_z = cast_pos.z, thinker_sce = thinker_sce, lines = i, total = lines, pfx = arcana}
+			ExtraData = {go = 1, pos_x = cast_pos.x, pos_y = cast_pos.y, pos_z = cast_pos.z, thinker_sce = thinker_sce, lines = i, total = lines, pfx = arcana}
 		}
 		ProjectileManager:CreateLinearProjectile(info)
-		local particle = true
-		if particle then
-			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, EntIndexToHScript(thinker))
-			ParticleManager:SetParticleControl(pfx, 0, cast_pos)
-			ParticleManager:SetParticleControl(pfx, 1, velocity)
-			ParticleManager:SetParticleControl(pfx, 2, Vector(0,duration,0))
-			ParticleManager:ReleaseParticleIndex(pfx)
-		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, nil)
+		ParticleManager:SetParticleControl(pfx, 0, cast_pos)
+		ParticleManager:SetParticleControl(pfx, 1, velocity)
+		ParticleManager:SetParticleControl(pfx, 2, Vector(0,duration,0))
+		ParticleManager:ReleaseParticleIndex(pfx)
 	end
-	local pfx = ParticleManager:CreateParticle(pfx_name_2, PATTACH_ABSORIGIN_FOLLOW, self.fx)
-	ParticleManager:SetParticleControl(pfx, 1, self.fx:GetAbsOrigin())
-	ParticleManager:ReleaseParticleIndex(pfx)
-end
-
-function imba_nevermore_requiem:OnProjectileThink_ExtraData(location, keys)
-	if EntIndexToHScript(keys.thinker) then
-		local pos = location
-		pos.z = pos.z - 1000
-		EntIndexToHScript(keys.thinker):SetOrigin(pos)
-	end
+	local pfx2 = ParticleManager:CreateParticle(pfx_name_2, PATTACH_ABSORIGIN_FOLLOW, self.fx)
+	ParticleManager:SetParticleControl(pfx2, 1, self.fx:GetAbsOrigin())
+	ParticleManager:ReleaseParticleIndex(pfx2)
 end
 
 function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys)
@@ -427,17 +413,14 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 			direction.z = 0
 			local velocity = direction * speed
 			local i = keys.lines
-			local thinker = CreateModifierThinker(caster, self, "modifier_imba_requiem_thinker", {duration = 5.0}, cast_pos, caster:GetTeamNumber(), false):entindex()
-			EntIndexToHScript(thinker):SetModel("models/heroes/shadow_fiend/fx_shadow_fiend_arcana_hand.vmdl")
 			local pfx_name = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf"
 			local sound_name = "Hero_Nevermore.RequiemOfSouls"
 			if keys.pfx == 1 then
 				pfx_name = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls_line.vpcf"
 				sound_name = "Hero_Nevermore.ROS.Arcana"
 			end
-			EntIndexToHScript(thinker).hitted = {}
-			if math.floor(i/10) == i/10 then
-				EntIndexToHScript(thinker):EmitSound(sound_name)
+			if i == 0 then
+				EntIndexToHScript(keys.thinker_sce):EmitSound(sound_name)
 			end
 			local info = 
 			{
@@ -457,29 +440,16 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 				bDeleteOnHit = true,
 				vVelocity = direction * speed,
 				bProvidesVision = false,
-				ExtraData = {thinker = thinker, go = 0, lines = i}
+				ExtraData = {thinker_sce = keys.thinker_sce, go = 0, lines = i}
 			}
 			ProjectileManager:CreateLinearProjectile(info)
-			local particle = true
-			if particle then
-				local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, EntIndexToHScript(thinker))
-				ParticleManager:SetParticleControl(pfx, 0, location)
-				ParticleManager:SetParticleControl(pfx, 1, velocity)
-				ParticleManager:SetParticleControl(pfx, 2, Vector(0,duration,0))
-				ParticleManager:ReleaseParticleIndex(pfx)
-			end
-
-			-----------
-			EntIndexToHScript(keys.thinker).hitted = nil
-			EntIndexToHScript(keys.thinker):ForceKill(false)
+			local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, nil)
+			ParticleManager:SetParticleControl(pfx, 0, location)
+			ParticleManager:SetParticleControl(pfx, 1, velocity)
+			ParticleManager:SetParticleControl(pfx, 2, Vector(0,duration,0))
+			ParticleManager:ReleaseParticleIndex(pfx)
 			return true
 		end
-		local thinker = EntIndexToHScript(keys.thinker)
-		local thinker_ent = keys.thinker
-		if IsInTable(target, thinker.hitted) then
-			return false
-		end
-		thinker.hitted[#thinker.hitted+1] = target
 		if target:IsTrueHero() and not IsInTable(target, EntIndexToHScript(keys.thinker_sce).steal) then
 			EntIndexToHScript(keys.thinker_sce).steal[#EntIndexToHScript(keys.thinker_sce).steal+1] = target
 			local cast_pos = Vector(keys.pos_x, keys.pos_y, keys.pos_z)
@@ -502,18 +472,7 @@ function imba_nevermore_requiem:OnProjectileHit_ExtraData(target, location, keys
 							}
 		ApplyDamage(damageTable)
 	end
-	if keys.go == 0 then
-		if not target then
-			EntIndexToHScript(keys.thinker).hitted = nil
-			EntIndexToHScript(keys.thinker):ForceKill(false)
-			return true
-		end
-		local thinker = EntIndexToHScript(keys.thinker)
-		local thinker_ent = keys.thinker
-		if IsInTable(target, thinker.hitted) then
-			return false
-		end
-		thinker.hitted[#thinker.hitted + 1] = target
+	if keys.go == 0 and target then
 		target:AddNewModifier(self:GetCaster(), self, "modifier_imba_requiem_enemy_debuff", {duration = self:GetSpecialValueFor("slow_duration")})
 		local damageTable = {
 							victim = target,

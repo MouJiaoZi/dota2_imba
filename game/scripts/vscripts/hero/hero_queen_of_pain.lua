@@ -40,7 +40,7 @@ function imba_queenofpain_shadow_strike:OnSpellStart(bAttack)
 end
 
 function imba_queenofpain_shadow_strike:OnProjectileHit(target, location)
-	if not target then
+	if not target or target:IsMagicImmune() then
 		return
 	end
 	if target:TriggerStandardTargetSpell(self) then

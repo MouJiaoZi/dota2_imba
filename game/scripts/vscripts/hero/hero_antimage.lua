@@ -201,7 +201,7 @@ function modifier_imba_antimage_spell_shield_active:GetReflectSpell(keys)
 	if not IsServer() then
 		return
 	end
-	if not IsEnemy(keys.ability:GetCaster(), self:GetParent()) or self:GetStackCount() <= 0 or keys.ability:GetAbilityName() == "rubick_spell_steal" or self.time[GameRules:GetGameTime()] or keys.ability:GetCaster():GetName() == "npc_dota_thinker" or bit.band(keys.ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_CHANNELLED) == DOTA_ABILITY_BEHAVIOR_CHANNELLED then
+	if not IsEnemy(keys.ability:GetCaster(), self:GetParent()) or self:GetStackCount() <= 0 or self.time[GameRules:GetGameTime()] or keys.ability:GetCaster():GetName() == "npc_dota_thinker" or bit.band(keys.ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_CHANNELLED) == DOTA_ABILITY_BEHAVIOR_CHANNELLED or not keys.ability:IsStealable() then
 		return 0
 	end
 	self.time[GameRules:GetGameTime()] = true

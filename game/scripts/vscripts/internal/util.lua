@@ -1534,3 +1534,41 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 		return true
 	end
 end
+
+function DumpAllHeroCustomAbilityIcons()
+	local a = LoadKeyValues("scripts/imba_item_info.txt")
+	local b = a['items']
+	for k, v in pairs(b) do
+		b[k]['portraits'] = nil
+		b[k]['static_attributes'] = nil
+		b[k]['used_by_heroes'] = nil
+		if b[k]['visuals'] then
+			b[k]['visuals']['skip_model_combine'] = nil
+		end
+	end
+	for _, v in pairs(b) do
+		local icon = false
+		if type(v) == "table" and v['visuals'] then
+			for i, j in pairs(v['visuals']) do
+				if type(j) == "table" and j['type'] == "ability_icon" then
+					icon = true
+					break
+				end
+			end
+		end
+		if icon then
+			for i, j in pairs(v['visuals']) do
+				if type(j) == "table" and j['type'] == "ability_icon" then
+					if v['model_player'] then
+						print('"'..j['asset']..'"')
+						print("{")
+						print("", '"'..v['model_player']..'"', '"'..j['modifier']..'"')
+						print("}")
+					else
+						--print(v['model_player'], j['asset'], j['modifier'])
+					end
+				end
+			end
+		end
+	end
+end

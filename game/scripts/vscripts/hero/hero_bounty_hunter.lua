@@ -463,7 +463,7 @@ function modifier_imba_track:OnHeroKilled(keys)
 	end
 	local ally_gold = self:GetAbility():GetSpecialValueFor("bonus_gold") + keys.target:GetLevel() * self:GetAbility():GetSpecialValueFor("bonus_gold_per_lvl")
 	local self_gold = self:GetAbility():GetSpecialValueFor("bonus_gold_self") + keys.target:GetLevel() * self:GetAbility():GetSpecialValueFor("bonus_gold_self_per_lvl")
-
+	local total_ally = 0
 	local allies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),
 									self:GetParent():GetAbsOrigin(),
 									nil,
@@ -477,11 +477,13 @@ function modifier_imba_track:OnHeroKilled(keys)
 	for _,ally in pairs(allies) do
 		if ally ~= self:GetCaster() and ally:IsTrueHero() then
 			ally:ModifyGold(ally_gold, true, 0)
-			SendOverheadEventMessage(ally, OVERHEAD_ALERT_GOLD, ally, ally_gold, ally:GetPlayerID())
+			total_ally = total_ally + 1
+			SendOverheadEventMessage(ally, OVERHEAD_ALERT_GOLD, ally, ally_gold, ally:GetPlayerOwner())
 		end
 	end
 	self:GetCaster():ModifyGold(self_gold, true, 0)
-	SendOverheadEventMessage(self:GetCaster(), OVERHEAD_ALERT_GOLD, self:GetCaster(), self_gold, self:GetCaster():GetPlayerID())
+	SendOverheadEventMessage(self:GetCaster(), OVERHEAD_ALERT_GOLD, self:GetCaster(), self_gold, self:GetCaster():GetPlayerOwner())
+	--GameRules:SendCustomMessage("追踪术信息："..total_ally.."名盟友获得赏金，赏金："..ally_gold.."（盟友），"..self_gold.."（施法者）。", 0, 0)
 	self:Destroy()
 end
 

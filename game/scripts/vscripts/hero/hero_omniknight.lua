@@ -119,6 +119,7 @@ function imba_omniknight_repel:OnSpellStart()
 	target:AddNewModifier(caster, self, "modifier_imba_repel", {duration = self:GetSpecialValueFor("duration")})
 	if target ~= caster then
 		caster:AddNewModifier(caster, self, "modifier_imba_repel", {duration = self:GetSpecialValueFor("self_duration")})
+		caster:Purge(false, true, false, true, true)
 	end
 end
 

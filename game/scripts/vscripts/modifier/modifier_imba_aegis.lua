@@ -173,6 +173,10 @@ function imba_roshan_slam:OnSpellStart()
 			buff2:GetCaster():AddNewModifierWhenPossible(buff2:GetCaster(), buff2:GetAbility(), "modifier_imba_gravekeepers_cloak_recover_timer", {duration = 10})
 		end
 		enemy[i]:RemoveModifierByName("modifier_winter_wyvern_cold_embrace")
+		if enemy[i]:HasAbility("imba_meepo_stand_we_divided") and CDOTA_PlayerResource.IMBA_PLAYER_HERO[enemy[i]:GetPlayerOwnerID() + 1]:HasAbility("imba_meepo_stand_we_divided") then
+			CDOTA_PlayerResource.IMBA_PLAYER_HERO[enemy[i]:GetPlayerOwnerID() + 1]:FindAbilityByName("imba_meepo_stand_we_divided"):EndCooldown()
+			CDOTA_PlayerResource.IMBA_PLAYER_HERO[enemy[i]:GetPlayerOwnerID() + 1]:FindAbilityByName("imba_meepo_stand_we_divided"):StartCooldown(20.0)
+		end
 	end
 end
 

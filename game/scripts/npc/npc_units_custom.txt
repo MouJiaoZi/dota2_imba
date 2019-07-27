@@ -4374,10 +4374,10 @@
 
 		// Abilities
 		//----------------------------------------------------------------
-		//"Ability1"					"bear_empty1"			// Ability 1
-		//"Ability2"					"bear_empty2"			// Ability 2
-		//"Ability3"					"lone_druid_savage_roar_bear"			// Ability 3
-		//"Ability4"					"lone_druid_spirit_bear_defender"	// Ability 4
+		"Ability1"					"imba_lone_druid_spirit_bear_return"			// Ability 1
+		"Ability2"					"imba_lone_druid_spirit_bear_entangle"			// Ability 2
+		"Ability3"					"imba_lone_druid_savage_roar"			// Ability 3
+		"Ability4"					"imba_lone_druid_spirit_bear_demolish"	// Ability 4
 		//"Ability5"					"generic_hidden"			// Ability 5
 		//"Ability6"					"generic_hidden"			// Ability 6
 
