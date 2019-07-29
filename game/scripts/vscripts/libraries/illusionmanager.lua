@@ -177,6 +177,11 @@ function IllusionManager:SetUpIllusion(hIllusion, hOwner, hBaseUnit, iOutgoingDM
 	for i=0, 23 do
 		if abilityTable[i] then
 			local ability = hIllusion:AddAbility(abilityTable[i][1])
+			for k, v in pairs(hIllusion:FindAllModifiers()) do
+				if v:GetAbility() == ability then
+					v:Destroy()
+				end
+			end
 			if abilityTable[i][2] > 0 then
 				ability:SetLevel(abilityTable[i][2])
 			end

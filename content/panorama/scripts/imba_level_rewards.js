@@ -36,6 +36,7 @@ function SetIMBALevelRewardsButton()
 		}
 		button.SetParent(container.FindChildTraverse("RoshanIconBackground"));
 		button.style.visibility = "visible";
+		$.DispatchEvent("DOTAShowTitleTextTooltip", button, "#IMBA_HUD_RewardButton_Titile", "#IMBA_HUD_RewardButton_Description");
 	}
 	else
 	{
@@ -414,6 +415,71 @@ function RemoveWardPfx()
 
 ///////////////////////////////////////////////////////////////////
 
+var MaelstromPfx = [];
+MaelstromPfx[1] = 100;
+MaelstromPfx[2] = 200;
+MaelstromPfx[3] = 300;
+MaelstromPfx[4] = 400;
+
+function SetMaelstromPfx()
+{
+	for(var i=1;i<=4;i++)
+	{
+		var pfxButton = $("#IMBALevelRewardPage_Maelstrom_Pick_"+i);
+		if(pfxButton)
+		{
+			pfxButton.SetAttributeInt("maelstrom_pfx_id", i);
+			pfxButton.style.backgroundImage = "url('file://{images}/custom_game/imba_level_rewards/maelstrom_"+i+".png')";
+			if(GetPlayerPfxSet("maelstrom_pfx") == i && (MaelstromPfx[i] <= local_IMBALevel || local_is_vip == 1))
+			{
+				ApplyMaelstromPfx(pfxButton.id);
+			}
+			if(local_IMBALevel < MaelstromPfx[i] && local_is_vip != 1)
+			{
+				pfxButton.hittest = false;
+				pfxButton.GetChild(0).style.visibility = "visible";
+				pfxButton.GetChild(0).SetDialogVariable("req_level", MaelstromPfx[i]);
+			}
+		}
+	}
+}
+
+function ApplyMaelstromPfx(id)
+{
+	var colorButton = $("#"+id);
+	if(!colorButton)
+	{
+		return;
+	}
+	colorButton.GetChild(1).style.visibility = "visible";
+	for(var i=1;i<=4;i++)
+	{
+		var otherColorButton = $("#IMBALevelRewardPage_Maelstrom_Pick_"+i);
+		if(otherColorButton && otherColorButton != colorButton)
+		{
+			otherColorButton.GetChild(1).style.visibility = "collapse";
+		}
+	}
+	var iID = colorButton.GetAttributeInt("maelstrom_pfx_id", 1);
+	GameEvents.SendCustomGameEventToServer("IMBALevelReward_MaelStromEffect", {id: iID});
+}
+
+function RemoveMaelstromPfx()
+{
+	for(var i=1;i<=4;i++)
+	{
+		var otherColorButton = $("#IMBALevelRewardPage_Maelstrom_Pick_"+i);
+		if(otherColorButton)
+		{
+			otherColorButton.GetChild(1).style.visibility = "collapse";
+		}
+	}
+	var iID = 0;
+	GameEvents.SendCustomGameEventToServer("IMBALevelReward_MaelStromEffect", {id: iID});
+}
+
+///////////////////////////////////////////////////////////////////
+
 function InitIMBALevel()
 {
 	if(current_retrys > max_retrys)
@@ -432,6 +498,7 @@ function InitIMBALevel()
 		SetHeroEmEmblem();
 		SetCourierPfx();
 		SetWardPfx();
+		SetMaelstromPfx();
 	}
 	else
 	{

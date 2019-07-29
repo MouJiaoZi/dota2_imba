@@ -185,7 +185,7 @@ function HeroItems:SetHeroAbilityIcon(hUnit, sAbilityName)
 				if HeroItems:UnitHasItem2(hUnit, item_name) then
 					--print(sAbilityName, base_name, icon)
 					local ability_icon = icon
-					if not ability or not ability_icon then
+					if ability_icon then
 						return
 					end
 					--PrintTable({ability_id = ability_id, ability_icon = ability_icon})
@@ -282,3 +282,18 @@ nil	broodmother_spawn_spiderlings	broodmother/virulent_matriarch/broodmother_spa
 nil	juggernaut_healing_ward	juggernaut/bladekeeper/juggernaut_healing_ward
 nil	enigma_demonic_conversion	enigma_demonic_conversion_alt
 ]]
+
+if IsServer() then
+
+	function CDOTA_Modifier_Lua:SetMaelStromParticle()
+		local info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(self:GetCaster():GetPlayerOwnerID()))
+		if info then
+			local pfx_id = info['maelstrom_pfx']
+			self.chain_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['chain']
+			self.shield_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['shield']
+		else
+			self.chain_pfx = "particles/items_fx/chain_lightning.vpcf"
+			self.shield_pfx = "particles/items2_fx/mjollnir_shield.vpcf"
+		end
+	end
+end

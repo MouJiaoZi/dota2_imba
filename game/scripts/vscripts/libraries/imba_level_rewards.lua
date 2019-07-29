@@ -1,8 +1,11 @@
 IMBALevelRewards = class({})
 
+LinkLuaModifier("modifier_imba_level_rewards_maelstrom_refresh", "libraries/dota_hero_items.lua", LUA_MODIFIER_MOTION_NONE)
+
 CustomGameEventManager:RegisterListener("IMBALevelReward_HeroEffect", function(...) return IMBALevelRewards:ChangeHeroEffect(...) end)
 CustomGameEventManager:RegisterListener("IMBALevelReward_CourierEffect", function(...) return IMBALevelRewards:ChangeCourierEffect(...) end)
 CustomGameEventManager:RegisterListener("IMBALevelReward_WardEffect", function(...) return IMBALevelRewards:ChangeWardEffect(...) end)
+CustomGameEventManager:RegisterListener("IMBALevelReward_MaelStromEffect", function(...) return IMBALevelRewards:ChangeMaelStromEffect(...) end)
 
 function IMBALevelRewards:LoadAllPlayersLevel()
 	for i=0, 23 do
@@ -82,9 +85,28 @@ function IMBALevelRewards:ChangeWardEffect(unused, kv)
 	local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(pID))
 	player_table['ward_pfx'] = pfxID
 	CustomNetTables:SetTableValue("imba_level_rewards", "player_state_"..tostring(pID), player_table)
-	if pfxID == 0 then
+end
 
-	else
-
+function IMBALevelRewards:ChangeMaelStromEffect(unused, kv)
+	local pfxID = kv.id
+	local pID = kv.PlayerID
+	local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(pID))
+	player_table['maelstrom_pfx'] = pfxID
+	CustomNetTables:SetTableValue("imba_level_rewards", "player_state_"..tostring(pID), player_table)
+	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[pID + 1]
+	if hero then
+		local unit = FindUnitsInRadius(hero:GetTeamNumber(), hero:GetAbsOrigin(), nil, 50000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_DEAD, FIND_ANY_ORDER, false)
+		for i=1, #unit do
+			if unit[i].GetUnitName and unit[i]:GetPlayerOwnerID() == pID then
+				local buff = unit[i]:FindAllModifiersByName("modifier_imba_maelstrom_passive")
+				local buff2 = unit[i]:FindAllModifiersByName("modifier_imba_mjollnir_passive")
+				for j=1, #buff do
+					buff[j]:OnCreated()
+				end
+				for k=1, #buff2 do
+					buff2[k]:OnCreated()
+				end
+			end
+		end
 	end
 end

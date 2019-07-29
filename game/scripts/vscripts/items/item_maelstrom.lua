@@ -1,5 +1,4 @@
 
-
 LinkLuaModifier("modifier_item_imba_maelstrom_charge", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
 
 modifier_item_imba_maelstrom_charge = class({})
@@ -25,6 +24,10 @@ function modifier_imba_maelstrom_passive:GetAttributes() return MODIFIER_ATTRIBU
 function modifier_imba_maelstrom_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_EVENT_ON_ATTACK_LANDED} end
 function modifier_imba_maelstrom_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_maelstrom_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_as") end
+
+function modifier_imba_maelstrom_passive:OnCreated()
+	self:SetMaelStromParticle()
+end
 
 function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 	if not IsServer() then
@@ -61,8 +64,8 @@ function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 		for k, unit in pairs(units) do
 			if k < #units then
 				units[k+1]:EmitSound("Item.Maelstrom.Chain_Lightning.Jump")
-				local pfx = ParticleManager:CreateParticle("particles/items_fx/chain_lightning.vpcf", PATTACH_POINT_FOLLOW, unit)
-				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack2" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
+				local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, unit)
+				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack1" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx, 1, units[k+1], PATTACH_POINT_FOLLOW, "attach_hitloc", units[k+1 >= #units and k or k+1]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControl(pfx, 2, Vector(3,3,3))
 				ParticleManager:ReleaseParticleIndex(pfx)
@@ -80,6 +83,10 @@ function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 	end
 end
 
+function modifier_imba_maelstrom_passive:OnDestroy()
+	self.chain_pfx = nil
+	self.shield_pfx = nil
+end
 
 
 item_imba_mjollnir = class({})
@@ -93,6 +100,7 @@ function item_imba_mjollnir:GetIntrinsicModifierName() return "modifier_imba_mjo
 function item_imba_mjollnir:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
+	target:RemoveModifierByName("modifier_item_imba_mjollnir_shield")
 	target:AddNewModifier(caster, self, "modifier_item_imba_mjollnir_shield", {duration = self:GetSpecialValueFor("static_duration")})
 	target:EmitSound("DOTA_Item.Mjollnir.Activate")
 end
@@ -107,6 +115,10 @@ function modifier_imba_mjollnir_passive:GetAttributes() return MODIFIER_ATTRIBUT
 function modifier_imba_mjollnir_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_EVENT_ON_ATTACK_LANDED} end
 function modifier_imba_mjollnir_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_mjollnir_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_as") end
+
+function modifier_imba_mjollnir_passive:OnCreated()
+	self:SetMaelStromParticle()
+end
 
 function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 	if not IsServer() then
@@ -143,8 +155,8 @@ function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 		for k, unit in pairs(units) do
 			if k < #units then
 				units[k+1]:EmitSound("Item.Maelstrom.Chain_Lightning.Jump")
-				local pfx = ParticleManager:CreateParticle("particles/items_fx/chain_lightning.vpcf", PATTACH_POINT_FOLLOW, unit)
-				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack2" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
+				local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, unit)
+				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack1" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx, 1, units[k+1], PATTACH_POINT_FOLLOW, "attach_hitloc", units[k+1 >= #units and k or k+1]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControl(pfx, 2, Vector(3,math.random(1,3),math.random(1,3)))
 				ParticleManager:ReleaseParticleIndex(pfx)
@@ -162,24 +174,33 @@ function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 	end
 end
 
+function modifier_imba_mjollnir_passive:OnDestroy()
+	self.chain_pfx = nil
+	self.shield_pfx = nil
+end
+
+
 modifier_item_imba_mjollnir_shield = class({})
 
 function modifier_item_imba_mjollnir_shield:IsDebuff()			return false end
 function modifier_item_imba_mjollnir_shield:IsHidden() 			return false end
 function modifier_item_imba_mjollnir_shield:IsPurgable() 		return true end
 function modifier_item_imba_mjollnir_shield:IsPurgeException() 	return true end
-function modifier_item_imba_mjollnir_shield:GetEffectName() return "particles/items2_fx/mjollnir_shield.vpcf" end
+function modifier_item_imba_mjollnir_shield:GetEffectName() return self.shield_pfx end
 function modifier_item_imba_mjollnir_shield:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_item_imba_mjollnir_shield:GetStatusEffectName() return "particles/status_fx/status_effect_mjollnir_shield.vpcf" end
 function modifier_item_imba_mjollnir_shield:StatusEffectPriority() return 15 end
 function modifier_item_imba_mjollnir_shield:OnCreated()
-	self.ability = self:GetAbility()
+	self.ability = self.ability or self:GetAbility()
+	self:SetMaelStromParticle()
 	if IsServer() then
 		self:GetParent():EmitSound("DOTA_Item.Mjollnir.Loop")
 	end
 end
 function modifier_item_imba_mjollnir_shield:OnDestroy()
 	self.ability = nil
+	self.chain_pfx = nil
+	self.shield_pfx = nil
 	if IsServer() then
 		self:GetParent():StopSound("DOTA_Item.Mjollnir.Loop")
 		self:GetParent():EmitSound("DOTA_Item.Mjollnir.DeActivate")
@@ -200,7 +221,7 @@ function modifier_item_imba_mjollnir_shield:OnTakeDamage(keys)
 		local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("static_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_ANY_ORDER, false)
 		self:GetParent():EmitSound("Item.Maelstrom.Chain_Lightning.Jump")
 		for _, enemy in pairs(enemies) do
-			local pfx = ParticleManager:CreateParticle("particles/items_fx/chain_lightning.vpcf", PATTACH_POINT_FOLLOW, enemy)
+			local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, enemy)
 			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 			ParticleManager:SetParticleControlEnt(pfx, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
 			ParticleManager:SetParticleControl(pfx, 2, Vector(10,math.random(1,10),math.random(1,10)))

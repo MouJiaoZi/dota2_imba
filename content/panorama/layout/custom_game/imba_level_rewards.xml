@@ -439,7 +439,32 @@
 
 
 					<Panel id="IMBALevelRewardPage_Maelstrom" class="TopBottomFlow IMBALevelRewardPage_Detail">
-					
+						<Label id="IMBALevelRewardPage_Maelstrom_Intro_Text" text="#IMBA_HUD_RewardPage_Maelstrom_Intro_Title" class="IMBALevelRewardPage_Intro_Text" />
+						<Button id="IMBALevelRewardPage_Maelstrom_RemoveButton" class="IMBALevelRewardPage_RemoveButton" hittest="true" onactivate="RemoveMaelstromPfx();">
+							<Label class="IMBALevelReward_HCWTitle_Text" style="font-size: 20px;" text="#IMBA_HUD_RewardPage_Maelstrom_Disable"/>
+						</Button>
+						<Panel id="IMBALevelRewardPage_Maelstrom_Pick" class="LeftRightFlow">
+							<Button id="IMBALevelRewardPage_Maelstrom_Pick_1" class="IMBALevelRewardPage_Maelstrom_PickButton" style="border-left-width:3px;border-top-width:3px;" hittest="true" onactivate="ApplyMaelstromPfx('IMBALevelRewardPage_Maelstrom_Pick_1');">
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+							</Button>
+							<Button id="IMBALevelRewardPage_Maelstrom_Pick_2" class="IMBALevelRewardPage_Maelstrom_PickButton" style="border-left-width:3px;border-top-width:3px;margin-left:30px;" hittest="true" onactivate="ApplyMaelstromPfx('IMBALevelRewardPage_Maelstrom_Pick_2');">
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+							</Button>
+							<Button id="IMBALevelRewardPage_Maelstrom_Pick_3" class="IMBALevelRewardPage_Maelstrom_PickButton" style="border-left-width:3px;border-top-width:3px;margin-left:30px;" hittest="true" onactivate="ApplyMaelstromPfx('IMBALevelRewardPage_Maelstrom_Pick_3');">
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+							</Button>
+							<Button id="IMBALevelRewardPage_Maelstrom_Pick_4" class="IMBALevelRewardPage_Maelstrom_PickButton" style="border-left-width:3px;border-top-width:3px;margin-left:30px;" hittest="true" onactivate="ApplyMaelstromPfx('IMBALevelRewardPage_Maelstrom_Pick_4');">
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Locked" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Locked"/>
+								<Label id="IMBALevelRewardPage_Hero_ColorPick_Active" class="IMBALevelRewardPage_Hero_ColorPick_Text" text="#IMBA_HUD_RewardPage_Hero_Actived"/>
+							</Button>
+						</Panel>
+						<Label id="IMBALevelRewardPage_MaelstromColor_Intro_Text" text="#IMBA_HUD_RewardPage_MaelstromColor_Intro_Title" class="IMBALevelRewardPage_Intro_Text" />
+						<Button id="IMBALevelRewardPage_MaelstromColor_RemoveButton" class="IMBALevelRewardPage_RemoveButton" hittest="false" onactivate="RemoveMaelstromPfx();">
+							<Label class="IMBALevelReward_HCWTitle_Text" style="font-size: 20px;" text="#IMBA_HUD_RewardPage_MaelstromColor_Disable"/>
+						</Button>
 					</Panel>
 
 

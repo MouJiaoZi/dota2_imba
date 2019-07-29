@@ -1146,6 +1146,11 @@ function GameMode:OnPlayerChat(keys)
 			if str == "-icon" then
 				DumpAllHeroCustomAbilityIcons()
 			end
+			if str == "-re" then
+				SendToServerConsole("script_reload")
+				SendToServerConsole("cl_script_reload")
+				GameRules:SendCustomMessage("重载完成。", 0, 0)
+			end
 			if str == "-api" then
 				local function httpprint(res)
 					for k, v in pairs(res) do

@@ -134,3 +134,15 @@ function C_DOTA_Ability_Lua:SetAbilityIcon()
 		break
 	end
 end
+
+function C_DOTA_Modifier_Lua:SetMaelStromParticle()
+	local info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(self:GetCaster():GetPlayerOwnerID()))
+	if info then
+		local pfx_id = info['maelstrom_pfx']
+		self.chain_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['chain']
+		self.shield_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['shield']
+	else
+		self.chain_pfx = "particles/items_fx/chain_lightning.vpcf"
+		self.shield_pfx = "particles/items2_fx/mjollnir_shield.vpcf"
+	end
+end

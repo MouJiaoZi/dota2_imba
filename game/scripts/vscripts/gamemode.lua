@@ -69,6 +69,7 @@ require('libraries/projectiles_track')
 require('libraries/illusionmanager')
 
 require('libraries/dota_hero_items')
+--require('libraries/dota_hero_items2')
 
 --require('libraries/mld')
 
