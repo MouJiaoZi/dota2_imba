@@ -67,7 +67,8 @@ function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 				local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, unit)
 				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack1" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx, 1, units[k+1], PATTACH_POINT_FOLLOW, "attach_hitloc", units[k+1 >= #units and k or k+1]:GetAbsOrigin(), true)
-				ParticleManager:SetParticleControl(pfx, 2, Vector(3,3,3))
+				ParticleManager:SetParticleControl(pfx, 2, Vector(1,1,1))
+				ParticleManager:SetParticleControl(pfx, 15, self.color)
 				ParticleManager:ReleaseParticleIndex(pfx)
 				local damageTable = {
 									victim = units[k+1],
@@ -158,7 +159,8 @@ function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 				local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, unit)
 				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack1" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx, 1, units[k+1], PATTACH_POINT_FOLLOW, "attach_hitloc", units[k+1 >= #units and k or k+1]:GetAbsOrigin(), true)
-				ParticleManager:SetParticleControl(pfx, 2, Vector(3,math.random(1,3),math.random(1,3)))
+				ParticleManager:SetParticleControl(pfx, 2, Vector(2,2,2))
+				ParticleManager:SetParticleControl(pfx, 15, self.color)
 				ParticleManager:ReleaseParticleIndex(pfx)
 				local damageTable = {
 									victim = units[k+1],
@@ -177,6 +179,7 @@ end
 function modifier_imba_mjollnir_passive:OnDestroy()
 	self.chain_pfx = nil
 	self.shield_pfx = nil
+	self.color = nil
 end
 
 
@@ -186,14 +189,15 @@ function modifier_item_imba_mjollnir_shield:IsDebuff()			return false end
 function modifier_item_imba_mjollnir_shield:IsHidden() 			return false end
 function modifier_item_imba_mjollnir_shield:IsPurgable() 		return true end
 function modifier_item_imba_mjollnir_shield:IsPurgeException() 	return true end
-function modifier_item_imba_mjollnir_shield:GetEffectName() return self.shield_pfx end
-function modifier_item_imba_mjollnir_shield:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_item_imba_mjollnir_shield:GetStatusEffectName() return "particles/status_fx/status_effect_mjollnir_shield.vpcf" end
 function modifier_item_imba_mjollnir_shield:StatusEffectPriority() return 15 end
 function modifier_item_imba_mjollnir_shield:OnCreated()
 	self.ability = self.ability or self:GetAbility()
 	self:SetMaelStromParticle()
 	if IsServer() then
+		local pfx = ParticleManager:CreateParticle(self.shield_pfx, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+		ParticleManager:SetParticleControl(pfx, 15, self.color)
+		self:AddParticle(pfx, false, false, 15, false, false)
 		self:GetParent():EmitSound("DOTA_Item.Mjollnir.Loop")
 	end
 end
@@ -201,6 +205,7 @@ function modifier_item_imba_mjollnir_shield:OnDestroy()
 	self.ability = nil
 	self.chain_pfx = nil
 	self.shield_pfx = nil
+	self.color = nil
 	if IsServer() then
 		self:GetParent():StopSound("DOTA_Item.Mjollnir.Loop")
 		self:GetParent():EmitSound("DOTA_Item.Mjollnir.DeActivate")
@@ -224,7 +229,8 @@ function modifier_item_imba_mjollnir_shield:OnTakeDamage(keys)
 			local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, enemy)
 			ParticleManager:SetParticleControlEnt(pfx, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 			ParticleManager:SetParticleControlEnt(pfx, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
-			ParticleManager:SetParticleControl(pfx, 2, Vector(10,math.random(1,10),math.random(1,10)))
+			ParticleManager:SetParticleControl(pfx, 2, Vector(2,2,2))
+			ParticleManager:SetParticleControl(pfx, 15, self.color)
 			ParticleManager:ReleaseParticleIndex(pfx)
 			ApplyDamage({victim = enemy, attacker = self:GetParent(), damage = self.ability:GetSpecialValueFor("static_damage"), ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL})
 			enemy:AddNewModifier(self:GetCaster(), self.ability, "modifier_item_imba_mjollnir_slow", {duration = self.ability:GetSpecialValueFor("static_slow_duration")})

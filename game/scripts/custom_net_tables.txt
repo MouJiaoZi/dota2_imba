@@ -2,17 +2,14 @@
 {
   custom_net_tables =
   [
-    "containers_lua",
-    "selection",
 	"imba_hero_selection_list",
 	"imba_player_detail",
 	"imba_scoreboard_detail",
 	"imba_hero_end_info",
 	"imba_omg",
 	"imba_vote",
-	"imba_lua_cursor_pos",
-	"imba_pan_cursor_pos",
 	"imba_level_rewards",
 	"imba_ability_icon",
+	"imba_item_color",
   ]
 }

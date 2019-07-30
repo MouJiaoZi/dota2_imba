@@ -135,14 +135,93 @@ function C_DOTA_Ability_Lua:SetAbilityIcon()
 	end
 end
 
-function C_DOTA_Modifier_Lua:SetMaelStromParticle()
-	local info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(self:GetCaster():GetPlayerOwnerID()))
-	if info then
-		local pfx_id = info['maelstrom_pfx']
-		self.chain_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['chain']
-		self.shield_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['shield']
-	else
-		self.chain_pfx = "particles/items_fx/chain_lightning.vpcf"
-		self.shield_pfx = "particles/items2_fx/mjollnir_shield.vpcf"
-	end
+function SplitString(szFullString, szSeparator)  
+	local nFindStartIndex = 1  
+	local nSplitIndex = 1  
+	local nSplitArray = {}  
+	while true do  
+		local nFindLastIndex = string.find(szFullString, szSeparator, nFindStartIndex)  
+		if not nFindLastIndex then  
+			nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, string.len(szFullString))  
+			break  
+		end  
+		nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, nFindLastIndex - 1)  
+		nFindStartIndex = nFindLastIndex + string.len(szSeparator)  
+		nSplitIndex = nSplitIndex + 1  
+	end  
+	return nSplitArray  
 end
+
+function HEXConvertToRGB(hex)
+    hex = hex:gsub("#","")
+    return {tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))}
+end
+
+function RGBConvertToHSV(colorRGB)
+	local r,g,b = colorRGB[1], colorRGB[2], colorRGB[3]
+	local h,s,v = 0,0,0
+
+	local max1 = math.max(r, math.max(g,b))
+	local min1 = math.min(r, math.min(g,b))
+
+	if max1 == min1 then
+		h=0;
+	else
+		if r == max1 then
+			if g >= b then
+				h = 60 * (g-b) / (max1-min1)
+			else
+				h = 60 * (g-b) / (max1-min1) + 360
+			end
+		end
+		if g == max1 then
+			h = 60 * (b-r)/(max1-min1) + 120
+		end
+		if b == max1 then
+			h = 60 * (r-g)/(max1-min1) + 240;
+		end
+	end    
+	
+	if max1 == 0 then
+		s = 0
+	else
+		s = (1- min1 / max1) * 255
+	end
+	
+	v = max1
+	
+	return {h, s, v}
+end
+
+
+function StringToVector(sString)
+	--Input: "123 123 123"
+	local temp = {}
+	for str in string.gmatch(sString, "%S+") do
+		if tonumber(str) then
+			temp[#temp + 1] = tonumber(str)
+		else
+			return nil
+		end
+	end
+	return Vector(temp[1], temp[2], temp[3])
+end
+
+function C_DOTA_Modifier_Lua:SetMaelStromParticle()
+		local info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(self:GetCaster():GetPlayerOwnerID()))
+		if info then
+			local pfx_id = info['maelstrom_pfx']
+			self.chain_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['chain']
+			self.shield_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['shield']
+			local color_info = CustomNetTables:GetTableValue("imba_item_color", "maelstrom_color"..tostring(self:GetCaster():GetPlayerOwnerID()))
+			if color_info and not color_info['default'] then
+				self.color = Vector(color_info['r'], color_info['g'], color_info['b'])
+			else
+				self.color = StringToVector(Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['default_color'])
+			end
+		else
+			self.chain_pfx = "particles/items_fx/chain_lightning.vpcf"
+			self.shield_pfx = "particles/items2_fx/mjollnir_shield.vpcf"
+			self.color = Vector(90, 110, 221)
+		end
+	end

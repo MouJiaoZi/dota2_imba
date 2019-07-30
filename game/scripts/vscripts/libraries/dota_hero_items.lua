@@ -284,16 +284,22 @@ nil	enigma_demonic_conversion	enigma_demonic_conversion_alt
 ]]
 
 if IsServer() then
-
 	function CDOTA_Modifier_Lua:SetMaelStromParticle()
 		local info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(self:GetCaster():GetPlayerOwnerID()))
 		if info then
 			local pfx_id = info['maelstrom_pfx']
 			self.chain_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['chain']
 			self.shield_pfx = Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['shield']
+			local color_info = CustomNetTables:GetTableValue("imba_item_color", "maelstrom_color"..tostring(self:GetCaster():GetPlayerOwnerID()))
+			if color_info and not color_info['default'] then
+				self.color = Vector(color_info['r'], color_info['g'], color_info['b'])
+			else
+				self.color = StringToVector(Hero_Items_KV['mael_storm_particles'][tostring(pfx_id)]['default_color'])
+			end
 		else
 			self.chain_pfx = "particles/items_fx/chain_lightning.vpcf"
 			self.shield_pfx = "particles/items2_fx/mjollnir_shield.vpcf"
+			self.color = Vector(90, 110, 221)
 		end
 	end
 end

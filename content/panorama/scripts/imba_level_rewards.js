@@ -421,6 +421,28 @@ MaelstromPfx[2] = 200;
 MaelstromPfx[3] = 300;
 MaelstromPfx[4] = 400;
 
+var MaelstromColor = [];
+MaelstromColor[1] = ["#808080FF", 500];
+MaelstromColor[2] = ["#000000FF", 550];
+MaelstromColor[3] = ["#FFFFFFFF", 600];
+MaelstromColor[4] = ["#00FFFFFF", 650];
+MaelstromColor[5] = ["#0094FFFF", 700];
+MaelstromColor[6] = ["#0026FFFF", 750];
+MaelstromColor[7] = ["#4800FFFF", 800];
+MaelstromColor[8] = ["#B200FFFF", 850];
+MaelstromColor[9] = ["#00FF90FF", 900];
+MaelstromColor[10] = ["#00FF21FF", 950];
+MaelstromColor[11] = ["#4CFF00FF", 1000];
+MaelstromColor[12] = ["#B6FF00FF", 1100];
+MaelstromColor[13] = ["#FFD800FF", 1200];
+MaelstromColor[14] = ["#FF6A00FF", 1300];
+MaelstromColor[15] = ["#FF00DCFF", 1400];
+MaelstromColor[16] = ["#FF0000FF", 1500];
+MaelstromColor[17] = ["#FF69B4FF", 0];
+MaelstromColor[18] = ["#FF4004FF", 0];
+MaelstromColor[19] = ["#B03060FF", 0];
+MaelstromColor[20] = ["#FFDAB9FF", 0];
+
 function SetMaelstromPfx()
 {
 	for(var i=1;i<=4;i++)
@@ -439,6 +461,29 @@ function SetMaelstromPfx()
 				pfxButton.hittest = false;
 				pfxButton.GetChild(0).style.visibility = "visible";
 				pfxButton.GetChild(0).SetDialogVariable("req_level", MaelstromPfx[i]);
+			}
+		}
+	}
+	for(var i=1;i<=20;i++)
+	{
+		var pfxButton = $("#IMBALevelRewardPage_MaelstromColor_Pick_"+i);
+		if(pfxButton)
+		{
+			if(i < 17 || (Game.GetLocalPlayerInfo().player_steamid == "76561198097609945" || Game.GetLocalPlayerInfo().player_steamid == "76561198100269546" || Game.GetLocalPlayerInfo().player_steamid == "76561198361355161"))
+			{
+				pfxButton.SetAttributeInt("maelstrom_color_id", i);
+				pfxButton.SetAttributeString("color_hex", MaelstromColor[i][0]);
+				pfxButton.style.backgroundColor = MaelstromColor[i][0];
+				if(GetPlayerPfxSet("maelstrom_color") == i && (MaelstromColor[i][1] <= local_IMBALevel || local_is_vip == 1))
+				{
+					ApplyMaelstromColor(pfxButton.id);
+				}
+				if(local_IMBALevel < MaelstromColor[i][1] && local_is_vip != 1)
+				{
+					pfxButton.hittest = false;
+					pfxButton.GetChild(0).style.visibility = "visible";
+					pfxButton.GetChild(0).SetDialogVariable("req_level", MaelstromColor[i][1]);
+				}
 			}
 		}
 	}
@@ -464,6 +509,27 @@ function ApplyMaelstromPfx(id)
 	GameEvents.SendCustomGameEventToServer("IMBALevelReward_MaelStromEffect", {id: iID});
 }
 
+function ApplyMaelstromColor(id)
+{
+	var colorButton = $("#"+id);
+	if(!colorButton || colorButton.GetAttributeString("color_hex", "") == "")
+	{
+		return;
+	}
+	colorButton.GetChild(1).style.visibility = "visible";
+	for(var i=1;i<=20;i++)
+	{
+		var otherColorButton = $("#IMBALevelRewardPage_MaelstromColor_Pick_"+i);
+		if(otherColorButton && otherColorButton != colorButton)
+		{
+			otherColorButton.GetChild(1).style.visibility = "collapse";
+		}
+	}
+	var iID = colorButton.GetAttributeInt("maelstrom_color_id", 0);
+	var sColor = colorButton.GetAttributeString("color_hex", "");
+	GameEvents.SendCustomGameEventToServer("IMBALevelReward_MaelStromColor", {id: iID, color: sColor});
+}
+
 function RemoveMaelstromPfx()
 {
 	for(var i=1;i<=4;i++)
@@ -476,6 +542,20 @@ function RemoveMaelstromPfx()
 	}
 	var iID = 0;
 	GameEvents.SendCustomGameEventToServer("IMBALevelReward_MaelStromEffect", {id: iID});
+}
+
+function RemoveMaelstromColor()
+{
+	for(var i=1;i<=20;i++)
+	{
+		var otherColorButton = $("#IMBALevelRewardPage_MaelstromColor_Pick_"+i);
+		if(otherColorButton)
+		{
+			otherColorButton.GetChild(1).style.visibility = "collapse";
+		}
+	}
+	var iID = 0;
+	GameEvents.SendCustomGameEventToServer("IMBALevelReward_MaelStromColor", {id: iID});
 }
 
 ///////////////////////////////////////////////////////////////////

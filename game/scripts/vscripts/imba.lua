@@ -1214,6 +1214,7 @@ function IMBA:EndGameAPI(iWinnerTeam)
 				end
 			end
 			local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(i))
+			--PrintTable(player_table)
 			for k,v in pairs(player_table) do
 				infoTable[k] = v
 			end
