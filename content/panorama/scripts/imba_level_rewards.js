@@ -1,6 +1,8 @@
 var local_ID = Players.GetLocalPlayer()
 var local_IMBALevel = 0;
 var local_is_vip = 0;
+var local_win_streak = 0;
+var local_win_rate = 0;
 var current_retrys = 0;
 var max_retrys = 60;
 
@@ -120,6 +122,84 @@ function HideAllRewardPage()
 	}
 }
 
+///////////////////////////////////////////////////////////////////
+
+var mouse_on = false;
+var wait_to_enable = false;
+
+function ShowLevelIntroTooltip()
+{
+	mouse_on = true;
+	var button = $("#IMBALevelRewardPage_LevelIntroIcon");
+	var table = CustomNetTables.GetTableValue("imba_level_rewards", "player_announce_"+local_ID);
+	var tooltip = $.Localize("IMBA_HUD_Reward_LevelIntro")+"<br><font color='#FF7800'><b>"+$.Localize("IMBA_HUD_Reward_LevelIntro2")+table.times+$.Localize("IMBA_HUD_Reward_LevelIntro3")+"</b></font>";
+	$.DispatchEvent("DOTAShowTitleTextTooltip", button, "#IMBA_HUD_Reward_Level_Title", tooltip);
+}
+
+function HideLevelIntroTooltip()
+{
+	mouse_on = false;
+	var button = $("#IMBALevelRewardPage_LevelIntroIcon");
+	$.DispatchEvent("DOTAHideTitleTextTooltip", button);
+}
+
+function AnnounceIMBALevel()
+{
+	var table = CustomNetTables.GetTableValue("imba_level_rewards", "player_announce_"+local_ID);
+	if(wait_to_enable || table.times <= 0)
+		return;
+	wait_to_enable = true;
+	var button = $("#IMBALevelRewardPage_LevelIntroIcon");
+	$.DispatchEvent("DOTAHideTitleTextTooltip", button);
+	var hero_name = Game.GetLocalPlayerInfo().player_selected_hero;
+	var player_name = "<font color='#FF0000'><b>"+Game.GetLocalPlayerInfo().player_name+"</b></font>";
+	player_name = player_name + "(" + $.Localize(hero_name) + ")";
+	var text = player_name;
+	var level_start = $.Localize("IMBA_HUD_RewardAnounce_Level");
+	var level_is = $.Localize("IMBA_HUD_RewardAnounce_Level_200");
+	if(local_IMBALevel >= 200 && local_IMBALevel < 500)
+	{
+		level_is = $.Localize("IMBA_HUD_RewardAnounce_Level_200_500");
+	}
+	if(local_IMBALevel >= 500)
+	{
+		level_is = $.Localize("IMBA_HUD_RewardAnounce_Level_500");
+	}
+	//var level_streak = $.Localize("IMBA_HUD_RewardAnounce_comma");
+	var level_streak = $.Localize("IMBA_HUD_RewardAnounce_period");
+	text = text+level_start+level_is+local_IMBALevel+level_streak;
+	/*if(local_win_streak == 0)
+	{
+		var level_streak_word = $.Localize("IMBA_HUD_RewardAnounce_but");
+		var streak_is = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_0");
+		text = text+level_streak_word+streak_is;
+	}
+	var he = $.Localize("IMBA_HUD_RewardAnounce_WinStreak");
+	if(local_win_streak > 0 && local_win_streak <= 3)
+	{
+		var level_streak_word = $.Localize("IMBA_HUD_RewardAnounce_and");
+		var level_streak_start = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_3_start");
+		var level_streak_end = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_3_end");
+		var streak_end = $.Localize("IMBA_HUD_RewardAnounce_exclamation");
+		text = text + level_streak_word + he + level_streak_start + local_win_streak + level_streak_end + streak_end;
+	}
+	if(local_win_streak >= 4)
+	{
+		var level_streak_word = $.Localize("IMBA_HUD_RewardAnounce_and");
+		var level_streak_start = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_4_start");
+		var level_streak_end = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_4_end");
+		var streak_end = $.Localize("IMBA_HUD_RewardAnounce_exclamation3");
+		text = text + level_streak_word + he + level_streak_start + local_win_streak + level_streak_end + streak_end;
+	}*/
+	GameEvents.SendCustomGameEventToServer("IMBALevelReward_Announce", {txt: text});
+	function reShow()
+	{
+		wait_to_enable = false;
+		if(mouse_on)
+			ShowLevelIntroTooltip();
+	}
+	$.Schedule(0.3, reShow);
+}
 
 ///////////////////////////////////////////////////////////////////
 
@@ -572,7 +652,9 @@ function InitIMBALevel()
 	{
 		local_IMBALevel = table.imba_level;
 		local_is_vip = table.is_vip;
+		local_win_streak = table.win_streak;
 		$.GetContextPanel().FindChildTraverse("IMBALevelReward_CurrentLevelText").SetDialogVariable("current_level", local_IMBALevel);
+		//$.GetContextPanel().FindChildTraverse("IMBALevelReward_CurrentWinstreakText").SetDialogVariable("current_winstreak", local_win_streak);
 		$.Schedule(0.1, SetIMBALevelRewardsButton);
 		ShowIMBARewardPage_Hero();
 		SetHeroEmEmblem();

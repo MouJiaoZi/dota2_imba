@@ -136,7 +136,7 @@
 	border-top: 3px solid #000000FF;
 }
 
-#IMBALevelReward_CurrentLevelText
+.IMBALevelReward_CurrentStateText
 {
 	margin-left: 10px;
 	font-size: 25px;
@@ -145,14 +145,29 @@
 	text-align: center;
 }
 
-#IMBALevelReward_LevelIntro
+#IMBALevelRewardPage_LevelIntroIcon
 {
-	margin-left: 20px;
-	font-size: 15px;
-	vertical-align: bottom;
+	margin-right: 10px;
+	background-image: url("s2r://panorama/images/status_icons/information_psd.vtex");
+	vertical-align: center;
 	horizontal-align: right;
-	text-align: center;
-	color: #C0C0C0FF;
+	height: 22px;
+	width: 22px;
+	wash-color: #A0A0A0FF;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	tooltip-position: top;
+	tooltip-body-position: 90% 10%;
+	transition-duration: 0.1s;
+	transition-property: wash-color;
+}
+
+#IMBALevelRewardPage_LevelIntroIcon:hover
+{
+	wash-color: #A0A0A000;
+	transition-duration: 0.2s;
+	transition-property: wash-color;
 }
 
 .IMBALevelRewardPage_Detail

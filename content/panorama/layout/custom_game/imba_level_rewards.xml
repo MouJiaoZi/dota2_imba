@@ -592,8 +592,10 @@
 					</Panel>
 				</Panel>
 				<Panel id="IMBALevelRewardBottom" class="LeftRightFlow">
-					<Label id="IMBALevelReward_CurrentLevelText" text="#IMBA_HUD_Reward_CurrentLevel"/>
-					<Label id="IMBALevelReward_LevelIntro" text="#IMBA_HUD_Reward_LevelIntro"/>
+					<Label id="IMBALevelReward_CurrentLevelText" text="#IMBA_HUD_Reward_CurrentLevel" class="IMBALevelReward_CurrentStateText"/>
+					<!--Label id="IMBALevelReward_CurrentWinrateText" text="#IMBA_HUD_Reward_CurrentWinrate" class="IMBALevelReward_CurrentStateText"/-->
+					<!--Label id="IMBALevelReward_CurrentWinstreakText" text="#IMBA_HUD_Reward_CurrentWinstreak" class="IMBALevelReward_CurrentStateText"/-->
+					<!--Button id="IMBALevelRewardPage_LevelIntroIcon" hittest="true" onmouseover="ShowLevelIntroTooltip();" onmouseout="HideLevelIntroTooltip();" onactivate="AnnounceIMBALevel();"/-->
 				</Panel>
 			</Button>
 		</Button>

@@ -1,5 +1,6 @@
 IMBALevelRewards = class({})
 
+CustomGameEventManager:RegisterListener("IMBALevelReward_Announce", function(...) return IMBALevelRewards:AnnounceIMBALevel(...) end)
 CustomGameEventManager:RegisterListener("IMBALevelReward_HeroEffect", function(...) return IMBALevelRewards:ChangeHeroEffect(...) end)
 CustomGameEventManager:RegisterListener("IMBALevelReward_CourierEffect", function(...) return IMBALevelRewards:ChangeCourierEffect(...) end)
 CustomGameEventManager:RegisterListener("IMBALevelReward_WardEffect", function(...) return IMBALevelRewards:ChangeWardEffect(...) end)
@@ -15,12 +16,26 @@ function IMBALevelRewards:LoadAllPlayersLevel()
 				for str in string.gmatch(result, "%S+") do
 					player_table[#player_table + 1] = str
 				end
-				player_table2 = {['imba_level'] = player_table[1], ['is_vip'] = player_table[2], ['hero_pfx'] = player_table[3], ['courier_pfx'] = player_table[4], ['ward_pfx'] = player_table[5], ['maelstrom_pfx'] = player_table[6], ['maelstrom_color'] = player_table[7], ['shiva_pfx'] = player_table[8], ['sheep_pfx'] = player_table[9], ['radiance_pfx'] = player_table[10], ['blink_pfx'] = player_table[11]}
+				player_table2 = {['imba_level'] = player_table[1], ['is_vip'] = player_table[2], ['hero_pfx'] = player_table[3], ['courier_pfx'] = player_table[4], ['ward_pfx'] = player_table[5], ['maelstrom_pfx'] = player_table[6], ['maelstrom_color'] = player_table[7], ['shiva_pfx'] = player_table[8], ['sheep_pfx'] = player_table[9], ['radiance_pfx'] = player_table[10], ['blink_pfx'] = player_table[11], ['win_streak'] = player_table[12]}
 				CustomNetTables:SetTableValue("imba_level_rewards", "player_state_"..tostring(i), player_table2)
+				--local announce_table = {['times'] = tonumber(player_table[12]) + 2}
+				local announce_table = {['times'] = 2}
+				CustomNetTables:SetTableValue("imba_level_rewards", "player_announce_"..tostring(i), announce_table)
 				--PrintTable(player_table2)
 			end
-			IMBA:SendHTTPRequest("imba_get_player_level.php", {["steamid_64"] = tostring(PlayerResource:GetSteamID(i))}, nil, SetLevel)
+			IMBA:SendHTTPRequest("imba_get_player_level.php", {["steamid_64"] = tostring(PlayerResource:GetSteamID(i))}, -40, SetLevel)
 		end
+	end
+end
+
+function IMBALevelRewards:AnnounceIMBALevel(unused, kv)
+	local pID = kv.PlayerID
+	local text = kv.txt
+	local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_announce_"..tostring(pID))
+	player_table['times'] = player_table['times'] - 1
+	if player_table['times'] >= 0 then
+		GameRules:SendCustomMessage(text, 0, 0)
+		CustomNetTables:SetTableValue("imba_level_rewards", "player_announce_"..tostring(pID), player_table)
 	end
 end
 

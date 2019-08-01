@@ -1179,10 +1179,14 @@ function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry, hCallback)
 			print("Retry..."..retry)
 			IMBA:SendHTTPRequest(sWeb, uHEAD, retry, hCallback)
 		else
-			if hCallback then
-				hCallback(res)
+			if res.StatusCode == 200 then
+				if hCallback then
+					hCallback(res)
+				else
+					print(res.Body)
+				end
 			else
-				print(res.Body)
+				print("HTTP ERROR CODE:", res.StatusCode)
 			end
 		end
 	end)
