@@ -16,10 +16,9 @@ function IMBALevelRewards:LoadAllPlayersLevel()
 				for str in string.gmatch(result, "%S+") do
 					player_table[#player_table + 1] = str
 				end
-				player_table2 = {['imba_level'] = player_table[1], ['is_vip'] = player_table[2], ['hero_pfx'] = player_table[3], ['courier_pfx'] = player_table[4], ['ward_pfx'] = player_table[5], ['maelstrom_pfx'] = player_table[6], ['maelstrom_color'] = player_table[7], ['shiva_pfx'] = player_table[8], ['sheep_pfx'] = player_table[9], ['radiance_pfx'] = player_table[10], ['blink_pfx'] = player_table[11], ['win_streak'] = player_table[12]}
+				player_table2 = {['imba_level'] = player_table[1], ['is_vip'] = player_table[2], ['hero_pfx'] = player_table[3], ['courier_pfx'] = player_table[4], ['ward_pfx'] = player_table[5], ['maelstrom_pfx'] = player_table[6], ['maelstrom_color'] = player_table[7], ['shiva_pfx'] = player_table[8], ['sheep_pfx'] = player_table[9], ['radiance_pfx'] = player_table[10], ['blink_pfx'] = player_table[11], ['win_streak'] = player_table[12], ['win'] = player_table[13], ['lose'] = player_table[14]}
 				CustomNetTables:SetTableValue("imba_level_rewards", "player_state_"..tostring(i), player_table2)
-				--local announce_table = {['times'] = tonumber(player_table[12]) + 2}
-				local announce_table = {['times'] = 2}
+				local announce_table = {['times'] = tonumber(player_table[12]) + 2}
 				CustomNetTables:SetTableValue("imba_level_rewards", "player_announce_"..tostring(i), announce_table)
 				--PrintTable(player_table2)
 			end

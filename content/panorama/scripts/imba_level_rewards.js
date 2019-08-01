@@ -2,6 +2,8 @@ var local_ID = Players.GetLocalPlayer()
 var local_IMBALevel = 0;
 var local_is_vip = 0;
 var local_win_streak = 0;
+var local_win = 0;
+var local_lose = 0; 
 var local_win_rate = 0;
 var current_retrys = 0;
 var max_retrys = 60;
@@ -165,10 +167,15 @@ function AnnounceIMBALevel()
 	{
 		level_is = $.Localize("IMBA_HUD_RewardAnounce_Level_500");
 	}
-	//var level_streak = $.Localize("IMBA_HUD_RewardAnounce_comma");
-	var level_streak = $.Localize("IMBA_HUD_RewardAnounce_period");
+	var level_streak = $.Localize("IMBA_HUD_RewardAnounce_comma");
 	text = text+level_start+level_is+local_IMBALevel+level_streak;
-	/*if(local_win_streak == 0)
+	var winrate_is = $.Localize("IMBA_HUD_RewardAnounce_Level_200");
+	if(local_win_rate >= 55)
+		winrate_is = $.Localize("IMBA_HUD_RewardAnounce_Level_200_500");
+	if(local_win_rate >= 70)
+		winrate_is = $.Localize("IMBA_HUD_RewardAnounce_Level_500");
+	text = text+$.Localize("IMBA_HUD_RewardAnounce_Winrate")+winrate_is+local_win_rate+"%"+level_streak
+	if(local_win_streak == 0)
 	{
 		var level_streak_word = $.Localize("IMBA_HUD_RewardAnounce_but");
 		var streak_is = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_0");
@@ -190,7 +197,7 @@ function AnnounceIMBALevel()
 		var level_streak_end = $.Localize("IMBA_HUD_RewardAnounce_WinStreak_4_end");
 		var streak_end = $.Localize("IMBA_HUD_RewardAnounce_exclamation3");
 		text = text + level_streak_word + he + level_streak_start + local_win_streak + level_streak_end + streak_end;
-	}*/
+	}
 	GameEvents.SendCustomGameEventToServer("IMBALevelReward_Announce", {txt: text});
 	function reShow()
 	{
@@ -640,6 +647,22 @@ function RemoveMaelstromColor()
 
 ///////////////////////////////////////////////////////////////////
 
+function GetPercent(num, total)
+{
+    /// <summary>
+    /// 求百分比
+    /// </summary>
+    /// <param name="num">当前数</param>
+    /// <param name="total">总数</param>
+    num = parseFloat(num);
+    total = parseFloat(total);
+    if (isNaN(num) || isNaN(total))
+    {
+        return "-";
+    }
+    return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00);
+}
+
 function InitIMBALevel()
 {
 	if(current_retrys > max_retrys)
@@ -653,8 +676,12 @@ function InitIMBALevel()
 		local_IMBALevel = table.imba_level;
 		local_is_vip = table.is_vip;
 		local_win_streak = table.win_streak;
+		local_win = table.win * 1.0;
+		local_lose = table.lose * 1.0;
+		local_win_rate = GetPercent(local_win, local_win + local_lose);
 		$.GetContextPanel().FindChildTraverse("IMBALevelReward_CurrentLevelText").SetDialogVariable("current_level", local_IMBALevel);
-		//$.GetContextPanel().FindChildTraverse("IMBALevelReward_CurrentWinstreakText").SetDialogVariable("current_winstreak", local_win_streak);
+		$.GetContextPanel().FindChildTraverse("IMBALevelReward_CurrentWinrateText").SetDialogVariable("current_winrate", local_win_rate);
+		$.GetContextPanel().FindChildTraverse("IMBALevelReward_CurrentWinstreakText").SetDialogVariable("current_winstreak", local_win_streak);
 		$.Schedule(0.1, SetIMBALevelRewardsButton);
 		ShowIMBARewardPage_Hero();
 		SetHeroEmEmblem();
