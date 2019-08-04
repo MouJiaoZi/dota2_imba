@@ -581,7 +581,7 @@ function GameMode:OnNPCSpawned(keys)
 		if ability and ability.IsTalentAbility and ability:IsTalentAbility() and ability:GetLevel() == 0 then
 			ability:SetLevel(1)
 		end
-		if ability then
+		if ability and ability:GetClassname() == "ability_lua" then
 			xpcall((HeroItems:SetHeroAbilityIcon(npc, ability:GetAbilityName())), function (msg) return msg..'\n'..debug.traceback()..'\n' end)
 		end
 	end
@@ -1157,8 +1157,8 @@ function GameMode:OnPlayerChat(keys)
 						print(k, v)
 					end
 				end
-				--IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
-				IMBA:EndGameAPI(DOTA_TEAM_BADGUYS)
+				IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
+				--IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
 			end
 		end
 	end

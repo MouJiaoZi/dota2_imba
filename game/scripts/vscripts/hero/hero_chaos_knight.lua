@@ -259,20 +259,25 @@ function modifier_imba_chaos_strike_passive:IsDebuff()			return false end
 function modifier_imba_chaos_strike_passive:IsHidden() 			return true end
 function modifier_imba_chaos_strike_passive:IsPurgable() 		return false end
 function modifier_imba_chaos_strike_passive:IsPurgeException() 	return false end
-function modifier_imba_chaos_strike_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_chaos_strike_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_FAIL} end
+
+function modifier_imba_chaos_strike_passive:OnCreated() self.crit = {} end
+function modifier_imba_chaos_strike_passive:OnDestroy() self.crit = nil end
 
 function modifier_imba_chaos_strike_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and keys.target:IsUnit() and not self:GetParent():PassivesDisabled() and self:GetAbility():IsCooldownReady() then
-		self.attack = keys.record
+		self.crit[keys.record] = true
 		self:GetParent():EmitSound("Hero_ChaosKnight.ChaosStrike")
 		self:GetAbility():UseResources(true, true, true)
 		return (self:GetAbility():GetSpecialValueFor("crit_min") + (self:GetAbility():GetSpecialValueFor("crit_max") - self:GetAbility():GetSpecialValueFor("crit_min") * (RandomInt(0, 100) / 100)))
 	end
 end
 
+function modifier_imba_chaos_strike_passive:OnAttackFail(keys) self.crit[keys.record] = nil end
+
 function modifier_imba_chaos_strike_passive:OnAttackLanded(keys)
 	if IsServer() and keys.attacker == self:GetParent() and keys.target:IsUnit() and not self:GetParent():PassivesDisabled() and keys.target:IsAlive() then
-		if keys.record == self.attack then
+		if self.crit[keys.record] then
 			self:GetParent():Heal(keys.damage * (self:GetAbility():GetSpecialValueFor("lifesteal") / 100), self:GetAbility())
 			local pfx = ParticleManager:CreateParticle("particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 			ParticleManager:ReleaseParticleIndex(pfx)
@@ -290,6 +295,7 @@ function modifier_imba_chaos_strike_passive:OnAttackLanded(keys)
 				keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), list[i], {duration = self:GetAbility():GetSpecialValueFor("duration")})
 			end
 		end
+		self.crit[keys.record] = nil
 	end
 end
 

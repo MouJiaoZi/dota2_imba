@@ -82,6 +82,7 @@ function modifier_imba_static_remnant_trigger:GetAuraSearchType() return DOTA_UN
 modifier_imba_static_remnant_target = class({})
 
 function modifier_imba_static_remnant_target:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_static_remnant_target:IsHidden() return true end
 function modifier_imba_static_remnant_target:OnCreated()
 	if IsServer() then
 		self:GetCaster():AddNewModifier(self:GetCaster(), nil, "modifier_kill", {duration = 0.1})

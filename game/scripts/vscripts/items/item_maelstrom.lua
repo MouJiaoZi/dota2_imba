@@ -1,16 +1,7 @@
-
-LinkLuaModifier("modifier_item_imba_maelstrom_charge", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
-
-modifier_item_imba_maelstrom_charge = class({})
-
-function modifier_item_imba_maelstrom_charge:IsDebuff()			return false end
-function modifier_item_imba_maelstrom_charge:IsHidden() 		return false end
-function modifier_item_imba_maelstrom_charge:IsPurgable() 		return false end
-function modifier_item_imba_maelstrom_charge:IsPurgeException() return false end
-
 item_imba_maelstrom = class({})
 
 LinkLuaModifier("modifier_imba_maelstrom_passive", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_maelstrom_unique", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_maelstrom:GetIntrinsicModifierName() return "modifier_imba_maelstrom_passive" end
 
@@ -21,31 +12,49 @@ function modifier_imba_maelstrom_passive:IsHidden() 		return true end
 function modifier_imba_maelstrom_passive:IsPurgable() 		return false end
 function modifier_imba_maelstrom_passive:IsPurgeException() return false end
 function modifier_imba_maelstrom_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_maelstrom_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_maelstrom_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
 function modifier_imba_maelstrom_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_maelstrom_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_as") end
 
 function modifier_imba_maelstrom_passive:OnCreated()
 	self:SetMaelStromParticle()
+	if IsServer() then
+		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_maelstrom_unique", {})
+	end
 end
 
-function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
+function modifier_imba_maelstrom_passive:OnDestroy()
+	if IsServer() and not self:GetParent():HasModifier("modifier_imba_maelstrom_passive") then
+		self:GetParent():RemoveModifierByName("modifier_imba_maelstrom_unique")
+	end
+end
+
+modifier_imba_maelstrom_unique = class({})
+
+function modifier_imba_maelstrom_unique:IsDebuff()			return false end
+function modifier_imba_maelstrom_unique:IsHidden() 			return true end
+function modifier_imba_maelstrom_unique:IsPurgable() 		return false end
+function modifier_imba_maelstrom_unique:IsPurgeException() 	return false end
+function modifier_imba_maelstrom_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
+
+function modifier_imba_maelstrom_unique:OnCreated()
+	self:SetMaelStromParticle()
+	self.ability = self:GetAbility()
+end
+
+function modifier_imba_maelstrom_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
 	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
-	local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_imba_maelstrom_charge", {duration = self:GetAbility():GetSpecialValueFor("proc_duration")})
-	buff:SetStackCount(buff:GetStackCount() + 1)
-	if buff:GetStackCount() >= self:GetAbility():GetSpecialValueFor("proc_count") then
-		buff:SetStackCount(0)
-		buff:Destroy()
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
 		self:GetParent():EmitSound("Item.Maelstrom.Chain_Lightning")
 		local units = {}
-		table.insert(units, keys.target)
+		units[#units + 1] = keys.target
 		for i, aunit in pairs(units) do
-			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
 			for _, unit1 in pairs(units1) do
 				local no_yet = true
 				for _, unit in pairs(units) do
@@ -55,7 +64,7 @@ function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 					end
 				end
 				if no_yet then
-					table.insert(units, unit1)
+					units[#units + 1] = unit1
 					break
 				end
 			end
@@ -73,8 +82,8 @@ function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 				local damageTable = {
 									victim = units[k+1],
 									attacker = self:GetCaster(),
-									damage = self:GetAbility():GetSpecialValueFor("bounce_damage"),
-									damage_type = DAMAGE_TYPE_MAGICAL,
+									damage = self.ability:GetSpecialValueFor("bounce_damage"),
+									damage_type = DAMAGE_TYPE_PURE,
 									damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
 									ability = self:GetAbility(), --Optional.
 									}
@@ -84,15 +93,18 @@ function modifier_imba_maelstrom_passive:OnAttackLanded(keys)
 	end
 end
 
-function modifier_imba_maelstrom_passive:OnDestroy()
+function modifier_imba_maelstrom_unique:OnDestroy()
 	self.chain_pfx = nil
 	self.shield_pfx = nil
+	self.color = nil
+	self.ability = nil
 end
 
 
 item_imba_mjollnir = class({})
 
 LinkLuaModifier("modifier_imba_mjollnir_passive", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_mjollnir_unique", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_imba_mjollnir_shield", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_imba_mjollnir_slow", "items/item_maelstrom", LUA_MODIFIER_MOTION_NONE)
 
@@ -119,25 +131,43 @@ function modifier_imba_mjollnir_passive:GetModifierAttackSpeedBonus_Constant() r
 
 function modifier_imba_mjollnir_passive:OnCreated()
 	self:SetMaelStromParticle()
+	if IsServer() then
+		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_mjollnir_unique", {})
+	end
 end
 
-function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
+function modifier_imba_mjollnir_passive:OnDestroy()
+	if IsServer() and not self:GetParent():HasModifier("modifier_imba_mjollnir_passive") then
+		self:GetParent():RemoveModifierByName("modifier_imba_mjollnir_unique")
+	end
+end
+
+modifier_imba_mjollnir_unique = class({})
+
+function modifier_imba_mjollnir_unique:IsDebuff()			return false end
+function modifier_imba_mjollnir_unique:IsHidden() 			return true end
+function modifier_imba_mjollnir_unique:IsPurgable() 		return false end
+function modifier_imba_mjollnir_unique:IsPurgeException() 	return false end
+function modifier_imba_mjollnir_unique:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
+
+function modifier_imba_mjollnir_unique:OnCreated()
+	self:SetMaelStromParticle()
+	self.ability = self:GetAbility()
+end
+
+function modifier_imba_mjollnir_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
 	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
-	local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_imba_maelstrom_charge", {duration = self:GetAbility():GetSpecialValueFor("proc_duration")})
-	buff:SetStackCount(buff:GetStackCount() + 1)
-	if buff:GetStackCount() >= self:GetAbility():GetSpecialValueFor("proc_count") then
-		buff:SetStackCount(0)
-		buff:Destroy()
+	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
 		self:GetParent():EmitSound("Item.Maelstrom.Chain_Lightning")
 		local units = {}
-		table.insert(units, keys.target)
+		units[#units + 1] = keys.target
 		for i, aunit in pairs(units) do
-			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
 			for _, unit1 in pairs(units1) do
 				local no_yet = true
 				for _, unit in pairs(units) do
@@ -147,7 +177,7 @@ function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 					end
 				end
 				if no_yet then
-					table.insert(units, unit1)
+					units[#units + 1] = unit1
 					break
 				end
 			end
@@ -159,14 +189,14 @@ function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 				local pfx = ParticleManager:CreateParticle(self.chain_pfx, PATTACH_POINT_FOLLOW, unit)
 				ParticleManager:SetParticleControlEnt(pfx, 0, units[k], PATTACH_POINT_FOLLOW, (units[k] == caster and "attach_attack1" or "attach_hitloc"), units[k]:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx, 1, units[k+1], PATTACH_POINT_FOLLOW, "attach_hitloc", units[k+1 >= #units and k or k+1]:GetAbsOrigin(), true)
-				ParticleManager:SetParticleControl(pfx, 2, Vector(2,2,2))
+				ParticleManager:SetParticleControl(pfx, 2, Vector(1,1,1))
 				ParticleManager:SetParticleControl(pfx, 15, self.color)
 				ParticleManager:ReleaseParticleIndex(pfx)
 				local damageTable = {
 									victim = units[k+1],
 									attacker = self:GetCaster(),
-									damage = self:GetAbility():GetSpecialValueFor("bounce_damage"),
-									damage_type = DAMAGE_TYPE_MAGICAL,
+									damage = self.ability:GetSpecialValueFor("bounce_damage"),
+									damage_type = DAMAGE_TYPE_PURE,
 									damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
 									ability = self:GetAbility(), --Optional.
 									}
@@ -176,10 +206,11 @@ function modifier_imba_mjollnir_passive:OnAttackLanded(keys)
 	end
 end
 
-function modifier_imba_mjollnir_passive:OnDestroy()
+function modifier_imba_mjollnir_unique:OnDestroy()
 	self.chain_pfx = nil
 	self.shield_pfx = nil
 	self.color = nil
+	self.ability = nil
 end
 
 

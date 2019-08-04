@@ -213,14 +213,14 @@ function modifier_imba_mortal_strike:IsDebuff()			return false end
 function modifier_imba_mortal_strike:IsHidden() 		return self:GetStackCount() == 0 and true or false end
 function modifier_imba_mortal_strike:IsPurgable() 		return false end
 function modifier_imba_mortal_strike:IsPurgeException() return false end
-function modifier_imba_mortal_strike:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_mortal_strike:DeclareFunctions() return {MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_FAIL} end
 function modifier_imba_mortal_strike:GetModifierBonusStats_Strength() return self:GetStackCount() end
 
 function modifier_imba_mortal_strike:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), self:GetAbility():GetSpecialValueFor("crit_chance")) then
 			self:GetParent():EmitSound("Hero_SkeletonKing.CriticalStrike")
-			self.attack = keys.record
+			self.crit[keys.record] = true
 			return self:GetAbility():GetSpecialValueFor("crit_power")
 		else
 			return 0
@@ -228,24 +228,30 @@ function modifier_imba_mortal_strike:GetModifierPreAttack_CriticalStrike(keys)
 	end
 end
 
+function modifier_imba_mortal_strike:OnAttackFail(keys) self.crit[keys.record] = nil end
+
 function modifier_imba_mortal_strike:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
-	if self.attack == keys.record then
+	if self.crit[keys.record] then
 		if not keys.target:IsConsideredHero() and not keys.target:IsOther() and not keys.target:IsBoss() then
 			keys.target:Kill(self:GetAbility(), self:GetParent())
 		end
 		local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_mortal_strike_counter", {duration = self:GetAbility():GetSpecialValueFor("drain_duration")})
 		buff:SetStackCount(keys.damage * (self:GetAbility():GetSpecialValueFor("str_drain_pct") / 100))
 	end
+	self.crit[keys.record] = nil
 end
 
 function modifier_imba_mortal_strike:OnCreated()
+	self.crit = {}
 	if IsServer() then
 		self:StartIntervalThink(0.1)
 	end
 end
+
+function modifier_imba_mortal_strike:OnDestroy() self.crit = nil end
 
 function modifier_imba_mortal_strike:OnIntervalThink()
 	local buffs = self:GetParent():FindAllModifiersByName("modifier_imba_mortal_strike_counter")

@@ -6572,19 +6572,14 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"proc_count"			"4"
+				"proc_chance"			"20"
 			}
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"proc_duration"			"30"
+				"bounce_damage"			"100"
 			}
 			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bounce_damage"			"150"
-			}
-			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"bounce_radius"			"900"
@@ -6668,54 +6663,44 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"proc_count"			"4"
+				"proc_chance"			"20"
 			}
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"proc_duration"			"30"
+				"bounce_damage"			"300"
 			}
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bounce_damage"			"150"
+				"bounce_radius"			"900"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bounce_radius"			"900"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"bounce_delay"			"0.1"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
 				"static_duration"		"16"
 			}
-			"09"
+			"07"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"static_proc_count"		"5"
 			}
-			"10"
+			"08"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"static_damage"			"200"
 			}
-			"11"
+			"09"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"static_radius"			"750"
 			}
-			"12"
+			"10"
 			{
 				"var_type"				"FIELD_INTEGER"
 				"static_slow"			"100"
 			}
-			"13"
+			"11"
 			{
 				"var_type"				"FIELD_FLOAT"
 				"static_slow_duration"	"1.0"

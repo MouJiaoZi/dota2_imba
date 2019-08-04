@@ -140,15 +140,22 @@ function modifier_imba_jinada_passive:IsHidden()			return true end
 function modifier_imba_jinada_passive:IsDebuff()			return false end
 function modifier_imba_jinada_passive:IsPurgable() 			return false end
 function modifier_imba_jinada_passive:IsPurgeException() 	return false end
-function modifier_imba_jinada_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
+function modifier_imba_jinada_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_FAIL} end
+
+function modifier_imba_jinada_passive:OnCreated() self.crit = {} end
+function modifier_imba_jinada_passive:OnDestroy() self.crit = nil end
 
 function modifier_imba_jinada_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() then
 		if self:GetAbility():IsCooldownReady() then
+			self:GetAbility():UseResources(true, true, true)
+			self.crit[keys.record] = true
 			return self:GetAbility():GetSpecialValueFor("crit_damage")
 		end
 	end
 end
+
+function modifier_imba_jinada_passive:OnAttackFail(keys) self.crit[keys.record] = nil end
 
 function modifier_imba_jinada_passive:OnAttackLanded(keys)
 	if not IsServer() then
@@ -157,8 +164,7 @@ function modifier_imba_jinada_passive:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() or self:GetParent():IsIllusion() then
 		return
 	end
-	if self:GetAbility():IsCooldownReady() then
-		self:GetAbility():UseResources(true, true, true)
+	if self.crit[keys.record] then
 		keys.target:EmitSound("Hero_BountyHunter.Jinada")
 		keys.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_jinada_slow", {duration = self:GetAbility():GetSpecialValueFor("slow_duration")})
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_bounty_hunter/bounty_hunter_jinda_slow.vpcf", PATTACH_CUSTOMORIGIN, keys.target)
@@ -171,6 +177,7 @@ function modifier_imba_jinada_passive:OnAttackLanded(keys)
 		PlayerResource:ModifyGold(self:GetParent():GetPlayerOwnerID(), self:GetAbility():GetSpecialValueFor("gold_steal"), true, DOTA_ModifyGold_Unspecified)
 		PopupNumbers(self:GetParent(), "gold", Vector(255, 200, 33), 1.0, self:GetAbility():GetSpecialValueFor("gold_steal"), 0)
 	end
+	self.crit[keys.record] = nil
 end
 
 modifier_imba_jinada_slow = class({})

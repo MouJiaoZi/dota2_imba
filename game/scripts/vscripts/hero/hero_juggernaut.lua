@@ -322,7 +322,10 @@ function modifier_imba_blade_dance_passive:IsDebuff()			return false end
 function modifier_imba_blade_dance_passive:IsPurgable() 		return false end
 function modifier_imba_blade_dance_passive:IsPurgeException() 	return false end
 
-function modifier_imba_blade_dance_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
+function modifier_imba_blade_dance_passive:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_FAIL} end
+
+function modifier_imba_blade_dance_passive:OnCreated() self.crit = {} end
+function modifier_imba_blade_dance_passive:OnDestroy() self.crit = nil end
 
 function modifier_imba_blade_dance_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
@@ -332,13 +335,15 @@ function modifier_imba_blade_dance_passive:GetModifierPreAttack_CriticalStrike(k
 			else
 				self:GetParent():EmitSound("Hero_Juggernaut.BladeDance")
 			end
-			self.attack = keys.record
+			self.crit[keys.record] = true
 			return self:GetAbility():GetSpecialValueFor("crit_damage")
 		else
 			return 0
 		end
 	end
 end
+
+function modifier_imba_blade_dance_passive:OnAttackFail(keys) self.crit[keys.record] = nil end
 
 function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	if not IsServer() then
@@ -347,7 +352,7 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or self:GetParent():PassivesDisabled() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
-	if keys.record == self.attack then
+	if self.crit[keys.record] then
 		self:GetParent():AddModifierStacks(self:GetParent(), self:GetAbility(), "modifier_imba_blade_dance_stacks", {duration = self:GetAbility():GetSpecialValueFor("bonus_duration")}, 1, false, true)
 		if HeroItems:UnitHasItem(self:GetCaster(), "juggernaut_arcana") then
 			local pfx_crit = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_crit_tgt.vpcf", PATTACH_ABSORIGIN_FOLLOW, keys.target)
@@ -359,6 +364,7 @@ function modifier_imba_blade_dance_passive:OnAttackLanded(keys)
 	if buff then
 		buff:SetDuration(buff:GetDuration(), true)
 	end
+	self.crit[keys.record] = nil
 end
 
 modifier_imba_blade_dance_stacks = class({})
@@ -483,6 +489,7 @@ function modifier_imba_omni_slash_caster:OnIntervalThink()
 	if self.target:IsAlive() and self.target:IsTrueHero() then
 		local pos = GetRandomPosition2D(self.target:GetAbsOrigin(), 128)
 		local direction = (self.target:GetAbsOrigin() - pos):Normalized()
+		direction.z = 0
 		local parent = self:GetParent()
 		self:GetParent():SetOrigin(pos)
 		self:GetParent():SetForwardVector(direction)

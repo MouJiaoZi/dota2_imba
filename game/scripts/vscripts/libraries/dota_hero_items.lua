@@ -3,6 +3,18 @@ HeroItems = class({})
 Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
 Hero_Icons_KV = LoadKeyValues("scripts/npc/kv/hero_ability_icon.kv")
 
+Hero_Icons_Table = {}
+
+for k, v in pairs(Hero_Icons_KV) do
+	for model, icon in pairs(v) do
+		Hero_Icons_Table[#Hero_Icons_Table + 1] = {}
+		Hero_Icons_Table[#Hero_Icons_Table] = {k, model}
+		if IsServer() then
+			CustomNetTables:SetTableValue("imba_ability_icon", tostring(#Hero_Icons_Table), {icon})
+		end
+	end
+end
+
 LinkLuaModifier("modifier_imba_heroitems_arcana", "libraries/dota_hero_items.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_heroitems_set_ability_icon", "libraries/dota_hero_items.lua", LUA_MODIFIER_MOTION_NONE)
 
@@ -24,8 +36,14 @@ function modifier_imba_heroitems_set_ability_icon:IsPurgable() 			return false e
 function modifier_imba_heroitems_set_ability_icon:IsPurgeException() 	return false end
 
 function modifier_imba_heroitems_set_ability_icon:OnCreated(keys)
+	if IsServer() then
+		self:SetStackCount(keys.icon_num)
+	end
+end
+
+function modifier_imba_heroitems_set_ability_icon:OnDestroy()
 	if IsClient() then
-		self:GetAbility():SetAbilityIcon()
+		self:GetAbility():SetAbilityIcon(self:GetStackCount())
 	end
 end
 
@@ -176,25 +194,21 @@ function HeroItems:SetHeroAbilityIcon(hUnit, sAbilityName)
 	end
 	local ability = hUnit:FindAbilityByName(sAbilityName)
 	local ability_id = ability:entindex()
-	if not ability or not ability_id or ability:GetClassname() ~= "ability_lua" or not AbilityKV[ability:GetAbilityName()] or not AbilityKV[ability:GetAbilityName()]['AbilityTextureName'] then
+	if not ability or ability:GetClassname() ~= "ability_lua" or not AbilityKV[ability:GetAbilityName()] or not AbilityKV[ability:GetAbilityName()]['AbilityTextureName'] then
 		return
 	end
-	for base_name, info in pairs(Hero_Icons_KV) do
-		if string.find(sAbilityName, base_name) or string.find(AbilityKV[ability:GetAbilityName()]['AbilityTextureName'], base_name) then
-			for item_name, icon in pairs(info) do
-				if HeroItems:UnitHasItem2(hUnit, item_name) then
-					--print(sAbilityName, base_name, icon)
-					local ability_icon = icon
-					if ability_icon then
-						return
-					end
-					--PrintTable({ability_id = ability_id, ability_icon = ability_icon})
-					--CustomGameEventManager:Send_ServerToAllClients("imba_set_ability_icon", {ability_id = ability_id, ability_icon = ability_icon})
-					CustomNetTables:SetTableValue("imba_ability_icon", tostring(ability_id), {icon_name = ability_icon})
-					CreateModifierThinker(hUnit, ability, "modifier_imba_heroitems_set_ability_icon", {duration = 0.1, ability_id = ability_id, ability_icon = ability_icon}, hUnit:GetAbsOrigin(), hUnit:GetTeamNumber(), false)
-				end
-			end
+	local icon_num = nil
+	for i=1, #Hero_Icons_Table do
+		local info = Hero_Icons_Table[i]
+		local base_name = info[1]
+		local model_name = info[2]
+		if string.find(sAbilityName, base_name) and HeroItems:UnitHasItem2(hUnit, model_name) then
+			icon_num = i
+			break
 		end
+	end
+	if icon_num then
+		CreateModifierThinker(hUnit, ability, "modifier_imba_heroitems_set_ability_icon", {duration = 0.1, icon_num = icon_num}, hUnit:GetAbsOrigin(), hUnit:GetTeamNumber(), false)
 	end
 end
 
@@ -226,7 +240,7 @@ function HeroItems:ApplyWardsParticle(fGameTime)
 			end
 			IMBAEvents:PlayerSpawnsWard(hWard)
 			local player_table = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..tostring(pID))
-			if not player_table['ward_pfx'] then
+			if not player_table or not player_table['ward_pfx'] then
 				return nil
 			end
 			local pfx_id = player_table['ward_pfx']

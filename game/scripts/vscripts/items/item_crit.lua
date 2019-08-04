@@ -13,8 +13,10 @@ function modifier_imba_greater_crit_passive:IsHidden() 			return true end
 function modifier_imba_greater_crit_passive:IsPurgable() 		return false end
 function modifier_imba_greater_crit_passive:IsPurgeException() 	return false end
 function modifier_imba_greater_crit_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_greater_crit_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_greater_crit_passive:DeclareFunctions() return {MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_EVENT_ON_ATTACK_FAIL} end
 function modifier_imba_greater_crit_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
+
+function modifier_imba_greater_crit_passive:OnCreated() self.crit = {} end
 
 function modifier_imba_greater_crit_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and self:GetParent().splitattack then
@@ -23,13 +25,15 @@ function modifier_imba_greater_crit_passive:GetModifierPreAttack_CriticalStrike(
 		if PseudoRandom:RollPseudoRandom(self:GetAbility(), pct) then
 			self:GetParent():EmitSound("DOTA_Item.Daedelus.Crit")
 			self:GetParent():RemoveModifierByName("modifier_item_imba_greater_crit_increase_dummy")
-			self.attack = keys.record
+			self.crit[keys.record] = true
 			return dmg
 		else
 			return 0
 		end
 	end
 end
+
+function modifier_imba_greater_crit_passive:OnAttackFail(keys) self.crit[keys.record] = nil end
 
 function modifier_imba_greater_crit_passive:OnAttackLanded(keys)
 	local parent = self:GetParent()
@@ -39,12 +43,13 @@ function modifier_imba_greater_crit_passive:OnAttackLanded(keys)
 	if keys.attacker ~= self:GetParent() or keys.target:IsOther() or keys.target:IsBuilding() or not keys.target:IsAlive() then
 		return
 	end
-	if self.attack ~= keys.record and parent.splitattack then
+	if not self.crit[keys.record] and parent.splitattack then
 		parent:AddModifierStacks(parent, self:GetAbility(), "modifier_item_imba_greater_crit_increase_dummy", {}, self:GetAbility():GetSpecialValueFor("crit_increase"), false, true)
 	end
 end
 
 function modifier_imba_greater_crit_passive:OnDestroy()
+	self.crit = nil
 	if IsServer() and not self:GetParent():HasModifier("modifier_imba_greater_crit_passive") then
 		self:GetParent():RemoveModifierByName("modifier_item_imba_greater_crit_increase_dummy")
 	end

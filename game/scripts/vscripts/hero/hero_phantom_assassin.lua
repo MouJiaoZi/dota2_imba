@@ -272,7 +272,10 @@ function modifier_imba_coup_de_grace:IsDebuff()			return false end
 function modifier_imba_coup_de_grace:IsHidden() 		return true end
 function modifier_imba_coup_de_grace:IsPurgable() 		return false end
 function modifier_imba_coup_de_grace:IsPurgeException() return false end
-function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE} end
+function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE. MODIFIER_EVENT_ON_ATTACK_FAIL} end
+
+function modifier_imba_coup_de_grace:OnCreated() self.crit = {} end
+function modifier_imba_coup_de_grace:OnDestroy() self.crit = nil end
 
 function modifier_imba_coup_de_grace:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and not keys.target:IsBuilding() and not keys.target:IsOther() and not self:GetParent():PassivesDisabled() and self:GetParent().splitattack then
@@ -283,13 +286,15 @@ function modifier_imba_coup_de_grace:GetModifierPreAttack_CriticalStrike(keys)
 			else
 				self:GetParent():EmitSound("Hero_PhantomAssassin.CoupDeGrace")
 			end
-			self.attack = keys.record
+			self.crit[keys.record] = true
 			return self:GetAbility():GetSpecialValueFor("crit_bonus")
 		else
 			return 0
 		end
 	end
 end
+
+function modifier_imba_coup_de_grace:OnAttackFail(keys) self.crit[keys.record] = nil end
 
 function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 	if not IsServer() then
@@ -299,7 +304,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		return
 	end
 	local caster = self:GetParent()
-	if keys.record == self.attack then
+	if self.crit[keys.record] then
 		local pfx_name = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_crit_impact.vpcf"
 		if HeroItems:UnitHasItem(caster, "pa_arcana") then
 			pfx_name = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/phantom_assassin_crit_arcana_swoop.vpcf"
@@ -335,6 +340,7 @@ function modifier_imba_coup_de_grace:OnAttackLanded(keys)
 		keys.target:EmitSound("Hero_PhantomAssassin.CoupDeGrace")
 		keys.target:EmitSound("Imba.PhantomAssassinFatality")
 	end
+	self.crit[keys.record] = nil
 end
 
 modifier_imba_coup_de_grace_stacks = class({})

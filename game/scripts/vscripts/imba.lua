@@ -1197,12 +1197,12 @@ function IMBA:EndGameAPI(iWinnerTeam)
 	for i=0, 19 do
 		if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1] and not PlayerResource:IsFakeClient(i) then
 			local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1]
-			local team = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1]:GetTeamNumber()
+			local team = hero:GetTeamNumber()
 			local win = team == iWinnerTeam and 1 or 0
 			local moons = hero:GetModifierStackCount("modifier_imba_moon_shard_consume", nil)
 			local scepter = hero:HasScepter() and 1 or 0
 			local order = hero.order or 0
-			local infoTable = {["map_name"] = GetMapName(), ["match_id"] = GameRules:GetMatchID(), ["win"] = win, ["steamid_64"] = PlayerResource:GetSteamID(i), ["player_name"] = PlayerResource:GetPlayerName(i), ["player_hero"] = hero:GetUnitName(), ["kills"] = PlayerResource:GetKills(i), ["deaths"] = PlayerResource:GetDeaths(i), ["assists"] = PlayerResource:GetAssists(i), ["gpm"] = PlayerResource:GetGoldPerMin(i), ["order"] = order, ["damage"] = PlayerResource:GetRawPlayerDamage(i), ["moon_shard"] = moons, ["scepter"] = scepter, ["game_version"] = IMBA_GAME_VERSION}
+			local infoTable = {["map_name"] = GetMapName(), ["match_id"] = GameRules:GetMatchID(), ["is_win"] = win, ["steamid_64"] = PlayerResource:GetSteamID(i), ["player_name"] = PlayerResource:GetPlayerName(i), ["player_hero"] = hero:GetUnitName(), ["kills"] = PlayerResource:GetKills(i), ["deaths"] = PlayerResource:GetDeaths(i), ["assists"] = PlayerResource:GetAssists(i), ["gpm"] = PlayerResource:GetGoldPerMin(i), ["order"] = order, ["damage"] = PlayerResource:GetRawPlayerDamage(i), ["moon_shard"] = moons, ["scepter"] = scepter, ["game_version"] = IMBA_GAME_VERSION}
 			for i=0, 8 do
 				local item = hero:GetItemInSlot(i)
 				if item then
@@ -1222,6 +1222,7 @@ function IMBA:EndGameAPI(iWinnerTeam)
 			for k,v in pairs(player_table) do
 				infoTable[k] = v
 			end
+			PrintTable(infoTable)
 			IMBA:SendHTTPRequest("imba_end_game_player.php", infoTable)
 		end
 	end
