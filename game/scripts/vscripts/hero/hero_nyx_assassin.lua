@@ -255,7 +255,10 @@ function modifier_imba_spiked_carapace:GetModifierIncomingDamage_Percentage(keys
 		return -300
 	end
 	local dmg = keys.damage
-	keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_spiked_carapace_stun", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
+	if not self.hitted[keys.attacker:entindex()] then
+		keys.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_spiked_carapace_stun", {duration = self:GetAbility():GetSpecialValueFor("stun_duration")})
+		self.hitted[keys.attacker:entindex()] = true
+	end
 	local damageTable = {
 						victim = keys.attacker,
 						attacker = self:GetParent(),
@@ -268,6 +271,10 @@ function modifier_imba_spiked_carapace:GetModifierIncomingDamage_Percentage(keys
 	keys.attacker:EmitSound("Hero_NyxAssassin.SpikedCarapace.Stun")
 	return -300
 end
+
+function modifier_imba_spiked_carapace:OnCreated() self.hitted = {} end
+
+function modifier_imba_spiked_carapace:OnDestroy() self.hitted = nil end
 
 modifier_imba_spiked_carapace_stun = class({})
 

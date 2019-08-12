@@ -93,8 +93,8 @@ function SetVoteUI()
 		FindDotaHudElement("DMOMGVotePanel").style.opacity = 0;
 		FindDotaHudElement("AKVotePanel").visible = 1;
 		FindDotaHudElement("AKVotePanel").style.opacity = 1;
-		FindDotaHudElement("31VotePanel").visible = 1;
-		FindDotaHudElement("31VotePanel").style.opacity = 1;
+		/*FindDotaHudElement("31VotePanel").visible = 1;
+		FindDotaHudElement("31VotePanel").style.opacity = 1;*/
 		UpdataAKVote();
 		Updata31Vote();
 	}
@@ -158,7 +158,7 @@ function IMBAVoteFor31()
 
 function Updata31Vote()
 {
-	var votes = CustomNetTables.GetTableValue("imba_omg", "enable_31").agree;
+	/*var votes = CustomNetTables.GetTableValue("imba_omg", "enable_31").agree;
 	var enable = CustomNetTables.GetTableValue("imba_omg", "enable_31").enable;
 	FindDotaHudElement("31VoteNum").text = votes;
 	if(enable == 1)
@@ -168,7 +168,7 @@ function Updata31Vote()
 	else
 	{
 		FindDotaHudElement("31VoteNum").style.color = '#FF0000';
-	}
+	}*/
 	//$.Msg(votes, "   ", enable);
 }
 

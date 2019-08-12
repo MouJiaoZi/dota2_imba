@@ -557,7 +557,7 @@
 		
 		"Ability1"					"imba_lich_frost_nova"
 		"Ability2"					"imba_lich_frost_armor"
-		"Ability3"					"imba_lich_dark_ritual"
+		"Ability3"					"imba_lich_sinister_gaze"
 		"Ability4"					"generic_hidden"
 		"Ability5"					"generic_hidden"
 		"Ability6"					"imba_lich_chain_frost"
@@ -569,7 +569,7 @@
 		"Ability13"					"special_bonus_attack_speed_45"
 		"Ability14"					"special_bonus_attack_damage_150"
 		"Ability15"					"special_bonus_attack_range_175"
-		"Ability16"					"special_bonus_imba_lich_3"
+		"Ability16"					"special_bonus_imba_lich_4"
 		"Ability17"					"special_bonus_imba_lich_2"
 	}
 	"npc_dota_hero_lion"
@@ -1763,17 +1763,17 @@
 
 		"Ability1"					"undying_decay"
 		"Ability2"					"undying_soul_rip"
-		"Ability3"					"undying_tombstone"
+		"Ability3"					"imba_undying_tombstone"
 		"Ability4"					"generic_hidden"
 		"Ability5"					"generic_hidden"
 		"Ability6"					"undying_flesh_golem"
 			
 		"Ability10"					"special_bonus_cast_range_75"
 		"Ability11"					"special_bonus_hp_regen_4"
-		"Ability12"					"special_bonus_unique_undying_3"
+		"Ability12"					"special_bonus_imba_undying_1"
 		"Ability13"					"special_bonus_unique_undying_4"
-		"Ability14"					"special_bonus_unique_undying"
-		"Ability15"					"special_bonus_unique_undying_5"
+		"Ability14"					"special_bonus_imba_undying_2"
+		"Ability15"					"special_bonus_imba_undying_3"
 		"Ability16"					"special_bonus_respawn_reduction_60"
 		"Ability17"					"special_bonus_unique_undying_2"
 		
@@ -2109,7 +2109,7 @@
 		"Ability2"		"tusk_snowball"
 		"Ability3"		"tusk_tag_team"
 		"Ability4"		"generic_hidden"
-		"Ability5"		"tusk_walrus_kick"
+		"Ability5"		"imba_tusk_walrus_kick"
 		"Ability6"		"tusk_walrus_punch"
 		"Ability7"		"tusk_launch_snowball"
 		
@@ -2407,7 +2407,8 @@
 		"Ability3"		"monkey_king_primal_spring"
 		"Ability4"		"monkey_king_jingu_mastery"
 		"Ability5"		"monkey_king_mischief"
-		"Ability6"		"imba_dummy_ability"
+		"Ability6"		"imba_dummy_ability_monkey_king"
+		//"Ability6"		"imba_monkey_king_wukongs_command"
 		"Ability7"		"monkey_king_primal_spring_early"
 		"Ability8"		"monkey_king_untransform"
 		
@@ -2418,7 +2419,9 @@
 		"Ability14"		"special_bonus_unique_monkey_king"
 		"Ability15"		"special_bonus_unique_monkey_king_3"
 		"Ability16"		"special_bonus_unique_monkey_king_4"
+		//"Ability16"		"special_bonus_imba_monkey_king_1"
 		"Ability17"		"special_bonus_unique_monkey_king_6"
+		//"Ability17"		"special_bonus_imba_monkey_king_2"
 	}
 
 	//=================================================================================================================

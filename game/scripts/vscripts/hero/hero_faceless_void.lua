@@ -429,7 +429,7 @@ function modifier_imba_faceless_void_chronosphere_thinker:IsAura() return true e
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraDuration() return 0.1 end
 function modifier_imba_faceless_void_chronosphere_thinker:GetModifierAura() return "modifier_imba_faceless_void_chronosphere_debuff" end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraRadius() return self.radius end
-function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_DEAD end
+function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_BOTH end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BUILDING + DOTA_UNIT_TARGET_BASIC end
 function modifier_imba_faceless_void_chronosphere_thinker:GetAuraEntityReject(unit)
@@ -535,7 +535,7 @@ end
 
 function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_AbsoluteMax()
 	if self.buff_type ==  Chronosphere_Caster then
-		return 10000
+		return 1000
 	elseif self.buff_type == Chronosphere_Ally_Scepter then
 		return self.ms
 	else

@@ -1,8 +1,3 @@
-
-
-
-
-
 CreateEmptyTalents("sandking")
 
 
@@ -364,8 +359,8 @@ function imba_sandking_treacherous_sands:IsHiddenWhenStolen() 		return false end
 function imba_sandking_treacherous_sands:IsRefreshable() 			return true end
 function imba_sandking_treacherous_sands:IsStealable() 				return false end
 function imba_sandking_treacherous_sands:IsNetherWardStealable()	return false end
-
-function imba_sandking_treacherous_sands:IsTalentAbility() return true end
+function imba_sandking_treacherous_sands:IsTalentAbility() 			return true end
+function imba_sandking_treacherous_sands:ResetToggleOnRespawn() 	return false end
 
 function imba_sandking_treacherous_sands:OnOwnerDied()
 	self.toggle = self:GetToggleState()

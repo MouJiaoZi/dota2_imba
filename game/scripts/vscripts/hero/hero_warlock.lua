@@ -283,11 +283,14 @@ function modifier_imba_upheaval_npc:IsHidden() 			return true end
 function modifier_imba_upheaval_npc:IsPurgable() 		return false end
 function modifier_imba_upheaval_npc:IsPurgeException() 	return false end
 function modifier_imba_upheaval_npc:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = true} end
-function modifier_imba_upheaval_npc:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_DISABLE_HEALING} end
+function modifier_imba_upheaval_npc:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL, MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL, MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE, MODIFIER_PROPERTY_DISABLE_HEALING} end
 function modifier_imba_upheaval_npc:GetDisableHealing() return 1 end
+function modifier_imba_upheaval_npc:GetAbsoluteNoDamageMagical() return 1 end
+function modifier_imba_upheaval_npc:GetAbsoluteNoDamagePhysical() return 1 end
+function modifier_imba_upheaval_npc:GetAbsoluteNoDamagePure() return 1 end
 
-function modifier_imba_upheaval_npc:GetModifierIncomingDamage_Percentage(keys)
-	if not IsServer() or keys.target ~= self:GetParent() or keys.original_damage <= 0 then
+function modifier_imba_upheaval_npc:OnAttackLanded(keys)
+	if not IsServer() or keys.target ~= self:GetParent() then
 		return
 	end
 	local damage = self:GetAbility():GetSpecialValueFor("hero_damage")
@@ -300,7 +303,6 @@ function modifier_imba_upheaval_npc:GetModifierIncomingDamage_Percentage(keys)
 	else
 		self:GetParent():SetHealth(health - damage)
 	end
-	return -1000000
 end
 
 function modifier_imba_upheaval_npc:OnCreated()

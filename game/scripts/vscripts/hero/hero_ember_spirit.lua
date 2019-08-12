@@ -497,6 +497,26 @@ function imba_ember_spirit_activate_fire_remnant:IsNetherWardStealable()	return 
 function imba_ember_spirit_activate_fire_remnant:GetAssociatedPrimaryAbilities() return "imba_ember_spirit_fire_remnant" end
 function imba_ember_spirit_activate_fire_remnant:GetManaCost(iLevel) return self:GetCaster():HasScepter() and 0 or self.BaseClass.GetManaCost(self, iLevel) end
 
+function imba_ember_spirit_activate_fire_remnant:OnAbilityPhaseStart()
+	local caster = self:GetCaster()
+	local ability = caster:FindAbilityByName("imba_ember_spirit_fire_remnant") 
+	local pos = self:GetCursorPosition()
+	local buffs = caster:FindAllModifiersByName("modifier_imba_fire_remnant_timer")
+	local target = nil
+	local distance = 1000000
+	for i=1, #buffs do
+		local remnant = buffs[i].target
+		if (pos - remnant:GetAbsOrigin()):Length2D() <= distance then
+			target = remnant
+		end
+	end
+	if not target then
+		return false
+	else
+		return true
+	end
+end
+
 function imba_ember_spirit_activate_fire_remnant:OnSpellStart()
 	local caster = self:GetCaster()
 	local ability = caster:FindAbilityByName("imba_ember_spirit_fire_remnant") 

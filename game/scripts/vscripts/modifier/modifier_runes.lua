@@ -51,8 +51,8 @@ function modifier_imba_rune_haste:IsPurgeException() 	return false end
 function modifier_imba_rune_haste:GetTexture() return "rune_haste" end
 function modifier_imba_rune_haste:GetEffectName() return "particles/generic_gameplay/rune_haste_owner.vpcf" end
 function modifier_imba_rune_haste:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_EVENT_ON_DEATH} end
-function modifier_imba_rune_haste:GetIMBAMaxMovespeed() return 10000 end
+function modifier_imba_rune_haste:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_EVENT_ON_DEATH, MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT} end
+function modifier_imba_rune_haste:GetModifierIgnoreMovespeedLimit() return 1 end
 function modifier_imba_rune_haste:GetModifierMoveSpeedBonus_Percentage() return 70 end
 function modifier_imba_rune_haste:GetModifierAttackSpeedBonus_Constant() return 70 end
 

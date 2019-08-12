@@ -326,26 +326,23 @@ function modifier_imba_nether_ward:GetAuraRadius() return self:GetAbility():GetS
 function modifier_imba_nether_ward:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_MANA_ONLY end
 function modifier_imba_nether_ward:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
 function modifier_imba_nether_ward:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
-function modifier_imba_nether_ward:DeclareFunctions() return {MODIFIER_EVENT_ON_SPENT_MANA, MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE, MODIFIER_PROPERTY_IGNORE_CAST_ANGLE, MODIFIER_PROPERTY_CASTTIME_PERCENTAGE} end
+function modifier_imba_nether_ward:DeclareFunctions() return {MODIFIER_EVENT_ON_SPENT_MANA, MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL, MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL, MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE, MODIFIER_PROPERTY_DISABLE_HEALING, MODIFIER_PROPERTY_IGNORE_CAST_ANGLE, MODIFIER_PROPERTY_CASTTIME_PERCENTAGE} end
 function modifier_imba_nether_ward:GetModifierPercentageCasttime() return -100 end
+function modifier_imba_nether_ward:GetAbsoluteNoDamageMagical() return 1 end
+function modifier_imba_nether_ward:GetAbsoluteNoDamagePhysical() return 1 end
+function modifier_imba_nether_ward:GetAbsoluteNoDamagePure() return 1 end
 function modifier_imba_nether_ward:GetModifierIgnoreCastAngle() return 360 end
-function modifier_imba_nether_ward:GetModifierHPRegenAmplify_Percentage() return -100 end
-function modifier_imba_nether_ward:GetModifierIncomingDamage_Percentage(keys)
-	if IsServer() then
-		if keys.damage <= 0 then
-			return -100
-		end
-		if keys.inflictor or keys.ability then
-			return -10000
-		end
-		local dmg = keys.attacker:IsTrueHero() and 4 or 1
-		if dmg > self:GetParent():GetHealth() then
-			self:GetParent():Kill(self:GetAbility(), keys.attacker)
-			return -10000
-		end
-		self:GetParent():SetHealth(self:GetParent():GetHealth() - dmg)
-		return -10000
+function modifier_imba_nether_ward:GetDisableHealing() return 1 end
+
+function modifier_imba_nether_ward:OnAttackLanded(keys)
+	if not IsServer() or keys.target ~= self:GetParent() then
+		return
 	end
+	local dmg = keys.attacker:IsTrueHero() and 4 or 1
+	if dmg > self:GetParent():GetHealth() then
+		self:GetParent():Kill(self:GetAbility(), keys.attacker)
+	end
+	self:GetParent():SetHealth(self:GetParent():GetHealth() - dmg)
 end
 
 function modifier_imba_nether_ward:OnSpentMana(keys)

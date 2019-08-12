@@ -1,4 +1,4 @@
-IMBA_GAME_VERSION = 131
+IMBA_GAME_VERSION = 141
 
 IMBA_WEB_SERVER = "https://www.moujiaozi.me/"
 
@@ -42,7 +42,7 @@ BUYBACK_ENABLED = true                 -- Should we allow people to buyback when
 DISABLE_FOG_OF_WAR_ENTIRELY = false     -- Should we disable fog of war entirely for both teams?
 USE_UNSEEN_FOG_OF_WAR = false           -- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
 											-- Note: DISABLE_FOG_OF_WAR_ENTIRELY must be false for USE_UNSEEN_FOG_OF_WAR to work
-USE_STANDARD_DOTA_BOT_THINKING = true  -- Should we have bots act like they would in Dota? (This requires 3 lanes, normal items, etc)
+USE_STANDARD_DOTA_BOT_THINKING = false  -- Should we have bots act like they would in Dota? (This requires 3 lanes, normal items, etc)
 USE_STANDARD_HERO_GOLD_BOUNTY = true    -- Should we give gold for hero kills the same as in Dota, or allow those values to be changed?
 
 USE_CUSTOM_TOP_BAR_VALUES = false        -- Should we do customized top bar values or use the default kill count per team?
@@ -246,7 +246,7 @@ IMBA_PICKLIST_INT = {}
 
 IMBA_TOWER_ABILITY_1 = {
 "imba_tower_mana_flare",
-"imba_tower_force",
+"imba_tower_axe",
 "imba_tower_self_repair",
 "imba_tower_plague",
 "imba_tower_spell_shield",
@@ -262,7 +262,7 @@ IMBA_TOWER_ABILITY_2 = {
 "imba_tower_mana_flare",
 "imba_tower_laser",
 "imba_tower_chrono",
-"imba_tower_force",
+"imba_tower_axe",
 "imba_tower_nature",
 "imba_tower_self_repair",
 "imba_tower_plague",
@@ -287,7 +287,7 @@ IMBA_TOWER_ABILITY_3 = {
 "imba_tower_laser",
 "imba_tower_hex_aura",
 "imba_tower_chrono",
-"imba_tower_force",
+"imba_tower_axe",
 "imba_tower_nature",
 "imba_tower_mindblast",
 "imba_tower_aegis",

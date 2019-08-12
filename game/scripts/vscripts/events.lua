@@ -188,6 +188,9 @@ function GameMode:OnGameRulesStateChange(keys)
 					if GameRules:IsCheatMode() then
 						CreateUnitByName("npc_dota_hero_target_dummy", Vector(-5345,-6549,384), false, nil, nil, DOTA_TEAM_NEUTRALS)
 					end
+					--[[local abc = CreateHeroForPlayer("npc_dota_hero_earthshaker", PlayerResource:GetPlayer(0))
+					PlayerResource:GetPlayer(0):SetAssignedHeroEntity(abc)
+					abc:SetControllableByPlayer(0, true)]]
 					IMBAEvents:StartIMBAVersionCheck()
 					IMBAEvents:StartAbandonCheck()
 					local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
@@ -333,6 +336,19 @@ function GameMode:OnGameRulesStateChange(keys)
 		end
 		)
 	end
+
+	if newState == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		local swapped_hero = {}
+		for i=1, 20 do
+			local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i]
+			if hero and hero:GetPlayerOwnerID() ~= (i - 1) then
+				swapped_hero[#swapped_hero + 1] = {hero:GetPlayerOwnerID(), swapped_hero}
+			end
+		end
+		for i=1, #swapped_hero do
+			CDOTA_PlayerResource.IMBA_PLAYER_HERO[swapped_hero[i][1]] = swapped_hero[i][2]
+		end
+	end
 end
 
 function GameMode:ResetCameraForAll()
@@ -368,7 +384,7 @@ function GameMode:OnNPCSpawned(keys)
 	local npc = EntIndexToHScript(keys.entindex)
 
 	--Game Start Hero Set
-	if npc:IsTrueHero() and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
+	if npc:IsTrueHero() and npc:GetUnitName() ~= "npc_dota_hero_target_dummy" and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
 		Timers:CreateTimer({useGameTime = false, endTime = 0.1,
 			callback = function()
 
@@ -399,10 +415,10 @@ function GameMode:OnNPCSpawned(keys)
 				end
 
 				-- Monkey King Fix
-				if npc:HasAbility("imba_dummy_ability") then
+				if npc:HasAbility("imba_dummy_ability_monkey_king") then
 					local wkc = npc:AddAbility("monkey_king_wukongs_command")
-					npc:SwapAbilities("imba_dummy_ability", "monkey_king_wukongs_command", false, true)
-					npc:RemoveAbility("imba_dummy_ability")
+					npc:SwapAbilities("imba_dummy_ability_monkey_king", "monkey_king_wukongs_command", false, true)
+					npc:RemoveAbility("imba_dummy_ability_monkey_king")
 				end
 				--
 				return nil
@@ -410,7 +426,6 @@ function GameMode:OnNPCSpawned(keys)
 		})
 
 		npc:AddNewModifier(npc, nil, "modifier_imba_talent_modifier_adder", {})
-		npc:AddNewModifier(npc, nil, "modifier_imba_movespeed_controller", {})
 		npc:AddNewModifier(npc, nil, "modifier_imba_reapers_scythe_permanent", {})
 		npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
 		
@@ -734,13 +749,12 @@ function GameMode:OnPlayerLevelUp(keys)
 	DebugPrint('[BAREBONES] OnPlayerLevelUp')
 	DebugPrintTable(keys)
 
-	local player = EntIndexToHScript(keys.player)
-	if not player then
+	local pID = keys.player - 1
+	local level = keys.level
+	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[pID + 1]
+	if not hero then
 		return
 	end
-
-	local level = keys.level
-	local hero = player:GetAssignedHero()
 	local hero_level = hero:GetLevel()
 
 	hero:SetCustomDeathXP(HERO_XP_BOUNTY_PER_LEVEL[hero_level])

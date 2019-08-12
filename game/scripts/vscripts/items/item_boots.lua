@@ -11,8 +11,6 @@ function item_imba_phase_boots_2:GetIntrinsicModifierName() return "modifier_imb
 function item_imba_phase_boots_2:OnSpellStart()
 	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_item_imba_phase_boots_2_move_speed", {duration = self:GetSpecialValueFor("phase_duration")})
 	self:GetCaster():EmitSound("DOTA_Item.PhaseBoots.Activate")
-	local pfx = ParticleManager:CreateParticle("particles/econ/events/ti6/phase_boots_ti6.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:ReleaseParticleIndex(pfx)
 end
 
 modifier_imba_phase_boots2_passive = class({})
@@ -22,7 +20,8 @@ function modifier_imba_phase_boots2_passive:IsHidden() 			return true end
 function modifier_imba_phase_boots2_passive:IsPurgable() 		return false end
 function modifier_imba_phase_boots2_passive:IsPurgeException() 	return false end
 function modifier_imba_phase_boots2_passive:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_imba_phase_boots2_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS} end
+function modifier_imba_phase_boots2_passive:DeclareFunctions() return {MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE, MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE} end
+function modifier_imba_phase_boots2_passive:GetModifierPreAttack_BonusDamage() return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 function modifier_imba_phase_boots2_passive:GetModifierPhysicalArmorBonus() return self:GetAbility():GetSpecialValueFor("bonus_armor") end
 function modifier_imba_phase_boots2_passive:GetModifierAttackSpeedBonus_Constant() return self:GetAbility():GetSpecialValueFor("bonus_as") end
 function modifier_imba_phase_boots2_passive:GetModifierMoveSpeedBonus_Special_Boots() return self:GetAbility():GetSpecialValueFor("bonus_movement_speed") end
@@ -34,9 +33,12 @@ function modifier_item_imba_phase_boots_2_move_speed:IsDebuff()			return false e
 function modifier_item_imba_phase_boots_2_move_speed:IsHidden() 		return false end
 function modifier_item_imba_phase_boots_2_move_speed:IsPurgable() 		return true end
 function modifier_item_imba_phase_boots_2_move_speed:IsPurgeException() return true end
-function modifier_item_imba_phase_boots_2_move_speed:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
-function modifier_item_imba_phase_boots_2_move_speed:GetIMBAMaxMovespeed() return self:GetAbility():GetSpecialValueFor("new_ms_limit") end
+function modifier_item_imba_phase_boots_2_move_speed:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT, MODIFIER_PROPERTY_MOVESPEED_LIMIT} end
+function modifier_item_imba_phase_boots_2_move_speed:GetModifierIgnoreMovespeedLimit() return 1 end
+function modifier_item_imba_phase_boots_2_move_speed:GetModifierMoveSpeed_Limit() return self:GetAbility():GetSpecialValueFor("new_ms_limit") end
 function modifier_item_imba_phase_boots_2_move_speed:GetModifierMoveSpeedBonus_Percentage() return self:GetAbility():GetSpecialValueFor("phase_ms") end
+function modifier_item_imba_phase_boots_2_move_speed:GetEffectName() return "particles/econ/events/ti6/phase_boots_ti6.vpcf" end
+function modifier_item_imba_phase_boots_2_move_speed:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 
 item_imba_tranquil_boots_2 = class({})
 

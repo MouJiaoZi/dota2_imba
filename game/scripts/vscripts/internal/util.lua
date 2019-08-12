@@ -777,68 +777,6 @@ function CDOTABaseAbility:HasFireSoulActive()
 	return self:GetCaster():HasModifier("modifier_imba_fiery_soul_active")
 end
 
-function CDOTA_BaseNPC:GetCastRangeBonus()
-	local caster = self
-	local range = 0
-	local buffs = caster:FindAllModifiers()
-	local range_unique = {}
-	--lua buffs
-	for _, buff in pairs(buffs) do
-		if buff.GetModifierCastRangeBonus then
-			table.insert(range_unique, buff:GetModifierCastRangeBonus())
-		end
-		if buff.GetModifierCastRangeBonusStacking then
-			range = range + buff:GetModifierCastRangeBonusStacking()
-		end
-	end
-	table.sort(range_unique)
-	if #range_unique > 0 then
-		range = range + range_unique[#range_unique]
-	end
-	--lua buffs
-
-	--Talent buff(Must be named as "special_bonus_cast_range_XXX" and special value as "value")
-	for i=0, 23 do
-		local ability = caster:GetAbilityByIndex(i)
-		if ability and ability:GetLevel() > 0 and string.find(ability:GetAbilityName(), "special_bonus_cast_range") then
-			range = range + ability:GetSpecialValueFor("value")
-		end
-	end
-	--Talent buff(Must be named as "special_bonus_cast_range_XXX" and special value as "value")
-	return range
-end
-
-function CDOTA_BaseNPC:GetCooldownReduction()
-	local caster = self
-	local cdr = 0
-	local buffs = caster:FindAllModifiers()
-	local cdr_unique = {}
-	--lua buffs
-	for _, buff in pairs(buffs) do
-		if buff.GetModifierPercentageCooldown then
-			table.insert(cdr_unique, buff:GetModifierPercentageCooldown())
-		end
-		if buff.GetModifierPercentageCooldownStacking then
-			cdr = cdr + buff:GetModifierPercentageCooldownStacking()
-		end
-	end
-
-	for i=0, 23 do
-		local ability = caster:GetAbilityByIndex(i)
-		if ability and ability:GetLevel() > 0 and string.find(ability:GetAbilityName(), "special_bonus_cooldown_reduction") then
-			cdr = cdr + ability:GetSpecialValueFor("value")
-		end
-	end
-
-	table.sort(cdr_unique)
-	if #cdr_unique > 0 then
-		cdr = cdr + (cdr_unique[#cdr_unique] - cdr_unique[#cdr_unique] * (cdr / 100))
-	end
-	--lua buffs
-
-	return math.min(cdr, 100)
-end
-
 function CDOTA_BaseNPC:GetIncomingHealAmp()
 	local caster = self
 	local buffs = caster:FindAllModifiers()
@@ -1536,7 +1474,7 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 end
 
 function DumpAllHeroCustomAbilityIcons()
-	local a = LoadKeyValues("scripts/imba_item_info.txt")
+	local a = LoadKeyValues("scripts/b.txt")
 	local b = a['items']
 	for k, v in pairs(b) do
 		b[k]['portraits'] = nil

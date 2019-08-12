@@ -41,13 +41,13 @@
 					<Label text="+1" />
 				</Button>
 			</Panel>
-			<Panel id="31VotePanel" class="OMGPanel TopBottomFlow" hittest="true" hittestchildren="true">
+			<!--Panel id="31VotePanel" class="OMGPanel TopBottomFlow" hittest="true" hittestchildren="true">
 				<Label id="31VoteTitle" class="OMGTitle" text="#IMBA_HUD_31VoteTitle" />
 				<Label id="31VoteNum" class="OMGNum" text="0" />
 				<Button id="31VoteButton" class="OMGVoteButton" onactivate="IMBAVoteFor31();">
 					<Label text="+1" />
 				</Button>
-			</Panel>
+			</Panel-->
 		</Panel>
 	</Panel>
 </root>

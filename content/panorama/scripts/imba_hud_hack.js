@@ -193,18 +193,27 @@ function SetBuffBar()
 {
 	var buffs = FindDotaHudElement("buffs");
 	var debuffs = FindDotaHudElement("debuffs");
+	var StatBranchDrawer = FindDotaHudElement("StatBranchDrawer");
+	var BuffContainer = FindDotaHudElement("BuffContainer");
 	var chat = FindDotaHudElement("HudChat");
 	if(buffs)
 	{
 		buffs.style.marginLeft = "38%";
+		buffs.style.width = "530px";
 	}
 	if(debuffs)
 	{
+		debuffs.style.width = "530px";
 		debuffs.style.marginLeft = "38%";
+		debuffs.style.marginRight = "0%";
 		debuffs.style.marginBottom = "198px";
 		debuffs.style.flowChildren = "right";
 		debuffs.style.horizontalAlign = "left";
 	}
+	if(StatBranchDrawer)
+		StatBranchDrawer.style.zIndex = "100";
+	if(BuffContainer)
+		BuffContainer.style.zIndex = "10";
 	if(chat)
 	{
 		chat.style.y = "-280px";
@@ -217,6 +226,8 @@ $.Schedule(1.0, SetBuffBar);
 
 FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.width = "0px";
 FindDotaHudElement("TertiaryAbilitiesBar").GetParent().style.height = "0px";
+FindDotaHudElement("SecondaryAbilityContainer").style.width = "0px";
+FindDotaHudElement("SecondaryAbilityContainer").style.height = "0px";
 
 function UnselectCourier(keys)
 {

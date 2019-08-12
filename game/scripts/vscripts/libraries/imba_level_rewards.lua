@@ -59,7 +59,12 @@ function IMBALevelRewards:ChangeHeroEffect(unused, kv)
 			if hero.imba_level_pfx then
 				ParticleManager:SetParticleControl(hero.imba_level_pfx, 15, color)
 			else
-				hero.imba_level_pfx = ParticleManager:CreateParticle("particles/imba_level_particle/ti8_hero_effect.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+				local pfx_name = "particles/imba_level_particle/ti8_hero_effect.vpcf"
+				local steamid = tonumber(tostring(PlayerResource:GetSteamID(pID)))
+				if steamid == 76561198097609945 or steamid == 76561198100269546 or steamid == 76561198361355161 then
+					pfx_name = "particles/imba_level_particle/ti7_hero_effect.vpcf"
+				end
+				hero.imba_level_pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_ABSORIGIN_FOLLOW, hero)
 				ParticleManager:SetParticleControl(hero.imba_level_pfx, 15, color)
 			end
 		end
@@ -143,8 +148,8 @@ function IMBALevelRewards:ChangeMaelStromColor(unused, kv)
 		local unit = FindUnitsInRadius(hero:GetTeamNumber(), hero:GetAbsOrigin(), nil, 50000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_ALL, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_DEAD, FIND_ANY_ORDER, false)
 		for i=1, #unit do
 			if unit[i].GetUnitName and unit[i]:GetPlayerOwnerID() == pID then
-				local buff = unit[i]:FindAllModifiersByName("modifier_imba_maelstrom_passive")
-				local buff2 = unit[i]:FindAllModifiersByName("modifier_imba_mjollnir_passive")
+				local buff = unit[i]:FindAllModifiersByName("modifier_imba_maelstrom_unique")
+				local buff2 = unit[i]:FindAllModifiersByName("modifier_imba_mjollnir_unique")
 				for j=1, #buff do
 					buff[j]:OnCreated()
 				end

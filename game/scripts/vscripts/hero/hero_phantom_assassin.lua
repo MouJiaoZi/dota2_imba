@@ -272,7 +272,7 @@ function modifier_imba_coup_de_grace:IsDebuff()			return false end
 function modifier_imba_coup_de_grace:IsHidden() 		return true end
 function modifier_imba_coup_de_grace:IsPurgable() 		return false end
 function modifier_imba_coup_de_grace:IsPurgeException() return false end
-function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE. MODIFIER_EVENT_ON_ATTACK_FAIL} end
+function modifier_imba_coup_de_grace:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED, MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE, MODIFIER_EVENT_ON_ATTACK_FAIL} end
 
 function modifier_imba_coup_de_grace:OnCreated() self.crit = {} end
 function modifier_imba_coup_de_grace:OnDestroy() self.crit = nil end

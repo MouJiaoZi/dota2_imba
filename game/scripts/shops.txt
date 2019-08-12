@@ -117,7 +117,7 @@
 		"item"		"item_force_staff"
 		"item"		"item_imba_necronomicon"
 		"item"		"item_solar_crest"
-		"item"		"item_imba_dagon"
+		"item"		"item_imba_dagon_10"
 		"item"		"item_cyclone"
 		"item"		"item_rod_of_atos"
 		"item"		"item_imba_orchid"	

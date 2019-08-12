@@ -3397,7 +3397,7 @@
 			"06"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"bonus_mana_regen"			"100"
+				"bonus_mana_regen"			"5"
 			}
 			"07"
 			{
@@ -10455,6 +10455,8 @@
 		"AbilityTextureName"			"imba_blade_mail_2"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET"
 		"FightRecapLevel"				"1"
+		"ItemBaseLevel"					"2"
+		"MaxUpgradeLevel"				"2"
 		"ScriptFile"					"items/item_blade_mail.lua"
 
 		// Stats		

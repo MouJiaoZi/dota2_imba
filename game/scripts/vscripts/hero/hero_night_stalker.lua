@@ -1,7 +1,3 @@
-
-
-
-
 CreateEmptyTalents("night_stalker")
 
 imba_night_stalker_void = class({})
@@ -357,9 +353,8 @@ function modifier_imba_darkness_caster:IsPurgable() 		return false end
 function modifier_imba_darkness_caster:IsPurgeException()	return false end
 function modifier_imba_darkness_caster:RemoveOnDeath()		return false end
 function modifier_imba_darkness_caster:DeclareFunctions() return {MODIFIER_PROPERTY_BONUS_NIGHT_VISION, MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT} end
-function modifier_imba_darkness_caster:GetBonusNightVision() return self:GetAbility():GetSpecialValueFor("bonus_vision") end
 function modifier_imba_darkness_caster:GetModifierIgnoreMovespeedLimit() return 1 end
-function modifier_imba_darkness_caster:GetIMBAMaxMovespeed() return 10000 end
+function modifier_imba_darkness_caster:GetBonusNightVision() return self:GetAbility():GetSpecialValueFor("bonus_vision") end
 
 function modifier_imba_darkness_caster:IsAura() return true end
 function modifier_imba_darkness_caster:IsAuraActiveOnDeath() return true end

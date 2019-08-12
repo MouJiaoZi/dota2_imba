@@ -267,8 +267,8 @@ function modifier_imba_chaos_strike_passive:OnDestroy() self.crit = nil end
 function modifier_imba_chaos_strike_passive:GetModifierPreAttack_CriticalStrike(keys)
 	if IsServer() and keys.attacker == self:GetParent() and keys.target:IsUnit() and not self:GetParent():PassivesDisabled() and self:GetAbility():IsCooldownReady() then
 		self.crit[keys.record] = true
-		self:GetParent():EmitSound("Hero_ChaosKnight.ChaosStrike")
 		self:GetAbility():UseResources(true, true, true)
+		self:GetParent():EmitSound("Hero_ChaosKnight.ChaosStrike")
 		return (self:GetAbility():GetSpecialValueFor("crit_min") + (self:GetAbility():GetSpecialValueFor("crit_max") - self:GetAbility():GetSpecialValueFor("crit_min") * (RandomInt(0, 100) / 100)))
 	end
 end

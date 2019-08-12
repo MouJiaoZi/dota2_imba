@@ -248,7 +248,7 @@ function PickButtonHitCheck()
 
 GameEvents.Subscribe( "dota_player_hero_selection_dirty", PickButtonHitCheck );
 
-var total;
+var total = 0;
 var current = 0;
 
 
@@ -260,9 +260,10 @@ function FindDotaHudElement(sElement)
 
 function FillTopBarPlayer() 
 {
-	FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
-	var herocard = FindDotaHudElement('GridCore');
-	total = herocard.GetChildCount();
+	//FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
+	/*var herocard = FindDotaHudElement('GridCategories');
+	for(var i=0;i<=2;i++)
+		total = total + herocard.GetChild(i).FindChild("HeroListContainer").FindChild("HeroList").GetChildCount();
 	var delay = 0.015;
 	if(Game.IsInToolsMode())
 	{
@@ -272,7 +273,7 @@ function FillTopBarPlayer()
 	{
 		$.Schedule((delay * i), UpdateHeroCard);
 	}
-	$.Schedule((delay * (i + 3)), ReEnablePickButton);
+	$.Schedule((delay * (i + 3)), ReEnablePickButton);*/
 }
 
 function ReEnablePickButton()

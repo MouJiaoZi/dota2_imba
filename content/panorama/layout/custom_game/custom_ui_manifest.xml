@@ -71,7 +71,7 @@
 		}
 
 		var block = $.CreatePanel('Button', FindDotaHudElement("PreGame"), 'IMBA_CLICK_BLOCKER');
-		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "1.0";
+		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.opacity = "0.0";
 		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.height = "50000px";
 		FindDotaHudElement('IMBA_CLICK_BLOCKER').style.width = "50000px";
 

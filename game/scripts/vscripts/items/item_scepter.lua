@@ -11,13 +11,14 @@ function item_imba_ultimate_scepter_synth:OnSpellStart()
 	if target:IsClone() or target:IsTempestDouble() or target:HasModifier("modifier_item_ultimate_scepter_consumed") or target:HasModifier("modifier_imba_consumable_scepter_consumed") then
 		return
 	end
+	target:AddNewModifier(caster, self, "modifier_item_ultimate_scepter_consumed", {})
 	target:AddNewModifier(caster, self, "modifier_imba_consumable_scepter_consumed", {})
 	target:EmitSound("Hero_Alchemist.Scepter.Cast")
-	Timers:CreateTimer(FrameTime(), function()
+	--Timers:CreateTimer(FrameTime(), function()
 			self:RemoveSelf()
-			return nil
-		end
-	)
+	--		return nil
+	--	end
+	--)
 end
 
 modifier_imba_consumable_scepter_passive = class({})
@@ -38,7 +39,7 @@ function modifier_imba_consumable_scepter_passive:GetModifierScepter() return 1 
 modifier_imba_consumable_scepter_consumed = class({})
 
 function modifier_imba_consumable_scepter_consumed:IsDebuff()			return false end
-function modifier_imba_consumable_scepter_consumed:IsHidden() 			return false end
+function modifier_imba_consumable_scepter_consumed:IsHidden() 			return true end
 function modifier_imba_consumable_scepter_consumed:IsPurgable() 		return false end
 function modifier_imba_consumable_scepter_consumed:IsPurgeException() 	return false end
 function modifier_imba_consumable_scepter_consumed:GetAttributes() return MODIFIER_ATTRIBUTE_PERMANENT end
@@ -49,7 +50,7 @@ function modifier_imba_consumable_scepter_consumed:OnCreated()
 	--self:SetAbilityKV()
 end
 
-function modifier_imba_consumable_scepter_consumed:DeclareFunctions() return {MODIFIER_PROPERTY_IS_SCEPTER, MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_MANA_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS} end
+function modifier_imba_consumable_scepter_consumed:DeclareFunctions() return {MODIFIER_PROPERTY_HEALTH_BONUS, MODIFIER_PROPERTY_MANA_BONUS, MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, MODIFIER_PROPERTY_STATS_INTELLECT_BONUS, MODIFIER_PROPERTY_STATS_AGILITY_BONUS} end
 function modifier_imba_consumable_scepter_consumed:GetModifierHealthBonus() return 300 end
 function modifier_imba_consumable_scepter_consumed:GetModifierManaBonus() return 250 end
 function modifier_imba_consumable_scepter_consumed:GetModifierBonusStats_Strength() return 14 end

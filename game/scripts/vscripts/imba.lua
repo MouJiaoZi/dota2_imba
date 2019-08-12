@@ -933,6 +933,9 @@ function IMBA:SpawnRoshan()
 			unit:AddItemByName("item_imba_ultimate_scepter_synth")
 		end
 	end
+	if roshan_kill >= 12 then
+		unit:AddAbility("imba_tower_grievous_wounds"):SetLevel(1)
+	end
 	if roshan_kill >= 15 then
 		unit:AddItemByName("item_aegis")
 	end

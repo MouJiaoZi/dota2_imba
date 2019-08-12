@@ -46,7 +46,7 @@ function modifier_imba_maelstrom_unique:OnAttackLanded(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.attacker ~= self:GetParent() or keys.target:IsBuilding() or keys.target:IsCourier() or keys.target:IsOther() or not self:GetParent().splitattack or not keys.target:IsAlive() then
+	if keys.attacker ~= self:GetParent() or not keys.target:IsUnit() or not self:GetParent().splitattack or not keys.target:IsAlive() then
 		return
 	end
 	if PseudoRandom:RollPseudoRandom(self.ability, self.ability:GetSpecialValueFor("proc_chance")) then
@@ -54,7 +54,7 @@ function modifier_imba_maelstrom_unique:OnAttackLanded(keys)
 		local units = {}
 		units[#units + 1] = keys.target
 		for i, aunit in pairs(units) do
-			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false)
 			for _, unit1 in pairs(units1) do
 				local no_yet = true
 				for _, unit in pairs(units) do
@@ -167,7 +167,7 @@ function modifier_imba_mjollnir_unique:OnAttackLanded(keys)
 		local units = {}
 		units[#units + 1] = keys.target
 		for i, aunit in pairs(units) do
-			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+			local units1 = FindUnitsInRadius(self:GetParent():GetTeamNumber(), aunit:GetAbsOrigin(), nil, self.ability:GetSpecialValueFor("bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false)
 			for _, unit1 in pairs(units1) do
 				local no_yet = true
 				for _, unit in pairs(units) do

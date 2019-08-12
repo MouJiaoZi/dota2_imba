@@ -39,10 +39,14 @@ function imba_axe_berserkers_call:OnSpellStart()
 			enemy:AddNewModifier(caster, caster:FindAbilityByName("imba_axe_battle_hunger"), "modifier_imba_axe_battle_hunger_enemy", {})
 		end
 	end
-	local pfx = ParticleManager:CreateParticle("particles/econ/items/axe/axe_helm_shoutmask/axe_beserkers_call_owner_shoutmask.vpcf", PATTACH_ABSORIGIN, caster)
+	local pfx_name = "particles/econ/items/axe/axe_helm_shoutmask/axe_beserkers_call_owner_shoutmask.vpcf"
+	if HeroItems:UnitHasItem(caster, "axe_ti9_immortal_head") then
+		pfx_name = "particles/econ/items/axe/axe_ti9_immortal/axe_ti9_call.vpcf"
+	end
+	local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_ABSORIGIN, caster)
 	ParticleManager:SetParticleControl(pfx, 0, caster:GetAbsOrigin())
 	ParticleManager:SetParticleControl(pfx, 1, caster:GetAttachmentOrigin(caster:ScriptLookupAttachment("attach_mouth")))
-	ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetSpecialValueFor("radius"), 0, 0))
+	ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius"), self:GetSpecialValueFor("radius")))
 end
 
 modifier_axe_berserkers_call_as = class({})

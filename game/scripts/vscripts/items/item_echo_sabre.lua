@@ -3,7 +3,9 @@ item_imba_echo_sabre = class({})
 item_imba_reverb_rapier = class({})
 
 function item_imba_echo_sabre:GetIntrinsicModifierName() return "modifier_imba_echo_sabre_passive" end
+function item_imba_echo_sabre:GetCooldown(i) return self:GetCaster():IsRangedAttacker() and self:GetSpecialValueFor("ranged_cooldown") or self.BaseClass.GetCooldown(self, i) end
 function item_imba_reverb_rapier:GetIntrinsicModifierName() return "modifier_imba_echo_sabre_passive" end
+function item_imba_reverb_rapier:GetCooldown(i) return self:GetCaster():IsRangedAttacker() and self:GetSpecialValueFor("ranged_cooldown") or self.BaseClass.GetCooldown(self, i) end
 
 LinkLuaModifier("modifier_item_imba_echo_sabre_slow", "items/item_echo_sabre", LUA_MODIFIER_MOTION_NONE)
 
@@ -60,11 +62,11 @@ function modifier_imba_echo_sabre_passive:OnAttack(keys)
 		end
 		self:DecrementStackCount()
 		if self:GetStackCount() ~= self:GetAbility():GetSpecialValueFor("max_hits") and self:GetAbility():IsCooldownReady() then
-			if self:GetParent():IsRangedAttacker() then
-				self:GetAbility():StartCooldown(self:GetAbility():GetSpecialValueFor("ranged_cooldown") * (1 - self:GetParent():GetCooldownReduction() / 100))
-			else
+			--if self:GetParent():IsRangedAttacker() then
+			--	self:GetAbility():StartCooldown(self:GetAbility():GetSpecialValueFor("ranged_cooldown") * (1 - self:GetParent():GetCooldownReduction() / 100))
+			--else
 				self:GetAbility():UseResources(true, true, true)
-			end
+			--end
 		end
 	end
 end

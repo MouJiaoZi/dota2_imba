@@ -3,7 +3,9 @@
 		<include src="file://{resources}/styles/hero_selection_imba.css" />
 	</styles>
 	<scripts>
-		<include src="file://{resources}/scripts/imba_hero_selection_hack.js" />
+		<!--include src="file://{resources}/scripts/imba_hero_selection_hack.js" /-->
+		
+		<include src="file://{resources}/scripts/imba_hero_selection_hack_temp.js" />
 	</scripts>
 	<Panel>
 	</Panel>

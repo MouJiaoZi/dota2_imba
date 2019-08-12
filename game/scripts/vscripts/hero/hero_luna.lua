@@ -26,7 +26,7 @@ function imba_luna_moon_glaive:GlaiveAttck(source, damage, bounce)
 		Target = target,
 		Source = source,
 		Ability = self,	
-		EffectName = "particles/units/heroes/hero_luna/luna_moon_glaive.vpcf",
+		EffectName = self:GetCaster():GetUnitName() == "npc_dota_hero_luna" and self:GetCaster():GetRangedProjectileName() or "particles/units/heroes/hero_luna/luna_moon_glaive.vpcf",
 		iMoveSpeed = (self:GetCaster():IsRangedAttacker() and self:GetCaster():GetProjectileSpeed() or 900),
 		iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION,
 		bDrawsOnMinimap = false,

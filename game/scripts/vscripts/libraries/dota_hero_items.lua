@@ -2,10 +2,20 @@ HeroItems = class({})
 
 Hero_Items_KV = LoadKeyValues("scripts/npc/kv/hero_items.kv")
 Hero_Icons_KV = LoadKeyValues("scripts/npc/kv/hero_ability_icon.kv")
+Hero_Icons_KV2 = LoadKeyValues("scripts/npc/kv/hero_ability_icon_hand.kv")
 
 Hero_Icons_Table = {}
 
 for k, v in pairs(Hero_Icons_KV) do
+	for model, icon in pairs(v) do
+		Hero_Icons_Table[#Hero_Icons_Table + 1] = {}
+		Hero_Icons_Table[#Hero_Icons_Table] = {k, model}
+		if IsServer() then
+			CustomNetTables:SetTableValue("imba_ability_icon", tostring(#Hero_Icons_Table), {icon})
+		end
+	end
+end
+for k, v in pairs(Hero_Icons_KV2) do
 	for model, icon in pairs(v) do
 		Hero_Icons_Table[#Hero_Icons_Table + 1] = {}
 		Hero_Icons_Table[#Hero_Icons_Table] = {k, model}
@@ -86,8 +96,7 @@ function HeroItems:SetHeroItemTable(hUnit)
 				head:FollowEntity(hUnit, true)
 				head:SetSkin(1)
 				local pfx = ParticleManager:CreateParticle("particles/econ/items/earthshaker/earthshaker_arcana/earthshaker_arcana_head_ambient_v2.vpcf", PATTACH_ABSORIGIN_FOLLOW, head)
-			end
-			if k == "pa_arcana" then
+			elseif k == "pa_arcana" then
 				hUnit:SetOriginalModel("models/heroes/phantom_assassin/pa_arcana.vmdl")
 				hUnit:SetModel("models/heroes/phantom_assassin/pa_arcana.vmdl")
 				local weapon = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/heroes/phantom_assassin/pa_arcana_weapons.vmdl"})
@@ -132,8 +141,7 @@ function HeroItems:SetHeroItemTable(hUnit)
 				ParticleManager:SetParticleControlEnt(pfx_head, 5, head, PATTACH_POINT_FOLLOW, "attach_core", hUnit:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControlEnt(pfx_head, 7, head, PATTACH_POINT_FOLLOW, "attach_front", hUnit:GetAbsOrigin(), true)
 				ParticleManager:SetParticleControl(pfx_head, 11, Vector(1000, 0, 0))
-			end
-			if k == "invoker_kid" then
+			elseif k == "invoker_kid" then
 				hUnit:SetOriginalModel("models/heroes/invoker_kid/invoker_kid.vmdl")
 				hUnit:SetModel("models/heroes/invoker_kid/invoker_kid.vmdl")
 				local hair = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/heroes/invoker_kid/invoker_kid_hair.vmdl"})
@@ -142,6 +150,13 @@ function HeroItems:SetHeroItemTable(hUnit)
 				local cloth = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/heroes/invoker_kid/invoker_kid_cape.vmdl"})
 				cloth:SetParent(hUnit, nil)
 				cloth:FollowEntity(hUnit, true)
+			elseif k == "ti6_hunters_hoard_model" then
+				local head = SpawnEntityFromTableSynchronous("prop_dynamic", {model = "models/items/bounty_hunter/ti6_hunters_hoard/mesh/ti6_hunters_hoard_model.vmdl"})
+				head:SetParent(hUnit, nil)
+				head:FollowEntity(hUnit, true)
+				head:SetSkin(1)
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/bounty_hunter/bounty_hunter_hunters_hoard/bounty_hunter_hoard_ambient.vpcf", PATTACH_ABSORIGIN_FOLLOW, head)
+				ParticleManager:SetParticleControlEnt(pfx, 0, head, PATTACH_POINT_FOLLOW, "attach_back", head:GetAbsOrigin(), true)
 			end
 		end
 		hUnit:AddNewModifier(hUnit, nil, "modifier_imba_heroitems_arcana", {})
@@ -194,7 +209,7 @@ function HeroItems:SetHeroAbilityIcon(hUnit, sAbilityName)
 	end
 	local ability = hUnit:FindAbilityByName(sAbilityName)
 	local ability_id = ability:entindex()
-	if not ability or ability:GetClassname() ~= "ability_lua" or not AbilityKV[ability:GetAbilityName()] or not AbilityKV[ability:GetAbilityName()]['AbilityTextureName'] then
+	if not ability or ability:GetClassname() ~= "ability_lua" or not AbilityKV[sAbilityName] or not AbilityKV[sAbilityName]['AbilityTextureName'] then
 		return
 	end
 	local icon_num = nil
@@ -202,7 +217,7 @@ function HeroItems:SetHeroAbilityIcon(hUnit, sAbilityName)
 		local info = Hero_Icons_Table[i]
 		local base_name = info[1]
 		local model_name = info[2]
-		if string.find(sAbilityName, base_name) and HeroItems:UnitHasItem2(hUnit, model_name) then
+		if (string.find(sAbilityName, base_name) or string.find(AbilityKV[sAbilityName]['AbilityTextureName'], base_name)) and HeroItems:UnitHasItem2(hUnit, model_name) then
 			icon_num = i
 			break
 		end

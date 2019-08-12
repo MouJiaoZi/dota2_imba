@@ -329,8 +329,6 @@ function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgable() 			return (se
 function modifier_imba_kunkka_x_marks_the_spot_target:IsPurgeException() 	return (self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber()) end
 function modifier_imba_kunkka_x_marks_the_spot_target:GetEffectName() return "particles/units/heroes/hero_kunkka/kunkka_spell_x_spot.vpcf" end
 function modifier_imba_kunkka_x_marks_the_spot_target:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_kunkka_x_marks_the_spot_target:IsMotionController() return true end
-function modifier_imba_kunkka_x_marks_the_spot_target:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_MEDIUM end
 
 function modifier_imba_kunkka_x_marks_the_spot_target:OnCreated()
 	if IsServer() then
@@ -350,9 +348,7 @@ function modifier_imba_kunkka_x_marks_the_spot_target:OnDestroy()
 		end
 		self:GetParent():EmitSound("Ability.XMarksTheSpot.Return")
 		self:GetParent():StopSound("Ability.XMark.Target_Movement")
-		if self:CheckMotionControllers() then
-			FindClearSpaceForUnit(self:GetParent(), self.pos, true)
-		end
+		FindClearSpaceForUnit(self:GetParent(), self.pos, true)
 		self.pos = nil
 	end
 end

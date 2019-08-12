@@ -602,11 +602,10 @@ function Reality( keys )
 	end
 end
 
-function Force( keys )
+function Axe( keys )
 	local caster = keys.caster
 	local ability = keys.ability
 	local ability_level = ability:GetLevel() - 1
-	local sound_force = keys.sound_force
 
 	-- If the ability is on cooldown, do nothing
 	if not ability:IsCooldownReady() then
@@ -614,43 +613,34 @@ function Force( keys )
 	end
 
 	-- Parameters
-	local force_aoe = ability:GetLevelSpecialValueFor("force_aoe", ability_level)
-	local force_distance = ability:GetLevelSpecialValueFor("force_distance", ability_level)
-	local force_duration = ability:GetLevelSpecialValueFor("force_duration", ability_level)
+	local radius = ability:GetLevelSpecialValueFor("radius", ability_level)
+	local taunt_duration = ability:GetLevelSpecialValueFor("duration", ability_level)
+	local armor_duration = ability:GetLevelSpecialValueFor("armor_duration", ability_level)
 	local min_creeps = ability:GetLevelSpecialValueFor("min_creeps", ability_level)
 	local tower_loc = caster:GetAbsOrigin()
 
 	-- Find nearby enemies
-	local creeps = FindUnitsInRadius(caster:GetTeamNumber(), tower_loc, nil, force_aoe, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_ANY_ORDER, false)
-	local heroes = FindUnitsInRadius(caster:GetTeamNumber(), tower_loc, nil, force_aoe, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_ANY_ORDER, false)
+	local creeps = FindUnitsInRadius(caster:GetTeamNumber(), tower_loc, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+	local heroes = FindUnitsInRadius(caster:GetTeamNumber(), tower_loc, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 
 	-- Check if the ability should be cast
 	if #creeps >= min_creeps or #heroes >= 1 then
 
 		-- Play sound
-		caster:EmitSound(sound_force)
+		caster:EmitSound("Hero_Axe.Berserkers_Call")
+		local pfx = ParticleManager:CreateParticle("particles/econ/items/axe/axe_helm_shoutmask/axe_beserkers_call_owner_shoutmask.vpcf", PATTACH_ABSORIGIN, caster)
+		ParticleManager:SetParticleControl(pfx, 0, caster:GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 1, caster:GetAttachmentOrigin(caster:ScriptLookupAttachment("attach_mouth")))
+		ParticleManager:SetParticleControl(pfx, 2, Vector(radius, 0, 0))
 
-		-- Set up knockback parameters
-		local knockback_param =
-		{	should_stun = 1,
-			knockback_duration = force_duration,
-			duration = force_duration,
-			knockback_distance = force_distance,
-			knockback_height = 0,
-			center_x = tower_loc.x,
-			center_y = tower_loc.y,
-			center_z = tower_loc.z
-		}
+		for i=1, #creeps do
+			creeps[i]:AddNewModifier(caster, ability, "modifier_axe_berserkers_call", {duration = taunt_duration})
+		end
+		for i=1, #heroes do
+			heroes[i]:AddNewModifier(caster, ability, "modifier_axe_berserkers_call", {duration = taunt_duration})
+		end
 
-		-- Knockback enemies
-		for _,enemy in pairs(creeps) do
-			enemy:RemoveModifierByName("modifier_knockback")
-			enemy:AddNewModifier(caster, nil, "modifier_knockback", knockback_param)
-		end
-		for _,enemy in pairs(heroes) do
-			enemy:RemoveModifierByName("modifier_knockback")
-			enemy:AddNewModifier(caster, nil, "modifier_knockback", knockback_param)
-		end
+		caster:AddNewModifier(caster, ability, "modifier_axe_berserkers_call_armor", {duration = armor_duration})
 
 		-- Put the ability on cooldown
 		ability:StartCooldown(ability:GetCooldown(ability_level))

@@ -13,8 +13,6 @@ function modifier_imba_meepo_clone_controller:OnCreated()
 		self.base_item = {}
 		self.clone_item = {}
 		self:StartIntervalThink(0.5)
-		self.meepo:AddNewModifier(self.meepo, nil, "modifier_imba_talent_modifier_adder", {})
-		self.meepo:AddNewModifier(self.meepo, nil, "modifier_imba_movespeed_controller", {})
 		self.meepo:AddNewModifier(self.meepo, nil, "modifier_imba_ability_layout_contoroller", {})
 	end
 end
@@ -129,7 +127,6 @@ function modifier_imba_stand_we_divided:IsDebuff()			return false end
 function modifier_imba_stand_we_divided:IsHidden() 			return true end
 function modifier_imba_stand_we_divided:IsPurgable() 		return false end
 function modifier_imba_stand_we_divided:IsPurgeException() 	return false end
-function modifier_imba_stand_we_divided:CheckState() return {[MODIFIER_STATE_NO_UNIT_COLLISION] = true} end
 function modifier_imba_stand_we_divided:DeclareFunctions() return {MODIFIER_EVENT_ON_DEATH} end
 
 function modifier_imba_stand_we_divided:OnCreated()
@@ -137,6 +134,7 @@ function modifier_imba_stand_we_divided:OnCreated()
 		if not self:GetParent():IsTrueHero() then
 			return
 		end
+		--self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_ultimate_scepter_consumed", {})
 		self.base = self:GetParent()
 		self.meepos = {}
 		self.ability = self:GetAbility()

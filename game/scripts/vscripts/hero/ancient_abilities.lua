@@ -384,26 +384,49 @@ function modifier_imba_ancient_buff_think:DeclareFunctions() return {MODIFIER_EV
 
 function modifier_imba_ancient_buff_think:IsHidden() return true end
 
+--[[function modifier_imba_ancient_buff_think:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(15.0)
+	end
+end
+
+function modifier_imba_ancient_buff_think:OnIntervalThink()
+	local caster = self:GetParent()
+	local enigma = caster:FindAbilityByName("enigma_midnight_pulse")
+	if caster:GetHealthPercent() ~= 70 and enigma and not enigma:IsHidden() then
+		caster:SetCursorPosition(caster:GetAbsOrigin())
+		enigma:OnSpellStart()
+		--enigma:SetHidden(true)
+	end
+end]]
+
 function modifier_imba_ancient_buff_think:OnTakeDamage(keys)
 	if IsServer() and keys.unit == self:GetParent() then
-		local magnus = self:GetParent():FindAbilityByName("magnataur_reverse_polarity")
-		local venomancer = self:GetParent():FindAbilityByName("venomancer_poison_nova")
-		local jugg = self:GetParent():FindAbilityByName("juggernaut_blade_fury")
-		if self:GetParent():GetHealthPercent() <= 80 and venomancer and not venomancer:IsHidden() then
+		local caster = self:GetParent()
+		local venomancer = caster:FindAbilityByName("venomancer_poison_nova")
+		local enigma = caster:FindAbilityByName("enigma_midnight_pulse")
+		local jugg = caster:FindAbilityByName("juggernaut_blade_fury")
+		local magnus = caster:FindAbilityByName("magnataur_reverse_polarity")
+		if caster:GetHealthPercent() <= 80 and venomancer and not venomancer:IsHidden() then
 			venomancer:OnSpellStart()
 			venomancer:SetHidden(true)
 		end
-		if self:GetParent():GetHealthPercent() <= 60 and jugg and not jugg:IsHidden() then
+		if caster:GetHealthPercent() <= 70 and enigma and not enigma:IsHidden() then
+			caster:SetCursorPosition(caster:GetAbsOrigin())
+			enigma:OnSpellStart()
+			enigma:SetHidden(true)
+		end
+		if caster:GetHealthPercent() <= 60 and jugg and not jugg:IsHidden() then
 			jugg:OnSpellStart()
 			jugg:SetHidden(true)
 		end
-		if self:GetParent():GetHealthPercent() <= 40 and magnus and not magnus:IsHidden() then
+		if caster:GetHealthPercent() <= 50 and magnus and not magnus:IsHidden() then
 			magnus:OnSpellStart()
 			magnus:SetHidden(true)
 		end
-		if self:GetParent():GetHealthPercent() <= 20 and self:GetAbility():IsCooldownReady() then
-			self:GetAbility():StartCooldown(600)
-			CreateModifierThinker(self:GetParent(), nil, "modifier_imba_ancient_soullink_thinker", {duration = 10.0}, self:GetParent():GetAbsOrigin(), self:GetParent():GetTeamNumber(), false)
+		if caster:GetHealthPercent() <= 40 and self:GetAbility():IsCooldownReady() then
+			self:GetAbility():StartCooldown(120)
+			CreateModifierThinker(caster, nil, "modifier_imba_ancient_soullink_thinker", {duration = 10.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 		end
 	end
 end

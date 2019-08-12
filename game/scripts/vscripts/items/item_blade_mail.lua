@@ -56,7 +56,7 @@ function modifier_imba_balde_mail_2_active:OnTakeDamage(keys)
 	if bit.band(keys.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then
 		return
 	end
-	if keys.unit ~= self:GetParent() or not keys.attacker:IsUnit() or not self:GetParent():IsAlive() then
+	if keys.unit ~= self:GetParent() or not keys.attacker:IsUnit() or not self:GetParent():IsAlive() or keys.attacker:IsBoss() then
 		return
 	end
 	local caster = self:GetCaster()

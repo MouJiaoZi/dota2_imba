@@ -420,43 +420,13 @@ modifier_imba_track = class({})
 function modifier_imba_track:IsDebuff()	return true end
 function modifier_imba_track:GetPriority() return MODIFIER_PRIORITY_HIGH end
 function modifier_imba_track:RemoveOnDeath() return true end
-function modifier_imba_track:IsHidden()
-	if self:GetStackCount() == 1 then
-		return true
-	end
-	return false
-end
-function modifier_imba_track:IsPurgable()
-	if self:GetStackCount() == 1 then
-		return false
-	end
-	return true
-end
-function modifier_imba_track:IsPurgeException()
-	if self:GetStackCount() == 1 then
-		return false
-	end
-	return true
-end
-function modifier_imba_track:CheckState()
-	if self:GetParent():HasModifier("modifier_imba_shadow_dance_effect") then
-		return  nil
-	end
-	return {[MODIFIER_STATE_INVISIBLE] = false}
-end
-
-function modifier_imba_track:DeclareFunctions()
-	return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_PROVIDES_FOW_POSITION, MODIFIER_EVENT_ON_HERO_KILLED}
-end
-
+function modifier_imba_track:IsHidden() return self:GetStackCount() == 1 end
+function modifier_imba_track:IsPurgable() return self:GetStackCount() ~= 1 end
+function modifier_imba_track:IsPurgeException() return self:GetStackCount() ~= 1 end
+function modifier_imba_track:CheckState() return self:GetParent():HasModifier("modifier_imba_shadow_dance_effect") and nil or {[MODIFIER_STATE_INVISIBLE] = false} end
+function modifier_imba_track:DeclareFunctions() return {MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE, MODIFIER_PROPERTY_PROVIDES_FOW_POSITION, MODIFIER_EVENT_ON_HERO_KILLED} end
 function modifier_imba_track:GetModifierProvidesFOWVision() return 1 end
-
-function modifier_imba_track:GetModifierIncomingDamage_Percentage()
-	if self:GetStackCount() == 1 then
-		return self:GetAbility():GetSpecialValueFor("bonus_damage_scepter")
-	end
-	return 0
-end
+function modifier_imba_track:GetModifierIncomingDamage_Percentage() return self:GetStackCount() == 1 and self:GetAbility():GetSpecialValueFor("bonus_damage_scepter") or 0 end
 
 function modifier_imba_track:OnHeroKilled(keys)
 	if not IsServer() then
@@ -468,10 +438,12 @@ function modifier_imba_track:OnHeroKilled(keys)
 	if not keys.target:IsRealHero() or keys.reincarnate then
 		return
 	end
+	local target = self:GetParent()
+	local caster = self:GetCaster()
 	local ally_gold = self:GetAbility():GetSpecialValueFor("bonus_gold") + keys.target:GetLevel() * self:GetAbility():GetSpecialValueFor("bonus_gold_per_lvl")
 	local self_gold = self:GetAbility():GetSpecialValueFor("bonus_gold_self") + keys.target:GetLevel() * self:GetAbility():GetSpecialValueFor("bonus_gold_self_per_lvl")
 	local total_ally = 0
-	local allies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),
+	local allies = FindUnitsInRadius(caster:GetTeamNumber(),
 									self:GetParent():GetAbsOrigin(),
 									nil,
 									self:GetAbility():GetSpecialValueFor("aura_radius"),
@@ -480,17 +452,22 @@ function modifier_imba_track:OnHeroKilled(keys)
 									DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD,
 									FIND_ANY_ORDER,
 									false)
-
+	local has = HeroItems:UnitHasItem(caster, "ti6_hunters_hoard_model")
 	for _,ally in pairs(allies) do
-		if ally ~= self:GetCaster() and ally:IsTrueHero() then
+		if ally ~= caster and ally:IsTrueHero() then
 			ally:ModifyGold(ally_gold, true, 0)
 			total_ally = total_ally + 1
 			SendOverheadEventMessage(ally, OVERHEAD_ALERT_GOLD, ally, ally_gold, ally:GetPlayerOwner())
+			if has then
+				local pfx = ParticleManager:CreateParticle("particles/econ/items/bounty_hunter/bounty_hunter_hunters_hoard/bounty_hunter_hoard_track_reward.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+				ParticleManager:SetParticleControlEnt(pfx, 2, ally, PATTACH_ABSORIGIN_FOLLOW, nil, ally:GetAbsOrigin(), true)
+				ParticleManager:SetParticleControlEnt(pfx, 3, caster, PATTACH_ABSORIGIN_FOLLOW, nil, caster:GetAbsOrigin(), true)
+				ParticleManager:ReleaseParticleIndex(pfx)
+			end
 		end
 	end
-	self:GetCaster():ModifyGold(self_gold, true, 0)
-	SendOverheadEventMessage(self:GetCaster(), OVERHEAD_ALERT_GOLD, self:GetCaster(), self_gold, self:GetCaster():GetPlayerOwner())
-	--GameRules:SendCustomMessage("追踪术信息："..total_ally.."名盟友获得赏金，赏金："..ally_gold.."（盟友），"..self_gold.."（施法者）。", 0, 0)
+	caster:ModifyGold(self_gold, true, 0)
+	SendOverheadEventMessage(caster, OVERHEAD_ALERT_GOLD, caster, self_gold, caster:GetPlayerOwner())
 	self:Destroy()
 end
 
@@ -498,11 +475,18 @@ function modifier_imba_track:OnCreated()
 	if IsServer() then
 		local target = self:GetParent()
 		local caster = self:GetCaster()
-		self.pfx1 = ParticleManager:CreateParticleForTeam("particles/units/heroes/hero_bounty_hunter/bounty_hunter_track_trail.vpcf", PATTACH_POINT_FOLLOW, target, caster:GetTeam())
-		ParticleManager:SetParticleControlEnt(self.pfx1, 0, target, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(self.pfx1, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
-
-		self.pfx2 = ParticleManager:CreateParticleForTeam("particles/units/heroes/hero_bounty_hunter/bounty_hunter_track_shield.vpcf", PATTACH_OVERHEAD_FOLLOW, target, caster:GetTeam())
+		local pfx_name1 = "particles/units/heroes/hero_bounty_hunter/bounty_hunter_track_trail.vpcf"
+		local pfx_name2 = "particles/units/heroes/hero_bounty_hunter/bounty_hunter_track_shield.vpcf"
+		if HeroItems:UnitHasItem(caster, "ti6_hunters_hoard_model") then
+			pfx_name1 = "particles/econ/items/bounty_hunter/bounty_hunter_hunters_hoard/bounty_hunter_hoard_track_trail.vpcf"
+			pfx_name2 = "particles/econ/items/bounty_hunter/bounty_hunter_hunters_hoard/bounty_hunter_hoard_shield.vpcf"
+		end
+		local pfx1 = ParticleManager:CreateParticleForTeam(pfx_name1, PATTACH_POINT_FOLLOW, target, caster:GetTeamNumber())
+		ParticleManager:SetParticleControlEnt(pfx1, 0, target, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(pfx1, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+		local pfx2 = ParticleManager:CreateParticleForTeam(pfx_name2, PATTACH_OVERHEAD_FOLLOW, target, caster:GetTeamNumber())
+		self:AddParticle(pfx1, false, false, 15, false, false)
+		self:AddParticle(pfx2, false, false, 15, false, false)
 		if self:GetCaster():HasTalent("special_bonus_imba_bounty_hunter_1") then
 			self:StartIntervalThink(0.1)
 		end
@@ -511,15 +495,6 @@ end
 
 function modifier_imba_track:OnIntervalThink()
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), self:GetCaster():GetTalentValue("special_bonus_imba_bounty_hunter_1"), 0.1, false)
-end
-
-function modifier_imba_track:OnDestroy()
-	if IsServer() then
-		ParticleManager:DestroyParticle(self.pfx1, false)
-		ParticleManager:DestroyParticle(self.pfx2, false)
-		ParticleManager:ReleaseParticleIndex(self.pfx1)
-		ParticleManager:ReleaseParticleIndex(self.pfx2)
-	end
 end
 
 modifier_imba_track_aura = class({})
