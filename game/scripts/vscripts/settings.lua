@@ -1,4 +1,4 @@
-IMBA_GAME_VERSION = 141
+IMBA_GAME_VERSION = 154
 
 IMBA_WEB_SERVER = "https://www.moujiaozi.me/"
 
@@ -8,9 +8,6 @@ GAME_UPDATED_CAST = false
 
 
 -- In this file you can set up all the properties and settings for your game mode.
-
-IMBA_DEBUG_AK = false
-
 ENABLE_HERO_RESPAWN = true              -- Should the heroes automatically respawn on a timer or stay dead until manually respawned
 UNIVERSAL_SHOP_MODE = false             -- Should the main shop contain Secret Shop items as well as regular items
 if GameRules:IsCheatMode() then
@@ -18,9 +15,15 @@ if GameRules:IsCheatMode() then
 end
 ALLOW_SAME_HERO_SELECTION = false        -- Should we let people select the same hero as each other
 
-HERO_SELECTION_TIME = 65.0              -- How long should we let people select their hero?
-IMBA_LOADING_DELAY = 0.0
-PRE_GAME_TIME = 60.0 + IMBA_LOADING_DELAY                   	-- How long after people select their heroes should the horn blow and the game start?
+HERO_SELECTION_TIME = 60.0              -- How long should we let people select their hero?
+IMBA_SELECTION_SHOW_UP_DELAY = 5.0
+AP_BAN_TIME_TEAM = 10.0
+IMBA_LOADING_DELAY = 30.0
+if GameRules:IsCheatMode() then
+	HERO_SELECTION_TIME = 10.0
+	AP_BAN_TIME_TEAM = 0
+	IMBA_LOADING_DELAY = 0
+end
 POST_GAME_TIME = 30.0                   -- How long should we let people look at the scoreboard before closing the server automatically?
 TREE_REGROW_TIME = 300.0                 -- How long should it take individual trees to respawn after being cut down/destroyed?
 
@@ -72,7 +75,7 @@ LOSE_GOLD_ON_DEATH = false               -- Should we have players lose the norm
 SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see their own inventory even when selecting other units?
 DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being able to buy items into their stash when not at a shop?
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
-FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
+FORCE_PICKED_HERO = "npc_dota_hero_dummy_dummy"                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
 
 FIXED_RESPAWN_TIME = 30                 -- What time should we use for a fixed respawn timer?  Use -1 to keep the default dota behavior.
 FOUNTAIN_CONSTANT_MANA_REGEN = 0       -- What should we use for the constant fountain mana regen?  Use -1 to keep the default dota behavior.

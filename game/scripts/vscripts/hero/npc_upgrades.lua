@@ -108,6 +108,8 @@ imba_fountain_buffs = class({})
 LinkLuaModifier("modifier_imba_fountain_buff", "hero/npc_upgrades", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_fountain_disabled", "hero/npc_upgrades", LUA_MODIFIER_MOTION_NONE)
 
+LinkLuaModifier("modifier_imba_game_start_pause", "hero/npc_upgrades", LUA_MODIFIER_MOTION_NONE)
+
 function imba_fountain_buffs:GetIntrinsicModifierName() return "modifier_imba_fountain_buff" end
 
 modifier_imba_fountain_buff = class({})
@@ -156,6 +158,7 @@ end
 
 function modifier_imba_fountain_buff:OnCreated()
 	if IsServer() then
+		self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_game_start_pause", {duration = IMBA_LOADING_DELAY})
 		self:StartIntervalThink(0.5)
 		if GetMapName() == "dbii_death_match" then
 			self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_imba_fountain_disabled", {})
@@ -179,3 +182,35 @@ function modifier_imba_fountain_disabled:IsPurgable() 		return false end
 function modifier_imba_fountain_disabled:IsPurgeException() return false end
 function modifier_imba_fountain_disabled:CheckState() return {[MODIFIER_STATE_DISARMED] = true} end
 function modifier_imba_fountain_disabled:GetTexture() return "imba_ancient_dire_spawn_behemoth" end
+
+modifier_imba_game_start_pause = class({})
+
+function modifier_imba_game_start_pause:IsDebuff()			return false end
+function modifier_imba_game_start_pause:IsHidden() 			return true end
+function modifier_imba_game_start_pause:IsPurgable() 		return false end
+function modifier_imba_game_start_pause:IsPurgeException() 	return false end
+function modifier_imba_game_start_pause:IsAura() return true end
+function modifier_imba_game_start_pause:GetAuraDuration() return 0.1 end
+function modifier_imba_game_start_pause:GetModifierAura() return "modifier_imba_stunned" end
+function modifier_imba_game_start_pause:GetAuraRadius() return 50000 end
+function modifier_imba_game_start_pause:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_DEAD end
+function modifier_imba_game_start_pause:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_BOTH end
+function modifier_imba_game_start_pause:GetAuraSearchType() return DOTA_UNIT_TARGET_ALL end
+
+function modifier_imba_game_start_pause:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(1.0)
+		if GameRules:IsCheatMode() then
+			self:Destroy()
+		end
+	end
+end
+
+function modifier_imba_game_start_pause:OnIntervalThink()
+	if not CustomNetTables:GetTableValue("imba_hero_selection_list", "selection_phase_done") then
+		self:SetDuration(self:GetDuration(), false)
+	else
+		self:StartIntervalThink(-1)
+		print("123")
+	end
+end

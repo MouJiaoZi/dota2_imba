@@ -1,4 +1,554 @@
-.IMBA_HeroCard
+.HeroSelection_Basic
 {
-	box-shadow: #000000aa -2px -2px 4px 4px;
+	height: 100%;
+	width: 100%;
+	flow-children: none;
+	background-color: black;
+	transition-property: opacity;
+	transition-duration: 1s;
+	transition-delay: 0.8s;
+	opacity: 0.0;
+}
+
+.HeroSelection_Basic.ongoing
+{
+	opacity: 1.0;
+}
+
+#ReturnToMenuButton
+{
+	margin-left: 16px;
+	margin-top: 12px;
+	width: 30px;
+	height: 30px;
+	background-image: url("s2r://panorama/images/control_icons/return_to_game_png.vtex");
+	background-repeat: no-repeat;
+	background-size: 100%;
+	background-position: center;
+	transform: scaleY(-1);
+	tooltip-position: bottom;
+	opacity: 0.5;
+	wash-color: #CDF;
+
+	transition-property: opacity, wash-color;
+	transition-duration: 0.2s;
+}
+
+#ReturnToMenuButton:hover
+{
+	opacity: 1.0;
+	wash-color: #FFF;
+
+	transition-property: opacity, wash-color;
+	transition-duration: 0.2s;
+}
+
+#HeroSelection_BG
+{
+	width: 25%;
+	height: 25%;
+	horizontal-align: center;
+	vertical-align: center;
+	pre-transform-scale2d: 4;
+	blur: gaussian (2);
+	wash-color: #33336666;
+	opacity: 1.0;
+
+	transition-property: opacity, wash-color;
+	transition-duration: 1s;
+	transition-delay: 0.8s;
+	transition-timing-function: ease-in-out;
+}
+
+#HeroPick_Card_Hover
+{
+	border: 2px solid black;
+	width: 151px;
+	height: 200px;
+	pre-transform-scale2d: 0.5;
+	box-shadow: #000000aa -8px -8px 16px 16px;
+	opacity: 0.0;
+	transition-property: opacity, pre-transform-scale2d;
+	transition-duration: 0.1s;
+}
+
+#HeroPick_Card_Hover.Show
+{
+	pre-transform-scale2d: 1.0;
+	opacity: 1.0;
+	transition-property: opacity, pre-transform-scale2d;
+	transition-duration: 0.1s;
+}
+
+#HeroPick_Card_Hover_Name
+{
+	width: 100%;
+	text-transform: uppercase;
+	text-align: center;
+	background-color: #000c;
+	padding: 5px 4px 2px 4px;
+	vertical-align: bottom;
+	letter-spacing: 2px;
+	font-size: 16px;
+	color: white;
+}
+
+#HeroGrid_Base
+{
+	width: 1204px;
+	height: 664px;
+	background-color: #00FF9000;
+	margin-right: -40px;
+}
+
+#HeroPick_Info
+{
+	width: 376px;
+	height: 650px;
+
+	padding-top: 8px;
+
+	background-color: #00FF9009;
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #171A25dd  ), to( #171A25dd ) );
+	border: 1px solid black;
+	flow-children: none;
+	horizontal-align: right;
+	opacity: 1;
+	transform: translateX(0px) rotateY(0deg) scaleX(1);
+	transition-property: opacity, transform;
+	transition-duration: 0.8s;
+}
+
+.HeroPick_Info_PnBText
+{
+	margin-top: 0px;
+	color: #A9C7f1;
+	font-size: 32px;
+	font-weight: thin;
+	text-align: center;
+	text-transform: uppercase;
+	horizontal-align: center;
+	opacity: 0.0;
+	transition-property: opacity;
+	transition-duration: .28s;
+}
+
+#HeroPick_Info_Main
+{
+	width: 100%;
+}
+
+#HeroPick_Info_Main_Header
+{
+	padding-left: 16px;
+	padding-right: 16px;
+	flow-children: right;
+}
+
+#HeroPick_Info_Main_Header_PrimaryAttributeIcon
+{
+	width: 32px;
+	height: 32px;
+
+	margin-top: 2px;
+
+	background-size: contain;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+
+#HeroPick_Info_Main_Header_HeroName
+{
+	color: white;
+	font-size: 32px;
+	text-transform: uppercase;
+	margin-left: 12px;
+	/*font-weight: bold;*/
+	letter-spacing: 2px;
+	text-overflow: shrink;
+	height: 43px;
+}
+
+#HeroPick_Info_Main_Movie
+{
+	padding-left: 16px;
+	flow-children: right;
+	height: 226px;
+	margin-top: 5px;
+	margin-bottom: 3px;
+	opacity: 1;
+
+	transform: translateY(0px);
+
+	transition-property: transform;
+	transition-duration: .1s;
+}
+
+#HeroPick_Info_Main_Movie_Main
+{
+	/* Full size is 192x256 */
+	width: fill-parent-flow( 1.0 );
+	height: width-percentage( 133% );
+	width: 160px;
+	height: 203px;
+	box-shadow: #000000aa -8px -8px 16px 16px;
+}
+
+#HeroPick_Info_Main_Abilities
+{
+	padding-left: 16px;
+	padding-right: 16px;
+	margin-top: 0px;
+	flow-children: right;
+	height: 60px;
+	width: 100%;
+}
+
+.HeroPick_Info_Main_Ability_Icon
+{
+	margin-right: 8px;
+	width: fill-parent-flow( 1.0 );
+	height: width-percentage( 100% );
+	tooltip-position: bottom;
+	visibility: collapse;
+}
+
+#HeroPick_Info_Main_Talent
+{
+	wash-color: #5E86C2;
+	background-image: url("s2r://panorama/images/spellicons/statbranch_psd.vtex");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+
+#HeroPick_Info_Main_Scepter
+{
+	wash-color: #5E86C2;
+	background-image: url("s2r://panorama/images/spellicons/aghsicon_psd.vtex");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+
+#HeroPick_Info_Talent_Title
+{
+	color: #e1e1e1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    horizontal-align: center;
+    text-shadow: 0px 0px 4px 2.0 #000000;
+    height: 24px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    vertical-align: top;
+
+    font-size: 18px;
+    font-family: defaultFont;
+}
+
+#HeroPick_Info_TalentDetail
+{
+	border: 2px solid black;
+	margin: 0px;
+	box-shadow: #00000066 -4px -4px 8px 8px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from ( #181b1d), to ( #22292f ) );
+	padding: 12px 12px 8px 12px;
+}
+
+.LeftTalentBg
+{
+	background-color: gradient( linear, 0% 0%, 100% 0%, from ( #0e1011), to ( #22292f00 ) );
+}
+
+.RightTalentBg
+{
+	background-color: gradient( linear, 0% 0%, 100% 0%, from ( #22292f00), to ( #0e1011 ) );
+}
+
+.HeroGridTitle
+{
+	height: 20px;
+	color: #ffffff80;
+	text-shadow: 2px 2px 4px black;
+	padding-left: 4px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: 16px;
+	font-weight: semi-bold;
+}
+
+.HeroCardGrid
+{
+	width: 1181px;
+	height: 174px;
+	margin-right: 50px;
+	flow-children: right-wrap;
+	overflow: squish scroll;
+	background-color: #00FF9000;
+}
+
+.HeroCard_Base
+{
+	width: 51px;
+	height: 83px;
+}
+
+.HeroCard_Static
+{
+	horizontal-align: center;
+	width: 43px;
+	height: 75px;
+	margin: 4px;
+	saturation: 0.7;
+	transition-duration: 0.2s;
+	transition-property: saturation;
+}
+
+.HeroCard_Overlay
+{
+	width: 100%;
+	height: 100%;
+	background-size: 63px 92px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: #00FF9000;
+	background-image: url('file://{images}/custom_game/hero_selection/overlay_selected.png');
+
+	opacity: 0.0;
+	transition-property: opacity;
+	transition-duration: 0.2s;
+	
+}
+
+.HeroCard_Overlay.visible
+{
+	opacity: 1.0;
+	transition-property: opacity;
+	transition-duration: 0.2s;
+}
+
+#PlayerCard_Border
+{
+	width: 128px;
+	height: 76px;
+	
+	background-image: url("s2r://panorama/images/masks/topbar_heroslant_left_inset_psd.vtex");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	opacity: 0.3;
+	wash-color: black;
+}
+
+#PlayerCard_Border.DireTeamPlayers
+{
+	background-image: url("s2r://panorama/images/masks/topbar_heroslant_right_inset_psd.vtex");
+}
+
+#PlayerCard_HeroImageContainer
+{
+	height: 72px;
+	opacity-mask: url("s2r://panorama/images/masks/topbar_heroslant_left_psd.vtex");
+	flow-children: none;
+	background-color: #0000002C;
+	margin-left: 4px;
+	pre-transform-scale2d: 1;
+
+	animation-duration: 0.82s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+	animation-direction: alternate-reverse;	
+	
+	transition-property: wash-color, pre-transform-scale2d, background-color;
+	transition-duration: .2s;
+}
+
+#PlayerCard_HeroImageContainer.DireTeamPlayers
+{
+	opacity-mask: url("s2r://panorama/images/masks/topbar_heroslant_right_psd.vtex");
+	margin-left: 6px;
+}
+
+#PlayerCard_HeroImage
+{
+	background-color: gradient( radial, 50% 90%, 0% 0%, 80% 90%, from( #444D5A ), to( #161B23 ) );
+	width: 118px;
+	height: width-percentage( 56.25% );
+	transform: translateY(6px) translateX(-1px);
+
+	saturation: 1.0;
+	brightness: 1.0;
+	contrast: 1.0;
+	wash-color: white;
+	pre-transform-scale2d: 1;
+	
+	transition-property: transform, saturation, contrast, brightness, wash-color, pre-transform-scale2d;
+	transition-duration: .12s;
+	transition-timing-function: ease-in-out;
+}
+
+#PlayerCard_HeroImage.HeroPickDirty
+{
+	saturation: 0.0;
+	contrast: 0.85;
+	brightness: .3;
+	wash-color: #ACBFDD;
+}
+
+#PlayerCard_NameContainer
+{
+	width: 100%;
+	height: 27px;
+	margin-top: 50px;
+
+	vertical-align: center;
+	text-align: center;
+	horizontal-align: center;
+
+	background-color: #000000A3;
+	transition-property: opacity;
+	transition-duration: 0.3s;
+	flow-children: none;
+}
+
+#PlayerCard_NameContainer.RadiantTeamPlayers
+{
+	margin-left: 10px;
+}
+
+#PlayerCard_NameContainer.DireTeamPlayers
+{
+	margin-right: 10px;
+}
+
+#PlayerCard_NameContainer > Label, #PlayerCard_PlayerName_Leader > Label, #PlayerCard_PlayerName
+{
+	height: 100%;
+	text-align: center;
+	horizontal-align: center;
+	font-weight: thin;
+	font-size: 27px;
+	color: #7a8a9d;
+	text-shadow: 0px 0px 0px 1 transparent;
+
+	transition-property: color, opacity, text-shadow, wash-color;
+	transition-duration: 0.3s;
+	
+	text-shadow: 1px 1px 3px 2.0 #000000;
+
+	tooltip-position: bottom;
+	tooltip-body-position: 50% 50%;
+	context-menu-position: bottom;
+	context-menu-body-position: 50% 50%;
+}
+
+#PlayerCard_PlayerName_Leader
+{
+	horizontal-align: center;
+	flow-children: right;
+	transition-property: opacity;
+	transition-duration: 0.3s;
+	width: fit-children;
+	height: 28px;
+}
+
+#PlayerCard_LeaderIMG
+{
+	visibility: collapse;
+	background-image: url("s2r://panorama/images/hud/player_mvp_crown_png.vtex");
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 27px;
+	height: 28px;
+	z-index: 10;
+	horizontal-align: center;
+
+	tooltip-position: bottom;
+	tooltip-body-position: 50% 50%;
+}
+
+#HeroPick_Info_ButtonBase
+{
+	width: fill-parent-flow( 1.0 );
+	height: 150px;
+	background-color: #7F003700;
+	margin-left: 15px;
+	margin-right: 16px;
+	margin-bottom: 20px;
+	horizontal-align: center;
+	vertical-align: center;
+}
+
+.HeroPick_Info_Button
+{
+	padding: 8px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #404D65dd ), to( #2B3445dd ) );
+
+	border-top: 1px solid #6F819B;
+	border-left: 1px solid #6F819B22;
+	border-right: 1px solid #6F819B11;
+	border-bottom: 1px solid #3F414B33;
+	box-shadow: #0000008f -6px -6px 12px 12px;
+	transition-property: opacity, background-color;
+	transition-duration: 0.18s;
+}
+
+.HeroPick_Info_Button:hover
+{
+	brightness: 1.2;
+}
+
+.HeroPick_Info_Button:active
+{
+	brightness: 1.5;
+}
+
+.HeroPick_Info_Button Label
+{
+	color: #ccc;
+	text-transform: uppercase;
+	text-align: center;
+	horizontal-align: center;
+	vertical-align: center;
+}
+
+.HeroPick_Info_Button_RandomIcon
+{
+	width: 34px;
+	height: 38px;
+	horizontal-align: center;
+	background-image: url("s2r://panorama/images/control_icons/random_dice_psd.vtex");
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+#HeroSelection_Top_Center_Time
+{
+	color: white;
+	width: 100%;
+	height: 88px;
+	font-size: 64px;
+	font-weight: thin;
+	text-align: center;
+
+	transition-property: transform, opacity, pre-transform-scale2d;
+	transition-duration: 0.4s;
+	transition-timing-function: ease-in-out;
+}
+
+#HeroSelection_Top_Center_Text,#HeroSelection_Top_Center_Phase
+{
+	color: white;
+	text-shadow: 0px 0px 6px 1.0 #9EF8FF45;
+	font-size: 20px;
+	text-align: center;
+	text-transform: uppercase;
+	horizontal-align: center;
+	vertical-align: top;
+}
+
+#HeroSelection_Top_Center_Text.DarkMoon
+{
+	text-shadow: 0px 0px 8px 2.0 #BA707045;
+	font-size: 28px;
+	letter-spacing: 2px;
 }

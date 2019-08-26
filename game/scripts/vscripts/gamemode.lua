@@ -54,6 +54,8 @@ require('events')
 require('events/imba_events')
 require('imba')
 
+require('internal/hero_selection')
+
 require('libraries/imba_level_rewards')
 
 require('libraries/abilitychargecontroller')
@@ -105,7 +107,9 @@ end
 ]]
 function GameMode:OnFirstPlayerLoaded()
 	DebugPrint("[BAREBONES] First Player has loaded")
-	IMBA:DumpAllHero()
+	IMBAHeroSelection:Init()
+	--[[GameRules:SetSameHeroSelectionEnabled(true)
+	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_dummy_dummy")]]
 end
 
 --[[

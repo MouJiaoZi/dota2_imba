@@ -178,6 +178,7 @@ imba_phantom_assassin_blur = class({})
 LinkLuaModifier("modifier_imba_blur", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_blur_detected", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_blur_active", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_blur_active_talent", "hero/hero_phantom_assassin", LUA_MODIFIER_MOTION_NONE)
 
 function imba_phantom_assassin_blur:IsHiddenWhenStolen() 		return false end
 function imba_phantom_assassin_blur:IsRefreshable() 			return true end
@@ -206,6 +207,9 @@ function imba_phantom_assassin_blur:OnSpellStart()
 	local pfx = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_death_lines.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
 	ParticleManager:SetParticleControlEnt(pfx, 1, caster, PATTACH_ABSORIGIN_FOLLOW, nil, caster:GetAbsOrigin(), true)
 	ParticleManager:ReleaseParticleIndex(pfx)
+	if caster:HasTalent("special_bonus_imba_phantom_assassin_2") then
+		caster:AddNewModifier(caster, self, "modifier_imba_blur_active_talent", {duration = caster:GetTalentValue("special_bonus_imba_phantom_assassin_2", "duration")})
+	end
 end
 
 modifier_imba_blur_active = class({})
@@ -217,6 +221,14 @@ function modifier_imba_blur_active:IsPurgeException() 	return false end
 function modifier_imba_blur_active:GetEffectName() return "particles/units/heroes/hero_phantom_assassin/phantom_assassin_active_blur.vpcf" end
 function modifier_imba_blur_active:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_imba_blur_active:CheckState() return {[MODIFIER_STATE_INVULNERABLE] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
+
+modifier_imba_blur_active_talent = class({})
+
+function modifier_imba_blur_active_talent:IsDebuff()			return false end
+function modifier_imba_blur_active_talent:IsHidden() 			return false end
+function modifier_imba_blur_active_talent:IsPurgable() 			return false end
+function modifier_imba_blur_active_talent:IsPurgeException() 	return false end
+function modifier_imba_blur_active_talent:CheckState() return {[MODIFIER_STATE_NOT_ON_MINIMAP_FOR_ENEMIES] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true} end
 
 modifier_imba_blur = class({})
 
@@ -251,13 +263,7 @@ function modifier_imba_blur_detected:GetStatusEffectName() return "particles/sta
 function modifier_imba_blur_detected:StatusEffectPriority() return 15 end
 function modifier_imba_blur_detected:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE} end
 function modifier_imba_blur_detected:GetModifierMoveSpeedBonus_Percentage() return self:GetCaster():PassivesDisabled() and 0 or self:GetAbility():GetSpecialValueFor("blur_ms") end
-function modifier_imba_blur_detected:CheckState()
-	if self:GetParent():HasTalent("special_bonus_imba_phantom_assassin_2") then
-		return {[MODIFIER_STATE_NOT_ON_MINIMAP_FOR_ENEMIES] = true, [MODIFIER_STATE_NO_HEALTH_BAR] = true}
-	else
-		return {[MODIFIER_STATE_NOT_ON_MINIMAP_FOR_ENEMIES] = true}
-	end
-end
+function modifier_imba_blur_detected:CheckState() return {[MODIFIER_STATE_NOT_ON_MINIMAP_FOR_ENEMIES] = true} end
 
 imba_phantom_assassin_coup_de_grace = class({})
 

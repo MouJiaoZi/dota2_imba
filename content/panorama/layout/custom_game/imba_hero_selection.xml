@@ -1,0 +1,174 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/hero_selection_imba.css" />
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/hero_inspect.vcss_c" />
+		<include src="s2r://panorama/styles/hudstyles.vcss_c" />
+		<include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+		<include src="s2r://panorama/styles/hud/dota_hud_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_ui.vcss_c" />
+		<include src="s2r://panorama/styles/imba_scoreboard.css" />
+		<include src="s2r://panorama/styles/tooltips/tooltip_stat_branch.vcss_c" />
+		<include src="s2r://panorama/styles/ui_stat_branch.vcss_c" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/imba_hero_selection.js" />
+	</scripts>
+	<Panel class="HeroSelection_Basic" hittest="false">
+		<Button hittest="true" style="width:100%;height:100%;z-index:-1;"/>
+		<Button id="ReturnToMenuButton" hittest="true" onactivate="DOTAHUDShowDashboard();" onmouseover="UIShowTextTooltip( DOTA_HUD_BackToDashboard )"  onmouseout="UIHideTextTooltip()" />
+		<DOTAScenePanel id="HeroSelection_BG" hittest="false" map="backgrounds/pregame_phase" camera="shot_cameraA"/>
+		<Panel id="HeroPick_Card_Hover" hittest="false" style="z-index:100;">
+			<DOTAHeroMovie id="HeroPick_Card_Hover_Movie" hittest="false" heroname="npc_dota_hero_axe"/>
+			<Label id="HeroPick_Card_Hover_Name" text="" />
+		</Panel>
+		<Panel hittest="false" style="height:100%;width:100%;flow-children:down;">
+			<Panel id="HeroSelection_Top" hittest="false" style="horizontal-align:center;flow-children:right;">
+				<Panel id="HeroSelection_Top_Left" hittest="false" style="width:650px;height:150px;flow-children:right-wrap;"/>
+				<Panel id="HeroSelection_Top_Center" hittest="false" style="width:250px;height:150px;" class="TopBottomFlow">
+					<Label id="HeroSelection_Top_Center_Time" class="MonoNumbersFont" text="" />
+					<Label id="HeroSelection_Top_Center_Text" html="true" text="#addon_game_name" />
+					<Label id="HeroSelection_Top_Center_Phase" style="margin-top:5px;" html="true" text="" />
+				</Panel>
+				<Panel id="HeroSelection_Top_Right" hittest="false" style="width:650px;height:150px;flow-children:left-wrap;"/>
+			</Panel>
+			<Panel id="HeroSelection_Main" hittest="false" class="LeftRightFlow" style="horizontal-align:center;margin-top:40px;">
+				<Panel id="HeroGrid_Base" hittest="false" class="TopBottomFlow">
+					<Panel id="HeroGrid_Str" hittest="false" class="TopBottomFlow">
+						<Label class="HeroGridTitle" text="#DOTA_STR"/>
+						<Panel id="HeroCardGrid_Str" hittest="false" class="HeroCardGrid" />
+					</Panel>
+					<Panel id="HeroGrid_Agi" hittest="false" class="TopBottomFlow" style="margin-top:5px;">
+						<Label class="HeroGridTitle" hittest="false" text="#DOTA_AGI"/>
+						<Panel id="HeroCardGrid_Agi" hittest="false" class="HeroCardGrid" />
+					</Panel>
+					<Panel id="HeroGrid_Int" hittest="false" class="TopBottomFlow" style="margin-top:5px;">
+						<Label class="HeroGridTitle" hittest="false" text="#DOTA_INT"/>
+						<Panel id="HeroCardGrid_Int" hittest="false" class="HeroCardGrid" />
+					</Panel>
+				</Panel>
+				<Panel id="HeroPick_Info" hittest="false">
+					<Label id="HeroPick_Info_BanDescription" hittest="false" class="HeroPick_Info_PnBText" text="#DOTA_HeroInspect_BanDescription" />
+					<Label id="HeroPick_Info_PickDescription" hittest="false" class="HeroPick_Info_PnBText" text="#DOTA_HeroInspect_PickDescription" />
+					<Panel id="HeroPick_Info_Main" hittest="false" class="TopBottomFlow">
+						<Panel id="HeroPick_Info_Main_Header" hittest="false">
+							<Panel id="HeroPick_Info_Main_Header_PrimaryAttributeIcon" hittest="false" />
+							<Label id="HeroPick_Info_Main_Header_HeroName" hittest="false" text=""/>
+						</Panel>
+						<Panel id="HeroPick_Info_Main_Movie" hittest="false" class="LeftRightFlow" >
+							<DOTAHeroMovie id="HeroPick_Info_Main_Movie_Main" hittest="false" heroname=""/>
+							<Panel id="HeroPick_Info_ButtonBase" hittest="false" style="visibility:visible;" >
+								<Panel id="HeroPick_Info_BanButton" hittest="false" style="width:100%;height:100%;visibility:visible;" class="TopBottomFlow" >
+									<Button id="HeroSelection_BanButton" hittest="true" style="width:100%;height:60px;vertical-align:center;" class="HeroPick_Info_Button" onactivate="PlayerBanHero();">
+										<Label hittest="false" text="#IMBA_HUD_HERO_SELECTION_BAN_TEXT" style="font-size:20px;color:red;" />
+									</Button>
+								</Panel>
+								<Panel id="HeroPick_Info_PickRandomButton" hittest="false" style="width:100%;height:100%;visibility:visible;" class="TopBottomFlow" >
+									<Button id="HeroPick_Info_Button_Pick" class="HeroPick_Info_Button" style="width:100%;height:60px;vertical-align:top;" onactivate="PlayerSelectHero();">
+										<Label hittest="false" text="#IMBA_HUD_HERO_SELECTION_PICK" style="font-size:20px;" />
+									</Button>
+									<Button id="HeroPick_Info_Button_Random" class="HeroPick_Info_Button LeftRightFlow" style="width:100%;height:60px;vertical-align:bottom;" onactivate="PlayerRandomHero();">
+										<Panel class="HeroPick_Info_Button_RandomIcon" />
+										<Label hittest="false" text="#IMBA_HUD_HERO_SELECTION_RANDOM" style="font-size:20px;" />
+									</Button>
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel id="HeroPick_Info_Main_Abilities" hittest="false">
+							<DOTAAbilityImage id="HeroPick_Info_Main_Ability_1" class="HeroPick_Info_Main_Ability_Icon" scaling="stretch-to-fit-preserve-aspect" hittest="true"/>
+							<DOTAAbilityImage id="HeroPick_Info_Main_Ability_2" class="HeroPick_Info_Main_Ability_Icon" scaling="stretch-to-fit-preserve-aspect" hittest="true"/>
+							<DOTAAbilityImage id="HeroPick_Info_Main_Ability_3" class="HeroPick_Info_Main_Ability_Icon" scaling="stretch-to-fit-preserve-aspect" hittest="true"/>
+							<DOTAAbilityImage id="HeroPick_Info_Main_Ability_4" class="HeroPick_Info_Main_Ability_Icon" scaling="stretch-to-fit-preserve-aspect" hittest="true"/>
+							<DOTAAbilityImage id="HeroPick_Info_Main_Ability_5" class="HeroPick_Info_Main_Ability_Icon" scaling="stretch-to-fit-preserve-aspect" hittest="true"/>
+							<DOTAAbilityImage id="HeroPick_Info_Main_Ability_6" class="HeroPick_Info_Main_Ability_Icon" scaling="stretch-to-fit-preserve-aspect" hittest="true"/>
+						</Panel>
+						<Panel id="HeroPick_Info_Talent_Scepter_Detail" hittest="false" style="margin-top: 30px;">
+							<Panel id="HeroPick_Info_TalentDetail" hittest="false" style="width:430px;height:fit-children;flow-children:down;">
+								<Label id="HeroPick_Info_Talent_Title" text="#DOTA_StatBranch_TooltipTitle" />
+								<Panel id="HeroPick_Info_Talent_Tree" style="width:100%;flow-children:down;">
+									<Panel id="HeroPick_Info_Talent_Tree_4" style="width:100%;">
+										<Panel class="BranchChoiceContainer LeftBranch LeftTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade8" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="BranchChoiceContainer RightBranch RightTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade7" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="Center">
+											<Panel class="ChoiceArrow Left" />
+											<Panel class="LevelBG">
+												<Label class="ReqLabel" text="25" />
+											</Panel>
+											<Panel class="ChoiceArrow Right" />
+										</Panel>
+									</Panel>
+									<Panel id="HeroPick_Info_Talent_Tree_3" style="width:100%;">
+										<Panel class="BranchChoiceContainer LeftBranch LeftTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade6" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="BranchChoiceContainer RightBranch RightTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade5" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="Center">
+											<Panel class="ChoiceArrow Left" />
+											<Panel class="LevelBG">
+												<Label class="ReqLabel" text="20" />
+											</Panel>
+											<Panel class="ChoiceArrow Right" />
+										</Panel>
+									</Panel>
+									<Panel id="HeroPick_Info_Talent_Tree_2" style="width:100%;">
+										<Panel class="BranchChoiceContainer LeftBranch LeftTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade4" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="BranchChoiceContainer RightBranch RightTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade3" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="Center">
+											<Panel class="ChoiceArrow Left" />
+											<Panel class="LevelBG">
+												<Label class="ReqLabel" text="15" />
+											</Panel>
+											<Panel class="ChoiceArrow Right" />
+										</Panel>
+									</Panel>
+									<Panel id="HeroPick_Info_Talent_Tree_1" style="width:100%;">
+										<Panel class="BranchChoiceContainer LeftBranch LeftTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade2" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="BranchChoiceContainer RightBranch RightTalentBg">
+											<Button id="HeroPick_Info_Talent_Tree_Upgrade1" class="BranchChoice">
+												<Label class="StatBonusLabel" style="color:#676E70;text-shadow:1px 1px 2px 2.0 #00000066;" text="" />
+											</Button>
+										</Panel>
+										<Panel class="Center">
+											<Panel class="ChoiceArrow Left" />
+											<Panel class="LevelBG">
+												<Label class="ReqLabel" text="10" />
+											</Panel>
+											<Panel class="ChoiceArrow Right" />
+										</Panel>
+									</Panel>
+								</Panel>
+							</Panel>
+						</Panel>
+					</Panel>
+				</Panel>
+			</Panel>
+			
+		</Panel>
+	</Panel>
+</root>

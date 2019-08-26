@@ -112,7 +112,6 @@ function GameMode:OnGameRulesStateChange(keys)
 
 	if newState == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
 		Timers:CreateTimer(1.0, function()
-			PauseGame(false)
 			if GameRules:State_Get() > DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
 				return nil
 			end
@@ -122,6 +121,7 @@ function GameMode:OnGameRulesStateChange(keys)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_HERO_SELECTION then
+		IMBAHeroSelection:SetGameMode("all_pick")
 		IMBA:SendHTTPRequest("imba_new_match.php", {["match_id"] = GameRules:IsCheatMode() and tostring(RandomInt(0, 1000000))..tostring(RandomInt(200, 9000)).."0000000" or GameRules:GetMatchID(), ["map_name"] = GetMapName(), ["player_number"] = (PlayerResource:GetPlayerCountForTeam(2) + PlayerResource:GetPlayerCountForTeam(3)), ["game_version"] = IMBA_GAME_VERSION,})
 		if GameRules:IsCheatMode() then
 			GameRules:SetSafeToLeave(true)
@@ -140,14 +140,7 @@ function GameMode:OnGameRulesStateChange(keys)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_STRATEGY_TIME then
-		if IsInToolsMode() and IMBA_DEBUG_AK then
-			SendToConsole("say -bot")
-		end
-		for i=0, 19 do -- force that noob random
-			if PlayerResource:IsValidPlayer(i) and not PlayerResource:HasSelectedHero(i) and PlayerResource:GetConnectionState(i) == DOTA_CONNECTION_STATE_CONNECTED then
-				PlayerResource:GetPlayer(i):MakeRandomHeroSelection()
-				PlayerResource:SetCanRepick(i, false)
-			end
+		for i=0, 19 do
 			CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[i + 1] = 0
 			CDOTA_PlayerResource.IMBA_PLAYER_KILL_STREAK[i + 1] = 0
 			if PlayerResource:IsValidPlayer(i) then
@@ -181,173 +174,111 @@ function GameMode:OnGameRulesStateChange(keys)
 				PlayerResource:SetCustomPlayerColor(i, PLAYER_COLORS[i][1], PLAYER_COLORS[i][2], PLAYER_COLORS[i][3])
 			end
 		end
-		local announce = false
-		Timers:CreateTimer({useGameTime = false, endTime = IMBA_LOADING_DELAY, 
-			callback = function()
-				if tick == 0 then
-					if GameRules:IsCheatMode() then
-						CreateUnitByName("npc_dota_hero_target_dummy", Vector(-5345,-6549,384), false, nil, nil, DOTA_TEAM_NEUTRALS)
-					end
-					--[[local abc = CreateHeroForPlayer("npc_dota_hero_earthshaker", PlayerResource:GetPlayer(0))
-					PlayerResource:GetPlayer(0):SetAssignedHeroEntity(abc)
-					abc:SetControllableByPlayer(0, true)]]
-					IMBAEvents:StartIMBAVersionCheck()
-					IMBAEvents:StartAbandonCheck()
-					local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-					for _, tower in pairs(towers) do
-						if string.find(tower:GetUnitName(), "_tower1_") then --T1 Tower set
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-							local ability = tower:AddAbility(RandomFromTable(IMBA_TOWER_ABILITY_1))
-							ability:SetLevel(1)
-							if (string.find(tower:GetName(), "_top") or string.find(tower:GetName(), "_bot")) and GetMapName() == "dbii_death_match" then
-								tower:AddNewModifier(tower, nil, "modifier_dummy_thinker", {})
-							end
-							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][1], tower)
-						end
-						if string.find(tower:GetUnitName(), "_tower2_") then --T2 Tower set
-							SetCreatureHealth(tower, tower:GetHealth() + 800, true)
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-							for i=1, 2 do
-								local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
-								while true do
-									if not tower:HasAbility(abilityName) then
-										local ability = tower:AddAbility(abilityName)
-										ability:SetLevel(2)
-										break
-									else
-										abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
-									end
-								end
-							end
-							------
-							if not string.find(tower:GetUnitName(), "mid") then
-								tower:AddNewModifier(tower, nil, "modifier_imba_t2_tower_vision", {})
-							end
-							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][2], tower)
-						end
-						if string.find(tower:GetUnitName(), "_tower3_") then --T3 Tower set
-							SetCreatureHealth(tower, tower:GetHealth() + 1300, true)
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-							for i=1, 3 do
-								local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
-								while true do
-									if not tower:HasAbility(abilityName) then
-										local ability = tower:AddAbility(abilityName)
-										ability:SetLevel(2)
-										break
-									else
-										abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
-									end
-								end
-							end
-							local abi = tower:AddAbility("imba_tower_healer_protect")
-							abi:SetLevel(1)
-							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][3], tower)
-						end
-						if string.find(tower:GetUnitName(), "_tower4") then --T4 Tower set
-							SetCreatureHealth(tower, tower:GetHealth() + 2200, true)
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-							for i=1, 3 do
-								local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
-								while true do
-									if not tower:HasAbility(abilityName) then
-										local ability = tower:AddAbility(abilityName)
-										ability:SetLevel(3)
-										break
-									else
-										abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
-									end
-								end
-							end
-							local abi = tower:AddAbility("imba_tower_the_last_line")
-							abi:SetLevel(1)
-							table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][4], tower)
-						end
-						if string.find(tower:GetUnitName(), "_melee_rax_") then
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-							SetCreatureHealth(tower, 4000, true)
-						end
-						if string.find(tower:GetUnitName(), "_range_rax_") then
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-							SetCreatureHealth(tower, 3200, true)
-						end
-						if string.find(tower:GetName(), "_fort") then
-							if GetMapName() == "dbii_death_match" then
-								tower:AddNewModifier(tower, nil, "modifier_imba_base_protect", {})
-							end
-							CDOTAGamerules.IMBA_FORT[tower:GetTeamNumber()] = tower
-							tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-						end
-					end
+		if GameRules:IsCheatMode() then
+			CreateUnitByName("npc_dota_hero_target_dummy", Vector(-5345,-6549,384), false, nil, nil, DOTA_TEAM_NEUTRALS)
+		end
+		IMBAEvents:StartIMBAVersionCheck()
+		IMBAEvents:StartAbandonCheck()
+		local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+		for _, tower in pairs(towers) do
+			if string.find(tower:GetUnitName(), "_tower1_") then --T1 Tower set
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+				local ability = tower:AddAbility(RandomFromTable(IMBA_TOWER_ABILITY_1))
+				ability:SetLevel(1)
+				if (string.find(tower:GetName(), "_top") or string.find(tower:GetName(), "_bot")) and GetMapName() == "dbii_death_match" then
+					tower:AddNewModifier(tower, nil, "modifier_dummy_thinker", {})
 				end
-				if tick >= 2 and not announce then
-					announce = true
-					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_20_SCES", duration = 100})
-					Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 100})
-					Timers:CreateTimer({
-						useGameTime = false,
-						endTime = waitTick-2, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
-						callback = function()
-							Notifications:ClearBottomFromAll()
-						end
-					})
-				end
-				PauseGame(true)
-				tick = tick + 0.1
-				if tick < waitTick then
-					return 0.1
-				else
-					PauseGame(false)
-					if IMBA_DEBUG_AK then
-						Timers:CreateTimer(10, function()
-								print(" ")
-								print(" ")
-								print(" ")
-								print(" ")
-								SendToServerConsole("dota_launch_custom_game dota_imba_redux dbii_10v10")
-								return nil
-							end
-						)
-					end
-					--GameMode:ResetCameraForAll()
-					return nil
-				end
+				table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][1], tower)
 			end
-		})
+			if string.find(tower:GetUnitName(), "_tower2_") then --T2 Tower set
+				SetCreatureHealth(tower, tower:GetHealth() + 800, true)
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+				for i=1, 2 do
+					local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
+					while true do
+						if not tower:HasAbility(abilityName) then
+							local ability = tower:AddAbility(abilityName)
+							ability:SetLevel(2)
+							break
+						else
+							abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
+						end
+					end
+				end
+				------
+				if not string.find(tower:GetUnitName(), "mid") then
+					tower:AddNewModifier(tower, nil, "modifier_imba_t2_tower_vision", {})
+				end
+				table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][2], tower)
+			end
+			if string.find(tower:GetUnitName(), "_tower3_") then --T3 Tower set
+				SetCreatureHealth(tower, tower:GetHealth() + 1300, true)
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+				for i=1, 3 do
+					local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
+					while true do
+						if not tower:HasAbility(abilityName) then
+							local ability = tower:AddAbility(abilityName)
+							ability:SetLevel(2)
+							break
+						else
+							abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
+						end
+					end
+				end
+				local abi = tower:AddAbility("imba_tower_healer_protect")
+				abi:SetLevel(1)
+				table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][3], tower)
+			end
+			if string.find(tower:GetUnitName(), "_tower4") then --T4 Tower set
+				SetCreatureHealth(tower, tower:GetHealth() + 2200, true)
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+				for i=1, 3 do
+					local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
+					while true do
+						if not tower:HasAbility(abilityName) then
+							local ability = tower:AddAbility(abilityName)
+							ability:SetLevel(3)
+							break
+						else
+							abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
+						end
+					end
+				end
+				local abi = tower:AddAbility("imba_tower_the_last_line")
+				abi:SetLevel(1)
+				table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][4], tower)
+			end
+			if string.find(tower:GetUnitName(), "_melee_rax_") then
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+				SetCreatureHealth(tower, 4000, true)
+			end
+			if string.find(tower:GetUnitName(), "_range_rax_") then
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+				SetCreatureHealth(tower, 3200, true)
+			end
+			if string.find(tower:GetName(), "_fort") then
+				if GetMapName() == "dbii_death_match" then
+					tower:AddNewModifier(tower, nil, "modifier_imba_base_protect", {})
+				end
+				CDOTAGamerules.IMBA_FORT[tower:GetTeamNumber()] = tower
+				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+			end
+		end
 
-		Timers:CreateTimer(5, function()
-			Notifications:BottomToAll({text="#imba_introduction_line_01", duration = 2.9})
-			return nil
-		end
-		)
-		Timers:CreateTimer(8, function()
-			Notifications:BottomToAll({text="#imba_introduction_line_02", duration = 2.9})
-			return nil
-		end
-		)
-		Timers:CreateTimer(11, function()
-			Notifications:BottomToAll({text="#imba_introduction_line_03", duration = 2.9})
-			return nil
-		end
-		)
-		Timers:CreateTimer(14, function()
-			Notifications:BottomToAll({text="#imba_introduction_line_04", duration = 10, style={["font-size"] = "30px"}})
-			return nil
-		end
-		)
 	end
 
 	if newState == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		local swapped_hero = {}
-		for i=1, 20 do
-			local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i]
-			if hero and hero:GetPlayerOwnerID() ~= (i - 1) then
-				swapped_hero[#swapped_hero + 1] = {hero:GetPlayerOwnerID(), swapped_hero}
-			end
-		end
-		for i=1, #swapped_hero do
-			CDOTA_PlayerResource.IMBA_PLAYER_HERO[swapped_hero[i][1]] = swapped_hero[i][2]
-		end
+		--local swapped_hero = {}
+		--for i=1, 20 do
+		--	local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[i]
+		--	if hero and hero:GetPlayerOwnerID() ~= (i - 1) then
+		--		swapped_hero[#swapped_hero + 1] = {hero:GetPlayerOwnerID(), swapped_hero}
+		--	end
+		--end
+		--for i=1, #swapped_hero do
+		--	CDOTA_PlayerResource.IMBA_PLAYER_HERO[swapped_hero[i][1]] = swapped_hero[i][2]
+		--end
 	end
 end
 
@@ -383,8 +314,20 @@ function GameMode:OnNPCSpawned(keys)
 
 	local npc = EntIndexToHScript(keys.entindex)
 
+	if (npc:GetUnitName() == "npc_dota_hero_dummy_dummy" and npc:GetPlayerOwnerID() >= 0) or PlayerResource:GetConnectionState(npc:GetPlayerOwnerID()) == 1 then
+		if not CDOTA_PlayerResource.IMBA_PLAYER_COURIER[npc:GetPlayerOwnerID() + 1] then
+			local chicken = npc:AddItemByName("item_courier")
+			npc:CastAbilityNoTarget(chicken, npc:GetPlayerOwnerID())
+			CDOTA_PlayerResource.IMBA_PLAYER_COURIER[npc:GetPlayerOwnerID() + 1] = GameRules:GetGameTime()
+		end
+		if PlayerResource:GetConnectionState(npc:GetPlayerOwnerID()) ~= 1 then
+			npc:AddNewModifier(npc, nil, "modifier_stunned", {})
+			npc:AddNewModifier(npc, nil, "modifier_imba_storm_bolt_caster", {})
+		end
+	end
+
 	--Game Start Hero Set
-	if npc:IsTrueHero() and npc:GetUnitName() ~= "npc_dota_hero_target_dummy" and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
+	if npc:IsTrueHero() and npc:GetUnitName() ~= "npc_dota_hero_target_dummy" and npc:GetUnitName() ~= "npc_dota_hero_dummy_dummy" and not npc:IsTempestDouble() and not npc:IsClone() and npc:GetPlayerOwnerID() and npc:GetPlayerOwnerID() + 1 > 0 and CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
 		Timers:CreateTimer({useGameTime = false, endTime = 0.1,
 			callback = function()
 
@@ -395,6 +338,8 @@ function GameMode:OnNPCSpawned(keys)
 				if npc:HasModifier("modifier_monkey_king_fur_army_soldier_hidden") then
 					return nil
 				end
+
+				PrecacheUnitByNameAsync(npc:GetUnitName(), function() end, npc:GetPlayerOwnerID())
 
 				if CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] == nil then
 					CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1] = npc
@@ -421,54 +366,50 @@ function GameMode:OnNPCSpawned(keys)
 					npc:RemoveAbility("imba_dummy_ability_monkey_king")
 				end
 				--
+
+				npc:AddNewModifier(npc, nil, "modifier_imba_talent_modifier_adder", {})
+				npc:AddNewModifier(npc, nil, "modifier_imba_reapers_scythe_permanent", {})
+				npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
+
+				if CustomNetTables:GetTableValue("imba_hero_selection_player", "player_hero_randomed_"..npc:GetPlayerOwnerID()) then
+					PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD_RANDOM, true)
+				else
+					PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD, true)
+				end
+
+				Timers:CreateTimer(0, function()
+					-- a fresh Tp
+					local tp = npc:GetTP()
+					if tp then
+						tp:EndCooldown()
+						return nil
+					end
+					return 0.2
+				end
+				)
+
+				-- Set up Player infomation
+				local pID = npc:GetPlayerOwnerID()
+				local player_table = {["player_id"] = pID, ["player_name"] = PlayerResource:GetPlayerName(pID), ["player_team"] = npc:GetTeamNumber(), ["steamid_64"] = PlayerResource:GetSteamID(pID), ["hero_index"] = npc:entindex(), ["hero_name"] = npc:GetUnitName()}
+				CustomNetTables:SetTableValue("imba_player_detail", tostring(pID), player_table)
+
+				if IMBA_TEAM_DUMMY_GOOD == nil and npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+					IMBA_TEAM_DUMMY_GOOD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_GOODGUYS)
+					local move = IMBA_TEAM_DUMMY_GOOD:AddAbility("special_bonus_unique_techies_4")
+					if move then
+						move:SetLevel(1)
+					end
+				end
+				if IMBA_TEAM_DUMMY_BAD == nil and npc:GetTeamNumber() == DOTA_TEAM_BADGUYS then
+					IMBA_TEAM_DUMMY_BAD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_BADGUYS)
+					local move = IMBA_TEAM_DUMMY_BAD:AddAbility("special_bonus_unique_techies_4")
+					if move then
+						move:SetLevel(1)
+					end
+				end
 				return nil
 			end
 		})
-
-		npc:AddNewModifier(npc, nil, "modifier_imba_talent_modifier_adder", {})
-		npc:AddNewModifier(npc, nil, "modifier_imba_reapers_scythe_permanent", {})
-		npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
-		
-		local chicken = npc:AddItemByName("item_courier")
-		npc:CastAbilityNoTarget(chicken, npc:GetPlayerOwnerID())
-		CDOTA_PlayerResource.IMBA_PLAYER_COURIER[npc:GetPlayerOwnerID() + 1] = GameRules:GetGameTime()
-
-		PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD, true)
-
-		if PlayerResource:HasRandomed(npc:GetPlayerOwnerID()) then
-			PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD_RANDOM, true)
-		end
-		
-		Timers:CreateTimer(0, function()
-			-- a fresh Tp
-			local tp = npc:GetTP()
-			if tp then
-				tp:EndCooldown()
-				return nil
-			end
-			return 0.2
-		end
-		)
-
-		-- Set up Player infomation
-		local pID = npc:GetPlayerOwnerID()
-		local player_table = {["player_id"] = pID, ["player_name"] = PlayerResource:GetPlayerName(pID), ["player_team"] = npc:GetTeamNumber(), ["steamid_64"] = PlayerResource:GetSteamID(pID), ["hero_index"] = npc:entindex(), ["hero_name"] = npc:GetUnitName()}
-		CustomNetTables:SetTableValue("imba_player_detail", tostring(pID), player_table)
-
-		if IMBA_TEAM_DUMMY_GOOD == nil and npc:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-			IMBA_TEAM_DUMMY_GOOD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_GOODGUYS)
-			local move = IMBA_TEAM_DUMMY_GOOD:AddAbility("special_bonus_unique_techies_4")
-			if move then
-				move:SetLevel(1)
-			end
-		end
-		if IMBA_TEAM_DUMMY_BAD == nil and npc:GetTeamNumber() == DOTA_TEAM_BADGUYS then
-			IMBA_TEAM_DUMMY_BAD = CreateUnitByName("npc_dummy_unit", npc:GetAbsOrigin(), false, npc, npc, DOTA_TEAM_BADGUYS)
-			local move = IMBA_TEAM_DUMMY_BAD:AddAbility("special_bonus_unique_techies_4")
-			if move then
-				move:SetLevel(1)
-			end
-		end
 	end
 
 	if npc:IsTrueHero() and npc.firstSpawn and GetMapName() == "dbii_death_match" and (IMBA_OMG_ENABLE or IsInToolsMode()) then
@@ -540,35 +481,6 @@ function GameMode:OnNPCSpawned(keys)
 		HeroItems:ApplyWardsParticle(npc:GetCreationTime())
 	end
 
-	if npc:GetName() == "npc_dota_lone_druid_bear" then
-		local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1]
-		if not hero then
-			return
-		end
-		if GetMapName() ~= "dbii_death_match" and (IMBA_AK_ENABLE or GameRules:IsCheatMode()) and npc:HasAbility("generic_hidden") and not npc:HasAbility("imba_ogre_magi_multicast") and not npc:HasAbility("imba_storm_spirit_ball_lightning") then
-			if not hero.bear_ak then
-				local ak_name = GetRandomAKAbility()
-				while npc:HasAbility(ak_name[2]) or (not npc:IsRangedAttacker() and (ak_name[2] == "dragon_knight_elder_dragon_form" or ak_name[2] == "terrorblade_metamorphosis")) do
-					ak_name = GetRandomAKAbility()
-				end
-				hero.bear_ak = ak_name[2]
-				local ak = npc:AddAbility(ak_name[2])
-				ak.ak = true
-				npc:AddNewModifier(npc, ak, "modifier_imba_ak_ability_controller_bear", {})
-				npc:SwapAbilities(ak_name[2], "generic_hidden", true, false)
-				ak:SetHidden(true)
-				PrecacheUnitByNameAsync(ak_name[1], function() ak:SetHidden(false) end, npc:GetPlayerOwnerID())
-			else
-				if not npc:HasAbility(hero.bear_ak) then
-					local ak = npc:AddAbility(hero.bear_ak)
-					ak.ak = true
-					npc:AddNewModifier(npc, ak, "modifier_imba_ak_ability_controller_bear", {})
-					npc:SwapAbilities(hero.bear_ak, "generic_hidden", true, false)
-				end
-			end
-		end
-	end
-
 	if npc:IsTempestDouble() then
 		local hero = CDOTA_PlayerResource.IMBA_PLAYER_HERO[npc:GetPlayerOwnerID() + 1]
 		if not hero then
@@ -601,6 +513,46 @@ function GameMode:OnNPCSpawned(keys)
 		end
 	end
 
+	if string.find(npc:GetUnitName(), "npc_dota_creep") then
+		local unit_name = npc:GetUnitName()
+		if string.find(unit_name, "goodguys") then
+			if string.find(unit_name, "melee") then
+				if string.find(unit_name, "mega") then
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_melee_mega.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_melee_mega.vmdl")
+				else
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_melee.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_melee.vmdl")
+				end
+			elseif string.find(unit_name, "ranged") then
+				if string.find(unit_name, "mega") then
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_ranged_mega.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_ranged_mega.vmdl")
+				else
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_ranged.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_chameleon_radiant/ti9_chameleon_radiant_ranged.vmdl")
+				end
+			end
+		elseif string.find(unit_name, "badguys") then
+			if string.find(unit_name, "melee") then
+				if string.find(unit_name, "mega") then
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_melee_mega.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_melee_mega.vmdl")
+				else
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_melee.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_melee.vmdl")
+				end
+			elseif string.find(unit_name, "ranged") then
+				if string.find(unit_name, "mega") then
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_ranged_mega.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_ranged_mega.vmdl")
+				else
+					npc:SetOriginalModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_ranged_mega.vmdl")
+					npc:SetModel("models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_ranged_mega.vmdl")
+				end
+			end
+		end
+	end
 end
 
 -- An entity somewhere has been hurt.  This event fires very often with many units so don't do too many expensive

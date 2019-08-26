@@ -36,6 +36,7 @@ function Precache( context )
 	--[[PrecacheUnitByNameSync("npc_dota_hero_ancient_apparition", context)
 	PrecacheUnitByNameSync("npc_dota_hero_enigma", context)]]
 
+	PrecacheUnitByNameSync("npc_dota_hero_dummy_dummy", context)
 	-- Common Modifier
 	LinkLuaModifier("modifier_multicast_attack_range", "hero/hero_ogre_magi", LUA_MODIFIER_MOTION_NONE) -- don't miss for to far
 	LinkLuaModifier("modifier_imba_talent_modifier_adder", "modifier/modifier_imba_talent_modifier_adder", LUA_MODIFIER_MOTION_NONE)

@@ -8,6 +8,55 @@
 //-------------------
 // Dummy stuff
 //-------------------
+
+	//=================================================================================================================
+	// Riki: Backstab
+	//=================================================================================================================
+	"imba_event_riki_permanent_invisibility"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"Baseclass"						"riki_permanent_invisibility"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_PHYSICAL"	
+		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+		"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"						"FIELD_FLOAT"
+				"damage_multiplier"				"0.0"
+				"LinkedSpecialBonus"		"special_bonus_unique_riki_1"
+				"CalculateSpellDamageTooltip"	"0"
+			}
+			"02"
+			{
+				"var_type"						"FIELD_INTEGER"
+				"backstab_angle"				"0"
+			}
+			"03"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"fade_time"					"0.0 0.0 0.0 0.0"
+			}
+			"04"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"fade_delay"				"0.2"
+			}
+			"05"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"hp_regen"					"0"
+			}
+		}
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	}
+
   	"imba_dummy_ability"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_HIDDEN"
@@ -5995,7 +6044,7 @@
 			"07"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"ion_duration_scepter"	"80.0"
+				"ion_duration_scepter"	"20.0"
 				"RequiresScepter"			"1"
 			}
 		}
@@ -12710,7 +12759,7 @@
 		"MaxLevel"						"1"
 		"ScriptFile"					"hero/hero_meepo.lua"
 
-		"AbilityCooldown"				"1.3"
+		"AbilityCooldown"				"5.5"
 		
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -15803,8 +15852,8 @@
 		{
 			"01"
 			{
-				"var_type"					"FIELD_INTEGER"
-				"value"						"1"
+				"var_type"					"FIELD_FLOAT"
+				"duration"					"5.0"
 			}
 		}
 	}
@@ -21359,7 +21408,7 @@
 			"08"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"duration"					"600"
+				"duration"					"300"
 			}
 		}
 	}
@@ -21443,7 +21492,7 @@
 			"07"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"duration"					"600"
+				"duration"					"300"
 			}
 			"08"
 			{
@@ -21651,7 +21700,7 @@
 			"03"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"duration"					"600.0"
+				"duration"					"300.0"
 			}
 			"04"
 			{

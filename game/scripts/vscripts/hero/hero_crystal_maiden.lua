@@ -261,6 +261,15 @@ imba_crystal_maiden_brilliance_aura = class({})
 LinkLuaModifier("modifier_imba_brilliance_aura_passive", "hero/hero_crystal_maiden", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_brilliance_aura_effect", "hero/hero_crystal_maiden", LUA_MODIFIER_MOTION_NONE)
 
+function imba_crystal_maiden_brilliance_aura:OnUpgrade()
+	if IsServer() and HeroItems:UnitHasItem(self:GetCaster(), "cm_ti9_immortal_weapon") then
+		local pfx = ParticleManager:CreateParticle("particles/econ/items/crystal_maiden/ti9_immortal_staff/cm_ti9_staff_lvlup_globe.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster())
+		ParticleManager:SetParticleControlEnt(pfx, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 5, Vector(1,1,1))
+		ParticleManager:ReleaseParticleIndex(pfx)
+	end
+end
+
 function imba_crystal_maiden_brilliance_aura:GetIntrinsicModifierName() return "modifier_imba_brilliance_aura_passive" end
 
 modifier_imba_brilliance_aura_passive = class({})

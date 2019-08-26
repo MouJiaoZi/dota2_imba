@@ -182,7 +182,7 @@ function modifier_imba_shallow_grave:OnTakeDamage(keys)
 	self:SetStackCount(self:GetStackCount() + keys.damage)
 end
 
-function modifier_imba_shallow_grave:GetMinHealth() return 1 end
+function modifier_imba_shallow_grave:GetMinHealth() return 2 end
 
 function modifier_imba_shallow_grave:OnDestroy()
 	if IsServer() then
@@ -211,7 +211,7 @@ function modifier_imba_shallow_grave_passive:GetMinHealth()
 	if self:GetParent():HasModifier("modifier_imba_shallow_grave_passive_cooldown") or self:GetParent():IsIllusion() or self:GetParent():PassivesDisabled() then
 		return nil
 	else
-		return 1
+		return 2
 	end
 end
 
@@ -225,7 +225,7 @@ function modifier_imba_shallow_grave_passive:OnTakeDamage(keys)
 	if self:GetParent():HasModifier("modifier_imba_shallow_grave_passive_cooldown") or self:GetParent():PassivesDisabled() or self:GetParent():IsIllusion() then
 		return
 	end
-	if self:GetParent():GetHealth() == 1 and not self:GetParent():HasModifier("modifier_imba_shallow_grave") then
+	if self:GetParent():GetHealth() == 2 and not self:GetParent():HasModifier("modifier_imba_shallow_grave") then
 		self:GetParent():AddNewModifier( self:GetParent(), self:GetAbility(), "modifier_imba_shallow_grave", {duration = self:GetAbility():GetSpecialValueFor("passive_duration")})
 		self:GetParent():AddNewModifier( self:GetParent(), self:GetAbility(), "modifier_imba_shallow_grave_passive_cooldown", {duration = self:GetAbility():GetSpecialValueFor("passive_cooldown")})
 	end

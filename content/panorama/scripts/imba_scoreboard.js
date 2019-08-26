@@ -118,7 +118,7 @@ function UpdateScoreBoard()
 				}
 				if(team != clientTeam)
 				{
-					if(Players.IsSpectator(clientID))
+					if(clientID == -1)
 					{
 						playerScore.FindChildTraverse("IMBAUnitControlButton").style.opacity="0;";
 						playerScore.FindChildTraverse("IMBAHeroControlButton").style.opacity="0;";

@@ -14,13 +14,13 @@ function imba_lone_druid_spirit_bear:OnUpgrade()
 	if IsServer() and self:GetCaster():IsRealHero() and not self:GetCaster():IsTempestDouble() then
 		local caster = self:GetCaster()
 		if not self.base_bear then
-			self.base_bear = CreateUnitByName("npc_imba_lone_druid_bear", Vector(30000, 30000, 0), false, caster, caster, caster:GetTeamNumber())
+			self.base_bear = CreateUnitByName("npc_dota_lone_druid_bear1", Vector(30000, 30000, 0), false, caster, caster, caster:GetTeamNumber())
 			self.base_bear:SetControllableByPlayer(caster:GetPlayerOwnerID(), true)
 			self.base_bear:AddNewModifier(caster, self, "modifier_imba_spirit_bear_base", {})
 			self.base_bear:ForceKill(false)
 		end
 		if not self.clone_bear then
-			self.clone_bear = CreateUnitByName("npc_imba_lone_druid_bear", Vector(30000, 30000, 0), false, caster, caster, caster:GetTeamNumber())
+			self.clone_bear = CreateUnitByName("npc_dota_lone_druid_bear1", Vector(30000, 30000, 0), false, caster, caster, caster:GetTeamNumber())
 			self.clone_bear:SetControllableByPlayer(caster:GetPlayerOwnerID(), true)
 			self.clone_bear:AddNewModifier(caster, self, "modifier_imba_spirit_bear_clone", {})
 			self.clone_bear:SetCanSellItems(false)
@@ -96,7 +96,7 @@ function imba_lone_druid_spirit_bear:OnInventoryContentsChanged()
 			end
 			for i=0, 8 do
 				local item = caster:GetItemInSlot(i)
-				if item and not forbidden_items[item:GetAbilityName()] then
+				if item and not forbidden_items[item:GetAbilityName()] and i <= 2 then
 					self.clone_bear:AddItemByName(item:GetAbilityName())
 				else
 					self.clone_bear:AddItemByName("item_imba_dummy")
@@ -376,7 +376,7 @@ function modifier_imba_spirit_link_passive:GetAuraSearchFlags() return DOTA_UNIT
 function modifier_imba_spirit_link_passive:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_FRIENDLY end
 function modifier_imba_spirit_link_passive:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
 function modifier_imba_spirit_link_passive:GetAuraEntityReject(unit)
-	if unit == self:GetCaster() or (unit:GetUnitName() == "npc_imba_lone_druid_bear" and unit:GetPlayerOwnerID() == self:GetCaster():GetPlayerOwnerID()) then
+	if unit == self:GetCaster() or (unit:GetUnitName() == "npc_dota_lone_druid_bear1" and unit:GetPlayerOwnerID() == self:GetCaster():GetPlayerOwnerID()) then
 		return false
 	end
 	return true

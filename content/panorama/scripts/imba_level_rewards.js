@@ -698,7 +698,8 @@ function InitIMBALevel()
 	}
 }
 
-$.Schedule(5.0, InitIMBALevel);
+var init_delay = CustomNetTables.GetTableValue("imba_hero_selection_list", "pick_time");
+$.Schedule(init_delay[1] + 30, InitIMBALevel);
 
 function GetPlayerPfxSet(sType)
 {

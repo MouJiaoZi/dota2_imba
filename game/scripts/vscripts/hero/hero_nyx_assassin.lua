@@ -281,7 +281,7 @@ modifier_imba_spiked_carapace_stun = class({})
 function modifier_imba_spiked_carapace_stun:IsDebuff()			return true end
 function modifier_imba_spiked_carapace_stun:IsHidden() 			return false end
 function modifier_imba_spiked_carapace_stun:IsPurgable() 		return false end
-function modifier_imba_spiked_carapace_stun:IsPurgeException() 	return false end
+function modifier_imba_spiked_carapace_stun:IsPurgeException() 	return true end
 function modifier_imba_spiked_carapace_stun:IsStunDebuff() 		return true end
 function modifier_imba_spiked_carapace_stun:GetEffectName() return "particles/generic_gameplay/generic_stunned.vpcf" end
 function modifier_imba_spiked_carapace_stun:GetEffectAttachType() return  PATTACH_OVERHEAD_FOLLOW end
@@ -303,7 +303,7 @@ LinkLuaModifier("modifier_imba_burrow", "hero/hero_nyx_assassin", LUA_MODIFIER_M
 
 function imba_nyx_assassin_burrow:IsHiddenWhenStolen() 		return false end
 function imba_nyx_assassin_burrow:IsRefreshable() 			return true end
-function imba_nyx_assassin_burrow:IsStealable() 			return true end
+function imba_nyx_assassin_burrow:IsStealable() 			return false end
 function imba_nyx_assassin_burrow:IsNetherWardStealable()	return false end
 function imba_nyx_assassin_burrow:GetAssociatedSecondaryAbilities() return "imba_nyx_assassin_unburrow" end
 
@@ -340,7 +340,7 @@ imba_nyx_assassin_unburrow = class({})
 
 function imba_nyx_assassin_unburrow:IsHiddenWhenStolen() 	return true end
 function imba_nyx_assassin_unburrow:IsRefreshable() 		return true end
-function imba_nyx_assassin_unburrow:IsStealable() 			return true end
+function imba_nyx_assassin_unburrow:IsStealable() 			return false end
 function imba_nyx_assassin_unburrow:IsNetherWardStealable()	return false end
 function imba_nyx_assassin_unburrow:GetAssociatedPrimaryAbilities() return "imba_nyx_assassin_burrow" end
 function imba_nyx_assassin_unburrow:GetIntrinsicModifierName() return "modifier_imba_burrow" end

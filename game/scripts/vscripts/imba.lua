@@ -41,7 +41,7 @@ function IMBA:OnAllPlayersLoaded()
 
 end
 
-function IMBA:DumpAllHero()
+--[[function IMBA:DumpAllHero()
 	for i=1, #HeroList do
 		if HeroList[i][2] >= 1 then
 			--PrecacheUnitWithQueue(HeroList[i][1])
@@ -81,7 +81,7 @@ function IMBA:DumpAllHero()
 	CustomNetTables:SetTableValue("imba_hero_selection_list", "str", IMBA_PICKLIST_STR)
 	CustomNetTables:SetTableValue("imba_hero_selection_list", "agi", IMBA_PICKLIST_AGI)
 	CustomNetTables:SetTableValue("imba_hero_selection_list", "int", IMBA_PICKLIST_INT)
-end
+end]]
 
 
 function IMBA:BountyRuneFilter(keys)
@@ -930,7 +930,7 @@ function IMBA:SpawnRoshan()
 		if RollPercentage(90) then
 			unit:AddItemByName("item_refresher_shard")
 		else
-			unit:AddItemByName("item_imba_ultimate_scepter_synth")
+			unit:AddItemByName("item_ultimate_scepter_2")
 		end
 	end
 	if roshan_kill >= 12 then

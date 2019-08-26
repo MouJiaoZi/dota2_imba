@@ -3564,6 +3564,7 @@
 	//=================================================================================
 	"npc_dota_creep_badguys_ranged_upgraded"
 	{
+		"Model"						"models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_ranged.vmdl"	// Model.
 		"AttackDamageMin"			"375"		// Damage range min.
 		"AttackDamageMax"			"325"		// Damage range max.
 		"MovementSpeed"				"380"		// Speed
@@ -3577,6 +3578,7 @@
 	//=================================================================================
 	"npc_dota_creep_badguys_ranged_upgraded_mega"
 	{
+		"Model"						"models/creeps/lane_creeps/ti9_crocodilian_dire/ti9_crocodilian_dire_ranged_mega.vmdl"	// Model.
 		"AttackDamageMin"			"455"		// Damage range min.
 		"AttackDamageMax"			"425"		// Damage range max.
 		"MovementSpeed"				"425"		// Speed
@@ -4275,7 +4277,7 @@
 	//=================================================================================
 	// Lone Druid Spirit Bears
 	//=================================================================================
-	"npc_imba_lone_druid_bear"
+	"npc_dota_lone_druid_bear1"
 	{										
 		// General
 		//----------------------------------------------------------------
@@ -4293,8 +4295,8 @@
 		"Ability2"					"imba_lone_druid_spirit_bear_entangle"			// Ability 2
 		"Ability3"					"imba_lone_druid_savage_roar"			// Ability 3
 		"Ability4"					"imba_lone_druid_spirit_bear_demolish"	// Ability 4
-		//"Ability5"					"generic_hidden"			// Ability 5
-		//"Ability6"					"generic_hidden"			// Ability 6
+		"Ability5"					"REMOVE"			// Ability 5
+		"Ability6"					"REMOVE"			// Ability 6
 
 		// Armor
 		//----------------------------------------------------------------

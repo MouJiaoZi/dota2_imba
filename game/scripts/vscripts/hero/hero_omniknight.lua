@@ -112,14 +112,14 @@ function imba_omniknight_repel:OnSpellStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	if IsEnemy(caster, target) then
-		target:Purge(true, false, false, false, true)
+		target:Purge(true, false, false, false, false)
 	else
-		target:Purge(false, true, false, true, true)
+		target:Purge(false, true, false, true, false)
 	end
 	target:AddNewModifier(caster, self, "modifier_imba_repel", {duration = self:GetSpecialValueFor("duration")})
 	if target ~= caster then
 		caster:AddNewModifier(caster, self, "modifier_imba_repel", {duration = self:GetSpecialValueFor("self_duration")})
-		caster:Purge(false, true, false, true, true)
+		caster:Purge(false, true, false, true, false)
 	end
 end
 

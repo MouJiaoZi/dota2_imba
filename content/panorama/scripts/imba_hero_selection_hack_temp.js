@@ -1,4 +1,4 @@
-
+/*
 function FindDotaHudElement(sElement)
 {
 	var BaseHud = $.GetContextPanel().GetParent().GetParent().GetParent();
@@ -39,3 +39,21 @@ enemyIcon.GetChild(0).GetChild(2).style.width = "70px"
 enemyIcon.FindChildTraverse("PredictEnemyHeroes").style.flowChildren = "right-wrap";
 enemyIcon.FindChildTraverse("PredictEnemyHeroes").style.height = "80px";
 enemyIcon.FindChildTraverse("PredictEnemyHeroes").style.width = "232px";
+
+var pa = FindDotaHudElement("PreGame");
+
+function PickButtonHitCheck()
+{
+	var localPlayerInfo = Game.GetLocalPlayerInfo();
+	var hero = "npc_dota_hero_"+localPlayerInfo.possible_hero_selection;
+	var ability = CustomNetTables.GetTableValue("imba_hero_selection_ability", hero);
+	var talent = CustomNetTables.GetTableValue("imba_hero_selection_talent", hero);
+	$.Msg(ability);
+	$.Msg(talent);
+}
+
+
+GameEvents.Subscribe( "dota_player_hero_selection_dirty", PickButtonHitCheck );
+pa.style.visibility = "visible";*/
+//pa.style.width = "0%";
+//pa.style.height = "0%";

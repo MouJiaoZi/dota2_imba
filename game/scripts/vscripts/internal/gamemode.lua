@@ -30,16 +30,15 @@ function GameMode:_InitGameMode()
 
 	-- IMBA
 	GameRules:SetUseBaseGoldBountyOnHeroes(USE_STANDARD_HERO_GOLD_BOUNTY)
-	GameRules:SetStrategyTime(10)
+	GameRules:SetStrategyTime(3.0)
+	GameRules:SetShowcaseTime(0)
+	GameRules:SetHeroSelectPenaltyTime(0)
 
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled( ENABLE_HERO_RESPAWN )
 	GameRules:SetUseUniversalShopMode( UNIVERSAL_SHOP_MODE )
 	GameRules:SetSameHeroSelectionEnabled( ALLOW_SAME_HERO_SELECTION )
 	GameRules:SetHeroSelectionTime( HERO_SELECTION_TIME )
-	GameRules:SetPreGameTime( PRE_GAME_TIME)
-	GameRules:SetShowcaseTime(0)
-	GameRules:SetHeroSelectPenaltyTime(0)
 	GameRules:SetPostGameTime( POST_GAME_TIME )
 	GameRules:SetTreeRegrowTime( TREE_REGROW_TIME )
 	GameRules:SetUseCustomHeroXPValues ( USE_CUSTOM_XP_VALUES )
@@ -181,6 +180,7 @@ function GameMode:_CaptureGameMode()
 	if mode == nil then
 		-- Set GameMode parameters
 		mode = GameRules:GetGameModeEntity()
+		mode:SetPauseEnabled(false)
 		mode:SetDraftingBanningTimeOverride(10)
 		mode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME)
 		if IsInToolsMode() then

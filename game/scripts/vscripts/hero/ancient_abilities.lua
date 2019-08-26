@@ -425,7 +425,7 @@ function modifier_imba_ancient_buff_think:OnTakeDamage(keys)
 			magnus:SetHidden(true)
 		end
 		if caster:GetHealthPercent() <= 40 and self:GetAbility():IsCooldownReady() then
-			self:GetAbility():StartCooldown(120)
+			self:GetAbility():StartCooldown(20)
 			CreateModifierThinker(caster, nil, "modifier_imba_ancient_soullink_thinker", {duration = 10.0}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 		end
 	end
@@ -550,7 +550,7 @@ function modifier_imba_courier_buff:OnOrder(keys)
 			end
 			IMBA_COURIER_ORDER[time][#IMBA_COURIER_ORDER[time] + 1] = self.courier
 			local buff = self
-			Timers:CreateTimer(0.1, function()
+			--[[Timers:CreateTimer(0.1, function()
 					if #IMBA_COURIER_ORDER[time] > 1 then
 						Notifications:Bottom(PlayerResource:GetPlayer(buff.pid), {text="#imba_introduction_line_04", duration = 10, style={["font-size"] = "30px"}})
 						for i=1, #IMBA_COURIER_ORDER[time] do
@@ -564,7 +564,7 @@ function modifier_imba_courier_buff:OnOrder(keys)
 					)
 					return nil
 				end
-			)
+			)]]
 		elseif keys.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET then
 			--self.courier:SetCustomHealthLabel(tostring(PlayerResource:GetSteamID(keys.issuer_player_index)), PLAYER_COLORS[keys.issuer_player_index][1], PLAYER_COLORS[keys.issuer_player_index][2], PLAYER_COLORS[keys.issuer_player_index][3])
 			self.id = tostring(PlayerResource:GetSteamID(keys.issuer_player_index))

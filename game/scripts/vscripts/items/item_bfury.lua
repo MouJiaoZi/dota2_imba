@@ -17,6 +17,7 @@ function item_imba_bfury:OnSpellStart()
 			ward:Kill(self, caster)
 		end
 	end
+	AddFOWViewer(caster:GetTeamNumber(), pos, self:GetSpecialValueFor("chop_radius"), 0.1, false)
 end
 
 modifier_imba_bfury_passive = class({})

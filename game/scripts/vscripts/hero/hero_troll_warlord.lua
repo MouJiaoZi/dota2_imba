@@ -180,15 +180,17 @@ function modifier_imba_fervor_passive:DeclareFunctions() return {MODIFIER_EVENT_
 function modifier_imba_fervor_passive:OnAttackLanded(keys)
 	if IsServer() then
 		if not self:GetParent():PassivesDisabled() and keys.attacker == self:GetParent() and not self:GetParent():HasModifier("modifier_imba_berserkers_rage_no_dmg") and not self:GetParent():IsIllusion() and keys.target:IsAlive() then
-			local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_fervor_dummy", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-			buff:SetStackCount(buff:GetStackCount() + 1)
+			if keys.damage > 1 and not keys.target:HasModifier("modifier_backdoor_protection_active") and not keys.target:HasModifier("modifier_fountain_glyph") then
+				local buff = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_fervor_dummy", {duration = self:GetAbility():GetSpecialValueFor("duration")})
+				buff:SetStackCount(buff:GetStackCount() + 1)
+			end
 		end
 	end
 end
 
 function modifier_imba_fervor_passive:OnCreated()
 	if IsServer() then
-		self:StartIntervalThink(0.2)
+		self:StartIntervalThink(0.1)
 	end
 end
 

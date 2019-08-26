@@ -210,9 +210,9 @@ COLOR_LRED = '\x1C'
 COLOR_GOLD = '\x1D'
 
 -- Returns a random value from a non-array table
-function RandomFromTable(table)
-	if #table == 0 then return nil end
-	return table[RandomInt(1,#table)]
+function RandomFromTable(hTable)
+	if #hTable == 0 then return nil end
+	return hTable[RandomInt(1,#hTable)]
 end
 
 -------------------------------------------------------------------------------------------------
@@ -1059,8 +1059,14 @@ function CDOTA_BaseNPC:GetMoveSpeedIncrease()
 	return ms
 end
 
-function GetHeroMainAttr(sName)
-	return (HeroKV[sName]['AttributePrimary'] or HeroKVBase[sName]['AttributePrimary'])
+function GetHeroMainAttr(sHeroname)
+	if HeroKv[sHeroname] and HeroKv[sHeroname]['AttributePrimary'] then
+		return HeroKv[sHeroname]['AttributePrimary']
+	elseif HeroKVBase[sHeroname] and HeroKVBase[sHeroname]['AttributePrimary'] then
+		return HeroKVBase[sHeroname]['AttributePrimary']
+	else
+		return nil
+	end
 end
 
 function GetRandomAvailableHero()

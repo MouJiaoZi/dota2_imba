@@ -738,6 +738,7 @@ item_imba_heavens_halberd = class({})
 
 LinkLuaModifier("modifier_imba_heavens_halberd_passive", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_heavens_halberd_unique", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_heavens_halberd_active", "items/item_knieves", LUA_MODIFIER_MOTION_NONE)
 
 function item_imba_heavens_halberd:GetIntrinsicModifierName() return "modifier_imba_heavens_halberd_passive" end
 
@@ -752,7 +753,7 @@ function item_imba_heavens_halberd:OnSpellStart()
 	if target:GetBaseAttackTime() < target:GetDefaultBAT() then
 		duration = target:IsRangedAttacker() and self:GetSpecialValueFor("disarm_range") or self:GetSpecialValueFor("disarm_melee")
 	end
-	target:AddNewModifier(caster, self, "modifier_item_imba_sange_disarm", {duration = duration})
+	target:AddNewModifier(caster, self, "modifier_imba_heavens_halberd_active", {duration = duration})
 	target:EmitSound("DOTA_Item.HeavensHalberd.Target")
 	caster:EmitSound("DOTA_Item.HeavensHalberd.Activate")
 end
@@ -809,3 +810,7 @@ function modifier_imba_heavens_halberd_unique:OnAttackLanded(keys)
 		keys.target:EmitSound("DOTA_Item.HeavensHalberd.Activate")
 	end
 end
+
+modifier_imba_heavens_halberd_active = modifier_item_imba_sange_disarm
+
+function modifier_imba_heavens_halberd_active:GetPriority() return MODIFIER_PRIORITY_ULTRA end

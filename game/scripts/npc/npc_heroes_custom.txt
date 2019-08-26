@@ -4,6 +4,16 @@
 	"Version"		"1"
 
 	//=================================================================================================================
+	// HERO: Dummy
+	//=================================================================================================================
+	"npc_dota_hero_dummy_dummy"
+	{
+		"BaseClass"			"npc_dota_hero"
+		"HeroID"			"255"
+		"Model"				"models/development/invisiblebox.vmdl"
+	}
+
+	//=================================================================================================================
 	// HERO: Antimage
 	//=================================================================================================================
 	"npc_dota_hero_antimage"
@@ -98,6 +108,13 @@
 	{
 		"AttackRate"				"1.6"
 
+		"Ability1"		"bloodseeker_bloodrage"
+		"Ability2"		"bloodseeker_blood_bath"
+		"Ability3"		"bloodseeker_thirst"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"bloodseeker_rupture"
+
 		"Ability10"					"special_bonus_armor_4"
 		"Ability11"					"special_bonus_attack_damage_35"
 		"Ability12"					"special_bonus_attack_speed_20"
@@ -169,6 +186,11 @@
 		"AttributeStrengthGain"		"3.0"
 		
 		"Ability1"					"imba_earthshaker_fissure"
+		"Ability2"		"earthshaker_enchant_totem"
+		"Ability3"		"earthshaker_aftershock"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"earthshaker_echo_slam"
 		
 		"Ability10"					"special_bonus_movement_speed_15"
 		"Ability11"					"special_bonus_mp_150"
@@ -252,18 +274,14 @@
 	"npc_dota_hero_morphling"
 	{
 
-		//"Ability1"					"morphling_waveform"
+		"Ability1"							"morphling_waveform"
 		"Ability2"							"imba_morphling_morphling"
 		"Ability3"							"generic_hidden"
 		"Ability4"							"morphling_adaptive_strike_agi"
 		"Ability5"							"morphling_adaptive_strike_str"
-		//"Ability2"					"morphling_adaptive_strike_agi"
-		//"Ability3"					"morphling_adaptive_strike_str"
-		//"Ability4"					"morphling_morph_agi"
-		//"Ability5"					"morphling_morph_str"
-		//"Ability6"					"morphling_replicate"
-		//"Ability7"					"morphling_morph_replicate"
-		//"Ability8"					"morphling_morph"
+		"Ability6"							"morphling_replicate"
+		"Ability7"							"morphling_morph_replicate"
+		"Ability8"							"morphling_morph"
 
 		"Ability15"					"special_bonus_movement_speed_20"
 		"Ability16"					"special_bonus_unique_morphling_1"
@@ -283,6 +301,13 @@
 		"AttributeAgilityGain"		"3.5"
 
 		"AttackRange"				"225"
+
+		"Ability1"		"phantom_lancer_spirit_lance"
+		"Ability2"		"phantom_lancer_doppelwalk"
+		"Ability3"		"phantom_lancer_phantom_edge"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"phantom_lancer_juxtapose"
 
 		"Ability10"					"special_bonus_hp_150"
 		"Ability11"					"special_bonus_cooldown_reduction_10"
@@ -350,6 +375,13 @@
 	"npc_dota_hero_razor"
 	{
 		"AttackRate"				"1.6"
+
+		"Ability1"		"razor_plasma_field"
+		"Ability2"		"razor_static_link"
+		"Ability3"		"razor_unstable_current"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"razor_eye_of_the_storm"
 
 		"Ability10"					"special_bonus_movement_speed_15"
 		"Ability11"					"special_bonus_agility_13"
@@ -427,10 +459,6 @@
 	}
 	"npc_dota_hero_tiny"
 	{
-		"Model"						"models/heroes/tiny_01/tiny_01.vmdl"
-		"Model1"					"models/heroes/tiny_02/tiny_02.vmdl"
-		"Model2"					"models/heroes/tiny_03/tiny_03.vmdl"
-		"Model3"					"models/heroes/tiny_04/tiny_04.vmdl"
 		
 		"AttackRate"				"1.6"
 
@@ -438,6 +466,14 @@
 		"AttributeAgilityGain"		"1.5"
 
 		"AttackRange"				"250"
+
+		"Ability1"		"tiny_avalanche"
+		"Ability2"		"tiny_toss"
+		"Ability3"		"tiny_craggy_exterior"
+		"Ability4"		"tiny_tree_channel"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"tiny_grow"
+		"Ability7"		"tiny_toss_tree"
 
 		"Ability10"					"special_bonus_strength_4"
 		"Ability11"					"special_bonus_intelligence_8"
@@ -480,6 +516,13 @@
 		"AttackRate"				"1.45"
 		"AttackAnimationPoint"		"0.1"
 
+		"Ability1"		"windrunner_shackleshot"
+		"Ability2"		"windrunner_powershot"
+		"Ability3"		"windrunner_windrun"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"windrunner_focusfire"
+
 		"Ability10"		"special_bonus_attack_damage_15"
 		"Ability11"		"special_bonus_unique_windranger_2"
 		"Ability12"		"special_bonus_unique_windranger_3"
@@ -497,6 +540,13 @@
 		"AttackAnimationPoint"		"0.5"
 
 		"AttackRange"				"500"
+
+		"Ability1"		"zuus_arc_lightning"
+		"Ability2"		"zuus_lightning_bolt"
+		"Ability3"		"zuus_static_field"
+		"Ability4"		"zuus_cloud"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"zuus_thundergods_wrath"
 		
 		"Ability10"		"special_bonus_armor_6"
 		"Ability11"		"special_bonus_exp_boost_15"
@@ -593,6 +643,13 @@
 	}
 	"npc_dota_hero_shadow_shaman"
 	{
+		"Ability1"		"shadow_shaman_ether_shock"
+		"Ability2"		"shadow_shaman_voodoo"
+		"Ability3"		"shadow_shaman_shackles"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"shadow_shaman_mass_serpent_ward"
+
 		"Ability10"					"special_bonus_hp_200"
 		"Ability11"					"special_bonus_exp_boost_20"
 		"Ability12"					"special_bonus_cast_range_125"
@@ -605,6 +662,13 @@
 	"npc_dota_hero_slardar"
 	{
 		"ModelScale"				"0.97"
+
+		"Ability1"		"slardar_sprint"
+		"Ability2"		"slardar_slithereen_crush"
+		"Ability3"		"slardar_bash"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"slardar_amplify_damage"
 
 		"Ability10"		"special_bonus_hp_regen_5"
 		"Ability11"		"special_bonus_attack_damage_25"
@@ -623,6 +687,13 @@
 		"AttributeBaseStrength"		"28"
 
 		"AttackRange"				"200"
+
+		"Ability1"		"tidehunter_gush"
+		"Ability2"		"tidehunter_kraken_shell"
+		"Ability3"		"tidehunter_anchor_smash"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"tidehunter_ravage"
 
 		"Ability10"		"special_bonus_movement_speed_25"
 		"Ability11"		"special_bonus_unique_tidehunter_2"
@@ -658,6 +729,10 @@
 		"AttributeBaseAgility"		"40"
 		"AttributeAgilityGain"		"2.5"
 		
+		"Ability1"		"riki_smoke_screen"
+		"Ability2"		"riki_blink_strike"
+		"Ability3"		"riki_permanent_invisibility"
+		"Ability4"		"generic_hidden"
 		"Ability5"			"imba_riki_tott_true"
 		"Ability6"			"imba_riki_tricks_of_the_trade"
 
@@ -747,6 +822,11 @@
 		//"Ability3"					"imba_necrolyte_sadist"
 		//"Ability4"					"generic_hidden"
 		//"Ability5"					"generic_hidden"
+		"Ability1"		"necrolyte_death_pulse"
+		"Ability2"		"necrolyte_sadist"
+		"Ability3"		"necrolyte_heartstopper_aura"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
 		"Ability6"							"imba_necrolyte_reapers_scythe"
 
 		
@@ -888,6 +968,22 @@
 	"npc_dota_hero_death_prophet"
 	{
 		"ArmorPhysical"				"2"
+
+		"Ability1"		"death_prophet_carrion_swarm"
+		"Ability2"		"death_prophet_silence"
+		"Ability3"		"death_prophet_spirit_siphon"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"death_prophet_exorcism"
+
+		"Ability10"		"special_bonus_attack_damage_40"
+		"Ability11"		"special_bonus_magic_resistance_15"
+		"Ability12"		"special_bonus_unique_death_prophet_3"
+		"Ability13"		"special_bonus_cast_range_175"
+		"Ability14"		"special_bonus_hp_500"
+		"Ability15"		"special_bonus_unique_death_prophet_2"
+		"Ability16"		"special_bonus_unique_death_prophet_4"
+		"Ability17"		"special_bonus_unique_death_prophet"
 	}
 	"npc_dota_hero_phantom_assassin"
 	{
@@ -960,6 +1056,12 @@
 	}
 	"npc_dota_hero_viper"
 	{
+		"Ability1"		"viper_poison_attack"
+		"Ability2"		"viper_nethertoxin"
+		"Ability3"		"viper_corrosive_skin"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"viper_viper_strike"
 		
 		"Ability10"					"special_bonus_attack_speed_20"
 		"Ability11"					"special_bonus_strength_6"
@@ -977,7 +1079,12 @@
 
 		"AttributeAgilityGain"		"3.5"
 		
-		"Ability2"					"imba_luna_moon_glaive"
+		"Ability1"		"luna_lucent_beam"
+		"Ability2"		"imba_luna_moon_glaive"
+		"Ability3"		"luna_lunar_blessing"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"luna_eclipse"
 
 		"Ability10"					"special_bonus_attack_speed_20"
 		"Ability11"					"special_bonus_cast_range_200"
@@ -996,6 +1103,13 @@
 		"MagicalResistance"			"40"
 
 		"AttributeBaseStrength"		"23"
+
+		"Ability1"		"dragon_knight_breathe_fire"
+		"Ability2"		"dragon_knight_dragon_tail"
+		"Ability3"		"dragon_knight_dragon_blood"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"dragon_knight_elder_dragon_form"
 
 		"Ability10"					"special_bonus_exp_boost_15"
 		"Ability11"					"special_bonus_mp_regen_2"
@@ -1039,18 +1153,24 @@
 		"Ability5"					"generic_hidden"
 		"Ability6"					"imba_rattletrap_hookshot"
 
-		"Ability10"		"special_bonus_armor_5"
+		"Ability10"		"special_bonus_armor_2"
 		"Ability11"		"special_bonus_movement_speed_20"
-		"Ability12"		"special_bonus_strength_5"
-		"Ability13"		"special_bonus_attack_speed_35"
+		"Ability12"		"special_bonus_strength_4"
+		"Ability13"		"special_bonus_attack_speed_25"
 		"Ability14"		"special_bonus_imba_rattletrap_3"
-		"Ability15"		"special_bonus_imba_rattletrap_4"
-		"Ability16"		"special_bonus_imba_rattletrap_1"
+		"Ability15"		"special_bonus_mp_regen_4"
+		"Ability16"		"special_bonus_imba_rattletrap_4"
 		"Ability17"		"special_bonus_imba_rattletrap_2"
 		
 	}
 	"npc_dota_hero_leshrac"
 	{
+		"Ability1"					"leshrac_split_earth"
+		"Ability2"					"leshrac_diabolic_edict"
+		"Ability3"					"leshrac_lightning_storm"
+		"Ability4"					"generic_hidden"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"leshrac_pulse_nova"
 
 		"Ability10"					"special_bonus_hp_150"
 		"Ability11"					"special_bonus_movement_speed_15"
@@ -1073,7 +1193,12 @@
 
 		"AttributeAgilityGain"		"2.75"
 		
+		"Ability1"					"furion_sprout"
+		"Ability2"					"furion_teleportation"
 		"Ability3"					"imba_furion_force_of_nature"
+		"Ability4"					"generic_hidden"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"furion_wrath_of_nature"
 
 		"Ability10"					"special_bonus_attack_damage_20"
 		"Ability11"					"special_bonus_hp_150"
@@ -1089,6 +1214,16 @@
 		"AttributeAgilityGain"		"3.0"
 		
 		"AttackRate"				"1.55"
+
+		"Ability1"					"life_stealer_rage"
+		"Ability2"					"life_stealer_feast"
+		"Ability3"					"life_stealer_open_wounds"
+		"Ability4"					"life_stealer_assimilate"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"life_stealer_infest"
+		"Ability7"					"life_stealer_control"
+		"Ability8"					"life_stealer_consume"
+		"Ability9"					"life_stealer_assimilate_eject"
 
 		"Ability10"					"special_bonus_hp_200"
 		"Ability11"					"special_bonus_attack_speed_20"
@@ -1170,6 +1305,13 @@
 
 		"MovementSpeed"				"335"
 
+		"Ability1"					"enchantress_untouchable"
+		"Ability2"					"enchantress_enchant"
+		"Ability3"					"enchantress_natures_attendants"
+		"Ability4"					"generic_hidden"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"enchantress_impetus"
+
 		"Ability10"					"special_bonus_unique_enchantress_1"
 		"Ability11"					"special_bonus_movement_speed_15"
 		"Ability12"					"special_bonus_all_stats_10"
@@ -1185,7 +1327,11 @@
 
 		"AttributeAgilityGain"		"2.0"
 		
-		"Ability3"						"imba_huskar_berserkers_blood"
+		"Ability1"					"huskar_inner_fire"
+		"Ability2"					"huskar_burning_spear"
+		"Ability3"					"imba_huskar_berserkers_blood"
+		"Ability4"					"generic_hidden"
+		"Ability5"					"generic_hidden"
 
 		"Ability10"					"special_bonus_lifesteal_10"
 		"Ability11"					"special_bonus_movement_speed_15"
@@ -1274,6 +1420,13 @@
 		
 		"AttackRange"				"425"
 
+		"Ability1"		"weaver_the_swarm"
+		"Ability2"		"weaver_shukuchi"
+		"Ability3"		"weaver_geminate_attack"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"weaver_time_lapse"
+
 		"Ability10"		"special_bonus_strength_7"
 		"Ability11"		"special_bonus_exp_boost_35"
 		"Ability12"		"special_bonus_mana_break_20"
@@ -1289,13 +1442,11 @@
 		"AttackRange"				"500"
 
 		"Ability1"					"imba_jakiro_dual_breath"
-		//"Ability2"					"jakiro_ice_path"
+		"Ability2"					"jakiro_ice_path"
 		"Ability3"					"imba_jakiro_liquid_fire"
 		"Ability4"					"generic_hidden"
 		"Ability5"					"generic_hidden"
 		"Ability6"					"imba_jakiro_macropyre"
-		
-
 		
 		"Ability10"					"special_bonus_exp_boost_20"
 		"Ability11"					"special_bonus_spell_amplify_5"
@@ -1312,6 +1463,13 @@
 		"AttackDamageMax"			"28"
 
 		"MovementSpeed"				"315"
+
+		"Ability1"		"batrider_sticky_napalm"
+		"Ability2"		"batrider_flamebreak"
+		"Ability3"		"batrider_firefly"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"batrider_flaming_lasso"
 
 		"Ability10"		"special_bonus_spell_amplify_6"
 		"Ability11"		"special_bonus_armor_5"
@@ -1420,6 +1578,13 @@
 
 		"MovementSpeed"				"320"
 
+		"Ability1"					"ursa_earthshock"
+		"Ability2"					"ursa_overpower"
+		"Ability3"					"ursa_fury_swipes"
+		"Ability4"					"generic_hidden"
+		"Ability5"					"generic_hidden"
+		"Ability6"					"ursa_enrage"
+
 		"Ability10"					"special_bonus_mp_regen_175"
 		"Ability11"					"special_bonus_strength_8"
 		"Ability12"					"special_bonus_agility_16"
@@ -1461,6 +1626,7 @@
 		"Ability4"					"generic_hidden"
 		"Ability5"					"generic_hidden"
 		"Ability6"					"gyrocopter_call_down"
+
 		"Ability10"					"special_bonus_attack_damage_20"
 		"Ability11"					"special_bonus_hp_200"
 		"Ability12"					"special_bonus_unique_gyrocopter_6"
@@ -1519,7 +1685,7 @@
 		"Ability19"						"special_bonus_unique_invoker_1"
 		"Ability20"						"special_bonus_unique_invoker_9"
 		"Ability21"						"special_bonus_unique_invoker_4"
-		"Ability22"						"special_bonus_unique_invoker_5"
+		"Ability22"						"special_bonus_spell_amplify_6"
 		"Ability23"						"special_bonus_unique_invoker_2"
 		"Ability24"						"special_bonus_imba_invoker_2"
 		"AbilityTalentStart" 			"17"
@@ -1790,7 +1956,7 @@
 		"Ability7"					"imba_rubick_telekinesis_land"
 		"Ability8"					"rubick_hidden1"
 		"Ability9"					"rubick_hidden2"
-		"Ability10"				"rubick_hidden3"
+		"Ability10"					"rubick_hidden3"
 
 		"Ability11"					"special_bonus_hp_200"
 		"Ability12"					"special_bonus_attack_damage_60"
@@ -2250,6 +2416,12 @@
 		//"Ability4"		"imba_terrorblade_demonic_power"
 		//"Ability5"		"generic_hidden"
 		//"Ability6"		"imba_terrorblade_sunder"
+		"Ability1"		"terrorblade_reflection"
+		"Ability2"		"terrorblade_conjure_image"
+		"Ability3"		"terrorblade_metamorphosis"
+		"Ability4"		"generic_hidden"
+		"Ability5"		"generic_hidden"
+		"Ability6"		"terrorblade_sunder"
 		
 		"Ability10"		"special_bonus_movement_speed_20"
 		"Ability11"		"special_bonus_evasion_10"
@@ -2259,6 +2431,9 @@
 		//"Ability15"		"special_bonus_imba_terrorblade_1"
 		//"Ability16"		"special_bonus_imba_terrorblade_2"
 		//"Ability17"		"special_bonus_imba_terrorblade_3"
+		"Ability15"		"special_bonus_unique_terrorblade_2"
+		"Ability16"		"special_bonus_unique_terrorblade"
+		"Ability17"		"special_bonus_unique_terrorblade_3"
 
 	}
 	"npc_dota_hero_phoenix"
@@ -2485,12 +2660,12 @@
 		"Ability5"				"generic_hidden"
 		"Ability6"				"grimstroke_soul_chain"
 		
-		"Ability10"				"special_bonus_movement_speed_30"
+		"Ability10"				"special_bonus_mp_regen_2"
 		"Ability11"				"special_bonus_gold_income_15"
-		"Ability12"				"special_bonus_spell_amplify_12"
-		"Ability13"				"special_bonus_cast_range_125"
-		"Ability14"				"special_bonus_unique_grimstroke_3"
-		"Ability15"				"special_bonus_unique_grimstroke_4"
+		"Ability12"				"special_bonus_unique_grimstroke_3"
+		"Ability13"				"special_bonus_unique_grimstroke_4"
+		"Ability14"				"special_bonus_spell_amplify_12"
+		"Ability15"				"special_bonus_cast_range_125"
 		"Ability16"				"special_bonus_unique_grimstroke_1"
 		"Ability17"				"special_bonus_unique_grimstroke_2"
 

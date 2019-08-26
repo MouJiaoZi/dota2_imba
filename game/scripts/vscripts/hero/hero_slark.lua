@@ -55,7 +55,7 @@ end
 
 function modifier_imba_shadow_dance_passive:OnCreated()
 	if IsServer() then
-		local dummy = CreateUnitByName("npc_dota_slark_visual", Vector(0,0,0), false, self:GetParent(), self:GetParent(), self:GetParent():GetTeamNumber() == DOTA_TEAM_GOODGUYS and DOTA_TEAM_BADGUYS or DOTA_TEAM_GOODGUYS)
+		local dummy = CreateUnitByName("npc_dota_slark_visual", Vector(30000,30000,0), false, self:GetParent(), self:GetParent(), self:GetParent():GetTeamNumber() == DOTA_TEAM_GOODGUYS and DOTA_TEAM_BADGUYS or DOTA_TEAM_GOODGUYS)
 		dummy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_shadow_dance_detect", {})
 		--self:StartIntervalThink(0.1)
 	end

@@ -79,11 +79,12 @@ function modifier_imba_wall_of_scan_end:OnCreated(keys)
 		self.head = EntIndexToHScript(keys.start)
 		self.center = Vector(keys.center_x, keys.center_y, 0)
 		self.center = GetGroundPosition(self.center, nil)
-		local pfx = ParticleManager:CreateParticle("particles/hero/dark_seer/dark_seer_wall_of_replica.vpcf", PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControlEnt(pfx, 0, self.head, PATTACH_ABSORIGIN_FOLLOW, nil, self.head:GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(pfx, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true)
-		ParticleManager:SetParticleControl(pfx, 2, Vector(0.5, 0.5, 0))
-		self:AddParticle(pfx, false, false, 15, false, false)
+		self.parent = self:GetParent()
+		self.pfx = ParticleManager:CreateParticle("particles/hero/dark_seer/dark_seer_wall_of_replica.vpcf", PATTACH_CUSTOMORIGIN, nil)
+		ParticleManager:SetParticleControl(self.pfx, 0, self.head:GetAbsOrigin())
+		ParticleManager:SetParticleControl(self.pfx, 1, self.parent:GetAbsOrigin())
+		ParticleManager:SetParticleControl(self.pfx, 2, Vector(0.5, 0.5, 0))
+		self:AddParticle(self.pfx, false, false, 15, false, false)
 		self:StartIntervalThink(FrameTime())
 		self:GetParent():EmitSound("Hero_Dark_Seer.Wall_of_Replica_lp")
 	end
@@ -125,6 +126,8 @@ function modifier_imba_wall_of_scan_end:OnIntervalThink()
 		end
 	end
 	AddFOWViewer(caster:GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, FrameTime() * 2, true)
+	ParticleManager:SetParticleControl(self.pfx, 0, self.head:GetAbsOrigin())
+	ParticleManager:SetParticleControl(self.pfx, 1, self.parent:GetAbsOrigin())
 	--DebugDrawLine(self.head:GetAbsOrigin(), self:GetParent():GetAbsOrigin(), 0, 33, 255, true, FrameTime())
 end
 
@@ -132,6 +135,10 @@ function modifier_imba_wall_of_scan_end:OnDestroy()
 	if IsServer() then
 		self.head = nil
 		self.center = nil
+		self.ability = nil
+		self.caster = nil
+		self.parent = nil
+		self.pfx = nil
 		self:GetParent():StopSound("Hero_Dark_Seer.Wall_of_Replica_lp")
 	end
 end

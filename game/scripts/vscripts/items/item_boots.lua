@@ -66,7 +66,7 @@ function modifier_imba_tranquil_boots2_passive:GetModifierPhysicalArmorBonus() r
 function modifier_imba_tranquil_boots2_passive:GetModifierMoveSpeedBonus_Special_Boots() return self:GetAbility():GetSpecialValueFor("base_move_speed") end
 
 function modifier_imba_tranquil_boots2_passive:OnAttackLanded(keys)
-	if IsServer() and (keys.target == self:GetParent() or keys.attacker == self:GetParent()) and keys.attacker:IsHero() then
+	if IsServer() and ((keys.target == self:GetParent() and keys.attacker:IsHero()) or (keys.attacker == self:GetParent() and keys.target:IsHero())) then
 		self:GetAbility():UseResources(true, true, true)
 	end
 end

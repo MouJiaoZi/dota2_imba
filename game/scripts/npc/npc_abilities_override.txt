@@ -282,8 +282,8 @@
 	"item_recipe_moon_shard"			"REMOVE"
 	"item_desolator"			"REMOVE"
 	//"item_relic"			"REMOVE"
-	"item_recipe_ultimate_scepter_2"			"REMOVE"
-	"item_ultimate_scepter_2"			"REMOVE"
+	//"item_recipe_ultimate_scepter_2"			"REMOVE"
+	//"item_ultimate_scepter_2"			"REMOVE"
 
 	//=================================================================================================================
 	//-----------------------------------------------------------------------------------------------------------------
@@ -3393,6 +3393,14 @@
 	}
 
 	//=================================================================================================================
+	// Recipe: Scepter 2
+	//=================================================================================================================
+	"item_recipe_ultimate_scepter_2"
+	{
+		"ItemCost"						"8000"	
+	}
+	
+	//=================================================================================================================
 	// Smoke of Deceit
 	//=================================================================================================================
 	"item_smoke_of_deceit"
@@ -4786,6 +4794,7 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"damage_increase_pct"		"10 15 20 25"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"03"
 			{
@@ -4947,16 +4956,19 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"movement_damage_pct"		"45 60 75"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"damage_cap_amount"			"200"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"cast_range_tooltip"		"700 800 900"
+				"LinkedSpecialBonus"		"special_bonus_unique_bloodseeker_3"
 			}
 			"05"
 			{
@@ -5031,6 +5043,7 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"totem_damage_percentage"	"200 300 400 500"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"02"
 			{
@@ -7385,6 +7398,7 @@
 				"var_type"				"FIELD_INTEGER"
 				"damage_reduction"		"-45 -50 -55 -60"
 				"LinkedSpecialBonus"	"special_bonus_unique_tidehunter_3"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"03"
 			{
@@ -7800,6 +7814,7 @@
 				"var_type"						"FIELD_FLOAT"
 				"damage_multiplier"				"0.5 0.8 1.1 1.4"
 				"LinkedSpecialBonus"		"special_bonus_unique_riki_1"
+				"CalculateSpellDamageTooltip"	"0"
 			}
 			"02"
 			{
@@ -10437,6 +10452,7 @@
 			{
 				"var_type"			"FIELD_INTEGER"
 				"destroy_attacks"	"8 8 10 12"
+				"LinkedSpecialBonus"	"special_bonus_unique_weaver_4"
 			}
 			"07"
 			{
@@ -14427,6 +14443,8 @@
 			{
 				"var_type"				"FIELD_FLOAT"
 				"stack_damage"			"20 35 50 65"
+				"LinkedSpecialBonus"		"special_bonus_unique_shadow_demon_4"
+				"LinkedSpecialBonusOperation"	"SPECIAL_BONUS_PERCENTAGE_ADD"
 			}
 			"02"
 			{
@@ -14437,6 +14455,8 @@
 			{
 				"var_type"				"FIELD_FLOAT"
 				"bonus_stack_damage"	"50"
+				"LinkedSpecialBonus"		"special_bonus_unique_shadow_demon_4"
+				"LinkedSpecialBonusOperation"	"SPECIAL_BONUS_PERCENTAGE_ADD"
 			}
 			"04"
 			{
@@ -14452,6 +14472,13 @@
 			{
 				"var_type"				"FIELD_FLOAT"
 				"tooltip_duration"		"10"
+			}
+			"07" //Damage that is applied every time shadow poison is applied.
+			{
+				"var_type"				"FIELD_FLOAT"
+				"hit_damage"			"26 34 42 50"
+				"LinkedSpecialBonus"		"special_bonus_unique_shadow_demon_4"
+				"LinkedSpecialBonusOperation"	"SPECIAL_BONUS_PERCENTAGE_ADD"
 			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -17397,7 +17424,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"pass_damage"			"70 100 130"
+				"pass_damage"			"100 140 180"
 				"RequiresScepter"	"1"
 			}
 			"04"
@@ -20133,7 +20160,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"required_hits"				"4 4 4 3"
+				"required_hits"				"4"
 			}
 			"02"
 			{
@@ -20227,7 +20254,7 @@
 			"08"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"strikes"				"4 4 5 6"
+				"strikes"				"4"
 			}
 			"09"
 			{
@@ -21501,6 +21528,7 @@
 			{
 				"var_type"			"FIELD_FLOAT"
 				"stun_duration"		"1.6 2.0 2.4 2.8"
+				"LinkedSpecialBonus"	"special_bonus_unique_mars_spear_stun_duration"
 			}
 			"08"
 			{

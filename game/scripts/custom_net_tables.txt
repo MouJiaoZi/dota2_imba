@@ -2,7 +2,10 @@
 {
   custom_net_tables =
   [
+	"imba_hero_selection_player",
 	"imba_hero_selection_list",
+	"imba_hero_selection_ability",
+	"imba_hero_selection_talent",
 	"imba_player_detail",
 	"imba_scoreboard_detail",
 	"imba_hero_end_info",

@@ -152,8 +152,8 @@ function modifier_imba_shiva_active_thinker:OnIntervalThink()
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), radius, FrameTime(), false)
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
-		if not IsInTable(enemy, self.hitted) then
-			table.insert(self.hitted, enemy)
+		if not self.hitted[enemy:entindex()] then
+			self.hitted[enemy:entindex()] = true
 			local pfx = ParticleManager:CreateParticle("particles/items2_fx/shivas_guard_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
 			ParticleManager:SetParticleControl(pfx, 1, self:GetParent():GetAbsOrigin())
 			ParticleManager:ReleaseParticleIndex(pfx)
@@ -282,8 +282,8 @@ function modifier_imba_shiva_2_active_thinker:OnIntervalThink()
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), radius, FrameTime(), false)
 	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
-		if not IsInTable(enemy, self.hitted) then
-			table.insert(self.hitted, enemy)
+		if not self.hitted[enemy:entindex()] then
+			self.hitted[enemy:entindex()] = true
 			local pfx = ParticleManager:CreateParticle("particles/econ/events/newbloom_2015/shivas_guard_impact_nian2015.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
 			ParticleManager:SetParticleControl(pfx, 1, self:GetParent():GetAbsOrigin())
 			ParticleManager:ReleaseParticleIndex(pfx)

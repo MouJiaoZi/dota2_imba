@@ -52,7 +52,7 @@
 		<DOTAItemImage id="IMBAItem_8" itemname="item_imba_dummy" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#AAAAAAFF;">
 			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="0"/>
 		</DOTAItemImage>
-		<DOTAItemImage id="IMBAItem_Scepter" itemname="item_imba_ultimate_scepter_synth" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#000000EE;">
+		<DOTAItemImage id="IMBAItem_Scepter" itemname="item_ultimate_scepter" style="height:100%;width:41.25px;margin-left:3px;background-size:cover;wash-color:#000000EE;">
 			<Label id="IMBAItemStackText" class="IMBAItemStackNumber MonoNumbersFont" hittest="false" text="√×"/>
 		</DOTAItemImage>
 		<DOTAItemImage id="IMBAItem_Moon" itemname="item_imba_moon_shard" style="height:100%;width:41.25px;margin-left:3px;">

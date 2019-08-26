@@ -1423,3 +1423,300 @@
 		}
 	}
 }
+
+"IMBA_TIME_10"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_count_pick_10_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_TIME_5"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_count_pick_05_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_TIME_RESERVE"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_time_reserve_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_BAN_DIRE"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_ban_dire_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_BAN_RADIANT"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_ban_rad_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_PICK_DIRE"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_pick_dire_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_PICK_RADIANT"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_pick_rad_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_MODE_CM"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_type_capt_mode_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_MODE_RD"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_type_ran_draft_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_MODE_AP"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_type_all_pick_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
+
+"IMBA_SELECTION_MODE_31"
+{
+	"operator_stacks"
+	{
+		"update_stack"
+		{
+			"reference_operator"
+			{
+				"operator"				"sos_reference_stack"
+				"reference_stack"		"dota_update_vo_switch"
+				"operator_variables"
+				{
+					"vsnd_files"
+					{
+						"value"
+						{
+							"value0"    "sounds/vo/announcer_dlc_crystal_maiden/cm_ann_type_sing_draft_01.vsnd"
+						}
+					}
+					"volume"			{   "value"     "1.000000"  }
+					"pitch"				{   "value"     "1.000000"  }
+				}
+			}
+		}
+	}
+}
