@@ -3614,7 +3614,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"ItemCost"						"100"
 		"ItemStockTime"					"120.0"			  
-		"ItemInitialStockTime"			"200.0"
+		"ItemInitialStockTime"			"280.0"
 		"AbilityCooldown"				"0.0"
 		"ItemStockMax"					"5"
 		"BonusDelayedStockCount"		"0"
@@ -5840,22 +5840,22 @@
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"end_radius"				"300 300 300 300"
+				"end_radius"				"800"
 			}
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"end_distance"				"500 500 500 500"
+				"end_distance"				"900"
 			}
 			"04"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"targets"					"3 6 9 12"
+				"targets"					"12"
 			}
 			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"damage"					"140 200 260 320"
+				"damage"					"200 260 320 380"
 				"LinkedSpecialBonus"		"special_bonus_unique_shadow_shaman_3"
 			}
 		}
@@ -10939,7 +10939,8 @@
 	{
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"1600"
+		"AbilityCastRange"				"3600"
+		"AbilityCooldown"				"20"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -12499,13 +12500,13 @@
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"bonus_health_regen"	"40 55 70"
+				"bonus_health_regen"	"50 100 150"
 				"LinkedSpecialBonus"		"special_bonus_unique_alchemist_4"
 			}
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"bonus_mana_regen"		"3.0 7.5 12.0"
+				"bonus_mana_regen"		"0"
 			}
 			"07"
 			{

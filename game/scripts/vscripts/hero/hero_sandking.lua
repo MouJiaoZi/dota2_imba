@@ -151,23 +151,19 @@ end
 
 imba_sandking_sand_storm = class({})
 
-LinkLuaModifier("modifier_sand_storm_caster", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sand_storm_sound", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_sand_storm_caster", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_sand_storm_motion", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_sand_storm", "hero/hero_sandking", LUA_MODIFIER_MOTION_NONE)
 
 function imba_sandking_sand_storm:IsHiddenWhenStolen() 		return false end
 function imba_sandking_sand_storm:IsRefreshable() 			return true end
 function imba_sandking_sand_storm:IsStealable() 			return true end
 function imba_sandking_sand_storm:IsNetherWardStealable()	return true end
 function imba_sandking_sand_storm:GetCastRange() return self:GetSpecialValueFor("radius") - self:GetCaster():GetCastRangeBonus() end
-function imba_sandking_sand_storm:GetChannelTime() return self:GetSpecialValueFor("max_duration") end
-function imba_sandking_sand_storm:GetChannelAnimation() return ACT_DOTA_OVERRIDE_ABILITY_2 end
 
 function imba_sandking_sand_storm:OnSpellStart()
 	local caster = self:GetCaster()
-	caster:RemoveModifierByName("modifier_sand_storm_caster")
-	caster:AddNewModifier(caster, self, "modifier_sand_storm_caster", {})
-	CreateModifierThinker(caster, self, "modifier_sand_storm_sound", {duration = self:GetChannelTime()}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
+	CreateModifierThinker(caster, self, "modifier_imba_sand_storm", {duration = self:GetSpecialValueFor("max_duration")}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 	caster:EmitSound("Ability.SandKing_SandStorm.start")
 end
 
@@ -179,82 +175,90 @@ function imba_sandking_sand_storm:OnChannelFinish(bInterrupted)
 	end
 end
 
-modifier_sand_storm_sound = class({})
+modifier_imba_sand_storm = class({})
 
-function modifier_sand_storm_sound:OnCreated()
+function modifier_imba_sand_storm:IsAura() return true end
+function modifier_imba_sand_storm:GetAuraDuration() return self:GetAbility():GetSpecialValueFor("invis_duration") end
+function modifier_imba_sand_storm:GetModifierAura() return "modifier_imba_sand_storm_caster" end
+function modifier_imba_sand_storm:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("radius") end
+function modifier_imba_sand_storm:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_NONE end
+function modifier_imba_sand_storm:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_FRIENDLY end
+function modifier_imba_sand_storm:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
+function modifier_imba_sand_storm:GetAuraEntityReject(unit) return self:GetCaster() ~= unit end
+
+function modifier_imba_sand_storm:OnCreated()
 	if IsServer() then
 		if RollPercentage(30) then
 			self:GetParent():EmitSound("Imba.SandKingSandStorm")
 		else
 			self:GetParent():EmitSound("Ability.SandKing_SandStorm.loop")
 		end
-		self:StartIntervalThink(0.2)
-	end
-end
-
-function modifier_sand_storm_sound:OnIntervalThink()
-	self:GetParent():SetOrigin(self:GetCaster():GetAbsOrigin())
-	if not self:GetAbility():IsChanneling() then
-		self:Destroy()
-	end
-end
-
-function modifier_sand_storm_sound:OnDestroy()
-	if IsServer() then
-		self:GetParent():StopSound("Imba.SandKingSandStorm")
-		self:GetParent():StopSound("Ability.SandKing_SandStorm.loop")
-	end
-end
-
-modifier_sand_storm_caster = class({})
-
-function modifier_sand_storm_caster:IsDebuff()			return false end
-function modifier_sand_storm_caster:IsHidden() 			return false end
-function modifier_sand_storm_caster:IsPurgable() 		return false end
-function modifier_sand_storm_caster:IsPurgeException() 	return false end
-function modifier_sand_storm_caster:DeclareFunctions() return {MODIFIER_PROPERTY_INVISIBILITY_LEVEL} end
-function modifier_sand_storm_caster:GetModifierInvisibilityLevel() return 1 end
-function modifier_sand_storm_caster:CheckState() return {[MODIFIER_STATE_INVISIBLE] = true} end
-
-function modifier_sand_storm_caster:OnCreated()
-	if IsServer() then
-		self.pos = self:GetParent():GetAbsOrigin()
-		self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("damage_tick"))
 		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_sandking/sandking_sandstorm.vpcf", PATTACH_CUSTOMORIGIN, nil)
-		ParticleManager:SetParticleControl(pfx, 0, self.pos)
-		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor('radius') * 1.3, 1, 1))
+		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
+		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor('radius') * 1.15, 1, 1))
 		self:AddParticle(pfx, false, false, 15, false, false)
 	end
 end
 
-function modifier_sand_storm_caster:OnIntervalThink()
-	local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self.pos, nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+function modifier_imba_sand_storm:OnIntervalThink()
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
 		local damageTable = {
 							victim = enemy,
 							attacker = self:GetCaster(),
-							damage = self:GetAbility():GetSpecialValueFor("damage"),
+							damage = self:GetAbility():GetSpecialValueFor("damage") / (1.0 / self:GetAbility():GetSpecialValueFor("damage_tick")),
 							damage_type = self:GetAbility():GetAbilityDamageType(),
 							damage_flags = DOTA_DAMAGE_FLAG_NONE, --Optional.
 							ability = self:GetAbility(), --Optional.
 							}
 		ApplyDamage(damageTable)
 		if self:GetCaster():HasAbility("imba_sandking_treacherous_sands") and self:GetCaster():FindAbilityByName("imba_sandking_treacherous_sands"):GetToggleState() then
-			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_sand_storm_motion", {duration = 0.2})
+			enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_imba_sand_storm_motion", {duration = 0.2})
 		end
 	end
 end
 
-modifier_sand_storm_motion = class({})
+function modifier_imba_sand_storm:OnDestroy()
+	if IsServer() then
+		self:GetParent():StopSound("Imba.SandKingSandStorm")
+		self:GetParent():StopSound("Ability.SandKing_SandStorm.loop")
+	end
+end
 
-function modifier_sand_storm_motion:IsDebuff()				return false end
-function modifier_sand_storm_motion:IsHidden() 				return true end
-function modifier_sand_storm_motion:IsPurgable() 			return false end
-function modifier_sand_storm_motion:IsPurgeException() 		return false end
-function modifier_sand_storm_motion:IsMotionController() return true end
-function modifier_sand_storm_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
+modifier_imba_sand_storm_caster = class({})
 
-function modifier_sand_storm_motion:OnCreated()
+function modifier_imba_sand_storm_caster:IsDebuff()			return false end
+function modifier_imba_sand_storm_caster:IsHidden() 		return false end
+function modifier_imba_sand_storm_caster:IsPurgable() 		return false end
+function modifier_imba_sand_storm_caster:IsPurgeException() return false end
+function modifier_imba_sand_storm_caster:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_sand_storm_caster:DeclareFunctions() return {MODIFIER_PROPERTY_INVISIBILITY_LEVEL} end
+function modifier_imba_sand_storm_caster:GetModifierInvisibilityLevel() return 1 end
+function modifier_imba_sand_storm_caster:CheckState() return {[MODIFIER_STATE_INVISIBLE] = true} end
+
+function modifier_imba_sand_storm_caster:OnCreated()
+	if IsServer() then
+		self:GetAuraOwner():FindModifierByName("modifier_imba_sand_storm"):StartIntervalThink(self:GetAbility():GetSpecialValueFor("damage_tick"))
+	end
+end
+
+function modifier_imba_sand_storm_caster:OnDestroy()
+	if IsServer() then
+		self:GetAuraOwner():FindModifierByName("modifier_imba_sand_storm"):StartIntervalThink(-1)
+	end
+end
+
+modifier_imba_sand_storm_motion = class({})
+
+function modifier_imba_sand_storm_motion:IsDebuff()			return false end
+function modifier_imba_sand_storm_motion:IsHidden() 		return true end
+function modifier_imba_sand_storm_motion:IsPurgable() 		return false end
+function modifier_imba_sand_storm_motion:IsPurgeException() return false end
+function modifier_imba_sand_storm_motion:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_imba_sand_storm_motion:IsMotionController() return true end
+function modifier_imba_sand_storm_motion:GetMotionControllerPriority() return DOTA_MOTION_CONTROLLER_PRIORITY_LOWEST end
+
+function modifier_imba_sand_storm_motion:OnCreated()
 	if IsServer() then
 		if self:CheckMotionControllers() then
 			self:StartIntervalThink(FrameTime())
@@ -264,14 +268,14 @@ function modifier_sand_storm_motion:OnCreated()
 	end
 end
 
-function modifier_sand_storm_motion:OnIntervalThink()
+function modifier_imba_sand_storm_motion:OnIntervalThink()
 	local distance = self:GetAbility():GetSpecialValueFor("wind_force_tooltip")
 	distance = distance / (self:GetDuration() / FrameTime())
 	local next_pos = self:GetParent():GetAbsOrigin() + (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized() * distance
 	self:GetParent():SetOrigin(next_pos)
 end
 
-function modifier_sand_storm_motion:OnDestroy()
+function modifier_imba_sand_storm_motion:OnDestroy()
 	if IsServer() then
 		FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), true)
 	end

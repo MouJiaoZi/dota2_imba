@@ -1196,6 +1196,9 @@ function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry, hCallback)
 end
 
 function IMBA:EndGameAPI(iWinnerTeam)
+	if GameRules:IsCheatMode() then
+		return
+	end
 	IMBA:SendHTTPRequest("imba_end_match.php", {["match_id"] = GameRules:GetMatchID(), ["map_name"] = GetMapName()})
 	for i=0, 19 do
 		if CDOTA_PlayerResource.IMBA_PLAYER_HERO[i+1] and not PlayerResource:IsFakeClient(i) then

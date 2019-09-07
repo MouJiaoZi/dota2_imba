@@ -102,26 +102,33 @@ function imba_skywrath_mage_concussive_shot:IsHiddenWhenStolen() 	return false e
 function imba_skywrath_mage_concussive_shot:IsRefreshable() 		return true end
 function imba_skywrath_mage_concussive_shot:IsStealable() 			return true end
 function imba_skywrath_mage_concussive_shot:IsNetherWardStealable()	return true end
-function imba_skywrath_mage_concussive_shot:GetCastRange() return self:GetSpecialValueFor("search_range") - self:GetCaster():GetCastRangeBonus() end
+function imba_skywrath_mage_concussive_shot:GetCastRange() return self:GetCaster():HasTalent("special_bonus_imba_skywrath_mage_1") and self:GetCaster():GetTalentValue("special_bonus_imba_skywrath_mage_1") - self:GetCaster():GetCastRangeBonus() or self:GetSpecialValueFor("search_range") - self:GetCaster():GetCastRangeBonus() end
 
 function imba_skywrath_mage_concussive_shot:OnSpellStart()
 	local caster = self:GetCaster()
 	caster:EmitSound("Hero_SkywrathMage.ConcussiveShot.Cast")
 	local main = 1
 	local target
-	local heroes = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
-	for _, hero in pairs(heroes) do
-		target = hero
-		self:ConcussiveShotLaunch(hero, self:GetSpecialValueFor("damage"), main)
-		break
-	end
-	if caster:HasScepter() and target then
-		local heroes = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+	if not caster:HasTalent("special_bonus_imba_skywrath_mage_1") then
+		local heroes = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
 		for _, hero in pairs(heroes) do
-			if hero ~= target then
-				self:ConcussiveShotLaunch(hero, self:GetSpecialValueFor("damage"), main)
-				break
+			target = hero
+			self:ConcussiveShotLaunch(hero, self:GetSpecialValueFor("damage"), main)
+			break
+		end
+		if caster:HasScepter() and target then
+			local heroes = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("search_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+			for _, hero in pairs(heroes) do
+				if hero ~= target then
+					self:ConcussiveShotLaunch(hero, self:GetSpecialValueFor("damage"), main)
+					break
+				end
 			end
+		end
+	else
+		local heroes = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, caster:GetTalentValue("special_bonus_imba_skywrath_mage_1"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS, FIND_CLOSEST, false)
+		for i=1, #heroes do
+			self:ConcussiveShotLaunch(heroes[i], self:GetSpecialValueFor("damage"), main)
 		end
 	end
 end
@@ -140,7 +147,7 @@ function imba_skywrath_mage_concussive_shot:ConcussiveShotLaunch(target, damage,
 		bIsAttack = false,
 		bVisibleToEnemies = true,
 		bReplaceExisting = false,
-		flExpireTime = GameRules:GetGameTime() + 10,
+		flExpireTime = GameRules:GetGameTime() + 60,
 		bProvidesVision = false,	
 		ExtraData = {damage = damage, main = main}
 	}

@@ -41,7 +41,7 @@ npc_dota_hero_rattletrap: 1,
 npc_dota_hero_razor: 0,
 npc_dota_hero_riki: 2,
 npc_dota_hero_sand_king: 1,
-npc_dota_hero_shadow_shaman: 3,
+npc_dota_hero_shadow_shaman: 0,
 npc_dota_hero_slardar: 0,
 npc_dota_hero_sniper: 1,
 npc_dota_hero_spectre: 2,
@@ -113,12 +113,12 @@ npc_dota_hero_techies: 1,
 npc_dota_hero_oracle: 2,
 npc_dota_hero_winter_wyvern: 0,
 npc_dota_hero_arc_warden: 0,
-npc_dota_hero_abyssal_underlord: 3,
+npc_dota_hero_abyssal_underlord: 0,
 npc_dota_hero_monkey_king: 0,
 npc_dota_hero_pangolier: 2,
 npc_dota_hero_dark_willow: 0,
 npc_dota_hero_mars: 0,
-npc_dota_hero_grimstroke: 3
+npc_dota_hero_grimstroke: 0
 };
 
 var local_player = Players.GetLocalPlayer();

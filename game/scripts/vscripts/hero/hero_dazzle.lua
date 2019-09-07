@@ -176,7 +176,7 @@ function modifier_imba_shallow_grave:OnTakeDamage(keys)
 	if not IsServer() then
 		return
 	end
-	if keys.unit ~= self:GetParent() or self:GetParent():GetHealth() ~= 1 then
+	if keys.unit ~= self:GetParent() or self:GetParent():GetHealth() ~= 2 then
 		return
 	end
 	self:SetStackCount(self:GetStackCount() + keys.damage)

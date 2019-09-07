@@ -223,7 +223,7 @@ end
 function modifier_imba_lion_hex:OnIntervalThink()
 	self:StartIntervalThink(-1)
 	local target_num = self:GetCaster():HasScepter() and self:GetAbility():GetSpecialValueFor("target_scepter") or 1
-	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("hex_bounce_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("hex_bounce_radius") + self:GetCaster():GetTalentValue("special_bonus_imba_lion_2"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	local tars = 0
 	for _, enemy in pairs(enemies) do
 		if enemy ~= self:GetParent() and not enemy:IsHexed() then
@@ -358,14 +358,29 @@ end
 imba_lion_finger_of_death = class({})
 
 LinkLuaModifier("modifier_imba_finger_of_death_kill", "hero/hero_lion", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_finger_of_death", "hero/hero_lion", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_finger_of_death_ti8", "hero/hero_lion", LUA_MODIFIER_MOTION_NONE)
 
 function imba_lion_finger_of_death:IsHiddenWhenStolen() 	return false end
 function imba_lion_finger_of_death:IsRefreshable() 			return true end
 function imba_lion_finger_of_death:IsStealable() 			return true end
 function imba_lion_finger_of_death:IsNetherWardStealable()	return true end
+function imba_lion_finger_of_death:GetIntrinsicModifierName() return "modifier_imba_finger_of_death" end
 function imba_lion_finger_of_death:GetManaCost(i) return (1 + (self:GetSpecialValueFor("mana_increase_pct") / 100) * self:GetCaster():GetModifierStackCount("modifier_imba_finger_of_death_kill", self:GetCaster())) * self:GetSpecialValueFor("base_mana_cost") end
 function imba_lion_finger_of_death:GetCooldown(i) return self:GetCaster():HasScepter() and self:GetSpecialValueFor("cooldown_scepter") or self:GetSpecialValueFor("cd") end
 function imba_lion_finger_of_death:GetAOERadius() return self:GetCaster():HasScepter() and self:GetSpecialValueFor("radius_scepter") or 0 end
+
+function imba_lion_finger_of_death:OnAbilityPhaseStart()
+	local caster = self:GetCaster()
+	local target = self:GetCursorTarget()
+	if HeroItems:UnitHasItem(caster, "lion_ti8") then
+		local pfx = ParticleManager:CreateParticle("particles/econ/items/lion/lion_ti8/lion_spell_finger_of_death_charge_ti8.vpcf", PATTACH_CUSTOMORIGIN, caster)
+		ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack2", caster:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(pfx, 1, caster, PATTACH_ABSORIGIN_FOLLOW, nil, caster:GetAbsOrigin(), true)
+		ParticleManager:ReleaseParticleIndex(pfx)
+	end
+	return true
+end
 
 function imba_lion_finger_of_death:OnSpellStart()
 	self.wait = false
@@ -377,9 +392,9 @@ function imba_lion_finger_of_death:OnSpellStart()
 	end
 	local enemies = {}
 	table.insert(enemies, target)
-	local dmg = self:GetSpecialValueFor("damage")
+	local dmg = self:GetSpecialValueFor("damage") + caster:GetModifierStackCount("modifier_imba_finger_of_death", nil) * self:GetSpecialValueFor("stack_damage")
 	if caster:HasScepter() then
-		dmg = self:GetSpecialValueFor("damage_scepter")
+		dmg = self:GetSpecialValueFor("damage_scepter") + caster:GetModifierStackCount("modifier_imba_finger_of_death", nil) * self:GetSpecialValueFor("stack_damage")
 		local enemies2 = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("radius_scepter"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NOT_NIGHTMARED, FIND_ANY_ORDER, false)
 		for _, enemy in pairs(enemies2) do
 			if (enemy:IsStunned() or enemy:IsHexed()) and enemy ~= target then
@@ -399,7 +414,7 @@ function imba_lion_finger_of_death:OnSpellStart()
 		local direction = (enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Normalized()
 		local pfx_name = "particles/units/heroes/hero_lion/lion_spell_finger_of_death.vpcf"
 		if HeroItems:UnitHasItem(caster, "lion_ti8") then
-			pfx_name = "particles/econ/items/lion/lion_ti8/lion_spell_finger_ti8.vpcf"
+			pfx_name = "particles/econ/items/lion/lion_ti8/lion_spell_finger_ti8_lvl2.vpcf"
 		end
 		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_CUSTOMORIGIN, nil)
 		ParticleManager:SetParticleControlEnt(pfx, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack2", caster:GetAbsOrigin(), true)
@@ -434,7 +449,10 @@ end
 function imba_lion_finger_of_death:KillCredit(target) -- set in vscripts/events.lua -- function GameMode:OnEntityKilled( keys )
 	if not self.wait and target:IsHero() then
 		local buff = self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_imba_finger_of_death_kill", {duration = self:GetSpecialValueFor("mana_add_duration")})
-		buff:SetStackCount(buff:GetStackCount() + 1)
+		if buff then
+			buff:SetStackCount(buff:GetStackCount() + 1)
+		end
+		self:GetCaster():SetModifierStackCount("modifier_imba_finger_of_death", nil, self:GetCaster():GetModifierStackCount("modifier_imba_finger_of_death", nil) + 1)
 		self.wait = true
 		self:EndCooldown()
 	end
@@ -446,3 +464,30 @@ function modifier_imba_finger_of_death_kill:IsDebuff()			return false end
 function modifier_imba_finger_of_death_kill:IsHidden() 			return false end
 function modifier_imba_finger_of_death_kill:IsPurgable() 		return false end
 function modifier_imba_finger_of_death_kill:IsPurgeException() 	return false end
+
+modifier_imba_finger_of_death = class({})
+
+function modifier_imba_finger_of_death:IsDebuff()			return false end
+function modifier_imba_finger_of_death:IsHidden() 			return false end
+function modifier_imba_finger_of_death:IsPurgable() 		return false end
+function modifier_imba_finger_of_death:IsPurgeException() 	return false end
+function modifier_imba_finger_of_death:DeclareFunctions() return {MODIFIER_PROPERTY_TOOLTIP} end
+function modifier_imba_finger_of_death:OnTooltip() return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("stack_damage") end
+
+function modifier_imba_finger_of_death:OnCreated()
+	if IsServer() and HeroItems:UnitHasItem(self:GetCaster(), "lion_ti8") then
+		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_imba_finger_of_death_ti8", {})
+	end
+end
+
+
+modifier_imba_finger_of_death_ti8 = class({})
+
+
+function modifier_imba_finger_of_death_ti8:IsDebuff()			return false end
+function modifier_imba_finger_of_death_ti8:IsHidden() 			return true end
+function modifier_imba_finger_of_death_ti8:RemoveOnDeath() 		return self:GetParent():IsIllusion() end
+function modifier_imba_finger_of_death_ti8:IsPurgable() 		return false end
+function modifier_imba_finger_of_death_ti8:IsPurgeException() 	return false end
+function modifier_imba_finger_of_death_ti8:DeclareFunctions() return {MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
+function modifier_imba_finger_of_death_ti8:GetActivityTranslationModifiers() return "ti8_immortal" end

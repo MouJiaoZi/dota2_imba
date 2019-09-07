@@ -9,7 +9,7 @@ function imba_disruptor_thunder_strike:IsHiddenWhenStolen() 	return false end
 function imba_disruptor_thunder_strike:IsRefreshable() 			return true end
 function imba_disruptor_thunder_strike:IsStealable() 			return true end
 function imba_disruptor_thunder_strike:IsNetherWardStealable()	return true end
-function imba_disruptor_thunder_strike:GetAOERadius() return self:GetSpecialValueFor("radius") end
+function imba_disruptor_thunder_strike:GetAOERadius() return self:GetSpecialValueFor("cast_radius") end
 
 function imba_disruptor_thunder_strike:OnSpellStart()
 	local caster = self:GetCaster()
@@ -18,7 +18,7 @@ function imba_disruptor_thunder_strike:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
-	local enemy = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+	local enemy = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("cast_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for i=1, #enemy do
 		enemy[i]:AddNewModifier(caster, self, "modifier_imba_thunder_strike", {})
 	end

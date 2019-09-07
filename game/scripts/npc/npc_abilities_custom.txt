@@ -5497,7 +5497,7 @@
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ULTIMATE"
-		"AbilityTextureName"			"clinkz_death_pact"
+		"AbilityTextureName"			"clinkz_burning_army"
 		"HasScepterUpgrade"				"1"
 		"ScriptFile"					"hero/hero_clinkz.lua"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
@@ -6475,20 +6475,25 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"radius"					"240"
+				"cast_radius"				"480"
 			}
 			"02"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"radius"					"240"
+			}
+			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"strikes"					"5"
 				"LinkedSpecialBonus"		"special_bonus_imba_disruptor_2"
 			}
-			"03"
+			"04"
 			{
 				"var_type"					"FIELD_FLOAT"
 				"strike_interval"			"1.0"
 			}
-			"04"
+			"05"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"strike_damage"				"25 50 75 100"
@@ -8609,6 +8614,7 @@
 			{
 				"var_type"					"FIELD_FLOAT"
 				"damage_scepter"			"5.25"
+				"CalculateSpellDamageTooltip"	"0"
 				"RequiresScepter"			"1"
 			}
 		}
@@ -10411,7 +10417,7 @@
 			"11"
 			{
 				"var_type"						"FIELD_INTEGER"
-				"rum_reduce_pct"				"50"
+				"rum_reduce_pct"				"30"
 			}
 			"12"
 			{
@@ -11583,10 +11589,36 @@
 			{
 				"var_type"				"FIELD_INTEGER"
 				"hex_bounce_radius"		"325"
+				"LinkedSpecialBonus"	"special_bonus_imba_lion_2"
 			}
 		}
 	}
 
+	"special_bonus_imba_lion_2" // +200 Hex AOE
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_lion_hex"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"200"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Lion's Mana Drain
 	//=================================================================================================================
@@ -11764,6 +11796,11 @@
 			{
 				"var_type"					"FIELD_FLOAT"
 				"base_mana_cost"			"200 400 600"
+			}
+			"10"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"stack_damage"				"20"
 			}
 		}
 	}
@@ -16030,7 +16067,7 @@
 		"BaseClass"             		"ability_lua"
 		"AbilityTextureName"			"puck_ethereal_jaunt"
 		"MaxLevel" 						"1"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES"
 		"AbilitySound"					"Hero_Puck.EtherealJaunt"
 		"ScriptFile"					"hero/hero_puck.lua"
 
@@ -16132,7 +16169,7 @@
 		"BaseClass"             		"ability_lua"
 		"AbilityTextureName"			"puck_phase_shift"
 		"MaxLevel" 						"4"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ALLIES_YES"
@@ -18320,7 +18357,7 @@
 		// General
 		//-------------------------------------------------------------------------------------------------------------
 		"BaseClass"						"ability_lua"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_CHANNELLED | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
@@ -18374,12 +18411,12 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"wind_force_tooltip"	"45 65 85 105"
+				"wind_force_tooltip"	"20 30 40 50"
 			}
 			"05"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"max_duration"			"50"
+				"max_duration"			"30"
 			}
 			"06"
 			{
@@ -20354,6 +20391,31 @@
 		}
 	}
 
+	"special_bonus_imba_skywrath_mage_1" // 3200 Concussive Shot
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		"BaseClass"						"special_bonus_undefined"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"LinkedAbility"
+		{
+			"01" 						"imba_skywrath_mage_concussive_shot"
+		}
+
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_INTEGER"
+				"value"						"3200"
+			}
+		}
+	}
+	
 	//=================================================================================================================
 	// Skywrath's Ancient Seal
 	//=================================================================================================================
@@ -23550,6 +23612,7 @@
 			{
 				"var_type"					"FIELD_INTEGER"
 				"contagion_extra_duration"	"3"
+				"RequiresScepter"			"1"
 			}
 		}
 	}

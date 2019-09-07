@@ -147,7 +147,7 @@ function IMBAHeroSelection:PlayerDirtySelectHero(unused, kv)
 	local pID = kv.PlayerID
 	local hero = kv.hero
 	CustomNetTables:SetTableValue("imba_hero_selection_player", "player_hero_dirty_"..pID, {hero = hero}) --
-	CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {})
+	CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {type = "dirty", hero = hero, pID = pID})
 end
 
 -------------------------------------------
@@ -171,9 +171,8 @@ function modifier_imba_hero_selection_select:OnCreated(kv)
 		end
 		IMBA_HEROSELECTION_SELECTED_HERO[hero] = IMBA_HEROSELECTION_SELECTED_HERO[hero] and IMBA_HEROSELECTION_SELECTED_HERO[hero] + 1 or 1
 		CustomNetTables:SetTableValue("imba_hero_selection_player", "player_hero_selected_"..pID, {hero = hero})
-		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {})
-		local dummy = PlayerResource:GetSelectedHeroEntity(pID)
-		CreateModifierThinker(nil, nil, "modifier_imba_hero_selection_replace_hero", {hero = hero, pID = pID, dummy = dummy:entindex()}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
+		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {type = "select", hero = hero, pID = pID})
+		CreateModifierThinker(nil, nil, "modifier_imba_hero_selection_replace_hero", {hero = hero, pID = pID}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -204,9 +203,8 @@ function modifier_imba_hero_selection_random:OnCreated(kv)
 			CustomNetTables:SetTableValue("imba_hero_selection_player", "player_hero_randomed_"..pID, {hero = hero})
 		end
 		IMBA_HEROSELECTION_SELECTED_HERO[hero] = IMBA_HEROSELECTION_SELECTED_HERO[hero] and IMBA_HEROSELECTION_SELECTED_HERO[hero] + 1 or 1
-		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {})
-		local dummy = PlayerResource:GetSelectedHeroEntity(pID)
-		CreateModifierThinker(nil, nil, "modifier_imba_hero_selection_replace_hero", {hero = hero, pID = pID, dummy = dummy:entindex()}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
+		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {type = "select", hero = hero, pID = pID})
+		CreateModifierThinker(nil, nil, "modifier_imba_hero_selection_replace_hero", {hero = hero, pID = pID}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
 	end
 end
 
@@ -262,7 +260,7 @@ function modifier_imba_hero_selection_ban:OnCreated(kv)
 		local new_info = ban_info or {}
 		new_info[hero] = true
 		CustomNetTables:SetTableValue("imba_hero_selection_list", "banned_hero", new_info)
-		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {})
+		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSelectedHero", {type = "ban", hero = hero, pID = pID})
 	end
 end
 
@@ -307,7 +305,7 @@ function modifier_imba_hero_selection_suggest:OnCreated(kv)
 			info[hero] = nil
 		end
 		CustomNetTables:SetTableValue("imba_hero_selection_list", "ap_suggest_list"..team, info)
-		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSuggestHero", {})
+		CustomGameEventManager:Send_ServerToAllClients("IMBAHeroSelection_PlayerSuggestHero", {team = team, hero = hero})
 	end
 end
 
@@ -346,8 +344,8 @@ modifier_imba_hero_selection_replace_hero = class({})
 function modifier_imba_hero_selection_replace_hero:OnCreated(keys)
 	if IsServer() then
 		self.hero = keys.hero
-		self.dummy = EntIndexToHScript(keys.dummy)
 		self.pID = keys.pID
+		self.dummy = PlayerResource:GetSelectedHeroEntity(self.pID)
 		self:StartIntervalThink(1.0)
 		self:OnIntervalThink()
 	end
@@ -355,7 +353,10 @@ end
 
 function modifier_imba_hero_selection_replace_hero:OnIntervalThink()
 	if self:GetStackCount() == 0 then
-		if PlayerResource:GetConnectionState(self.pID) == DOTA_CONNECTION_STATE_CONNECTED or PlayerResource:GetConnectionState(self.pID) == DOTA_CONNECTION_STATE_ABANDONED then
+		if not self.dummy then
+			self.dummy = PlayerResource:GetSelectedHeroEntity(self.pID)
+		end
+		if self.dummy and PlayerResource:GetConnectionState(self.pID) == DOTA_CONNECTION_STATE_CONNECTED or PlayerResource:GetConnectionState(self.pID) == DOTA_CONNECTION_STATE_ABANDONED then
 			self.dummy:AddNoDraw()
 			self.dummy:AddNewModifier(nil, nil, "modifier_imba_storm_bolt_caster", {})
 			PlayerResource:ReplaceHeroWith(self.pID, self.hero, 0, 0)

@@ -45,7 +45,7 @@ function UpdatePlayerInfo()
 		heroIMGPanel.SetHasClass("HeroPickDirty", false);
 		heroIMGPanel.heroname = hero_name_locked.hero;
 	}
-	else if(local_player == -1)
+	else if(local_player == -1 && hero_name_dirty)
 	{
 
 		heroIMGPanel.SetHasClass("HeroPickDirty", true);
