@@ -492,9 +492,9 @@ end
 
 
 
-function modifier_special_bonus_imba_invoker_1:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_EXECUTED} end
+function modifier_special_bonus_imba_invoker_1:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_FULLY_CAST} end
 
-function modifier_special_bonus_imba_invoker_1:OnAbilityExecuted(keys)
+function modifier_special_bonus_imba_invoker_1:OnAbilityFullyCast(keys)
 	if not IsServer() then
 		return
 	end
@@ -521,9 +521,9 @@ end
 
 local normal_ability = {"invoker_quas", "invoker_wex", "invoker_exort", "invoker_invoke"}
 
-function modifier_special_bonus_imba_invoker_2:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_EXECUTED} end
+function modifier_special_bonus_imba_invoker_2:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_FULLY_CAST} end
 
-function modifier_special_bonus_imba_invoker_2:OnAbilityExecuted(keys)
+function modifier_special_bonus_imba_invoker_2:OnAbilityFullyCast(keys)
 	if not IsServer() then
 		return
 	end
@@ -544,3 +544,23 @@ end
 
 -- modifier_invoker_quas_instance	modifier_invoker_wex_instance	modifier_invoker_exort_instance
 
+function modifier_special_bonus_imba_invoker_3:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_FULLY_CAST} end
+
+function modifier_special_bonus_imba_invoker_3:OnAbilityFullyCast(keys)
+	if not IsServer() then
+		return
+	end
+	if keys.unit == self:GetParent() and keys.ability:GetName() == "invoker_tornado" then
+		local caster = self:GetParent()
+		local ability = self:GetParent():FindAbilityByName("invoker_tornado")
+		local sou_pos = ability:GetCursorPosition()
+		local caster_pos = self:GetParent():GetAbsOrigin()
+		for i=-1, 1 do
+			if i ~= 0 then
+				local new_pos = RotatePosition(caster_pos, QAngle(0, 30 * i, 0), sou_pos)
+				caster:SetCursorPosition(new_pos)
+				ability:OnSpellStart()
+			end
+		end
+	end
+end

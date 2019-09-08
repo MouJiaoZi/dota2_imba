@@ -116,7 +116,7 @@
 		"item"		"item_imba_aether_lens"
 		"item"		"item_force_staff"
 		"item"		"item_imba_necronomicon"
-		"item"		"item_solar_crest"
+		"item"		"item_imba_solar_crest"
 		"item"		"item_imba_dagon_10"
 		"item"		"item_cyclone"
 		"item"		"item_rod_of_atos"

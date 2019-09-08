@@ -189,7 +189,7 @@
 	//"item_recipe_cyclone"			"REMOVE"
 	//"item_claymore"			"REMOVE"
 	//"item_recipe_mask_of_madness"			"REMOVE"
-	//"item_recipe_solar_crest"			"REMOVE"
+	"item_recipe_solar_crest"			"REMOVE"
 	"item_recipe_pipe"			"REMOVE"
 	"item_dagon_3"			"REMOVE"
 	"item_heart"			"REMOVE"
@@ -252,7 +252,7 @@
 	"item_veil_of_discord"			"REMOVE"
 	//"item_tome_of_knowledge"			"REMOVE"
 	"item_mekansm"			"REMOVE"
-	//"item_solar_crest"			"REMOVE"
+	"item_solar_crest"			"REMOVE"
 	"item_vanguard"			"REMOVE"
 	//"item_recipe_soul_booster"			"REMOVE"
 	"item_hood_of_defiance"			"REMOVE"
@@ -12775,7 +12775,7 @@
 			"09"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"wex_damage"			"100 175 250 325 400 475 550 625"
+				"wex_damage"			"175 250 325 400 475 550 625 700"
 				"levelkey"				"wexlevel"
 			}
 		}
@@ -12810,7 +12810,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"damage_per_mana_pct"	"60"
+				"damage_per_mana_pct"	"100"
 			}
 		}
 	}
@@ -12907,7 +12907,7 @@
 			"10"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"burn_dps"				"10 15 20 25 30 35 40 45"
+				"burn_dps"				"20 30 40 50 60 70 80 90"
 				"levelkey"				"exortlevel"
 				"CalculateSpellDamageTooltip"	"1"
 			}
@@ -13057,7 +13057,7 @@
 			"04"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"damage_per_second"		"6 12 18 24 30 36 42 48"
+				"damage_per_second"		"15 25 35 45 55 65 75 85"
 				"levelkey"				"exortlevel"
 			}
 			"05"
@@ -13121,7 +13121,7 @@
 			"06"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"damage"				"40 80 120 160 200 240 280 320"
+				"damage"				"150 200 250 300 350 400 450 500"
 				"levelkey"				"exortlevel"
 			}
 			"07"

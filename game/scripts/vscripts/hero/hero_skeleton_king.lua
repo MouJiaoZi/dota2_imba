@@ -298,7 +298,7 @@ function modifier_imba_reincarnation:DeclareFunctions() return {MODIFIER_PROPERT
 function modifier_imba_reincarnation:GetActivityTranslationModifiers() return self:GetStackCount() == 1 and "reincarnate" or nil end
 
 function modifier_imba_reincarnation:IsAura() return (not self:GetCaster():IsIllusion() and self:GetCaster():HasScepter()) end
-function modifier_imba_reincarnation:IsAuraActiveOnDeath() return true end
+function modifier_imba_reincarnation:IsAuraActiveOnDeath() return false end
 function modifier_imba_reincarnation:GetAuraDuration() return self:GetAbility():GetSpecialValueFor("aura_linger") end
 function modifier_imba_reincarnation:GetModifierAura() return "modifier_imba_reincarnation_scepter_aura" end
 function modifier_imba_reincarnation:GetAuraRadius() return self:GetAbility():GetSpecialValueFor("aura_radius_scepter") end

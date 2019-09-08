@@ -448,7 +448,7 @@ function modifier_imba_incapacitating_bite:IsDebuff()			return false end
 function modifier_imba_incapacitating_bite:IsHidden() 			return true end
 function modifier_imba_incapacitating_bite:IsPurgable() 		return false end
 function modifier_imba_incapacitating_bite:IsPurgeException() 	return false end
-function modifier_imba_incapacitating_bite:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK, MODIFIER_EVENT_ON_ATTACK_START, MODIFIER_EVENT_ON_ATTACK_LANDED} end
+function modifier_imba_incapacitating_bite:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_START, MODIFIER_EVENT_ON_ATTACK_LANDED} end
 
 function modifier_imba_incapacitating_bite:OnAttackStart(keys)
 	if not IsServer() then

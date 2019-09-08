@@ -1687,7 +1687,7 @@
 		"Ability21"						"special_bonus_unique_invoker_4"
 		"Ability22"						"special_bonus_spell_amplify_6"
 		"Ability23"						"special_bonus_unique_invoker_2"
-		"Ability24"						"special_bonus_imba_invoker_2"
+		"Ability24"						"special_bonus_imba_invoker_3"
 		"AbilityTalentStart" 			"17"
 		
 	}

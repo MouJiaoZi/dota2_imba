@@ -1,4 +1,4 @@
-IMBA_GAME_VERSION = 160
+IMBA_GAME_VERSION = 161
 
 IMBA_WEB_SERVER = "https://www.moujiaozi.me/"
 
