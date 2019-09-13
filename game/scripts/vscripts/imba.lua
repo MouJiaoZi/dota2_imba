@@ -23,8 +23,6 @@ require('libraries/json')
 
 function IMBA:OnAllPlayersLoaded()
 
-	CreateEmptyTalents("invoker")
-
 	--GameRules:GetGameModeEntity():SetAbilityTuningValueFilter(Dynamic_Wrap(IMBA, "AbilityValueFilter"), self)
 	GameRules:GetGameModeEntity():SetBountyRunePickupFilter(Dynamic_Wrap(IMBA, "BountyRuneFilter"), self)
 	GameRules:GetGameModeEntity():SetDamageFilter(Dynamic_Wrap(IMBA, "DamageFilter"), self)
@@ -40,49 +38,6 @@ function IMBA:OnAllPlayersLoaded()
 	IMBALevelRewards:LoadAllPlayersLevel()
 
 end
-
---[[function IMBA:DumpAllHero()
-	for i=1, #HeroList do
-		if HeroList[i][2] >= 1 then
-			--PrecacheUnitWithQueue(HeroList[i][1])
-			local main = GetHeroMainAttr(HeroList[i][1]) 
-			if main == "DOTA_ATTRIBUTE_STRENGTH" then
-				IMBA_HEROLIST_STR[#IMBA_HEROLIST_STR + 1] = HeroList[i][1]
-			elseif main == "DOTA_ATTRIBUTE_AGILITY" then
-				IMBA_HEROLIST_AGI[#IMBA_HEROLIST_AGI + 1] = HeroList[i][1]
-			elseif main == "DOTA_ATTRIBUTE_INTELLECT" then
-				IMBA_HEROLIST_INT[#IMBA_HEROLIST_INT + 1] = HeroList[i][1]
-			end
-		end
-	end
-
-	local player_num = CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] + CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]
-	for i=1, player_num do
-		local hero = RandomFromTable(IMBA_HEROLIST_STR)
-		while IsInTable(hero, IMBA_PICKLIST_STR) do
-			hero = RandomFromTable(IMBA_HEROLIST_STR)
-		end
-		IMBA_PICKLIST_STR[i] = hero
-	end
-	for i=1, player_num do
-		local hero = RandomFromTable(IMBA_HEROLIST_AGI)
-		while IsInTable(hero, IMBA_PICKLIST_AGI) do
-			hero = RandomFromTable(IMBA_HEROLIST_AGI)
-		end
-		IMBA_PICKLIST_AGI[i] = hero
-	end
-	for i=1, player_num do
-		local hero = RandomFromTable(IMBA_HEROLIST_INT)
-		while IsInTable(hero, IMBA_PICKLIST_INT) do
-			hero = RandomFromTable(IMBA_HEROLIST_INT)
-		end
-		IMBA_PICKLIST_INT[i] = hero
-	end
-	CustomNetTables:SetTableValue("imba_hero_selection_list", "str", IMBA_PICKLIST_STR)
-	CustomNetTables:SetTableValue("imba_hero_selection_list", "agi", IMBA_PICKLIST_AGI)
-	CustomNetTables:SetTableValue("imba_hero_selection_list", "int", IMBA_PICKLIST_INT)
-end]]
-
 
 function IMBA:BountyRuneFilter(keys)
 	--[[

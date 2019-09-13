@@ -1,14 +1,6 @@
---[[
-        By: MouJiaoZi
-        Date: 17.08.2017
-        Updated:  17.08.2017	FindTalentValue("special_bonus_imba_pudge_1","damage")
-        						FindTalentValue("special_bonus_imba_pudge_8")  
-    ]]
 
 
-CreateEmptyTalents("invoker")
-
-imba_invoker_i_am_injoker = imba_invoker_i_am_injoker or class({})
+--[[imba_invoker_i_am_injoker = imba_invoker_i_am_injoker or class({})
 
 LinkLuaModifier("modifier_imba_invoker_i_am_injoker_buff", "hero/hero_invoker", LUA_MODIFIER_MOTION_NONE)
 
@@ -37,16 +29,16 @@ function modifier_imba_invoker_i_am_injoker_buff:OnCreated()
 	--caster:AddAbility("invoker_quas")
 	--caster:AddAbility("invoker_wex")
 	--caster:AddAbility("invoker_exort")				-- Use these 3 orbs to control other spells level
-	--[[caster:AddAbility("invoker_cold_snap") 			--极冻=3
-	caster:AddAbility("invoker_ghost_walk") 		--鬼步=10
-	caster:AddAbility("invoker_tornado") 			--吹风=17
-	caster:AddAbility("invoker_deafening_blast") 	--推波=25
-	caster:AddAbility("invoker_emp") 				--磁暴=24
+	--caster:AddAbility("invoker_cold_snap") 			--极冻=3
+	--caster:AddAbility("invoker_ghost_walk") 		--鬼步=10
+	--caster:AddAbility("invoker_tornado") 			--吹风=17
+	--caster:AddAbility("invoker_deafening_blast") 	--推波=25
+	--caster:AddAbility("invoker_emp") 				--磁暴=24
 	--caster:AddAbility("invoker_alacrity") 			--灵动迅捷=32
-	caster:AddAbility("invoker_chaos_meteor") 		--陨石=40
-	caster:AddAbility("invoker_sun_strike") 		--天火=48
-	caster:AddAbility("invoker_ice_wall") 			--冰墙=18
-	caster:AddAbility("invoker_forge_spirit") 		--火人=33]]
+	--caster:AddAbility("invoker_chaos_meteor") 		--陨石=40
+	--caster:AddAbility("invoker_sun_strike") 		--天火=48
+	--caster:AddAbility("invoker_ice_wall") 			--冰墙=18
+	--caster:AddAbility("invoker_forge_spirit") 		--火人=33
 
 	self.orb_attach = {}
 	self.orb_attach[1] = "attach_orb1"
@@ -471,26 +463,36 @@ end
 
 function modifier_imba_invoker_alacrity_buff:GetModifierAttackSpeedBonus_Constant()
 	return self:GetAbility():GetSpecialValueFor("bonus_attack_speed")
+end]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+CreateEmptyTalents("invoker")
+
+imba_invoker_controller = class({})
+
+LinkLuaModifier("modifier_imba_invoker_controller", "hero/hero_invoker.lua", LUA_MODIFIER_MOTION_NONE)
+
+function imba_invoker_controller:IsTalentAbility() return true end
+function imba_invoker_controller:GetIntrinsicModifierName() return "modifier_imba_invoker_controller" end
+
+modifier_imba_invoker_controller = class({})
+
+function modifier_imba_invoker_controller:OnCreated()
+	if IsServer() then
+		self:StartIntervalThink(1.0)
+	end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function modifier_special_bonus_imba_invoker_1:DeclareFunctions() return {MODIFIER_EVENT_ON_ABILITY_FULLY_CAST} end
 

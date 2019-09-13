@@ -1023,42 +1023,6 @@ function FindStoneRemnant(pos, radius)
 	return nil
 end
 
-function CDOTA_BaseNPC:GetMoveSpeedIncrease()
-	local ms = 0
-	local has = self:HasModifier("modifier_bloodseeker_thirst")
-	if has then
-		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed(), false) - self:GetBaseMoveSpeed()
-	else
-		local ability = nil
-		for i=0, 23 do
-			local ab = self:GetAbilityByIndex(i)
-			if ab and string.find(ab:GetAbilityName(), "special_bonus") then
-				ability = ab
-				break
-			end
-		end
-		if not ability then
-			ability = self:AddAbility("imba_dummy_ability")
-			ability:SetLevel(1)
-		end
-		local buff = self:AddNewModifier(self, ability, "modifier_bloodseeker_thirst", {})
-		local ms_buff = self:FindModifierByName("modifier_imba_movespeed_controller")
-		local stack
-		if ms_buff then
-			stack = ms_buff:GetStackCount()
-			ms_buff:SetStackCount(0)
-		end
-		ms = self:GetMoveSpeedModifier(self:GetBaseMoveSpeed(), false) - self:GetBaseMoveSpeed()
-		if ms_buff then
-			ms_buff:SetStackCount(stack)
-		end
-		buff:Destroy()
-		ability:EndCooldown()
-		self:RemoveAbility("imba_dummy_ability")
-	end
-	return ms
-end
-
 function GetHeroMainAttr(sHeroname)
 	if HeroKv[sHeroname] and HeroKv[sHeroname]['AttributePrimary'] then
 		return HeroKv[sHeroname]['AttributePrimary']
@@ -1154,7 +1118,8 @@ function CDOTA_BaseNPC:RemoveAllModifiers()
 								"modifier_imba_ability_charge",
 								"modifier_item_ultimate_scepter_consumed",
 								"modifier_imba_moon_shard_consume",
-								"modifier_imba_consumable_scepter_consumed",}
+								"modifier_imba_consumable_scepter_consumed",
+								"modifier_imba_atrophy_aura_permanent",}
 	for i=1, #buff do
 		if not IsInTable(buff[i]:GetName(), no_move_buff_name) and not string.find(buff[i]:GetName(), "charge_counter") or (buff[i].CheckState and buff[i]:CheckState()[MODIFIER_STATE_STUNNED]) then
 			if buff[i]:GetAbility() and buff[i]:GetAbility().GetIntrinsicModifierName and buff[i]:GetName() == buff[i]:GetAbility():GetIntrinsicModifierName() then

@@ -41,7 +41,7 @@ function item_imba_butterfly:OnProjectileHit(target, location)
 		return
 	end
 	self:GetCaster().splitattack = false
-	self:GetCaster():PerformAttack(target, false, true, true, false, false, false, false)
+	self:GetCaster():PerformAttack(target, false, true, true, false, false, false, true)
 	self:GetCaster().splitattack = true
 end
 

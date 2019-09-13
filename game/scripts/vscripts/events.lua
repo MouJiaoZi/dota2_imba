@@ -25,6 +25,9 @@ end
 if CDOTAGamerules.IMBA_FORT == nil then
 	CDOTAGamerules.IMBA_FORT = {}
 end
+if CDOTAGamerules.IMBA_FOUNTAIN == nil then
+	CDOTAGamerules.IMBA_FOUNTAIN = {}
+end
 if CDOTAGamerules.IMBA_COURIER == nil then
 	CDOTAGamerules.IMBA_COURIER = {}
 	CDOTAGamerules.IMBA_COURIER[DOTA_TEAM_GOODGUYS] = {}
@@ -263,6 +266,9 @@ function GameMode:OnGameRulesStateChange(keys)
 				end
 				CDOTAGamerules.IMBA_FORT[tower:GetTeamNumber()] = tower
 				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
+			end
+			if string.find(tower:GetName(), "fountain") then
+				CDOTAGamerules.IMBA_FOUNTAIN[tower:GetTeamNumber()] = tower
 			end
 		end
 
@@ -503,7 +509,7 @@ function GameMode:OnNPCSpawned(keys)
 	end
 
 	-- Set Talent Ability
-	for i = 0, 23 do
+	for i = 0, 30 do
 		local ability = npc:GetAbilityByIndex(i)
 		if ability and ability.IsTalentAbility and ability:IsTalentAbility() and ability:GetLevel() == 0 then
 			ability:SetLevel(1)

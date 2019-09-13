@@ -365,10 +365,15 @@ function imba_lion_finger_of_death:IsHiddenWhenStolen() 	return false end
 function imba_lion_finger_of_death:IsRefreshable() 			return true end
 function imba_lion_finger_of_death:IsStealable() 			return true end
 function imba_lion_finger_of_death:IsNetherWardStealable()	return true end
-function imba_lion_finger_of_death:GetIntrinsicModifierName() return "modifier_imba_finger_of_death" end
 function imba_lion_finger_of_death:GetManaCost(i) return (1 + (self:GetSpecialValueFor("mana_increase_pct") / 100) * self:GetCaster():GetModifierStackCount("modifier_imba_finger_of_death_kill", self:GetCaster())) * self:GetSpecialValueFor("base_mana_cost") end
 function imba_lion_finger_of_death:GetCooldown(i) return self:GetCaster():HasScepter() and self:GetSpecialValueFor("cooldown_scepter") or self:GetSpecialValueFor("cd") end
 function imba_lion_finger_of_death:GetAOERadius() return self:GetCaster():HasScepter() and self:GetSpecialValueFor("radius_scepter") or 0 end
+
+function imba_lion_finger_of_death:OnUpgrade()
+	if IsServer() and not self:GetCaster():HasModifier("modifier_imba_finger_of_death") then
+		self:GetCaster():AddNewModifierWhenPossible(self:GetCaster(), self, "modifier_imba_finger_of_death", {})
+	end
+end
 
 function imba_lion_finger_of_death:OnAbilityPhaseStart()
 	local caster = self:GetCaster()
@@ -471,6 +476,7 @@ function modifier_imba_finger_of_death:IsDebuff()			return false end
 function modifier_imba_finger_of_death:IsHidden() 			return false end
 function modifier_imba_finger_of_death:IsPurgable() 		return false end
 function modifier_imba_finger_of_death:IsPurgeException() 	return false end
+function modifier_imba_finger_of_death:RemoveOnDeath() return self:GetParent():IsIllusion() end
 function modifier_imba_finger_of_death:DeclareFunctions() return {MODIFIER_PROPERTY_TOOLTIP} end
 function modifier_imba_finger_of_death:OnTooltip() return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("stack_damage") end
 
