@@ -1690,7 +1690,7 @@
 		"Ability24"						"special_bonus_imba_invoker_3"
 		"AbilityTalentStart" 			"17"
 
-		//"Ability25"						"imba_invoker_controller"
+		"Ability25"						"imba_invoker_controller"
 	}
 	"npc_dota_hero_silencer"
 	{

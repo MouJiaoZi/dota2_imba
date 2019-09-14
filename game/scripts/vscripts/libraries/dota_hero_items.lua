@@ -69,6 +69,11 @@ HeroItems_steamid_64[76561198236042082] = true
 HeroItems_steamid_64[76561198361355161] = true
 HeroItems_steamid_64[76561198049598958] = true
 
+HeroItems_steamid_64[76561198370987263] = true
+HeroItems_steamid_64[76561198006947736] = true
+HeroItems_steamid_64[76561198172399467] = true
+HeroItems_steamid_64[76561198091925982] = true
+
 local hero_item_table = {}
 for i=0, 23 do
 	hero_item_table[i] = {}

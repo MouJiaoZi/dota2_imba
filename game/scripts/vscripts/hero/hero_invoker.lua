@@ -484,7 +484,7 @@ imba_invoker_controller = class({})
 LinkLuaModifier("modifier_imba_invoker_controller", "hero/hero_invoker.lua", LUA_MODIFIER_MOTION_NONE)
 
 function imba_invoker_controller:IsTalentAbility() return true end
-function imba_invoker_controller:GetIntrinsicModifierName() return "modifier_imba_invoker_controller" end
+--function imba_invoker_controller:GetIntrinsicModifierName() return "modifier_imba_invoker_controller" end
 
 modifier_imba_invoker_controller = class({})
 
