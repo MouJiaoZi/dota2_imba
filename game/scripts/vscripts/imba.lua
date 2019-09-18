@@ -1151,7 +1151,7 @@ function IMBA:SendHTTPRequest(sWeb, uHEAD, iRetry, hCallback)
 end
 
 function IMBA:EndGameAPI(iWinnerTeam)
-	if GameRules:IsCheatMode() then
+	if GameRules:IsCheatMode() and not IsInToolsMode() then
 		return
 	end
 	IMBA:SendHTTPRequest("imba_end_match.php", {["match_id"] = GameRules:GetMatchID(), ["map_name"] = GetMapName()})
@@ -1183,7 +1183,11 @@ function IMBA:EndGameAPI(iWinnerTeam)
 			for k,v in pairs(player_table) do
 				infoTable[k] = v
 			end
-			PrintTable(infoTable)
+			infoTable['connection_state'] = PlayerResource:GetConnectionState(i)
+			if (hero:IsIdle() and (GameRules:GetGameTime() - hero:GetLastIdleChangeTime() >= 180)) then
+				infoTable['connection_state'] = DOTA_CONNECTION_STATE_ABANDONED
+			end
+			--PrintTable(infoTable)
 			IMBA:SendHTTPRequest("imba_end_game_player.php", infoTable)
 		end
 	end

@@ -1,4 +1,4 @@
-
+$.GetContextPanel().style.visibility = "collapse";
 var teamContainer = [];
 teamContainer[2] = $.GetContextPanel().FindChildTraverse("IMBAEndRadiantTeamContainer");
 teamContainer[3] = $.GetContextPanel().FindChildTraverse("IMBAEndDireTeamContainer");
@@ -54,7 +54,7 @@ function startEnd()
 
 	InitEndBoard();
 	updataScoreBoard();
-
+	$.GetContextPanel().style.visibility = "visible";
 }
 
 

@@ -51,18 +51,21 @@ function IMBAEvents:DeathMatchRandomOMG(npc)
 end
 
 function IMBAEvents:GiveAKAbility(npc)
-	if npc:HasAbility("generic_hidden") and not npc:HasAbility("imba_ogre_magi_multicast") and not npc:HasAbility("imba_storm_spirit_ball_lightning") then
-		GameRules:SetSafeToLeave(true)
-		local ak = nil
-		local ak_name = GetRandomAKAbility()
-		while npc:HasAbility(ak_name[2]) or (not npc:IsRangedAttacker() and (ak_name[2] == "dragon_knight_elder_dragon_form" or ak_name[2] == "terrorblade_metamorphosis")) do
-			ak_name = GetRandomAKAbility()
+	local level_info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..npc:GetPlayerOwnerID())
+	--if not level_info or (level_info and level_info['penalize'] == "0") then
+		if npc:HasAbility("generic_hidden") and not npc:HasAbility("imba_ogre_magi_multicast") and not npc:HasAbility("imba_storm_spirit_ball_lightning") then
+			GameRules:SetSafeToLeave(true)
+			local ak = nil
+			local ak_name = GetRandomAKAbility()
+			while npc:HasAbility(ak_name[2]) or (not npc:IsRangedAttacker() and (ak_name[2] == "dragon_knight_elder_dragon_form" or ak_name[2] == "terrorblade_metamorphosis")) do
+				ak_name = GetRandomAKAbility()
+			end
+			npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_loading", {})
+			PrecacheUnitByNameAsync(ak_name[1], function() npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_adder", {duration = RandomFloat(0.2, 6.0), ability_owner = ak_name[1], ability_name = ak_name[2]}) end, npc:GetPlayerOwnerID())
+		else
+			local buff = npc:AddNewModifier(npc, nil, "modifier_imba_unlimited_powerup_ak", {})
 		end
-		npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_loading", {})
-		PrecacheUnitByNameAsync(ak_name[1], function() npc:AddNewModifier(npc, nil, "modifier_imba_ak_ability_adder", {duration = RandomFloat(0.2, 6.0), ability_owner = ak_name[1], ability_name = ak_name[2]}) end, npc:GetPlayerOwnerID())
-	else
-		local buff = npc:AddNewModifier(npc, nil, "modifier_imba_unlimited_powerup_ak", {})
-	end
+	--end
 end
 
 function IMBAEvents:OnHeroKilled(victim, attacker)
@@ -254,6 +257,161 @@ function IMBAEvents:NormalIllusionCreated(fGameTime, hBaseUnit)
 			if hBaseUnit:HasModifier("modifier_imba_consumable_scepter_consumed") then
 				unit:AddNewModifier(hBaseUnit, nil, "modifier_imba_consumable_scepter_consumed", {})
 			end
+		end
+	end
+end
+
+function IMBAEvents:SetTowerAbility(hTowerTable)
+	local safeAbilities = {}
+	local midAbilities = {}
+	local dangerousAbilities = {}
+	local fortAbilities1 = {}
+	local fortAbilities2 = {}
+	for i=1, 3 do
+		safeAbilities[i] = {}
+		midAbilities[i] = {}
+		dangerousAbilities[i] = {}
+	end
+	for i=1, 3 do
+		local newAbility = RandomFromTable(IMBA_TOWER_ABILITY_1)
+		while IsInTable(newAbility, safeAbilities[1]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_1)
+		end
+		safeAbilities[1][#safeAbilities[1] + 1] = newAbility
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_1)
+		while IsInTable(newAbility, midAbilities[1]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_1)
+		end
+		midAbilities[1][#midAbilities[1] + 1] = newAbility
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_1)
+		while IsInTable(newAbility, dangerousAbilities[1]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_1)
+		end
+		dangerousAbilities[1][#dangerousAbilities[1] + 1] = newAbility
+
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_2)
+		while IsInTable(newAbility, safeAbilities[2]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_2)
+		end
+		safeAbilities[2][#safeAbilities[2] + 1] = newAbility
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_2)
+		while IsInTable(newAbility, midAbilities[2]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_2)
+		end
+		midAbilities[2][#midAbilities[2] + 1] = newAbility
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_2)
+		while IsInTable(newAbility, dangerousAbilities[2]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_2)
+		end
+		dangerousAbilities[2][#dangerousAbilities[2] + 1] = newAbility
+
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
+		while IsInTable(newAbility, safeAbilities[2]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
+		end
+		safeAbilities[3][#safeAbilities[3] + 1] = newAbility
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
+		while IsInTable(newAbility, midAbilities[3]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
+		end
+		midAbilities[3][#midAbilities[3] + 1] = newAbility
+		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
+		while IsInTable(newAbility, dangerousAbilities[3]) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
+		end
+		dangerousAbilities[3][#dangerousAbilities[3] + 1] = newAbility
+	end
+	for i=1, 6 do
+		local newAbility = RandomFromTable(IMBA_TOWER_ABILITY_4)
+		while IsInTable(newAbility, fortAbilities1) or IsInTable(newAbility, fortAbilities2) do
+			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_4)
+		end
+		if #fortAbilities1 < 3 then
+			fortAbilities1[#fortAbilities1 + 1] = newAbility
+		else
+			fortAbilities2[#fortAbilities2 + 1] = newAbility
+		end
+	end
+	
+	local goodFortTower = {}
+	local badFortTower = {}
+	for i=1, #hTowerTable do
+		local tower = hTowerTable[i]
+		local safe = true
+		if (tower:GetTeamNumber() == DOTA_TEAM_GOODGUYS and string.find(tower:GetUnitName(), "_top")) or (tower:GetTeamNumber() == DOTA_TEAM_BADGUYS and string.find(tower:GetUnitName(), "_bot")) then
+			safe = false
+		end
+		if string.find(tower:GetUnitName(), "_tower1_") then
+			if string.find(tower:GetUnitName(), "mid") then
+				tower:AddAbility(midAbilities[1][1]):SetLevel(1)
+				tower:AddAbility(midAbilities[1][2])
+				tower:AddAbility(midAbilities[1][3])
+			else
+				if safe then
+					tower:AddAbility(safeAbilities[1][1]):SetLevel(1)
+					tower:AddAbility(safeAbilities[1][2])
+					tower:AddAbility(safeAbilities[1][3])
+				else
+					tower:AddAbility(safeAbilities[1][1]):SetLevel(1)
+					tower:AddAbility(safeAbilities[1][2])
+					tower:AddAbility(safeAbilities[1][3])
+				end
+			end
+		elseif string.find(tower:GetUnitName(), "_tower2_") then
+			if string.find(tower:GetUnitName(), "mid") then
+				tower:AddAbility(midAbilities[2][1]):SetLevel(2)
+				tower:AddAbility(midAbilities[2][2]):SetLevel(2)
+				tower:AddAbility(midAbilities[2][3])
+			else
+				if safe then
+					tower:AddAbility(safeAbilities[2][1]):SetLevel(2)
+					tower:AddAbility(safeAbilities[2][2]):SetLevel(2)
+					tower:AddAbility(safeAbilities[2][3])
+				else
+					tower:AddAbility(safeAbilities[2][1]):SetLevel(2)
+					tower:AddAbility(safeAbilities[2][2]):SetLevel(2)
+					tower:AddAbility(safeAbilities[2][3])
+				end
+			end
+		elseif string.find(tower:GetUnitName(), "_tower3_") then
+			if string.find(tower:GetUnitName(), "mid") then
+				tower:AddAbility(midAbilities[3][1]):SetLevel(3)
+				tower:AddAbility(midAbilities[3][2]):SetLevel(3)
+				tower:AddAbility(midAbilities[3][3]):SetLevel(3)
+			else
+				if safe then
+					tower:AddAbility(safeAbilities[3][1]):SetLevel(3)
+					tower:AddAbility(safeAbilities[3][2]):SetLevel(3)
+					tower:AddAbility(safeAbilities[3][3]):SetLevel(3)
+				else
+					tower:AddAbility(safeAbilities[3][1]):SetLevel(3)
+					tower:AddAbility(safeAbilities[3][2]):SetLevel(3)
+					tower:AddAbility(safeAbilities[3][3]):SetLevel(3)
+				end
+			end
+		elseif string.find(tower:GetUnitName(), "_tower4") then
+			if tower:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+				goodFortTower[#goodFortTower + 1] = tower
+			else
+				badFortTower[#badFortTower + 1] = tower
+			end
+		end
+	end
+	for i=1, 2 do
+		if i == 1 then
+			goodFortTower[i]:AddAbility(fortAbilities1[1]):SetLevel(3)
+			goodFortTower[i]:AddAbility(fortAbilities1[2]):SetLevel(3)
+			goodFortTower[i]:AddAbility(fortAbilities1[3]):SetLevel(3)
+			badFortTower[i]:AddAbility(fortAbilities1[1]):SetLevel(3)
+			badFortTower[i]:AddAbility(fortAbilities1[2]):SetLevel(3)
+			badFortTower[i]:AddAbility(fortAbilities1[3]):SetLevel(3)
+		else
+			goodFortTower[i]:AddAbility(fortAbilities2[1]):SetLevel(3)
+			goodFortTower[i]:AddAbility(fortAbilities2[2]):SetLevel(3)
+			goodFortTower[i]:AddAbility(fortAbilities2[3]):SetLevel(3)
+			badFortTower[i]:AddAbility(fortAbilities2[1]):SetLevel(3)
+			badFortTower[i]:AddAbility(fortAbilities2[2]):SetLevel(3)
+			badFortTower[i]:AddAbility(fortAbilities2[3]):SetLevel(3)
 		end
 	end
 end

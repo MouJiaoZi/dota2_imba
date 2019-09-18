@@ -7458,12 +7458,12 @@
 			"08"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"active_as_per_hero"	"15"
+				"active_as_per_hero"	"8"
 			}
 			"09"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"active_ms_per_hero"	"15"
+				"active_ms_per_hero"	"8"
 			}
 			"10"
 			{

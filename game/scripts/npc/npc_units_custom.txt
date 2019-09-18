@@ -3850,8 +3850,8 @@
 		"ArmorPhysical"				"4"			// Physical protection.
 		"MagicalResistance"				"35"		// Magical protection.
 
-		"AttackDamageMin"			"80"			// Damage range min.
-		"AttackDamageMax"			"80"			// Damage range max.
+		"AttackDamageMin"			"40"			// Damage range min.
+		"AttackDamageMax"			"40"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
@@ -3873,8 +3873,8 @@
 		"ArmorPhysical"				"8"			// Physical protection.
 		"MagicalResistance"				"55"		// Magical protection.
 
-		"AttackDamageMin"			"160"			// Damage range min.
-		"AttackDamageMax"			"160"			// Damage range max.
+		"AttackDamageMin"			"80"			// Damage range min.
+		"AttackDamageMax"			"80"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
@@ -3896,8 +3896,8 @@
 		"ArmorPhysical"				"12"			// Physical protection.
 		"MagicalResistance"				"75"		// Magical protection.
 
-		"AttackDamageMin"			"240"			// Damage range min.
-		"AttackDamageMax"			"240"			// Damage range max.
+		"AttackDamageMin"			"120"			// Damage range min.
+		"AttackDamageMax"			"120"			// Damage range max.
 		"AttackDamageType"			"DAMAGE_TYPE_ArmorPhysical"
 		"AttackRate"				"0.4"		// Speed of attack.
 		"AttackAnimationPoint"		"0.33"		// Normalized time in animation cycle to attack.
@@ -3968,7 +3968,7 @@
 
 		// Armor
 		//----------------------------------------------------------------
-		"ArmorPhysical"				"4"			// Physical protection.
+		"ArmorPhysical"				"2"			// Physical protection.
 		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
@@ -4017,7 +4017,7 @@
 	{										
 		// Armor
 		//----------------------------------------------------------------
-		"ArmorPhysical"				"6"			// Physical protection.
+		"ArmorPhysical"				"3"			// Physical protection.
 		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
@@ -4052,7 +4052,7 @@
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"650"		// Base health.
+		"StatusHealth"				"550"		// Base health.
 		"StatusHealthRegen"			"0.5"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0"			// Mana regeneration rate.		 
@@ -4067,7 +4067,7 @@
 	{										
 		// Armor
 		//----------------------------------------------------------------
-		"ArmorPhysical"				"8"			// Physical protection.
+		"ArmorPhysical"				"4"			// Physical protection.
 		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
@@ -4101,7 +4101,7 @@
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"850"		// Base health.
+		"StatusHealth"				"650"		// Base health.
 		"StatusHealthRegen"			"0.5"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0"			// Mana regeneration rate.		 
@@ -4134,7 +4134,7 @@
 
 		// Armor
 		//----------------------------------------------------------------
-		"ArmorPhysical"				"10"			// Physical protection.
+		"ArmorPhysical"				"5"			// Physical protection.
 		"MagicalResistance"				"50"		// Magical protection.
 
 		// Attack
@@ -4168,7 +4168,7 @@
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"1050"		// Base health.
+		"StatusHealth"				"750"		// Base health.
 		"StatusHealthRegen"			"0.5"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0"			// Mana regeneration rate.		 
@@ -4217,7 +4217,7 @@
 
 		// Status
 		//----------------------------------------------------------------
-		"StatusHealth"				"850"		// Base health.
+		"StatusHealth"				"550"		// Base health.
 		"StatusHealthRegen"			"0.5"		// Health regeneration rate.
 		"StatusMana"				"0"			// Base mana.
 		"StatusManaRegen"			"0"			// Mana regeneration rate.		 
@@ -4227,52 +4227,6 @@
 		"VisionDaytimeRange"		"2800"		// Range of vision during day light.
 		"VisionNighttimeRange"		"1800"		// Range of vision at night time.
 	}	
-//=================================================================================
-// Lone Druid Spirit Bears
-//=================================================================================
-	"npc_dota_lone_druid_bear1"
-	{
-		"ModelScale" 				"0.5"
-		// Status
-		//----------------------------------------------------------------
-		"StatusHealth"				"1500"		// Base health.
-		"StatusHealthRegen"			"5"			// Health regeneration rate.
-		"StatusMana"				"2000"		// Base mana.
-		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
-	}
-	
-	"npc_dota_lone_druid_bear2"
-	{										
-		"ModelScale" 				"0.7"
-		// Status
-		//----------------------------------------------------------------
-		"StatusHealth"				"2000"		// Base health.
-		"StatusHealthRegen"			"6"			// Health regeneration rate.
-		"StatusMana"				"2000"		// Base mana.
-		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
-	}	
-
-	"npc_dota_lone_druid_bear3"
-	{										
-		"ModelScale" 				"0.9"
-		// Status
-		//----------------------------------------------------------------
-		"StatusHealth"				"2500"		// Base health.
-		"StatusHealthRegen"			"7"			// Health regeneration rate.
-		"StatusMana"				"2000"			// Base mana.
-		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
-	}	
-
-	"npc_dota_lone_druid_bear4"
-	{
-		"ModelScale" 				"1.2"
-		// Status
-		//----------------------------------------------------------------
-		"StatusHealth"				"3000"		// Base health.
-		"StatusHealthRegen"			"8"			// Health regeneration rate.
-		"StatusMana"				"2000"		// Base mana.
-		"StatusManaRegen"			"2.5"		// Mana regeneration rate.		 
-	}
 
 	//=================================================================================
 	// Lone Druid Spirit Bears

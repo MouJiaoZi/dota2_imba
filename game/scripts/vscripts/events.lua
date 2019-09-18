@@ -134,9 +134,9 @@ function GameMode:OnGameRulesStateChange(keys)
 				GameRules:SendCustomMessage(res.Body, 0, 0)
 			end
 			IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
+			--[[Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
 			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
-			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
-			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})
+			Notifications:BottomToAll({text="#DOTA_IMBA_WAIT_WARN", duration = 5})]]
 			return nil
 		end
 		)
@@ -183,11 +183,10 @@ function GameMode:OnGameRulesStateChange(keys)
 		IMBAEvents:StartIMBAVersionCheck()
 		IMBAEvents:StartAbandonCheck()
 		local towers = FindUnitsInRadius(0, Vector(0,0,0), nil, 50000, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+		IMBAEvents:SetTowerAbility(towers)
 		for _, tower in pairs(towers) do
 			if string.find(tower:GetUnitName(), "_tower1_") then --T1 Tower set
 				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-				local ability = tower:AddAbility(RandomFromTable(IMBA_TOWER_ABILITY_1))
-				ability:SetLevel(1)
 				if (string.find(tower:GetName(), "_top") or string.find(tower:GetName(), "_bot")) and GetMapName() == "dbii_death_match" then
 					tower:AddNewModifier(tower, nil, "modifier_dummy_thinker", {})
 				end
@@ -196,18 +195,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			if string.find(tower:GetUnitName(), "_tower2_") then --T2 Tower set
 				SetCreatureHealth(tower, tower:GetHealth() + 800, true)
 				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-				for i=1, 2 do
-					local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
-					while true do
-						if not tower:HasAbility(abilityName) then
-							local ability = tower:AddAbility(abilityName)
-							ability:SetLevel(2)
-							break
-						else
-							abilityName = RandomFromTable(IMBA_TOWER_ABILITY_2)
-						end
-					end
-				end
 				------
 				if not string.find(tower:GetUnitName(), "mid") then
 					tower:AddNewModifier(tower, nil, "modifier_imba_t2_tower_vision", {})
@@ -217,18 +204,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			if string.find(tower:GetUnitName(), "_tower3_") then --T3 Tower set
 				SetCreatureHealth(tower, tower:GetHealth() + 1300, true)
 				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-				for i=1, 3 do
-					local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
-					while true do
-						if not tower:HasAbility(abilityName) then
-							local ability = tower:AddAbility(abilityName)
-							ability:SetLevel(2)
-							break
-						else
-							abilityName = RandomFromTable(IMBA_TOWER_ABILITY_3)
-						end
-					end
-				end
 				local abi = tower:AddAbility("imba_tower_healer_protect")
 				abi:SetLevel(1)
 				table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][3], tower)
@@ -236,18 +211,6 @@ function GameMode:OnGameRulesStateChange(keys)
 			if string.find(tower:GetUnitName(), "_tower4") then --T4 Tower set
 				SetCreatureHealth(tower, tower:GetHealth() + 2200, true)
 				tower:SetPhysicalArmorBaseValue(tower:GetPhysicalArmorBaseValue() + 5.0)
-				for i=1, 3 do
-					local abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
-					while true do
-						if not tower:HasAbility(abilityName) then
-							local ability = tower:AddAbility(abilityName)
-							ability:SetLevel(3)
-							break
-						else
-							abilityName = RandomFromTable(IMBA_TOWER_ABILITY_4)
-						end
-					end
-				end
 				local abi = tower:AddAbility("imba_tower_the_last_line")
 				abi:SetLevel(1)
 				table.insert(CDOTAGamerules.IMBA_TOWER[tower:GetTeamNumber()][4], tower)
@@ -377,11 +340,18 @@ function GameMode:OnNPCSpawned(keys)
 				npc:AddNewModifier(npc, nil, "modifier_imba_reapers_scythe_permanent", {})
 				npc:AddNewModifier(npc, nil, "modifier_imba_ability_layout_contoroller", {})
 
-				if CustomNetTables:GetTableValue("imba_hero_selection_player", "player_hero_randomed_"..npc:GetPlayerOwnerID()) then
-					PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD_RANDOM, true)
-				else
-					PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD, true)
-				end
+				local level_info = CustomNetTables:GetTableValue("imba_level_rewards", "player_state_"..npc:GetPlayerOwnerID())
+				--if not level_info or (level_info and level_info['penalize'] == "0") then
+					if CustomNetTables:GetTableValue("imba_hero_selection_player", "player_hero_randomed_"..npc:GetPlayerOwnerID()) then
+						PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD_RANDOM, true)
+					else
+						PlayerResource:SetGold(npc:GetPlayerOwnerID(), IMBA_STARTING_GOLD, true)
+					end
+				--else
+				--	Notifications:BottomToAll({text = PlayerResource:GetPlayerName(npc:GetPlayerOwnerID()), duration = 30.0})
+				--	Notifications:BottomToAll({text = "#imba_player_penalize_message", duration = 30.0, continue = true})
+				--	Notifications:BottomToAll({text = level_info['penalize'], duration = 30.0, continue = true})
+				--end
 
 				Timers:CreateTimer(0, function()
 					-- a fresh Tp
@@ -1034,6 +1004,8 @@ function GameMode:OnTowerKill(keys)
 				if tp then
 					tp:EndCooldown()
 				end
+			else
+				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[i] = 0
 			end
 		end
 	end
@@ -1129,8 +1101,8 @@ function GameMode:OnPlayerChat(keys)
 						print(k, v)
 					end
 				end
-				IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
-				--IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
+				--IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
+				IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
 			end
 		end
 	end

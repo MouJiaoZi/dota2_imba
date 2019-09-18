@@ -85,8 +85,8 @@ function modifier_imba_janggo_active_hero:OnCreated() self.ability = self:GetAbi
 function modifier_imba_janggo_active_hero:OnDestroy() self.ability = nil end
 function modifier_imba_janggo_active_hero:GetEffectName() return "particles/items_fx/drum_of_endurance_buff.vpcf" end
 function modifier_imba_janggo_active_hero:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-function modifier_imba_janggo_active_hero:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
-function modifier_imba_janggo_active_hero:GetModifierMoveSpeedBonus_Percentage() return self.ability:GetSpecialValueFor("active_ms_per_hero") * self:GetStackCount() end
+function modifier_imba_janggo_active_hero:DeclareFunctions() return {MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT, MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT} end
+function modifier_imba_janggo_active_hero:GetModifierMoveSpeedBonus_Constant() return self.ability:GetSpecialValueFor("active_ms_per_hero") * self:GetStackCount() end
 function modifier_imba_janggo_active_hero:GetModifierAttackSpeedBonus_Constant() return self.ability:GetSpecialValueFor("active_as_per_hero") * self:GetStackCount() end
 
 modifier_imba_janggo_active_creep = class({})
