@@ -81,18 +81,18 @@ function IMBAEvents:OnHeroKilled(victim, attacker)
 		end
 
 		--Lose Gold
-		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerID())
-		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerID())
-		PlayerResource:ModifyGold(victim:GetPlayerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
+		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerOwnerID())
+		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerOwnerID())
+		PlayerResource:ModifyGold(victim:GetPlayerOwnerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
 
 		--print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
 
 		--Death Streak
-		if attacker and IsInTable(attacker, CDOTA_PlayerResource.IMBA_PLAYER_HERO) then
+		if attacker and CDOTA_PlayerResource.IMBA_PLAYER_HERO[attacker:GetPlayerOwnerID() + 1] then
 			local line_duration = 7
 
-			local death_player = victim:GetPlayerID()
-			local kill_player = attacker:GetPlayerID()
+			local death_player = victim:GetPlayerOwnerID()
+			local kill_player = attacker:GetPlayerOwnerID()
 			if death_player and kill_player then
 				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] = math.min(CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[death_player + 1] + 1, 10)
 				CDOTA_PlayerResource.IMBA_PLAYER_DEATH_STREAK[kill_player + 1] = 0

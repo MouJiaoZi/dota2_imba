@@ -361,7 +361,7 @@ end
 function modifier_imba_atrophy_aura_passive:OnIntervalThink()
 	if self.caster:HasScepter() and not self.caster:IsIllusion() and not self.caster:HasModifier("modifier_imba_atrophy_aura_scepter_aura") then
 		self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_imba_atrophy_aura_scepter_aura", {})
-	else
+	elseif not self.caster:HasScepter() then
 		self.caster:RemoveModifierByName("modifier_imba_atrophy_aura_scepter_aura")
 	end
 end
@@ -532,6 +532,13 @@ function modifier_imba_double_gate:OnCreated(keys)
 		self:GetParent():EmitSound("Hero_AbyssalUnderlord.DarkRift.Cast")
 		self.target:EmitSound("Hero_AbyssalUnderlord.DarkRift.Target")
 		self:GetParent():SwapAbilities("imba_abyssal_underlord_dark_rift", "imba_abyssal_underlord_cancel_dark_rift", false, true)
+		self:StartIntervalThink(0.1)
+	end
+end
+
+function modifier_imba_double_gate:OnIntervalThink()
+	if not self.target:IsAlive() then
+		self:Destroy()
 	end
 end
 

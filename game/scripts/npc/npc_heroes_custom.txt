@@ -119,7 +119,7 @@
 		"Ability11"					"special_bonus_attack_damage_35"
 		"Ability12"					"special_bonus_attack_speed_20"
 		"Ability13"					"special_bonus_hp_175"
-		"Ability14"					"special_bonus_respawn_reduction_35"
+		"Ability14"					"special_bonus_agility_16"
 		"Ability15"					"special_bonus_all_stats_12"
 		"Ability16"					"special_bonus_lifesteal_30"
 		"Ability17"					"special_bonus_unique_bloodseeker"
@@ -144,7 +144,7 @@
 		
 		"Ability10"					"special_bonus_gold_income_20"
 		"Ability11"					"special_bonus_attack_damage_40"
-		"Ability12"					"special_bonus_respawn_reduction_35"
+		"Ability12"					"special_bonus_magic_resistance_8"
 		"Ability13"					"special_bonus_hp_175"
 		"Ability14"					"special_bonus_attack_speed_100"
 		"Ability15"					"special_bonus_cast_range_100"
@@ -197,7 +197,7 @@
 		"Ability12"					"special_bonus_strength_6"
 		"Ability13"					"special_bonus_attack_damage_40"
 		"Ability14"					"special_bonus_spell_amplify_6"
-		"Ability15"					"special_bonus_respawn_reduction_35"
+		"Ability15"					"special_bonus_cast_range_100"
 		"Ability16"					"special_bonus_cleave_60"
 		"Ability17"					"special_bonus_unique_earthshaker"
 	}
@@ -632,7 +632,7 @@
 		"Ability6"					"imba_lion_finger_of_death"
 
 		
-		"Ability10"					"special_bonus_respawn_reduction_25"
+		"Ability10"					"special_bonus_movement_speed_20"
 		"Ability11"					"special_bonus_gold_income_20"
 		"Ability12"					"special_bonus_hp_175"
 		"Ability13"					"special_bonus_attack_damage_40"
@@ -718,7 +718,7 @@
 		"Ability10"					"special_bonus_hp_150"
 		"Ability11"					"special_bonus_exp_boost_15"
 		"Ability12"					"special_bonus_attack_damage_50"
-		"Ability13"					"special_bonus_respawn_reduction_35"
+		"Ability13"					"special_bonus_attack_range_125"
 		"Ability14"					"special_bonus_armor_6"
 		"Ability15"					"special_bonus_magic_resistance_20"
 		"Ability16"					"special_bonus_cooldown_reduction_20"
@@ -762,7 +762,7 @@
 		
 		"Ability10"					"special_bonus_movement_speed_20"
 		"Ability11"					"special_bonus_magic_resistance_10"
-		"Ability12"					"special_bonus_respawn_reduction_35"
+		"Ability12"					"special_bonus_hp_125"
 		"Ability13"					"special_bonus_gold_income_40"
 		"Ability14"					"special_bonus_cast_range_100"
 		"Ability15"					"special_bonus_spell_amplify_5"
@@ -872,7 +872,7 @@
 		"Ability10"					"special_bonus_exp_boost_15"
 		"Ability11"					"special_bonus_movement_speed_25"
 		"Ability12"					"special_bonus_strength_8"
-		"Ability13"					"special_bonus_respawn_reduction_35"
+		"Ability13"					"special_bonus_attack_speed_35"
 		"Ability14"					"special_bonus_cooldown_reduction_15"
 		"Ability15"					"special_bonus_hp_250"
 		"Ability16"					"special_bonus_attack_damage_75"
@@ -1024,7 +1024,7 @@
 		
 		"Ability10"					"special_bonus_mp_regen_3"
 		"Ability11"					"special_bonus_hp_150"
-		"Ability12"					"special_bonus_respawn_reduction_25"
+		"Ability12"					"special_bonus_intelligence_12"
 		"Ability13"					"special_bonus_strength_6"
 		"Ability14"					"special_bonus_all_stats_7"
 		"Ability15"					"special_bonus_cast_range_100"
@@ -1454,7 +1454,7 @@
 		"Ability13"					"special_bonus_hp_175"
 		"Ability14"					"special_bonus_cast_range_200"
 		"Ability15"					"special_bonus_armor_7"
-		"Ability16"					"special_bonus_respawn_reduction_50"
+		"Ability16"					"special_bonus_movement_speed_50"
 		"Ability17"					"special_bonus_unique_jakiro"
 	}
 	"npc_dota_hero_batrider"
@@ -1496,7 +1496,7 @@
 		
 		"Ability10"					"special_bonus_exp_boost_35"
 		"Ability11"					"special_bonus_cast_range_200"
-		"Ability12"					"special_bonus_respawn_reduction_50"
+		"Ability12"					"special_bonus_mp_500"
 		"Ability13"					"special_bonus_unique_chen_4"
 		"Ability14"					"special_bonus_gold_income_30"
 		"Ability15"					"special_bonus_magic_resistance_30"
@@ -1941,7 +1941,7 @@
 		"Ability13"					"special_bonus_unique_undying_4"
 		"Ability14"					"special_bonus_imba_undying_2"
 		"Ability15"					"special_bonus_imba_undying_3"
-		"Ability16"					"special_bonus_respawn_reduction_60"
+		"Ability16"					"special_bonus_reincarnation_100"
 		"Ability17"					"special_bonus_unique_undying_2"
 		
 	}
@@ -2222,7 +2222,7 @@
 		"Ability13"					"special_bonus_attack_damage_30"
 		"Ability14"					"special_bonus_strength_8"
 		"Ability15"					"special_bonus_imba_magnus_1"
-		"Ability16"					"special_bonus_respawn_reduction_35"
+		"Ability16"					"special_bonus_strength_14"
 		"Ability17"					"special_bonus_cooldown_reduction_12"
 	}
 	"npc_dota_hero_shredder"
@@ -2402,7 +2402,7 @@
 		"Ability14"		"special_bonus_spell_amplify_6"
 		"Ability15"		"special_bonus_imba_earth_spirit_1"
 		"Ability16"		"special_bonus_cooldown_reduction_12"
-		"Ability17"		"special_bonus_respawn_reduction_60"
+		"Ability17"		"special_bonus_attack_speed_50"
 
 		"AttackRate"		"1.5500000"
 
@@ -2496,7 +2496,7 @@
 		"Ability5"		"imba_techies_minefield_sign"
 		"Ability6"		"imba_techies_remote_mines"
 		
-		"Ability10"		"special_bonus_respawn_reduction_20"
+		"Ability10"		"special_bonus_mp_125"
 		"Ability11"		"special_bonus_strength_7"
 		"Ability12"		"special_bonus_cast_range_150"
 		"Ability13"		"special_bonus_mp_regen_4"

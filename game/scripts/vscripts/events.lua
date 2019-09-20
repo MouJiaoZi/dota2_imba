@@ -1101,8 +1101,8 @@ function GameMode:OnPlayerChat(keys)
 						print(k, v)
 					end
 				end
-				--IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
-				IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
+				IMBA:SendHTTPRequest(nil, nil, nil, httpprint)
+				--IMBA:EndGameAPI(DOTA_TEAM_GOODGUYS)
 			end
 		end
 	end

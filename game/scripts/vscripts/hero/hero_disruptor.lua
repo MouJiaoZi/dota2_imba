@@ -306,8 +306,14 @@ modifier_imba_kinetic_field_delay = class({})
 function modifier_imba_kinetic_field_delay:OnCreated(keys)
 	if IsServer() then
 		self.sound = keys.sound
-		EntIndexToHScript(self.sound):EmitSound("Hero_Disruptor.KineticField")
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_disruptor/disruptor_kf_formation.vpcf", PATTACH_WORLDORIGIN, nil)
+		local pfx_name = "particles/units/heroes/hero_disruptor/disruptor_kf_formation.vpcf"
+		local sound_name = "Hero_Disruptor.KineticField"
+		if HeroItems:UnitHasItem(self:GetCaster(), "resistive_pinfold_back") then
+			pfx_name = "particles/econ/items/disruptor/disruptor_resistive_pinfold/disruptor_ecage_formation.vpcf"
+			sound_name = "Hero_Disruptor.KineticField.Pinfold"
+		end
+		EntIndexToHScript(self.sound):EmitSound(sound_name)
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor("radius"), self:GetAbility():GetSpecialValueFor("radius"), 0))
 		ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetAbility():GetSpecialValueFor("formation_time"), 0, 0))
@@ -328,7 +334,11 @@ modifier_imba_kinetic_field_thinker = class({})
 function modifier_imba_kinetic_field_thinker:OnCreated(keys)
 	if IsServer() then
 		self.sound = keys.sound
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_disruptor/disruptor_kineticfield.vpcf", PATTACH_WORLDORIGIN, nil)
+		local pfx_name = "particles/units/heroes/hero_disruptor/disruptor_kineticfield.vpcf"
+		if HeroItems:UnitHasItem(self:GetCaster(), "resistive_pinfold_back") then
+			pfx_name = "particles/econ/items/disruptor/disruptor_resistive_pinfold/disruptor_ecage_kineticfield.vpcf"
+		end
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_WORLDORIGIN, nil)
 		ParticleManager:SetParticleControl(pfx, 0, self:GetParent():GetAbsOrigin())
 		ParticleManager:SetParticleControl(pfx, 1, Vector(self:GetAbility():GetSpecialValueFor("radius"), 0, 0))
 		ParticleManager:SetParticleControl(pfx, 2, Vector(self:GetAbility():GetSpecialValueFor("duration") + self:GetCaster():GetTalentValue("special_bonus_imba_disruptor_5"), 0, 0))
@@ -350,7 +360,11 @@ end
 
 function modifier_imba_kinetic_field_thinker:OnDestroy()
 	if IsServer() then
-		self:GetParent():EmitSound("Hero_Disruptor.KineticField.End")
+		local sound_name = "Hero_Disruptor.KineticField.End"
+		if HeroItems:UnitHasItem(self:GetCaster(), "resistive_pinfold_back") then
+			sound_name = "Hero_Disruptor.KineticField.Pinfold.End"
+		end
+		self:GetParent():EmitSound(sound_name)
 		EntIndexToHScript(self.sound):StopSound("Hero_Disruptor.KineticField")
 		self.sound = nil
 	end

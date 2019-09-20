@@ -124,7 +124,7 @@ function imba_mirana_arrow:OnProjectileHit_ExtraData(target, location, keys)
 		target:Kill(self, self:GetCaster())
 		return false
 	end
-	if IsNearEnemyFountain(location, self:GetCaster():GetTeamNumber(), 1200) then
+	if IsNearEnemyFountain(location, self:GetCaster():GetTeamNumber(), 1800) then
 		return false
 	end
 	local buff = EntIndexToHScript(keys.thinker):FindModifierByName("modifier_imba_mirana_arrow_thinker")
