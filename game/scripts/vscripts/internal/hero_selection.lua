@@ -346,6 +346,10 @@ function modifier_imba_hero_selection_replace_hero:OnCreated(keys)
 		self.hero = keys.hero
 		self.pID = keys.pID
 		self.dummy = PlayerResource:GetSelectedHeroEntity(self.pID)
+		if self.dummy and self.dummy:GetUnitName() ~= "npc_dota_hero_dummy_dummy" then
+			self:Destroy()
+			return
+		end
 		self:StartIntervalThink(1.0)
 		self:OnIntervalThink()
 	end

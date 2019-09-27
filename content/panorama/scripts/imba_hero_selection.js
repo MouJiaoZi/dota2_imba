@@ -118,7 +118,7 @@ npc_dota_hero_monkey_king: 0,
 npc_dota_hero_pangolier: 2,
 npc_dota_hero_dark_willow: 0,
 npc_dota_hero_mars: 0,
-npc_dota_hero_grimstroke: 3
+npc_dota_hero_grimstroke: 1
 };
 
 var local_player = Players.GetLocalPlayer();

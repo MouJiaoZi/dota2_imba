@@ -535,7 +535,7 @@ end
 
 function modifier_imba_faceless_void_chronosphere_debuff:GetModifierMoveSpeed_AbsoluteMax()
 	if self.buff_type ==  Chronosphere_Caster then
-		return 1000
+		return self:GetAbility():GetSpecialValueFor("chrono_ms")
 	elseif self.buff_type == Chronosphere_Ally_Scepter then
 		return self.ms
 	else

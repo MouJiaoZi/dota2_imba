@@ -306,7 +306,7 @@ function IMBAEvents:SetTowerAbility(hTowerTable)
 		dangerousAbilities[2][#dangerousAbilities[2] + 1] = newAbility
 
 		newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
-		while IsInTable(newAbility, safeAbilities[2]) do
+		while IsInTable(newAbility, safeAbilities[3]) do
 			newAbility = RandomFromTable(IMBA_TOWER_ABILITY_3)
 		end
 		safeAbilities[3][#safeAbilities[3] + 1] = newAbility

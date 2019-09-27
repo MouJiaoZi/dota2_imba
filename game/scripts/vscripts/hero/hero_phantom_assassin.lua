@@ -45,7 +45,8 @@ function imba_phantom_assassin_stifling_dagger:OnSpellStart()
 			bVisibleToEnemies = true,
 			bReplaceExisting = false,
 			flExpireTime = GameRules:GetGameTime() + 10,
-			bProvidesVision = false,	
+			bProvidesVision = false,
+			ExtraData = {hit = i}
 		}
 		ProjectileManager:CreateTrackingProjectile(info)
 	end
@@ -55,11 +56,11 @@ function imba_phantom_assassin_stifling_dagger:OnProjectileThink(location)
 	AddFOWViewer(self:GetCaster():GetTeamNumber(), location, 450, FrameTime(), false)
 end
 
-function imba_phantom_assassin_stifling_dagger:OnProjectileHit(target, location)
+function imba_phantom_assassin_stifling_dagger:OnProjectileHit_ExtraData(target, location, keys)
 	if not target then
 		return
 	end
-	if target:TriggerStandardTargetSpell(self) then
+	if keys.hit == 1 and target:TriggerStandardTargetSpell(self) then
 		return true
 	end
 	target:EmitSound("Hero_PhantomAssassin.Dagger.Target")

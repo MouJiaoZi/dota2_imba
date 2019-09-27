@@ -124,6 +124,13 @@ function imba_centaur_double_edge:OnSpellStart()
 	if target:TriggerStandardTargetSpell(self) then
 		return
 	end
+	caster:Purge(false, true, false, false, false)
+	local pfx_name = "particles/units/heroes/hero_centaur/centaur_double_edge.vpcf"
+	local sound_name = "Hero_Centaur.DoubleEdge"
+	if HeroItems:UnitHasItem(caster, "centaur_ti9_immortal_weapon") then
+		pfx_name = "particles/econ/items/centaur/centaur_ti9/centaur_double_edge_ti9.vpcf"
+		sound_name = "Hero_Centaur.DoubleEdge.TI9"
+	end
 	local dmg = self:GetSpecialValueFor("edge_damage") + self:GetSpecialValueFor("str_percentage") / 100 * caster:GetStrength()
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
 	for _, enemy in pairs(enemies) do
@@ -136,12 +143,15 @@ function imba_centaur_double_edge:OnSpellStart()
 							ability = self, --Optional.
 							}
 		ApplyDamage(damageTable)
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_centaur/centaur_double_edge.vpcf", PATTACH_POINT, caster)
+		local pfx = ParticleManager:CreateParticle(pfx_name, PATTACH_POINT, enemy)
 		ParticleManager:SetParticleControlEnt(pfx, 0, enemy, PATTACH_POINT, "attach_hitloc", enemy:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 1, caster, PATTACH_POINT, "attach_hitloc", caster:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlForward(pfx, 2, caster:GetForwardVector())
+		ParticleManager:SetParticleControlEnt(pfx, 3, enemy, PATTACH_ABSORIGIN, nil, enemy:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(pfx, 5, caster, PATTACH_POINT_FOLLOW, "attach_weapon_base", caster:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(pfx, 6, Vector(enemy:GetHullRadius(), 0, 0))
 		ParticleManager:ReleaseParticleIndex(pfx)
-		EmitSoundOnLocationWithCaster(enemy:GetAbsOrigin(), "Hero_Centaur.DoubleEdge", caster)
+		enemy:EmitSound(sound_name)
 	end
 	local damageTable = {
 						victim = caster,
@@ -157,14 +167,27 @@ end
 imba_centaur_return = class({})
 
 LinkLuaModifier("modifier_imba_centaur_return_aura", "hero/hero_centaur", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_imba_centaur_return_active", "hero/hero_centaur", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_centaur_return", "hero/hero_centaur", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_imba_centaur_return_prevent", "hero/hero_centaur", LUA_MODIFIER_MOTION_NONE)
 
+function imba_centaur_return:IsHiddenWhenStolen() 		return false end
+function imba_centaur_return:IsRefreshable() 			return true end
+function imba_centaur_return:IsStealable() 				return true end
+function imba_centaur_return:IsNetherWardStealable() 	return false end
 function imba_centaur_return:GetIntrinsicModifierName() return "modifier_imba_centaur_return_aura" end
+
+function imba_centaur_return:OnSpellStart()
+	local caster = self:GetCaster()
+	local duration = caster:GetModifierStackCount("modifier_imba_centaur_return_aura", nil) * self:GetSpecialValueFor("stack_duration")
+	caster:AddNewModifier(caster, self, "modifier_imba_centaur_return_active", {duration = duration})
+	caster:EmitSound("Hero_Centaur.Retaliate.Cast")
+	caster:SetModifierStackCount("modifier_imba_centaur_return_aura", nil, 0)
+end
 
 modifier_imba_centaur_return_aura = class({})
 
-function modifier_imba_centaur_return_aura:IsAura() return true end
+function modifier_imba_centaur_return_aura:IsAura() return not self:GetParent():PassivesDisabled() end
 function modifier_imba_centaur_return_aura:GetAuraDuration() return 0.1 end
 function modifier_imba_centaur_return_aura:GetModifierAura() return "modifier_imba_centaur_return" end
 function modifier_imba_centaur_return_aura:GetAuraRadius() return 1 + self:GetCaster():GetTalentValue("special_bonus_imba_centaur_1") end
@@ -181,14 +204,38 @@ function modifier_imba_centaur_return_aura:GetAuraEntityReject(unit)
 end
 
 function modifier_imba_centaur_return_aura:IsDebuff()			return false end
-function modifier_imba_centaur_return_aura:IsHidden() 			return true end
+function modifier_imba_centaur_return_aura:IsHidden() 			return self:GetStackCount() <= 0 end
 function modifier_imba_centaur_return_aura:IsPurgable() 		return false end
 function modifier_imba_centaur_return_aura:IsPurgeException() 	return false end
+
+function modifier_imba_centaur_return_aura:DeclareFunctions() return {MODIFIER_EVENT_ON_ATTACK_LANDED} end
+
+function modifier_imba_centaur_return_aura:OnAttackLanded(keys)
+	if not IsServer() then
+		return
+	end
+	local caster = self:GetParent()
+	local attacker = keys.attacker
+	if (attacker:IsRealHero() or attacker:IsTower()) and keys.target == caster and not caster:PassivesDisabled() and not caster:HasModifier("modifier_imba_centaur_return_active") then
+		self:SetStackCount(math.min(self:GetAbility():GetSpecialValueFor("max_stacks"), self:GetStackCount() + 1))
+	end
+	if caster:HasModifier("modifier_imba_centaur_return_active") and attacker:IsUnit() and keys.target == caster then
+		caster:PerformAttack(attacker, false, true, true, true, false, false, true)
+		attacker:EmitSound("Hero_Centaur.Retaliate.Target")
+	end
+end
+
+modifier_imba_centaur_return_active = class({})
+
+function modifier_imba_centaur_return_active:IsDebuff()			return false end
+function modifier_imba_centaur_return_active:IsHidden() 		return false end
+function modifier_imba_centaur_return_active:IsPurgable() 		return false end
+function modifier_imba_centaur_return_active:IsPurgeException() return false end
 
 modifier_imba_centaur_return = class({})
 
 function modifier_imba_centaur_return:IsDebuff()			return false end
-function modifier_imba_centaur_return:IsHidden() 			return false end
+function modifier_imba_centaur_return:IsHidden() 			return self:GetCaster() == self:GetParent() end
 function modifier_imba_centaur_return:IsPurgable() 			return false end
 function modifier_imba_centaur_return:IsPurgeException() 	return false end
 

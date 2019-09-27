@@ -59,7 +59,9 @@ function imba_lion_earth_spike:OnProjectileHit_ExtraData(target, location, keys)
 				return false
 			end
 		end
-		if target:TriggerStandardTargetSpell(self) then
+		if target:HasModifier("modifier_imba_soul_chain") and keys.extra == 1 then
+			--
+		elseif target:TriggerStandardTargetSpell(self) then
 			return
 		end
 		target:EmitSound("Hero_Lion.ImpaleHitTarget")
@@ -115,7 +117,7 @@ function imba_lion_earth_spike:OnProjectileHit_ExtraData(target, location, keys)
 						bDeleteOnHit = true,
 						vVelocity = (end_pos - start_pos):Normalized() * self:GetSpecialValueFor("spike_speed"),
 						bProvidesVision = false,
-						ExtraData = {marker = marker_ent, sound = keys.sound}
+						ExtraData = {marker = marker_ent, sound = keys.sound, extra = 1}
 					}
 					ProjectileManager:CreateLinearProjectile(info)
 				end
