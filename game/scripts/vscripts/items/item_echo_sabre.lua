@@ -62,11 +62,7 @@ function modifier_imba_echo_sabre_passive:OnAttack(keys)
 		end
 		self:DecrementStackCount()
 		if self:GetStackCount() ~= self:GetAbility():GetSpecialValueFor("max_hits") and self:GetAbility():IsCooldownReady() then
-			--if self:GetParent():IsRangedAttacker() then
-			--	self:GetAbility():StartCooldown(self:GetAbility():GetSpecialValueFor("ranged_cooldown") * (1 - self:GetParent():GetCooldownReduction() / 100))
-			--else
-				self:GetAbility():UseResources(true, true, true)
-			--end
+			self:GetAbility():UseResources(true, true, true)
 		end
 	end
 end

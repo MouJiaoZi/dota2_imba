@@ -25,6 +25,10 @@ IMBA_HEROLIST[1] = {} --AGI
 IMBA_HEROLIST[2] = {} --INT
 
 function IMBAHeroSelection:Init()
+	lang_chn = LoadKeyValues("scripts/npc/kv/talent_lang_chn.kv")
+	lang_eng = LoadKeyValues("scripts/npc/kv/talent_lang_eng.kv")
+	ability_base_kv = LoadKeyValues("scripts/npc/npc_abilities.txt")
+	ability_override_kv = LoadKeyValues("scripts/npc/npc_abilities_override.txt")
 	for i=1, #HeroList do
 		if HeroList[i][2] >= 1 then
 			local main = IMBAHeroSelection:GetHeroPrimaryAttribute(HeroList[i][1])
@@ -46,10 +50,15 @@ function IMBAHeroSelection:Init()
 			IMBA_HEROLIST_SUM[#IMBA_HEROLIST_SUM + 1] = hero_name
 			CustomNetTables:SetTableValue("imba_hero_selection_ability", hero_name, IMBAHeroSelection:GetHeroAbility(hero_name))
 			CustomNetTables:SetTableValue("imba_hero_selection_talent", hero_name, IMBAHeroSelection:GetHeroTalent(hero_name))
+			IMBAHeroSelection:SetHeroTalentText(hero_name)
 		end
 	end
 	CustomNetTables:SetTableValue("imba_hero_selection_list", "all_pick_sum", IMBA_HEROLIST_SUM)
 	--CreateModifierThinker(nil, nil, "modifier_imba_hero_selection_timer", {duration = -1}, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
+	lang_chn = nil
+	lang_eng = nil
+	ability_base_kv = nil
+	ability_override_kv = nil
 end
 
 function IMBAHeroSelection:ChangeSelectionPhase(sPhasename)
@@ -118,19 +127,72 @@ function IMBAHeroSelection:GetHeroTalent(sHeroname)
 			name = "generic_hidden"
 		end
 		if string.find(name, "special_bonus_") then
-			talent_list[#talent_list + 1] = name
+			talent_list[#talent_list + 1] = string.lower(name)
 		end
 	end
 	return talent_list
 end
 
-function IMBAHeroSelection:CanHeroBeSelected(sHeroname)
-	--[[for i=0, 19 do
-		local info = CustomNetTables:GetTableValue("imba_hero_selection_player", "player_hero_selected_"..i)
-		if info and info.hero == sHeroname then
-			return false
+--CustomNetTables:SetTableValue("imba_hero_selection_talent", hero_name, IMBAHeroSelection:GetHeroTalent(hero_name))
+
+function IMBAHeroSelection:SetHeroTalentText(sHeroname)
+	local talent = IMBAHeroSelection:GetHeroTalent(sHeroname)
+	local chn_text = {}
+	local eng_text = {}
+	local chn_desc = {}
+	local eng_desc = {}
+	for i=1, #talent do
+		local kv = IMBAHeroSelection:GetHeroTalentKV(talent[i])
+		chn_text[i] = (lang_chn['DOTA_Tooltip_ability_'..talent[i]] or lang_chn['DOTA_Tooltip_Ability_'..talent[i]]) or nil
+		eng_text[i] = (lang_eng['DOTA_Tooltip_ability_'..talent[i]] or lang_eng['DOTA_Tooltip_Ability_'..talent[i]]) or nil
+		chn_desc[i] = (lang_chn['DOTA_Tooltip_ability_'..talent[i].."_Description"] or lang_chn['DOTA_Tooltip_Ability_'..talent[i].."_Description"]) or nil
+		eng_desc[i] = (lang_eng['DOTA_Tooltip_ability_'..talent[i].."_Description"] or lang_eng['DOTA_Tooltip_Ability_'..talent[i].."_Description"]) or nil
+		for k, v in pairs(kv) do
+			--print(talent[i])
+			chn_text[i] = string.gsub(chn_text[i], "{s:"..k.."}", v)
+			eng_text[i] = string.gsub(eng_text[i], "{s:"..k.."}", v)
+			if chn_desc[i] then
+				chn_desc[i] = string.gsub(chn_desc[i], "%%"..k.."%%", v)
+			end
+			if eng_desc[i] then
+				eng_desc[i] = string.gsub(eng_desc[i], "%%"..k.."%%", v)
+			end
 		end
-	end]]
+	end
+	CustomNetTables:SetTableValue("imba_hero_selection_talent", "lang_chn_"..sHeroname, chn_text)
+	CustomNetTables:SetTableValue("imba_hero_selection_talent", "lang_eng_"..sHeroname, eng_text)
+	CustomNetTables:SetTableValue("imba_hero_selection_talent", "desc_chn_"..sHeroname, chn_desc)
+	CustomNetTables:SetTableValue("imba_hero_selection_talent", "desc_eng_"..sHeroname, eng_desc)
+end
+
+--[[
+ability_base_kv
+ability_override_kv
+AbilityKV
+]]
+
+function IMBAHeroSelection:GetHeroTalentKV(sTalentname)
+	local kvinfo = nil
+	local talent_kv = {}
+	if string.find(sTalentname, "special_bonus_imba_") then
+		kvinfo = AbilityKV[sTalentname]['AbilitySpecial']
+	else
+		kvinfo = ability_override_kv[sTalentname] and ability_override_kv[sTalentname]['AbilitySpecial'] or ability_base_kv[sTalentname]['AbilitySpecial']
+	end
+	if kvinfo then
+		for k, v in pairs(kvinfo) do
+			for a, b in pairs(v) do
+				if a ~= "var_type" then
+					talent_kv[a] = string.format("%.2f", tonumber(b))
+					talent_kv[a] = tonumber(talent_kv[a])
+				end
+			end
+		end
+	end
+	return talent_kv
+end
+
+function IMBAHeroSelection:CanHeroBeSelected(sHeroname)
 	return (not IMBA_HEROSELECTION_SELECTED_HERO[sHeroname] and not IMBA_HEROSELECTION_BANNED_HERO[sHeroname])
 end
 

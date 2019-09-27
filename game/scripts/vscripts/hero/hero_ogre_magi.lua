@@ -72,7 +72,7 @@ function modifier_imba_multicast_passive:OnAttackLanded(keys)
 		multicast = 2
 	end
 	if multicast > 0 then
-		self:GetAbility():StartCooldown(self:GetAbility():GetCooldown(-1) * ((100 - self:GetParent():GetCooldownReduction()) / 100))
+		self:GetAbility():StartCooldown(self:GetAbility():GetCooldown(-1) * self:GetParent():GetCooldownReduction())
 		self:DoMultiAttack(self:GetParent(), target, multicast)
 	end
 end
@@ -198,7 +198,7 @@ function modifier_imba_multicast_passive:OnAbilityFullyCast(keys)
 end
 
 function modifier_imba_multicast_passive:DoMultiTargetAbility(caster, target, ability, times)
-	self:GetAbility():StartCooldown(self:GetAbility():GetCooldown(-1) * ((100 - self:GetParent():GetCooldownReduction()) / 100))
+	self:GetAbility():StartCooldown(self:GetAbility():GetCooldown(-1) * self:GetParent():GetCooldownReduction())
 	for i = 1, times-1 do
 		Timers:CreateTimer(i * self:GetAbility():GetSpecialValueFor("multicast_delay"), function()
 			self.nocast = true

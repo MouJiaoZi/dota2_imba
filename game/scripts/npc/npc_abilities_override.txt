@@ -2982,115 +2982,160 @@
 	//=================================================================================================================
 	"special_bonus_gold_income_5"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"15"
+				"value"				"90"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_10"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"20"
+				"value"				"120"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_15"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"25"
+				"value"				"150"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_20"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"30"
+				"value"				"180"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_25"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"35"
+				"value"				"210"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_30"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"40"
+				"value"				"240"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_40"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"50"
+				"value"				"300"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_50"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"			"FIELD_INTEGER"
-				"value"				"60"
+				"value"				"360"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_70"
 	{
+		"BaseClass"						"special_bonus_gold_income_420"
+		"MaxLevel" 						"1"
+		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
 		"AbilitySpecial"
 		{
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"value"				"90"
+				"value"				"540"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_imba_900"
 	{
-		"BaseClass"						"special_bonus_gold_income_70"
+		"BaseClass"						"special_bonus_gold_income_420"
 		"MaxLevel" 						"1"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
@@ -3100,14 +3145,14 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"value"					"150"
+				"value"					"900"
 			}
 		}
 	}
 
 	"special_bonus_gold_income_imba_1200"
 	{
-		"BaseClass"						"special_bonus_gold_income_70"
+		"BaseClass"						"special_bonus_gold_income_420"
 		"MaxLevel" 						"1"
 		"AbilityType"					"DOTA_ABILITY_TYPE_ATTRIBUTES"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
@@ -3117,7 +3162,7 @@
 			"01"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"value"				"200"
+				"value"				"1200"
 			}
 		}
 	}

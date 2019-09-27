@@ -5,11 +5,34 @@ function FindDotaHudElement(sElement)
 	return BaseHud.FindChildTraverse(sElement);
 }
 
+var language = $.Localize("IMBA_Language");
+var lang_pre = "none"
+switch(language)
+{
+	case "Schinese":
+		lang_pre = "lang_chn_";
+		break;
+	case "English":
+		lang_pre = "lang_eng_";
+		break;
+}
+var desc_pre = "none"
+switch(language)
+{
+	case "Schinese":
+		desc_pre = "desc_chn_";
+		break;
+	case "English":
+		desc_pre = "desc_eng_";
+		break;
+}
 var local_player = Players.GetLocalPlayer();
 var hero_name = $.GetContextPanel().GetAttributeString("heroname", "no_hero_name");
 var attribute = $.GetContextPanel().GetAttributeInt("hero_attribute", 0);
 var ability = CustomNetTables.GetTableValue("imba_hero_selection_ability", hero_name);
 var talent = CustomNetTables.GetTableValue("imba_hero_selection_talent", hero_name);
+var talent_lang = CustomNetTables.GetTableValue("imba_hero_selection_talent", lang_pre+hero_name);
+var talent_desc = CustomNetTables.GetTableValue("imba_hero_selection_talent", desc_pre+hero_name);
 $("#Overlay_Selected").style.backgroundImage = "url('file://{images}/custom_game/hero_selection/overlay_selected.png')";
 $("#Overlay_FullyIMBA").style.backgroundImage = "url('file://{images}/custom_game/hero_selection/overlay_fully_imba.png')";
 $("#Overlay_HalfIMBA").style.backgroundImage = "url('file://{images}/custom_game/hero_selection/overlay_half_imba.png')";
@@ -89,7 +112,9 @@ function ShowHeroDetail()
 		{
 			for(var i=1;i<=8;i++)
 			{
-				hero_info_talent[i-1].text = $.Localize("DOTA_Tooltip_ability_"+talent[i]);
+				var txt = talent_lang[i];
+				var desc = talent_desc[i];
+				hero_info_talent[i-1].text = txt ? txt : $.Localize("DOTA_Tooltip_ability_"+talent[i]);
 				if($.Localize("DOTA_Tooltip_ability_"+talent[i]+"_Description") != "DOTA_Tooltip_ability_"+talent[i]+"_Description")
 				{
 					(function (abilityPanel, ability) {
@@ -100,7 +125,7 @@ function ShowHeroDetail()
 						abilityPanel.SetPanelEvent("onmouseout", function() {
 							$.DispatchEvent("DOTAHideTextTooltip", abilityPanel);
 						})
-					})(hero_info_talent[i-1], $.Localize("DOTA_Tooltip_ability_"+talent[i]+"_Description"));
+					})(hero_info_talent[i-1], desc ? desc : $.Localize("DOTA_Tooltip_ability_"+talent[i]+"_Description"));
 				}
 				else
 				{

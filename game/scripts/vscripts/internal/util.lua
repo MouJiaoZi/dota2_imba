@@ -1445,7 +1445,7 @@ function CDOTA_Modifier_Lua:CheckMotionControllers()
 end
 
 function DumpAllHeroCustomAbilityIcons()
-	local a = LoadKeyValues("scripts/b.txt")
+	local a = LoadKeyValues("scripts/icon_info.txt")
 	local b = a['items']
 	for k, v in pairs(b) do
 		b[k]['portraits'] = nil

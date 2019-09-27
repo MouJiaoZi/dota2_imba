@@ -91,7 +91,7 @@ function modifier_imba_ability_charge:OnIntervalThink()
 	end
 	local duration = self.chargetime
 	if self.getcdr then
-		duration = duration * (1 - self.caster:GetCooldownReduction() / 100)
+		duration = duration * self.caster:GetCooldownReduction()
 	end
 	if self:GetStackCount() > self.maxcharges or (self:GetStackCount() == self.maxcharges - 1 and self:GetRemainingTime() <= 0) then
 		self:SetStackCount(self.maxcharges)
@@ -132,8 +132,9 @@ function modifier_imba_ability_charge:OnAbilityFullyCast( keys )
 	end
 	if keys.ability == self.ability then
 		local duration = self.chargetime
+		print(duration)
 		if self.getcdr then
-			duration = duration * (1 - self.caster:GetCooldownReduction() / 100)
+			duration = duration * self.caster:GetCooldownReduction()
 		end
 		if self:GetDuration() == -1 then
 			self:SetDuration(duration, true)
@@ -233,7 +234,7 @@ function AbilityChargeController:CostCharge(hAbility, iCost, bIncreaseType)  --b
 	local current_charge = control_buff:GetStackCount()
 	if cost >= 0 then
 		if control_buff.getcdr then
-			local cdr_pct = caster:GetCooldownReduction() / 100
+			local cdr_pct = caster:GetCooldownReduction()
 			charge_time = charge_time * (1 - cdr_pct)
 		end
 		if current_charge >= cost then
