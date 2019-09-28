@@ -280,7 +280,7 @@ imba_rubick_spell_steal_buff = class({})
 LinkLuaModifier("modifier_imba_spell_steal_buff", "hero/hero_rubick", LUA_MODIFIER_MOTION_NONE)
 
 function imba_rubick_spell_steal_buff:IsTalentAbility() return true end
-function imba_rubick_spell_steal_buff:GetIntrinsicModifierName() return "modifier_imba_spell_steal_buff" end
+--function imba_rubick_spell_steal_buff:GetIntrinsicModifierName() return "modifier_imba_spell_steal_buff" end
 
 modifier_imba_spell_steal_buff = class({})
 
