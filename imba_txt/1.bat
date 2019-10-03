@@ -1,0 +1,1 @@
+python -i dump_talent_chn.py
