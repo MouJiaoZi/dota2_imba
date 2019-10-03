@@ -320,7 +320,7 @@ function GameMode:OnNPCSpawned(keys)
 
 				HeroItems:SetHeroItemTable(npc)
 				for i=0, 10 do
-					AddFOWViewer(i, npc:GetAbsOrigin(), 200, FrameTime(), false)
+					npc:MakeVisibleToTeam(i, FrameTime())
 				end
 				if GetMapName() ~= "dbii_death_match" and (IMBA_AK_ENABLE or GameRules:IsCheatMode()) then
 					IMBAEvents:GiveAKAbility(npc)

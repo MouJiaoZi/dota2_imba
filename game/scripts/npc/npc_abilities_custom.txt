@@ -41,12 +41,12 @@
 			"03"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"fade_time"					"0.0 0.0 0.0 0.0"
+				"fade_time"					"1.0"
 			}
 			"04"
 			{
 				"var_type"					"FIELD_FLOAT"
-				"fade_delay"				"0.2"
+				"fade_delay"				"1.0"
 			}
 			"05"
 			{
@@ -24532,7 +24532,7 @@
 			"07"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"contagion_extra_duration"	"3"
+				"contagion_extra_duration"	"6" //3
 				"RequiresScepter"			"1"
 			}
 		}

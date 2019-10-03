@@ -55,7 +55,6 @@ function IMBAEvents:GiveAKAbility(npc)
 	--if not level_info or (level_info and level_info['penalize'] == "0") then
 		if npc:HasAbility("generic_hidden") and not npc:HasAbility("imba_ogre_magi_multicast") and not npc:HasAbility("imba_storm_spirit_ball_lightning") then
 			GameRules:SetSafeToLeave(true)
-			local ak = nil
 			local ak_name = GetRandomAKAbility()
 			while npc:HasAbility(ak_name[2]) or (not npc:IsRangedAttacker() and (ak_name[2] == "dragon_knight_elder_dragon_form" or ak_name[2] == "terrorblade_metamorphosis")) do
 				ak_name = GetRandomAKAbility()
@@ -84,8 +83,6 @@ function IMBAEvents:OnHeroKilled(victim, attacker)
 		local maxLoseGold = PlayerResource:GetUnreliableGold(victim:GetPlayerOwnerID())
 		local netWorth = PlayerResource:GetGoldSpentOnItems(victim:GetPlayerOwnerID())
 		PlayerResource:ModifyGold(victim:GetPlayerOwnerID(), 0 - math.min(maxLoseGold, 50 + netWorth / 40), false, DOTA_ModifyGold_Death)
-
-		--print(victim:GetName(), "respawn time:", respawn_timer, "bb cd:", buyback_cooldown, "bb cost:", buy_back_cost, "lose gold:", math.min(maxLoseGold, 50 + netWorth / 40))
 
 		--Death Streak
 		if attacker and CDOTA_PlayerResource.IMBA_PLAYER_HERO[attacker:GetPlayerOwnerID() + 1] then

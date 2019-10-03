@@ -278,7 +278,7 @@ function modifier_imba_phase_shift:OnDestroy()
 		self:GetParent():StopSound("Hero_Puck.Phase_Shift")
 		--GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 180, false)
 		self:GetAbility():EndCooldown()
-		self:GetAbility():StartCooldown(math.max(FrameTime(), (self:GetAbility():GetCooldown(-1) * self:GetCaster():GetCooldownReduction() / 100) - self:GetElapsedTime()))
+		self:GetAbility():StartCooldown(math.max(FrameTime(), (self:GetAbility():GetCooldown(-1) * self:GetCaster():GetCooldownReduction()) - self:GetElapsedTime()))
 	end
 end
 

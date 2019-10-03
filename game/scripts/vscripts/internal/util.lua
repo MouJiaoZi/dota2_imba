@@ -1071,6 +1071,20 @@ function GetRandomAKAbility()
 	return (RollPercentage(20) and GetRandomAbilityUltimate() or GetRandomAbilityNormal())
 end
 
+function GetRandomAKAbility_Event()
+	local rand_tab = {}
+	for i=1, 3 do
+		rand_tab[1 + (i - 1) * 6] = {"npc_dota_hero_ogre_magi", "imba_ogre_magi_multicast"}
+		rand_tab[2 + (i - 1) * 6] = {"npc_dota_hero_lina", "imba_lina_fiery_soul"}
+		rand_tab[3 + (i - 1) * 6] = {"npc_dota_hero_pudge", "imba_pudge_flesh_heap"}
+		rand_tab[4 + (i - 1) * 6] = {"npc_dota_hero_slark", "slark_essence_shift"}
+		rand_tab[5 + (i - 1) * 6] = {"npc_dota_hero_dazzle", "dazzle_bad_juju"}
+		rand_tab[6 + (i - 1) * 6] = {"npc_dota_hero_venomancer", "imba_venomancer_poison_nova"}
+	end
+	rand_tab[#rand_tab + 1] = {"npc_dota_hero_tinker", "imba_tinker_rearm"}
+	return rand_tab[RandomInt(1, #rand_tab)]
+end
+
 function CheckRandomAbilityKV()
 	print("Normal Ability KV Check Start ...........")
 	for k,v in pairs(Random_Abilities_Normal) do
@@ -1119,7 +1133,8 @@ function CDOTA_BaseNPC:RemoveAllModifiers()
 								"modifier_item_ultimate_scepter_consumed",
 								"modifier_imba_moon_shard_consume",
 								"modifier_imba_consumable_scepter_consumed",
-								"modifier_imba_atrophy_aura_permanent",}
+								"modifier_imba_atrophy_aura_permanent",
+								"modifier_imba_ak_ability_controller",}
 	for i=1, #buff do
 		if not IsInTable(buff[i]:GetName(), no_move_buff_name) and not string.find(buff[i]:GetName(), "charge_counter") or (buff[i].CheckState and buff[i]:CheckState()[MODIFIER_STATE_STUNNED]) then
 			if buff[i]:GetAbility() and buff[i]:GetAbility().GetIntrinsicModifierName and buff[i]:GetName() == buff[i]:GetAbility():GetIntrinsicModifierName() then
@@ -1211,42 +1226,43 @@ end
 
 function IsRefreshableByAbility(str)
 	local NO_REFRESH = {
-		"imba_tinker_rearm",
-		"ancient_apparition_ice_blast",
-		"zuus_thundergods_wrath",
-		"furion_wrath_of_nature",
-		"imba_magnus_reverse_polarity",
-		"imba_omniknight_guardian_angel",
-		"imba_mirana_arrow",
-		"imba_dazzle_shallow_grave",
-		"imba_wraith_king_reincarnation",
-		"imba_abaddon_borrowed_time",
-		"imba_nyx_assassin_spiked_carapace",
-		"elder_titan_earth_splitter",
-		"imba_centaur_stampede",
-		"silencer_global_silence",
-		"imba_dark_seer_wall_of_replica",
-		"item_imba_bloodstone",
-		"item_imba_arcane_boots",
-		"item_imba_mekansm",
-		"item_imba_mekansm_2",
-		"item_imba_guardian_greaves",
-		"item_imba_hand_of_midas",
-		"item_imba_white_queen_cape",
-		"item_imba_black_king_bar",
-		"item_imba_refresher",
-		"item_imba_necronomicon",
-		"item_imba_necronomicon_2",
-		"item_imba_necronomicon_3",
-		"item_imba_necronomicon_4",
-		"item_imba_necronomicon_5",
-		"item_imba_skadi",
-		"item_imba_sphere",
-		"item_aeon_disk",
-		"zuus_cloud",
-		"chen_hand_of_god",
+		["imba_tinker_rearm"] = true,
+		["ancient_apparition_ice_blast"] = true,
+		["zuus_thundergods_wrath"] = true,
+		["furion_wrath_of_nature"] = true,
+		["imba_magnus_reverse_polarity"] = true,
+		["imba_omniknight_guardian_angel"] = true,
+		["imba_mirana_arrow"] = true,
+		["imba_dazzle_shallow_grave"] = true,
+		["imba_wraith_king_reincarnation"] = true,
+		["imba_abaddon_borrowed_time"] = true,
+		["imba_nyx_assassin_spiked_carapace"] = true,
+		["elder_titan_earth_splitter"] = true,
+		["imba_centaur_stampede"] = true,
+		["silencer_global_silence"] = true,
+		["imba_dark_seer_wall_of_replica"] = true,
+		["item_imba_bloodstone"] = true,
+		["item_imba_arcane_boots"] = true,
+		["item_imba_mekansm"] = true,
+		["item_imba_mekansm_2"] = true,
+		["item_imba_guardian_greaves"] = true,
+		["item_imba_hand_of_midas"] = true,
+		["item_imba_white_queen_cape"] = true,
+		["item_imba_black_king_bar"] = true,
+		["item_imba_refresher"] = true,
+		["item_imba_necronomicon"] = true,
+		["item_imba_necronomicon_2"] = true,
+		["item_imba_necronomicon_3"] = true,
+		["item_imba_necronomicon_4"] = true,
+		["item_imba_necronomicon_5"] = true,
+		["item_imba_skadi"] = true,
+		["item_imba_sphere"] = true,
+		["item_aeon_disk"] = true,
+		["zuus_cloud"] = true,
+		["chen_hand_of_god"] = true,
+		["invoker_sun_strike"] = true,
 	}
-	return IsInTable(str, NO_REFRESH)
+	return NO_REFRESH[str]
 end
 
 function CDOTA_BaseNPC:GiveVisionForBothTeam(fDuration)
